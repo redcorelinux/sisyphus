@@ -1,0 +1,76 @@
+#!/bin/bash
+
+export local showprogress="yad --title "sisyphus" --text-info --width 640 --height 480 --center --listen --tail &"
+export local SISYPHUS='
+<window title="Sisyphus - Package Manager" window-position="1" icon-name="gtk-about" modal="true" resizable="false" width-request="1000" height-request="600">
+<vbox>
+<frame Manage Packages>
+	<hbox>
+		<text>
+			<label>Enter package(s)</label>
+		</text>
+		<entry>
+			<variable>pkgname</variable>
+		</entry>
+	</hbox>
+	<hbox>
+		
+		<button tooltip-text="Install new package(s) (no confirmation)">
+			<label>Install package(s)</label>
+			<action>epkg autoinstall $pkgname | $showprogress</action>
+			<action>sleep 1</action>
+			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+		</button>
+		<button tooltip-text="Search for package(s)">
+			<label>Search package(s)</label>
+			<action>epkg search $pkgname | $showprogress</action>
+			<action>sleep 1</action>
+			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+		</button>
+		<button tooltip-text="Uninstall package(s) safely (no confirmation)">
+			<label>Uninstall package(s)</label>
+			<action>epkg autoremove $pkgname | $showprogress</action>
+			<action>sleep 1</action>
+			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+		</button>
+		<button tooltip-text="Update portage tree, portage configs && Kogaion overlay">
+			<label>Update Databases</label>
+			<action>epkg update | $showprogress</action>
+			<action>sleep 1</action>
+			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+		</button>
+		<button tooltip-text="Upgrade system (no confirmation)">
+			<label>Upgrade System</label>
+			<action>epkg autoupgrade | $showprogress </action>
+			<action>sleep 1</action>
+			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+		</button>
+		<button tooltip-text="Display information about installed core packages and portage configuration">
+			<label>Sysinfo</label>
+				<action>epkg sysinfo | $showprogress</action>
+				<action>sleep 1</action>
+				<action>wmctrl -F -a "sisyphus" -b add,above</action>
+		</button>
+	</hbox>
+</frame>
+<frame Terminal Emulator>
+	<hbox>
+		<terminal argv0="/bin/bash">
+			<variable>vte1</variable>
+			<input>echo epkg</input>
+		</terminal>
+	</hbox>
+</frame>
+<frame Exit>
+	<hbox>
+		<button>
+			<label>Exit</label>
+			<action>EXIT:ok</action>
+		</button>
+	</hbox>
+</frame>
+</vbox>
+</window>
+'
+
+gtkdialog --space-expand=true --space-fill=true --program=SISYPHUS
