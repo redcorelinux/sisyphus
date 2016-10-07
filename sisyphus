@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export local showprogress="yad --title "sisyphus" --text-info --width 640 --height 480 --center --listen --tail &"
+export local focusprogress="wmctrl -F -a "sisyphus" -b add,above"
 export local SISYPHUS='
 <window title="Sisyphus - Package Manager" window-position="1" icon-name="gtk-about" modal="true" resizable="false" width-request="1000" height-request="600">
 <vbox>
@@ -19,37 +20,37 @@ export local SISYPHUS='
 			<label>Install package(s)</label>
 			<action>epkg autoinstall $pkgname | $showprogress</action>
 			<action>sleep 1</action>
-			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Search for package(s)">
 			<label>Search package(s)</label>
 			<action>epkg search $pkgname | $showprogress</action>
 			<action>sleep 1</action>
-			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Uninstall package(s) safely (no confirmation)">
 			<label>Uninstall package(s)</label>
 			<action>epkg autoremove $pkgname | $showprogress</action>
 			<action>sleep 1</action>
-			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Update portage tree, portage configs && Kogaion overlay">
 			<label>Update Databases</label>
 			<action>epkg update | $showprogress</action>
 			<action>sleep 1</action>
-			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Upgrade system (no confirmation)">
 			<label>Upgrade System</label>
 			<action>epkg autoupgrade | $showprogress </action>
 			<action>sleep 1</action>
-			<action>wmctrl -F -a "sisyphus" -b add,above</action>
+			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Display information about installed core packages and portage configuration">
 			<label>Sysinfo</label>
 				<action>epkg sysinfo | $showprogress</action>
 				<action>sleep 1</action>
-				<action>wmctrl -F -a "sisyphus" -b add,above</action>
+				<action>$focusprogress</action>
 		</button>
 	</hbox>
 </frame>
