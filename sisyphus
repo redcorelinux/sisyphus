@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Sisyphus is a simple GUI for epkg, the portage wrapper
+# It uses gnome-extra/yad, x11-libs/vte && x11-misc/gtkdialog
+# Main Author : Ghiunhan Mamut @ RogentOS Development Group
 
 export local showprogress="yad --title "sisyphus" --text-info --width 640 --height 480 --center --listen --tail &"
 export local focusprogress="wmctrl -F -a "sisyphus" -b add,above"
