@@ -4,8 +4,7 @@
 # It uses gnome-extra/yad, x11-libs/vte && x11-misc/gtkdialog
 # Main Author : Ghiunhan Mamut @ RogentOS Development Group
 
-export local showprogress="yad --title "sisyphus" --text-info --width 640 --height 480 --center --listen --tail &"
-export local focusprogress="wmctrl -F -a "sisyphus" -b add,above"
+export local showprogress="yad --title "sisyphus" --text-info --width 640 --height 480 --center --no-buttons --on-top --sticky --fixed --undecorated --skip-taskbar --listen --tail &"
 export local SISYPHUS='
 <window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="1000" height-request="600">
 <vbox>
@@ -22,46 +21,32 @@ export local SISYPHUS='
 		<button tooltip-text="Install new package(s) (no confirmation)">
 			<label>Install package(s)</label>
 			<action>epkg autoinstall $pkgname | $showprogress</action>
-			<action>sleep 1</action>
-			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Search for package(s)">
 			<label>Search package(s)</label>
 			<action>epkg search $pkgname | $showprogress</action>
-			<action>sleep 1</action>
-			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Uninstall package(s) safely (no confirmation)">
 			<label>Remove package(s)</label>
 			<action>epkg autoremove $pkgname | $showprogress</action>
-			<action>sleep 1</action>
-			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Remove orphan packages(s) aka no longer needed (no confirmation)">
 			<label>Remove orphan package(s)</label>
 			<action>epkg autoclean | $showprogress</action>
-			<action>sleep 1</action>
-			<action>$focusprogress</action>
 		</button>
 	</hbox>
 	<hbox>
 		<button tooltip-text="Update portage tree, portage configs && Kogaion overlay">
 			<label>Update Database</label>
 			<action>epkg update | $showprogress</action>
-			<action>sleep 1</action>
-			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Upgrade system (no confirmation)">
 			<label>Upgrade System</label>
 			<action>epkg autoupgrade | $showprogress </action>
-			<action>sleep 1</action>
-			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Display information about installed core packages and portage configuration">
 			<label>Portage Information</label>
 			<action>epkg sysinfo | $showprogress</action>
-			<action>sleep 1</action>
-			<action>$focusprogress</action>
 		</button>
 	</hbox>
 </frame>
