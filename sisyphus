@@ -3,7 +3,7 @@
 export local showprogress="yad --title "sisyphus" --text-info --width 640 --height 480 --center --listen --tail &"
 export local focusprogress="wmctrl -F -a "sisyphus" -b add,above"
 export local SISYPHUS='
-<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-about" modal="true" resizable="false" width-request="1000" height-request="600">
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="1000" height-request="600">
 <vbox>
 <frame Manage Packages>
 	<hbox>
