@@ -3,7 +3,7 @@
 export local showprogress="yad --title "sisyphus" --text-info --width 640 --height 480 --center --listen --tail &"
 export local focusprogress="wmctrl -F -a "sisyphus" -b add,above"
 export local SISYPHUS='
-<window title="Sisyphus - Package Manager" window-position="1" icon-name="gtk-about" modal="true" resizable="false" width-request="1000" height-request="600">
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-about" modal="true" resizable="false" width-request="1000" height-request="600">
 <vbox>
 <frame Manage Packages>
 	<hbox>
@@ -15,45 +15,46 @@ export local SISYPHUS='
 		</entry>
 	</hbox>
 	<hbox>
-		
 		<button tooltip-text="Install new package(s) (no confirmation)">
 			<label>Install package(s)</label>
-			<input file>install.svg</input>
 			<action>epkg autoinstall $pkgname | $showprogress</action>
 			<action>sleep 1</action>
 			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Search for package(s)">
 			<label>Search package(s)</label>
-			<input file>search.svg</input>
 			<action>epkg search $pkgname | $showprogress</action>
 			<action>sleep 1</action>
 			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Uninstall package(s) safely (no confirmation)">
-			<label>Uninstall package(s)</label>
-			<input file>uninstall.svg</input>
+			<label>Remove package(s)</label>
 			<action>epkg autoremove $pkgname | $showprogress</action>
 			<action>sleep 1</action>
 			<action>$focusprogress</action>
 		</button>
+		<button tooltip-text="Remove orphan packages(s) aka no longer needed (no confirmation)">
+			<label>Remove orphan package(s)</label>
+			<action>epkg autoclean | $showprogress</action>
+			<action>sleep 1</action>
+			<action>$focusprogress</action>
+		</button>
+	</hbox>
+	<hbox>
 		<button tooltip-text="Update portage tree, portage configs && Kogaion overlay">
-			<label>Update Databases</label>
-			<input file>update.svg</input>
+			<label>Update Database</label>
 			<action>epkg update | $showprogress</action>
 			<action>sleep 1</action>
 			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Upgrade system (no confirmation)">
 			<label>Upgrade System</label>
-			<input file>upgrade.svg</input>
 			<action>epkg autoupgrade | $showprogress </action>
 			<action>sleep 1</action>
 			<action>$focusprogress</action>
 		</button>
 		<button tooltip-text="Display information about installed core packages and portage configuration">
-			<label>Sysinfo</label>
-			<input file>sysinfo.svg</input>
+			<label>Portage Information</label>
 			<action>epkg sysinfo | $showprogress</action>
 			<action>sleep 1</action>
 			<action>$focusprogress</action>
@@ -72,7 +73,6 @@ export local SISYPHUS='
 	<hbox>
 		<button>
 			<label>Exit</label>
-			<input file>exit.svg</input>
 			<action>EXIT:ok</action>
 		</button>
 	</hbox>
