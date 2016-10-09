@@ -4,9 +4,10 @@
 # It uses gnome-extra/yad, x11-libs/vte && x11-misc/gtkdialog
 # Main Author : Ghiunhan Mamut @ RogentOS Development Group
 
-export local showprogress="yad --title "sisyphus" --text-info --width 640 --height 480 --center --no-buttons --on-top --sticky --fixed --undecorated --skip-taskbar --listen --tail &"
+export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --undecorated --skip-taskbar --listen --tail &"
+export local showprogress="yad --title "sisyphus" --progress --pulsate --width 800 --center --no-buttons --on-top --sticky --fixed --undecorated  --auto-close &"
 export local SISYPHUS='
-<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="1000" height-request="600">
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="1000" height-request="640">
 <vbox>
 <frame Manage Packages>
 	<hbox>
@@ -18,35 +19,33 @@ export local SISYPHUS='
 		</entry>
 	</hbox>
 	<hbox>
-		<button tooltip-text="Install new package(s) (no confirmation)">
-			<label>Install package(s)</label>
-			<action>epkg autoinstall $pkgname | $showprogress</action>
-		</button>
 		<button tooltip-text="Search for package(s)">
 			<label>Search package(s)</label>
-			<action>epkg search $pkgname | $showprogress</action>
+			<action>epkg search $pkgname | $showdialog</action>
+		</button>
+		<button tooltip-text="Install new package(s) (no confirmation)">
+			<label>Install package(s)</label>
+			<action>epkg autoinstall $pkgname | $showdialog</action>
 		</button>
 		<button tooltip-text="Uninstall package(s) safely (no confirmation)">
 			<label>Remove package(s)</label>
-			<action>epkg autoremove $pkgname | $showprogress</action>
+			<action>epkg autoremove $pkgname | $showdialog</action>
 		</button>
+	</hbox>
+	<hbox>
 		<button tooltip-text="Remove orphan packages(s) aka no longer needed (no confirmation)">
 			<label>Remove orphan package(s)</label>
 			<action>epkg autoclean | $showprogress</action>
 		</button>
 	</hbox>
 	<hbox>
-		<button tooltip-text="Update portage tree, portage configs && Kogaion overlay">
-			<label>Update Database</label>
-			<action>epkg update | $showprogress</action>
-		</button>
 		<button tooltip-text="Upgrade system (no confirmation)">
 			<label>Upgrade System</label>
-			<action>epkg autoupgrade | $showprogress </action>
+			<action>epkg autoupgrade | $showdialog </action>
 		</button>
 		<button tooltip-text="Display information about installed core packages and portage configuration">
 			<label>Portage Information</label>
-			<action>epkg sysinfo | $showprogress</action>
+			<action>epkg sysinfo | $showdialog</action>
 		</button>
 	</hbox>
 </frame>
