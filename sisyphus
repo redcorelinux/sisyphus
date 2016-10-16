@@ -48,6 +48,12 @@ export local SISYPHUS='
 			<action>epkg sysinfo | $showdialog</action>
 		</button>
 	</hbox>
+	<hbox>
+		<button tooltip-text="Display ALL applications from repository">
+			<label>Display ALL applications from repository</label>
+			<action>cat /var/cache/edb/binhost/pkg.rogentos.ro/binhost/x64/Packages |grep CPV | cut -d " " -f2 | $showdialog</action>
+		</button>
+	</hbox>
 </frame>
 <frame Terminal Emulator>
 	<hbox>
