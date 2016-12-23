@@ -41,6 +41,15 @@ export local gamesui='
 			<label>Uninstall package</label>
 			<action>epkg autoremove $game|$showdialog</action>
 		</button>
+		<button space-expand="true" space-extend="true" label-text="home">
+			<label>Back home</label>
+			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=mainui &</action>
+			<action signal="button-release-event">EXIT:ok</action>
+		</button>
+		<button space-expand="true" space-extend="true" label-text="exit">
+			<label>Exit</label>
+			<action>EXIT:ok</action>
+		</button>
 	</hbox>
 </frame>
 </vbox>
@@ -124,7 +133,8 @@ export local mainui='
 		</button>
 		<button tooltip-text="Games">
 			<label>Games</label>
-			<action>gtkdialog --space-expand=true --space-fill=true --program=gamesui</action>
+			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=gamesui &</action>
+			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Graphics">
 			<label>Graphics</label>
