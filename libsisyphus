@@ -34,11 +34,11 @@ export local gamesui='
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">
-			<label>Install Application</label>
+			<label>Install package</label>
 			<action>epkg autoinstall $game|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="uninstall">
-			<label>Uninstall Application</label>
+			<label>Uninstall package</label>
 			<action>epkg autoremove $game|$showdialog</action>
 		</button>
 	</hbox>
@@ -85,7 +85,7 @@ export local systemui='
 export local mainui='
 <window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="800" height-request="600">
 <vbox>
-<frame Manage Packages>
+<frame Manage packages by name>
 	<hbox>
 		<text>
 			<label>Enter package(s)</label>
@@ -117,7 +117,7 @@ export local mainui='
 		</button>
 	</hbox>
 </frame>
-<frame Browse Packages>
+<frame Browse packages by category>
 	<hbox>
 		<button tooltip-text="Accesories">
 			<label>Accesories</label>
