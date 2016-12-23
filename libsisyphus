@@ -34,11 +34,11 @@ export local gamesui='
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">
-			<label>Install Selected Application</label>
+			<label>Install Application</label>
 			<action>epkg autoinstall $game|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="uninstall">
-			<label>Uninstall Selected Application</label>
+			<label>Uninstall Application</label>
 			<action>epkg autoremove $game|$showdialog</action>
 		</button>
 	</hbox>
