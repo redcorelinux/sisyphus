@@ -2,77 +2,12 @@
 
 # Sisyphus is a simple GUI for epkg, the portage wrapper
 # It uses gnome-extra/yad, x11-libs/vte && x11-misc/gtkdialog
-# Main Author : Ghiunhan Mamut @ RogentOS Development Group
+# Main Author : Ghiunhan Mamut @ Redcore Linux Project
 
-export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --undecorated --skip-taskbar --listen --tail &"
-export local showprogress="yad --title "sisyphus" --progress --pulsate --width 800 --center --no-buttons --on-top --sticky --fixed --undecorated --skip-taskbar  --auto-close &"
-export local SISYPHUS='
-<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="1000" height-request="640">
-<vbox>
-<frame Manage Packages>
-	<hbox>
-		<text>
-			<label>Enter package(s)</label>
-		</text>
-		<entry>
-			<variable>pkgname</variable>
-		</entry>
-	</hbox>
-	<hbox>
-		<button tooltip-text="Search for package(s)">
-			<label>Search package(s)</label>
-			<action>epkg search $pkgname | $showdialog</action>
-		</button>
-		<button tooltip-text="Install new package(s) (no confirmation)">
-			<label>Install package(s)</label>
-			<action>epkg autoinstall $pkgname | $showdialog</action>
-		</button>
-		<button tooltip-text="Uninstall package(s) safely (no confirmation)">
-			<label>Remove package(s)</label>
-			<action>epkg autoremove $pkgname | $showdialog</action>
-		</button>
-	</hbox>
-	<hbox>
-		<button tooltip-text="Remove orphan packages(s) aka no longer needed (no confirmation)">
-			<label>Remove orphan package(s)</label>
-			<action>epkg autoclean | $showprogress</action>
-		</button>
-	</hbox>
-	<hbox>
-		<button tooltip-text="Upgrade system (no confirmation)">
-			<label>Upgrade System</label>
-			<action>epkg autoupgrade | $showdialog </action>
-		</button>
-		<button tooltip-text="Display information about installed core packages and portage configuration">
-			<label>Portage Information</label>
-			<action>epkg sysinfo | $showdialog</action>
-		</button>
-	</hbox>
-	<hbox>
-		<button tooltip-text="Display ALL applications from repository">
-			<label>Display ALL applications from repository</label>
-			<action>cat /var/cache/edb/binhost/pkg.rogentos.ro/binhost/x64/Packages |grep CPV | cut -d " " -f2 | $showdialog</action>
-		</button>
-	</hbox>
-</frame>
-<frame Terminal Emulator>
-	<hbox>
-		<terminal argv0="/bin/bash">
-			<variable>vte1</variable>
-			<input>echo epkg</input>
-		</terminal>
-	</hbox>
-</frame>
-<frame Exit>
-	<hbox>
-		<button>
-			<label>Exit</label>
-			<action>EXIT:ok</action>
-		</button>
-	</hbox>
-</frame>
-</vbox>
-</window>
-'
+source libsisyphus
 
-gtkdialog --space-expand=true --space-fill=true --program=SISYPHUS
+main() {
+	gtkdialog --space-expand=true --space-fill=true --program=mainwindow
+}
+
+main
