@@ -239,7 +239,7 @@ export local mainui='
 		<button tooltip-text="Sound & Video">
 			<label>Sound & Video</label>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=multimediaui &</action>
-			<action signal="button-release-event">EXI:ok</action>
+			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Office">
 			<label>Office</label>
