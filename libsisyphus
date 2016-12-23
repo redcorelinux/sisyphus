@@ -49,14 +49,16 @@ export local gamesui='
 			<variable>game</variable>
 			<label>Application Category|Application Name|Application Description</label>
 			<item>app-emulation|steam|Digital distribution client bootstrap package</item>
-			<item>games-action|armagetronad|A Tron Clone in 3D</item>
-			<item>games-action|chromium-bsu|A fast paced top scrolling shooter</item>
-			<item>games-action|supertuxkart|Kart racing game featuring Tux and his friends</item>
-			<item>games-action|teeworlds|Fast-paced multiplayer 2D shooter game</item>
-			<item>games-board|aisleriot|A collection of patience games written in guile scheme</item>
-			<item>games-fps|urbanterror|A team-based tactical shooter based on the Quake 3 Engine</item>
+			<item>games-action|armagetronad|Fast-paced 3D lightcycle game based on Tron</item>
+			<item>games-action|chromium-bsu|Chromium B.S.U. - an arcade game</item>
+			<item>games-action|supertuxkart|A kart racing game starring Tux, the linux penguin (TuxKart fork)</item>
+			<item>games-action|teeworlds|Online multi-player platform 2D shooter</item>
+			<item>games-board|aisleriot|A collection of solitaire card games for GNOME</item>
+			<item>games-emulation|dosbox|DOS Emulator</item>
+			<item>games-emulation|zsnes|SNES (Super Nintendo) emulator that uses x86 assembly</item>
+			<item>games-fps|urbanterror|Hollywood tactical shooter based on the ioquake3 engine</item>
 			<item>games-fps|xonotic|Fork of Nexuiz, Deathmatch FPS based on DarkPlaces, an advanced Quake 1 engine</item>
-			<item>games-simulation|openttd|An engine for running Transport Tycoon Deluxe</item>
+			<item>games-simulation|openttd|OpenTTD is a clone of Transport Tycoon Deluxe</item>
 			<item>games-strategy|0ad|Cross-platform, 3D and historically-based real-time strategy game</item>
 		</table>
 	</hbox>
