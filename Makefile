@@ -21,5 +21,7 @@ install:
 
 	install -d $(DESTDIR)$(UBINDIR)
 	install -m 0755 sisyphus $(DESTDIR)$(UBINDIR)/
+	install -d $(DESTDIR)$(LIBDIR)
+	install -m 0755 libsisyphus $(DESTDIR)$(LIBDIR)/
 	install -d $(DESTDIR)$(POLKITDIR)
 	install -m 0644 org.redcorelinux.sisyphus.policy $(DESTDIR)$(POLKITDIR)/
