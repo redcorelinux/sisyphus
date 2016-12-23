@@ -7,7 +7,7 @@
 source libsisyphus
 
 main() {
-	gtkdialog --space-expand=true --space-fill=true --program=mainwindow
+	gtkdialog --space-expand=true --space-fill=true --program=mainui
 }
 
 main

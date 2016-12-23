@@ -4,8 +4,15 @@
 export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail &"
 export local showprogress="yad --title "sisyphus" --progress --pulsate --width 800 --center --no-buttons --on-top --sticky --fixed --undecorated --skip-taskbar  --auto-close &"
 
+# accesories category ui function
+export local accesoriesui='
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" with-request="800" height-request="600">
+<hbox>
+</hbox>
+</window>'
+
 # games category ui function
-export local gameswindow='
+export local gamesui='
 <window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="800" height-request="600">
 <vbox>
 <frame Games>
@@ -39,8 +46,43 @@ export local gameswindow='
 </vbox>
 </window>'
 
+# graphics category ui function
+export local graphicsui='
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" with-request="800" height-request="600">
+<hbox>
+</hbox>
+</window>'
+
+# internet category ui function
+export local internetui='
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" with-request="800" height-request="600">
+<hbox>
+</hbox>
+</window>'
+
+# multimedia category ui function
+export local multimediaui='
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" with-request="800" height-request="600">
+<hbox>
+</hbox>
+</window>'
+
+# office category ui function
+export local officeui='
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" with-request="800" height-request="600">
+<hbox>
+</hbox>
+</window>'
+
+# system category ui function
+export local systemui='
+<window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" with-request="800" height-request="600">
+<hbox>
+</hbox>
+</window>'
+
 # main ui function
-export local mainwindow='
+export local mainui='
 <window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="800" height-request="600">
 <vbox>
 <frame Manage Packages>
@@ -82,7 +124,7 @@ export local mainwindow='
 		</button>
 		<button tooltip-text="Games">
 			<label>Games</label>
-			<action>gtkdialog --space-expand=true --space-fill=true --program=gameswindow</action>
+			<action>gtkdialog --space-expand=true --space-fill=true --program=gamesui</action>
 		</button>
 		<button tooltip-text="Graphics">
 			<label>Graphics</label>
