@@ -48,6 +48,7 @@ export local gamesui='
 		<table hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1">
 			<variable>game</variable>
 			<label>Application Category|Application Name|Application Description</label>
+			<item>app-emulation|playonlinux|Set of scripts to easily install and use Windows games and software</item>
 			<item>app-emulation|steam|Digital distribution client bootstrap package</item>
 			<item>games-action|armagetronad|Fast-paced 3D lightcycle game based on Tron</item>
 			<item>games-action|chromium-bsu|Chromium B.S.U. - an arcade game</item>
