@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# export yad worker variable
-export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail &"
+# export xterm flags
+export local showprogress="xterm -maximized -e"
+export local showresults="xterm -maximized -hold -e"
 
 # import user interfaces
 source /usr/lib64/sisyphus/accesoriesui.sh
@@ -28,23 +29,23 @@ export local mainui='
 	<hbox>
 		<button tooltip-text="Search for package(s)">
 			<label>Search package(s)</label>
-			<action>epkg search $pkgname | $showdialog</action>
+			<action>$showresults epkg search $pkgname</action>
 		</button>
 		<button tooltip-text="Install new package(s) (no confirmation)">
 			<label>Install package(s)</label>
-			<action>epkg autoinstall $pkgname | $showdialog</action>
+			<action>$showprogress epkg autoinstall $pkgname</action>
 		</button>
 		<button tooltip-text="Uninstall package(s) safely (no confirmation)">
 			<label>Remove package(s)</label>
-			<action>epkg autoremove $pkgname | $showdialog</action>
+			<action>$showprogress epkg autoremove $pkgname</action>
 		</button>
 		<button tooltip-text="Upgrade system (no confirmation)">
 			<label>Upgrade System</label>
-			<action>epkg autoupgrade | $showdialog</action>
+			<action>$showprogress epkg autoupgrade</action>
 		</button>
 		<button tooltip-text="Remove orphan packages(s) aka no longer needed (no confirmation)">
 			<label>Remove orphan package(s)</label>
-			<action>epkg autoclean | $showdialog</action>
+			<action>$showprogress epkg autoclean</action>
 		</button>
 	</hbox>
 </frame>

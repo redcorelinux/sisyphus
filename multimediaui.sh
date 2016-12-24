@@ -15,11 +15,11 @@ export local multimediaui='
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">
 			<label>Install package</label>
-			<action>epkg autoinstall $multimedia|$showdialog</action>
+			<action>$showprogress epkg autoinstall $multimedia</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="uninstall">
 			<label>Uninstall package</label>
-			<action>epkg autoremove $multimedia|$showdialog</action>
+			<action>$showprogress epkg autoremove $multimedia</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="home">
 		<label>Back home</label>
