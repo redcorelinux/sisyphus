@@ -4,7 +4,8 @@
 # It uses gnome-extra/yad, x11-libs/vte && x11-misc/gtkdialog
 # Main Author : Ghiunhan Mamut @ Redcore Linux Project
 
-source libsisyphus
+# import main user interface
+source libsisyphus.sh
 
 main() {
 	gtkdialog --space-expand=true --space-fill=true --program=mainui &
