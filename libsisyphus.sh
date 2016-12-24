@@ -84,6 +84,8 @@ export local mainui='
 		</button>
 		<button tooltip-text="System Tools">
 			<label>System Tools</label>
+			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=systemui &</action>
+			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 	</hbox>
 </frame>
