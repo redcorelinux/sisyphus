@@ -17,85 +17,84 @@ source /usr/lib64/sisyphus/systemui.sh
 export local mainui='
 <window title="Sisyphus - A simple Epkg GUI" window-position="1" icon-name="gtk-search" modal="true" resizable="false" width-request="800" height-request="600">
 <vbox>
-<frame Manage packages by name>
-	<hbox>
-		<text>
-			<label>Enter package(s)</label>
+<frame>
+	<hbox space-expand="false" space-extend="false">
+		<text space-expand="true" space-extend="true">
+			<label>MANAGE PACKAGES</label>
 		</text>
-		<entry>
+	</hbox>
+	<hbox space-expand="false" space-extend="false">
+		<entry space-expand="true" space-extend="true">
+			<default>Enter package(s)</default>
 			<variable>pkgname</variable>
 		</entry>
 	</hbox>
-	<hbox>
-		<button tooltip-text="Search for package(s)">
-			<label>Search package(s)</label>
+	<hbox space-expand="false" space-extend="false">
+		<button space-expand="true" space-extend="true" tooltip-text="Search package(s)">
+			<input file>/usr/share/sisyphus/search.svg</input>
 			<action>$showresults epkg search $pkgname</action>
 		</button>
-		<button tooltip-text="Install new package(s) (no confirmation)">
-			<label>Install package(s)</label>
+		<button space-expand="true" space-extend="true" tooltip-text="Install package(s)">
+			<input file>/usr/share/sisyphus/install.svg</input>
 			<action>$showprogress epkg autoinstall $pkgname</action>
 		</button>
-		<button tooltip-text="Uninstall package(s) safely (no confirmation)">
-			<label>Remove package(s)</label>
+		<button space-expand="true" space-extend="true" tooltip-text="Uninstall package(s)">
+			<input file>/usr/share/sisyphus/remove.svg</input>
 			<action>$showprogress epkg autoremove $pkgname</action>
 		</button>
-		<button tooltip-text="Upgrade system (no confirmation)">
-			<label>Upgrade System</label>
+		<button space-expand="true" space-extend="true" tooltip-text="Upgrade system">
+			<input file>/usr/share/sisyphus/upgrade.svg</input>
 			<action>$showprogress epkg autoupgrade</action>
 		</button>
-		<button tooltip-text="Remove orphan packages(s) aka no longer needed (no confirmation)">
-			<label>Remove orphan package(s)</label>
+		<button space-expand="true" space-extend="true" tooltip-text="Remove orphan packages(s) aka no longer needed">
+			<input file>/usr/share/sisyphus/purge.svg</input>
 			<action>$showprogress epkg autoclean</action>
 		</button>
 	</hbox>
-</frame>
-<frame Browse packages by category>
-	<hbox>
+	<hseparator space-expand="true" space-extend="true"></hseparator>
+	<hbox space-expand="false" space-extend="false">
+		<text space-expand="true" space-extend="true">
+			<label>BROWSE PACKAGES</label>
+		</text>
+	</hbox>
+	<hbox space-expand="true" space-extend="true">
 		<button tooltip-text="Accesories">
-			<label>Accesories</label>
+			<input file>/usr/share/sisyphus/accesories.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=accesoriesui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Games">
-			<label>Games</label>
+			<input file>/usr/share/sisyphus/games.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=gamesui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Graphics">
-			<label>Graphics</label>
+			<input file>/usr/share/sisyphus/graphics.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=graphicsui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Internet">
-			<label>Internet</label>
+			<input file>/usr/share/sisyphus/internet.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=internetui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>	
 	</hbox>
-	<hbox>
+	<hbox space-expand="true" space-extend="true">
 		<button tooltip-text="Sound & Video">
-			<label>Sound & Video</label>
+			<input file>/usr/share/sisyphus/multimedia.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=multimediaui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Office">
-			<label>Office</label>
+			<input file>/usr/share/sisyphus/office.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=officeui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="System Tools">
-			<label>System Tools</label>
+			<input file>/usr/share/sisyphus/system.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=systemui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
-	</hbox>
-</frame>
-<frame Terminal Emulator>
-	<hbox>
-		<terminal argv0="/bin/bash">
-			<variable>vte1</variable>
-			<input>echo epkg</input>
-		</terminal>
 	</hbox>
 </frame>
 </vbox>
