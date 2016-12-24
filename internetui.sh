@@ -10,6 +10,10 @@ export local internetui='
 			<variable>internet</variable>
 			<label>Application Category|Application Name|Application Description</label>
 			<item>www-client|firefox|Firefox Web Browser</item>
+			<item>www-client|google-chrome|The web browser from Google</item>
+			<item>www-client|opera|A fast and secure web browser</item>
+			<item>www-client|qupzilla|A cross-platform web browser using QtWebEngine</item>
+			<item>www-client|vivaldi|A new browser for our friends</item>
 		</table>
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
