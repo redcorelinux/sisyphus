@@ -5,7 +5,7 @@
 # Main Author : Ghiunhan Mamut @ Redcore Linux Project
 
 # import main user interface
-source libsisyphus.sh
+source /usr/lib64/sisyphus/libsisyphus.sh
 
 main() {
 	gtkdialog --space-expand=true --space-fill=true --program=mainui &

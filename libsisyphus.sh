@@ -4,13 +4,13 @@
 export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail &"
 
 # import user interfaces
-source accesoriesui.sh
-source gamesui.sh
-source graphicsui.sh
-source internetui.sh
-source multimediaui.sh
-source officeui.sh
-source systemui.sh
+source /usr/lib64/sisyphus/accesoriesui.sh
+source /usr/lib64/sisyphus/gamesui.sh
+source /usr/lib64/sisyphus/graphicsui.sh
+source /usr/lib64/sisyphus/internetui.sh
+source /usr/lib64/sisyphus/multimediaui.sh
+source /usr/lib64/sisyphus/officeui.sh
+source /usr/lib64/sisyphus/systemui.sh
 
 # create main user interface
 export local mainui='
