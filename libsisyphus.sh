@@ -67,6 +67,8 @@ export local mainui='
 		</button>
 		<button tooltip-text="Internet">
 			<label>Internet</label>
+			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=internetui &</action>
+			<action signal="button-release-event">EXIT:ok</action>
 		</button>	
 	</hbox>
 	<hbox>
