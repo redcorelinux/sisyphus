@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Sisyphus
+Type=Application
+Comment=A simple Epkg GUI
+Exec=sisyphus-pkexec
+Icon=sisyphus
+Categories=System;
