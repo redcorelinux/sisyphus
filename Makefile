@@ -47,3 +47,12 @@ install:
 	install -m 0644 desktop/sisyphus.png $(DESTDIR)$(PIXMAPDIR)
 	install -d $(DESTDIR)$(POLKITDIR)
 	install -m 0644 org.redcorelinux.sisyphus.policy $(DESTDIR)$(POLKITDIR)/
+
+uninstall:
+	rm -rf $(DESTDIR)$(UBINDIR)/sisyphus
+	rm -rf $(DESTDIR)$(UBINDIR)/sisyphus-pkexec
+	rm -rf $(DESTDIR)$(DESKTOPDIR)/sisyphus.desktop
+	rm -rf $(DESTDIR)$(PIXMAPDIR)/sisyphus.png
+	rm -rf $(DESTDIR)$(POLKITDIR)/org.redcorelinux.sisyphus.policy
+	rm -rf $(DESTDIR)$(SISYPHUSLIBDIR)
+	rm -rf $(DESTDIR)$(SISYPHUSDATADIR)
