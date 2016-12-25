@@ -15,11 +15,11 @@ export local accesoriesui='
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">
 			<label>Install package</label>
-			<action>$showprogress epkg autoinstall $accesories</action>
+			<action>epkg autoinstall $accesories|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="uninstall">
 			<label>Uninstall package</label>
-			<action>$showprogress epkg autoremove $accesories</action>
+			<action>epkg autoremove $accesories|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="home">
 			<label>Back home</label>

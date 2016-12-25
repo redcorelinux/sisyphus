@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-# export xterm flags
-export local showprogress="xterm -maximized -e"
-export local showresults="xterm -maximized -hold -e"
+# export dialog flags
+export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail &"
 
 # import user interfaces
 source /usr/lib64/sisyphus/accesoriesui.sh
@@ -32,23 +31,23 @@ export local mainui='
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" tooltip-text="Search package(s)">
 			<input file>/usr/share/sisyphus/search.svg</input>
-			<action>$showresults epkg search $pkgname</action>
+			<action>epkg search $pkgname|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Install package(s)">
 			<input file>/usr/share/sisyphus/install.svg</input>
-			<action>$showprogress epkg autoinstall $pkgname</action>
+			<action>epkg autoinstall $pkgname|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Uninstall package(s)">
 			<input file>/usr/share/sisyphus/remove.svg</input>
-			<action>$showprogress epkg autoremove $pkgname</action>
+			<action>epkg autoremove $pkgname|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Upgrade system">
 			<input file>/usr/share/sisyphus/upgrade.svg</input>
-			<action>$showprogress epkg autoupgrade</action>
+			<action>epkg autoupgrade|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Remove orphan packages(s) aka no longer needed">
 			<input file>/usr/share/sisyphus/purge.svg</input>
-			<action>$showprogress epkg autoclean</action>
+			<action>epkg autoclean|$showdialog</action>
 		</button>
 	</hbox>
 	<hseparator space-expand="true" space-extend="true"></hseparator>
