@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # export dialog flags
-export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail &"
+export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail"
 
 # import user interfaces
 source /usr/lib64/sisyphus/accesoriesui.sh
