@@ -2,7 +2,7 @@
 
 # export dialog && abort flags
 export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail"
-export local abortnow="killall -9 emerge"
+export local abortnow="killall -9 emerge > /dev/null 2>&1"
 
 # import user interfaces
 source /usr/lib64/sisyphus/accesoriesui.sh
