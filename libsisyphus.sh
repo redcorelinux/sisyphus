@@ -30,23 +30,23 @@ export local mainui='
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" tooltip-text="Search package(s)">
-			<input file>/usr/share/sisyphus/search.svg</input>
+			<input file>/usr/share/sisyphus/appsearch.svg</input>
 			<action>epkg search $pkgname|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Install package(s)">
-			<input file>/usr/share/sisyphus/install.svg</input>
+			<input file>/usr/share/sisyphus/appinstall.svg</input>
 			<action>epkg autoinstall $pkgname|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Uninstall package(s)">
-			<input file>/usr/share/sisyphus/remove.svg</input>
+			<input file>/usr/share/sisyphus/appremove.svg</input>
 			<action>epkg autoremove $pkgname|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Upgrade system">
-			<input file>/usr/share/sisyphus/upgrade.svg</input>
+			<input file>/usr/share/sisyphus/appupgrade.svg</input>
 			<action>epkg autoupgrade|$showdialog</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Remove orphan packages(s) aka no longer needed">
-			<input file>/usr/share/sisyphus/purge.svg</input>
+			<input file>/usr/share/sisyphus/appcleanup.svg</input>
 			<action>epkg autoclean|$showdialog</action>
 		</button>
 	</hbox>
@@ -58,39 +58,39 @@ export local mainui='
 	</hbox>
 	<hbox space-expand="true" space-extend="true">
 		<button tooltip-text="Accesories">
-			<input file>/usr/share/sisyphus/accesories.svg</input>
+			<input file>/usr/share/sisyphus/caccesories.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=accesoriesui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Games">
-			<input file>/usr/share/sisyphus/games.svg</input>
+			<input file>/usr/share/sisyphus/cgames.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=gamesui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Graphics">
-			<input file>/usr/share/sisyphus/graphics.svg</input>
+			<input file>/usr/share/sisyphus/cgraphics.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=graphicsui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Internet">
-			<input file>/usr/share/sisyphus/internet.svg</input>
+			<input file>/usr/share/sisyphus/cinternet.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=internetui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>	
 	</hbox>
 	<hbox space-expand="true" space-extend="true">
 		<button tooltip-text="Sound & Video">
-			<input file>/usr/share/sisyphus/multimedia.svg</input>
+			<input file>/usr/share/sisyphus/cmultimedia.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=multimediaui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="Office">
-			<input file>/usr/share/sisyphus/office.svg</input>
+			<input file>/usr/share/sisyphus/coffice.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=officeui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>
 		<button tooltip-text="System Tools">
-			<input file>/usr/share/sisyphus/system.svg</input>
+			<input file>/usr/share/sisyphus/csystem.svg</input>
 			<action signal="button-press-event">gtkdialog --space-expand=true --space-fill=true --program=systemui &</action>
 			<action signal="button-release-event">EXIT:ok</action>
 		</button>

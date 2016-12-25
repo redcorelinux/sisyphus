@@ -29,18 +29,18 @@ install:
 	install -m 0755 ui/officeui.sh $(DESTDIR)$(SISYPHUSLIBDIR)/
 	install -m 0755 ui/systemui.sh $(DESTDIR)$(SISYPHUSLIBDIR)/
 	install -d $(DESTDIR)$(SISYPHUSDATADIR)
-	install -m 0755 icon/accesories.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/games.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/graphics.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/install.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/internet.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/multimedia.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/office.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/purge.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/remove.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/search.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/system.svg $(DESTDIR)$(SISYPHUSDATADIR)/
-	install -m 0755 icon/upgrade.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/appcleanup.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/appinstall.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/appremove.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/appsearch.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/appupgrade.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/caccesories.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/cgames.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/cgraphics.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/cinternet.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/cmultimedia.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/coffice.svg $(DESTDIR)$(SISYPHUSDATADIR)/
+	install -m 0755 icon/csystem.svg $(DESTDIR)$(SISYPHUSDATADIR)/
 	install -d $(DESTDIR)$(DESKTOPDIR)
 	install -m 0755 desktop/sisyphus.desktop $(DESTDIR)$(DESKTOPDIR)/
 	install -d $(DESTDIR)$(PIXMAPDIR)
