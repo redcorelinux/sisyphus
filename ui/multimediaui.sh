@@ -17,6 +17,7 @@ export local multimediaui='
 			<item>app-cdr|cdrtools|A set of tools for CD|DVD reading and recording, including cdrecord</item>
 			<item>app-cdr|dvd+rw-tools|A set of tools for DVD+RW|-RW drives</item>
 			<item>app-cdr|nrg2iso|Converts Nero nrg CD-images to iso</item>
+			<item>media-plugins|qmmp-plugin-pack|A set of extra plugins for Qmmp</item>
 			<item>media-sound|audacity|Free crossplatform audio editor</item>
 			<item>media-sound|deadbeef|foobar2k-like music player</item>
 			<item>media-sound|pavucontrol|Pulseaudio Volume Control, GTK based mixer for Pulseaudio</item>
