@@ -16,7 +16,6 @@ export local internetui='
 			<item>net-firewall|ufw|A program used to manage a netfilter firewall</item>
 			<item>net-firewall|ufw-frontends|Provides graphical frontend to ufw</item>
 			<item>net-fs|samba|Samba Suite Version 4</item>
-			<item>net-fs|sshfs|Fuse-filesystem utilizing the sftp service</item>
 			<item>net-ftp|filezilla|FTP client with lots of useful features and an intuitive interface</item>
 			<item>net-im|pidgin|GTK Instant Messenger client</item>
 			<item>net-im|skypeforlinux|P2P Internet Telephony (VoiceIP) client</item>
@@ -36,15 +35,8 @@ export local internetui='
 			<item>net-p2p|deluge|BitTorrent client with a client/server model</item>
 			<item>net-p2p|qbittorrent|BitTorrent client in C++ and Qt</item>
 			<item>net-p2p|transmission|A Fast, Easy and Free BitTorrent client</item>
-			<item>net-print|cnijfilter|Canon InkJet Printer Driver for Linux (Pixus/Pixma-Series)</item>
-			<item>net-print|cnijfilter-drivers|Canon InkJet Printer Driver for Linux (Pixus/Pixma-Series)</item>
 			<item>net-print|cups|The Common Unix Printing System</item>
-			<item>net-print|cups-filters|Cups PDF filters</item>
-			<item>net-print|hplip|HP Linux Imaging and Printing - Print, scan, fax drivers and service tools</item>
 			<item>net-wireless|aircrack-ng|WLAN tools for breaking 802.11 WEP/WPA keys</item>
-			<item>net-wireless|b43-fwcutter|Firmware Tool for Broadcom 43xx based wireless network devices using the mac80211 wireless stack</item>
-			<item>net-wireless|bluez|Bluetooth Tools and System Daemons for Linux</item>
-			<item>net-wireless|broadcom-sta|Broadcoms IEEE 802.11a/b/g/n hybrid Linux device driver</item>
 			<item>net-wireless|wavemon|Ncurses based monitor for IEEE 802.11 wireless LAN cards</item>
 			<item>www-client|firefox|Firefox Web Browser</item>
 			<item>www-client|google-chrome|The web browser from Google</item>
