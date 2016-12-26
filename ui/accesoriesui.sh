@@ -15,13 +15,11 @@ export local accesoriesui='
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">
 			<label>Install package</label>
-			<action signal="button-press-event">epkg autoinstall $accesories|$sisyphusprogress</action>
-			<action signal="button-release-event">$abortnow</action>
+			<action>epkg autoinstall $accesories|$sisyphusprogress</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="uninstall">
 			<label>Uninstall package</label>
-			<action signal="button-press-event">epkg autoremove $accesories|$sisyphusprogress</action>
-			<action signal="button-release-event">$abortnow</action>
+			<action>epkg autoremove $accesories|$sisyphusprogress</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="home">
 			<label>Back home</label>
