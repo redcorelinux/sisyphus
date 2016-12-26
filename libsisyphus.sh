@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # export dialog && abort flags
-export local sisyphusprogress="yad --title "sisyphus" --progress --pulsate --width 400 --center --no-buttons --no-escape --sticky --fixed --undecorated --skip-taskbar  --auto-close &"
+export local sisyphusprogress="yad --title "sisyphus" --progress --pulsate --width 400 --center --no-buttons --on-top --no-escape --sticky --fixed --undecorated --skip-taskbar  --auto-close &"
 export local sisyphustextinfo="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail &"
 
 # import user interfaces
