@@ -6,7 +6,7 @@ export local internetui='
 <vbox>
 <frame Internet>
 	<hbox space-expand="true" space-extend="true">
-		<table hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1">
+		<tree hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1" selection-mode="3">
 			<variable>internet</variable>
 			<label>Application Category|Application Name|Application Description</label>
 			<item>net-analyzer|netcat6|netcat clone with better IPv6 support, improved code, etc...</item>
@@ -56,7 +56,7 @@ export local internetui='
 			<item>www-plugins|chrome-binary-plugins|Binary plugins from Google Chrome for use in Chromium</item>
 			<item>www-plugins|freshplayerplugin|PPAPI-host NPAPI-plugin adapter for flashplayer in npapi based browsers</item>
 			<item>www-plugins|google-talkplugin|Video chat browser plug-in for Google Talk</item>
-		</table>
+		</tree>
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">

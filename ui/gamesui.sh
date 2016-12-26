@@ -6,7 +6,7 @@ export local gamesui='
 <vbox>
 <frame Games>
 	<hbox space-expand="true" space-extend="true">
-		<table hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1">
+		<tree hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1" selection-mode="3">
 			<variable>game</variable>
 			<label>Application Category|Application Name|Application Description</label>
 			<item>app-emulation|playonlinux|Set of scripts to easily install and use Windows games and software</item>
@@ -22,7 +22,7 @@ export local gamesui='
 			<item>games-fps|xonotic|Fork of Nexuiz, Deathmatch FPS based on DarkPlaces, an advanced Quake 1 engine</item>
 			<item>games-simulation|openttd|OpenTTD is a clone of Transport Tycoon Deluxe</item>
 			<item>games-strategy|0ad|Cross-platform, 3D and historically-based real-time strategy game</item>
-		</table>
+		</tree>
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">

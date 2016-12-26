@@ -6,7 +6,7 @@ export local multimediaui='
 <vbox>
 <frame Multimedia>
 	<hbox space-expand="true" space-extend="true">
-		<table hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1">
+		<tree hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1" selection-mode="3">
 			<variable>multimedia</variable>
 			<label>Application Category|Application Name|Application Description</label>
 			<item>app-cdr|bashburn|A shell script for burning optical media</item>
@@ -39,7 +39,7 @@ export local multimediaui='
 			<item>media-video|smplayer|Great Qt GUI front-end for mplayer/mpv</item>
 			<item>media-video|smtube|YouTube Browser for SMPlayer</item>
 			<item>media-video|vlc|VLC media player - Video player and streamer</item>
-		</table>
+		</tree>
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">

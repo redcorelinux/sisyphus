@@ -6,7 +6,7 @@ export local graphicsui='
 <vbox>
 <frame Graphics>
 	<hbox space-expand="true" space-extend="true">
-		<table hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1">
+		<tree hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1" selection-mode="3">
 			<variable>graphics</variable>
 			<label>Application Category|Application Name|Application Description</label>
 			<item>media-fonts|cantarell|Default fontset for GNOME Shell</item>
@@ -28,7 +28,7 @@ export local graphicsui='
 			<item>media-gfx|rawtherapee|A powerful cross-platform raw image processing program</item>
 			<item>media-gfx|simple-scan|Simple document scanning utility</item>
 			<item>media-gfx|xsane|graphical scanning frontend</item>
-		</table>
+		</tree>
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">

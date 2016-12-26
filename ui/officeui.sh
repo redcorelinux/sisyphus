@@ -6,7 +6,7 @@ export local officeui='
 <vbox>
 <frame Office>
 	<hbox space-expand="true" space-extend="true">
-		<table hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1">
+		<tree hscrollbar-policy="1" vscrollbar-policy="1" exported-column="1" selection-mode="3">
 			<variable>office</variable>
 			<label>Application Category|Application Name|Application Description</label>
 			<item>app-office|abiword|Fully featured yet light and fast cross platform word processor documentation</item>
@@ -15,7 +15,7 @@ export local officeui='
 			<item>app-office|libreoffice|A full office productivity suite</item>
 			<item>app-office|wps-office|WPS Office is an office productivity suite</item>
 			<item>app-text|qpdfview|A tabbed document viewer</item>
-		</table>
+		</tree>
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">
