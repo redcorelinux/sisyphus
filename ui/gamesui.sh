@@ -27,12 +27,12 @@ export local gamesui='
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">
 			<label>Install package</label>
-			<action signal="button-press-event">epkg autoinstall $game|$showdialog</action>
+			<action signal="button-press-event">epkg autoinstall $game|$sisyphusprogress</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="uninstall">
 			<label>Uninstall package</label>
-			<action signal="button-press-event">epkg autoremove $game|$showdialog</action>
+			<action signal="button-press-event">epkg autoremove $game|$sisyphusprogress</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="home">

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # export dialog && abort flags
-export local showdialog="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail"
+export local sisyphusprogress="yad --title "sisyphus" --progress --pulsate --width 400 --center --no-buttons --on-top --sticky --fixed --undecorated --skip-taskbar  --auto-close &"
+export local sisyphustextinfo="yad --title "sisyphus" --text-info --width 800 --height 600 --center --no-buttons --on-top --sticky --fixed --skip-taskbar --listen --tail"
 export local abortnow="killall -9 emerge"
 
 # import user interfaces
@@ -32,27 +33,27 @@ export local mainui='
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" tooltip-text="Search package(s)">
 			<input file>/usr/share/sisyphus/appsearch.svg</input>
-			<action signal="button-press-event">epkg search $pkgname|$showdialog</action>
+			<action signal="button-press-event">epkg search $pkgname|$sisyphustextinfo</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Install package(s)">
 			<input file>/usr/share/sisyphus/appinstall.svg</input>
-			<action signal="button-press-event">epkg autoinstall $pkgname|$showdialog</action>
+			<action signal="button-press-event">epkg autoinstall $pkgname|$sisyphusprogress</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Uninstall package(s)">
 			<input file>/usr/share/sisyphus/appremove.svg</input>
-			<action signal="button-press-event">epkg autoremove $pkgname|$showdialog</action>
+			<action signal="button-press-event">epkg autoremove $pkgname|$sisyphusprogress</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Upgrade system">
 			<input file>/usr/share/sisyphus/appupgrade.svg</input>
-			<action signal="button-press-event">epkg autoupgrade|$showdialog</action>
+			<action signal="button-press-event">epkg autoupgrade|$sisyphusprogress</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 		<button space-expand="true" space-extend="true" tooltip-text="Remove orphan packages(s) aka no longer needed">
 			<input file>/usr/share/sisyphus/appcleanup.svg</input>
-			<action signal="button-press-event">epkg autoclean|$showdialog</action>
+			<action signal="button-press-event">epkg autoclean|$sisyphusprogress</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 	</hbox>

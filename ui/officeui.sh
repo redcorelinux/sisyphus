@@ -20,12 +20,12 @@ export local officeui='
 	<hbox space-expand="false" space-extend="false">
 		<button space-expand="true" space-extend="true" label-text="install">
 			<label>Install package</label>
-			<action signal="button-press-event">epkg autoinstall $office|$showdialog</action>
+			<action signal="button-press-event">epkg autoinstall $office|$sisyphusprogress</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="uninstall">
 			<label>Uninstall package</label>
-			<action signal="button-press-event">epkg autoremove $office|$showdialog</action>
+			<action signal="button-press-event">epkg autoremove $office|$sisyphusprogress</action>
 			<action signal="button-release-event">$abortnow</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="home">
