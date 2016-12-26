@@ -42,13 +42,17 @@ export local multimediaui='
 		</tree>
 	</hbox>
 	<hbox space-expand="false" space-extend="false">
-		<button space-expand="true" space-extend="true" label-text="install">
-			<label>Install package</label>
+		<button space-expand="true" space-extend="true" label-text="Install package(s)">
+			<label>Install package(s)</label>
 			<action>epkg autoinstall $multimedia|$sisyphusprogress &</action>
 		</button>
-		<button space-expand="true" space-extend="true" label-text="uninstall">
-			<label>Uninstall package</label>
+		<button space-expand="true" space-extend="true" label-text="Uninstall package(s)">
+			<label>Uninstall package(s)</label>
 			<action>epkg autoremove $multimedia|$sisyphusprogress &</action>
+		</button>
+		<button space-expand="true" space-extend="true" tooltip-text="Clean orphan package(s)">
+			<label>Clean orphan package(s)</label>
+			<action>epkg autoclean|$sisyphusprogress &</action>
 		</button>
 		<button space-expand="true" space-extend="true" label-text="home">
 		<label>Back home</label>
