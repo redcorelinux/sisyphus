@@ -38,17 +38,17 @@ class Everything(QtWidgets.QMainWindow):
         with sqlite3.connect('/var/lib/epkg/db/epkg.db') as db:
             cursor=db.cursor()
             cursor.execute('''
-                            SELECT
-                            a.category AS cat,
-                            a.name AS pn,
-                            a.version AS av,
-                            i.version AS iv,
-                            a.description AS descr
-                            FROM remote_packages AS a
-                            LEFT JOIN local_packages AS i
-                            ON a.category = i.category
-                            AND a.name = i.name
-                            AND a.slot = i.slot
+                SELECT
+                a.category AS cat,
+                a.name AS pn,
+                a.version AS av,
+                i.version AS iv,
+                a.description AS descr
+                FROM remote_packages AS a
+                LEFT JOIN local_packages AS i
+                ON a.category = i.category
+                AND a.name = i.name
+                AND a.slot = i.slot
             ''')
             rows = cursor.fetchall()
             
