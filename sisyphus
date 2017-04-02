@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Sisyphus is a simple GUI for epkg, the portage wrapper
+# Main Author : Ghiunhan Mamut @ Redcore Linux Project
+
+main() {
+	pushd /usr/share/sisyphus
+	python3 sisyphus.py
+	popd
+}
+
+main
