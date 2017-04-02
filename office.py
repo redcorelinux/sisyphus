@@ -37,7 +37,21 @@ class Office(QtWidgets.QMainWindow):
     def load_packages(self):
         with sqlite3.connect('/var/lib/epkg/db/epkg.db') as db:
             cursor=db.cursor()
-            cursor.execute('''SELECT * from remote_packages''')
+            cursor.execute('''
+                SELECT
+                a.category AS cat,
+                a.name AS pn,
+                a.version AS av,
+                i.version AS iv,
+                a.description AS descr
+                FROM remote_packages AS a
+                LEFT JOIN local_packages AS i
+                ON a.category = i.category
+                AND a.name = i.name
+                AND a.slot = i.slot
+                WHERE  a.name IN
+                ('fet', 'libreoffice', 'wps-office', 'cantarell', 'corefonts', 'dejavu', 'liberation-fonts', 'libertine', 'noto', 'open-sans', 'roboto', 'ttf-bitstream-vera', 'qpdfview', 'cups', 'cups-filters', 'cups-pdf', 'simple-scan', 'cnijfilter', 'cnijfilter-drivers', 'hplip')
+            ''')
             rows = cursor.fetchall()
             
             for row in rows:
