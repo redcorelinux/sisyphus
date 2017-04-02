@@ -448,7 +448,7 @@
     <widget class="QPushButton" name="category_everything">
      <property name="geometry">
       <rect>
-       <x>825</x>
+       <x>625</x>
        <y>215</y>
        <width>150</width>
        <height>150</height>
@@ -471,7 +471,7 @@
     <widget class="QPushButton" name="category_local">
      <property name="geometry">
       <rect>
-       <x>625</x>
+       <x>825</x>
        <y>215</y>
        <width>150</width>
        <height>150</height>
