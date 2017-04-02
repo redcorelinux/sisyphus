@@ -50,7 +50,7 @@ class Office(QtWidgets.QMainWindow):
                 AND a.name = i.name
                 AND a.slot = i.slot
                 WHERE  a.name IN
-                ('fet', 'libreoffice', 'wps-office', 'cantarell', 'corefonts', 'dejavu', 'liberation-fonts', 'libertine', 'noto', 'open-sans', 'roboto', 'ttf-bitstream-vera', 'qpdfview', 'cups', 'cups-filters', 'cups-pdf', 'simple-scan', 'cnijfilter', 'cnijfilter-drivers', 'hplip')
+                ('fet', 'libreoffice', 'wps-office', 'tesseract', 'cantarell', 'corefonts', 'dejavu', 'liberation-fonts', 'libertine', 'noto', 'open-sans', 'roboto', 'ttf-bitstream-vera', 'qpdfview', 'cups', 'cups-filters', 'cups-pdf', 'simple-scan', 'cnijfilter', 'cnijfilter-drivers', 'hplip')
             ''')
             rows = cursor.fetchall()
             
