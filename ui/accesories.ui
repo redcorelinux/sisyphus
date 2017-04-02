@@ -71,6 +71,9 @@
    <attribute name="horizontalHeaderCascadingSectionResizes">
     <bool>true</bool>
    </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>110</number>
+   </attribute>
    <attribute name="horizontalHeaderStretchLastSection">
     <bool>true</bool>
    </attribute>
@@ -89,12 +92,12 @@
    </column>
    <column>
     <property name="text">
-     <string>Version</string>
+     <string>Available Version</string>
     </property>
    </column>
    <column>
     <property name="text">
-     <string>Slot</string>
+     <string>Installed Version</string>
     </property>
    </column>
    <column>
