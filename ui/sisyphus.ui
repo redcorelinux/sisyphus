@@ -505,12 +505,15 @@
   <tabstop>system_upgrade</tabstop>
   <tabstop>orphans_remove</tabstop>
   <tabstop>category_accesories</tabstop>
+  <tabstop>category_development</tabstop>
   <tabstop>category_games</tabstop>
   <tabstop>category_graphics</tabstop>
   <tabstop>category_internet</tabstop>
   <tabstop>category_multimedia</tabstop>
   <tabstop>category_office</tabstop>
   <tabstop>category_system</tabstop>
+  <tabstop>category_local</tabstop>
+  <tabstop>category_everything</tabstop>
  </tabstops>
  <resources/>
  <connections/>
