@@ -37,21 +37,33 @@ class Games(QtWidgets.QMainWindow):
     def load_packages(self):
         with sqlite3.connect('/var/lib/epkg/db/epkg.db') as db:
             cursor=db.cursor()
-            cursor.execute('''
-                SELECT
-                a.category AS cat,
-                a.name AS pn,
-                a.version AS av,
-                i.version AS iv,
-                a.description AS descr
-                FROM remote_packages AS a
-                LEFT JOIN local_packages AS i
-                ON a.category = i.category
-                AND a.name = i.name
-                AND a.slot = i.slot
-                WHERE  a.name IN
-                ('steam', 'playonlinux', 'armagetronad', 'chromium-bsu', 'supertuxkart', 'teeworlds', 'dosbox', 'snes9x', 'zsnes', 'urbanterror', 'openttd', '0ad', 'warzone2100', 'wesnoth')
-            ''')
+            cursor.execute('''SELECT
+                            a.category AS cat,
+                            a.name AS pn,
+                            a.version AS av,
+                            i.version AS iv,
+                            a.description AS descr
+                            FROM remote_packages AS a
+                            LEFT JOIN local_packages AS i
+                            ON a.category = i.category
+                            AND a.name = i.name
+                            AND a.slot = i.slot
+                            WHERE  a.name IN
+                                ('steam',
+                                'playonlinux',
+                                'armagetronad',
+                                'chromium-bsu',
+                                'supertuxkart',
+                                'teeworlds',
+                                'dosbox',
+                                'snes9x',
+                                'zsnes',
+                                'urbanterror',
+                                'openttd',
+                                '0ad',
+                                'warzone2100',
+                                'wesnoth')
+                        ''')
             rows = cursor.fetchall()
             
             for row in rows:

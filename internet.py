@@ -37,21 +37,56 @@ class Internet(QtWidgets.QMainWindow):
     def load_packages(self):
         with sqlite3.connect('/var/lib/epkg/db/epkg.db') as db:
             cursor=db.cursor()
-            cursor.execute('''
-                SELECT
-                a.category AS cat,
-                a.name AS pn,
-                a.version AS av,
-                i.version AS iv,
-                a.description AS descr
-                FROM remote_packages AS a
-                LEFT JOIN local_packages AS i
-                ON a.category = i.category
-                AND a.name = i.name
-                AND a.slot = i.slot
-                WHERE  a.name IN
-                ('firewalld', 'ufw', 'ufw-frontends', 'filezilla', 'franz', 'qtox', 'telegram', 'viber', 'konversation', 'quassel', 'dropbox', 'megasync', 'owncloud-client', 'teamviewer', 'tigervnc', 'youtube-dl', 'quiterss', 'qbittorrent', 'qbittorrent', 'transmission', 'firefox', 'google-chrome', 'opera', 'qupzilla', 'vivaldi', 'adobe-flash', 'chrome-binary-plugins', 'freshplayerplugin', 'google-talkplugin', 'wmail', 'trojita')
-            ''')
+            cursor.execute('''SELECT
+                            a.category AS cat,
+                            a.name AS pn,
+                            a.version AS av,
+                            i.version AS iv,
+                            a.description AS descr
+                            FROM remote_packages AS a
+                            LEFT JOIN local_packages AS i
+                            ON a.category = i.category
+                            AND a.name = i.name
+                            AND a.slot = i.slot
+                            WHERE  a.name IN
+                                ('firewalld',
+                                'ufw',
+                                'ufw-frontends',
+                                'cifs-utils',
+                                'samba',
+                                'sshfs',
+                                'filezilla',
+                                'franz',
+                                'qtox',
+                                'telegram',
+                                'viber',
+                                'konversation',
+                                'quassel',
+                                'aria2',
+                                'dropbox',
+                                'megasync',
+                                'owncloud-client',
+                                'teamviewer',
+                                'telnet-bsd',
+                                'tigervnc',
+                                'youtube-dl',
+                                'quiterss',
+                                'qbittorrent',
+                                'transmission',
+                                'firefox',
+                                'google-chrome',
+                                'opera',
+                                'qupzilla',
+                                'vivaldi',
+                                'adobe-flash',
+                                'chrome-binary-plugins',
+                                'freshplayerplugin',
+                                'google-talkplugin',
+                                'wmail',
+                                'trojita',
+                                'aircrack-ng',
+                                'wavemon')
+                        ''')
             rows = cursor.fetchall()
             
             for row in rows:
