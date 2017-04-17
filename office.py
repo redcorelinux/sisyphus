@@ -53,6 +53,7 @@ class Office(QtWidgets.QMainWindow):
                                 'libreoffice',
                                 'wps-office',
                                 'tesseract',
+                                'okular',
                                 'cantarell',
                                 'corefonts',
                                 'dejavu',
