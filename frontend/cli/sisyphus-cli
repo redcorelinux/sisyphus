@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+source /usr/lib/sisyphus/libsisyphus.sh
+
+checksystemmode
+
+action=$1
+shift
+
+case "$action" in
+	install)
+		checksync
+		localdbcsvpre
+		emerge -a "$@"
+		updatelocaldb
+		;;
+	remove)
+		checksync
+		localdbcsvpre
+		emerge --depclean -a "$@"
+		updatelocaldb
+		;;
+	forceremove)
+		checksync
+		localdbcsvpre
+		emerge --unmerge -a "$@"
+		updatelocaldb
+		;;
+	clean)
+		checksync
+		localdbcsvpre
+		emerge --depclean -a
+		updatelocaldb
+		;;
+	upgrade)
+		checksync
+		localdbcsvpre
+		emerge -uDaN --with-bdeps=y @system @world "$@"
+		updatelocaldb
+		;;
+	autoinstall)
+		redcoresync
+		localdbcsvpre
+		emerge "$@"
+		updatelocaldb
+		;;
+	autoremove)
+		redcoresync
+		localdbcsvpre
+		emerge --depclean "$@"
+		updatelocaldb
+		;;
+	autoforceremove)
+		redcoresync
+		localdbcsvpre
+		emerge --unmerge "$@"
+		updatelocaldb
+		;;
+	autoclean)
+		redcoresync
+		localdbcsvpre
+		emerge --depclean -q
+		updatelocaldb
+		;;
+	autoupgrade)
+		redcoresync
+		localdbcsvpre
+		emerge -uDN --with-bdeps=y @system @world "$@"
+		updatelocaldb
+		;;
+	search)
+		emerge -s "$@"
+		;;
+	update)
+		redcoresync
+		;;
+	belongs)
+		equery belongs "$@"
+		;;
+	depends)
+		equery depends "$@"
+		;;
+	files)
+		equery files "$@"
+		;;
+	sysinfo)
+		emerge --info
+		;;
+	*)
+		cat <<-"EOH"
+			Usage: sisyphus command [package(s)]
+
+			sisyphus is a simple wrapper around portage, gentoolkit, and portage-utils that provides an
+			apt-get/yum-alike interface to these commands, to assist people transitioning from
+			Debian/RedHat-based systems to Gentoo.
+
+			Commands :
+				install - Install new packages
+				remove - Remove packages safely
+				forceremove - *Unsafely* remove packages
+				clean - Remove packages that are no longer needed
+				upgrade -  Upgrade system
+				autoinstall - Install new packages (no confirmation)
+				autoremove - Remove packages safely (no confirmation)
+				autoforceremove - *Unsafely* remove packages (no confirmation)
+				autoclean - Remove packages that are no longer needed (no confirmation)
+				autoupgrade - Upgrade system (no confirmation)
+				search - Search for packages
+				update - Resync portage tree, portage config && redcore overlay
+				belongs - List what package FILE(s) belong to
+				depends - List all packages directly depending on ATOM
+				files - List all files installed by package
+				sysinfo - Display information about installed core packages and portage configuration
+		EOH
+		;;
+esac

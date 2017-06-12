@@ -22,20 +22,20 @@ class Everything(QtWidgets.QMainWindow):
     
     def install_package(self):
         pkgname = self.table_everything.item(self.table_everything.currentRow(), 1).text()
-        subprocess.Popen(['xterm', '-e', 'epkg', 'autoinstall'] + pkgname.split())
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoinstall'] + pkgname.split())
 
     def uninstall_package(self):
         pkgname = self.table_everything.item(self.table_everything.currentRow(), 1).text()
-        subprocess.Popen(['xterm', '-e', 'epkg', 'autoremove'] + pkgname.split())
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoremove'] + pkgname.split())
 
     def remove_orphans(self):
-        subprocess.Popen(['xterm', '-e', 'epkg', 'autoclean'])
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoclean'])
 
     def exit_category(self):
         self.close()
  
     def load_packages(self):
-        with sqlite3.connect('/var/lib/epkg/db/epkg.db') as db:
+        with sqlite3.connect('/var/lib/sisyphus/db/sisyphus.db') as db:
             cursor=db.cursor()
             cursor.execute('''SELECT
                             a.category AS cat,

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Sisyphus GUI
+Type=Application
+Comment=Sisyphus Package Manager (GUI)
+Exec=sisyphus-gui-pkexec
+Icon=sisyphus-gui
+Categories=System;

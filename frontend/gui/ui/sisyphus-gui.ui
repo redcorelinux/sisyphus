@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Sisyphus : Epkg Graphical User Interface</string>
+   <string>Sisyphus : Graphical User Interface</string>
   </property>
   <property name="windowIcon">
    <iconset>

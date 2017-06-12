@@ -16,7 +16,7 @@ from everything import Everything
 class Sisyphus(QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
-        uic.loadUi('ui/sisyphus.ui', self)
+        uic.loadUi('ui/sisyphus-gui.ui', self)
         self.centerOnScreen()
         self.show()
 
@@ -44,21 +44,21 @@ class Sisyphus(QtWidgets.QMainWindow):
 
     def search_package(self):
         pkgname = self.input.text()
-        subprocess.Popen(['xterm', '-hold', '-e', 'epkg', 'search'] + pkgname.split())
+        subprocess.Popen(['xterm', '-hold', '-e', 'sisyphus', 'search'] + pkgname.split())
 
     def install_package(self):
         pkgname = self.input.text()
-        subprocess.Popen(['xterm', '-e', 'epkg', 'autoinstall'] + pkgname.split())
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoinstall'] + pkgname.split())
 
     def uninstall_package(self):
         pkgname = self.input.text()
-        subprocess.Popen(['xterm', '-e', 'epkg', 'autoremove'] + pkgname.split())
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoremove'] + pkgname.split())
 
     def upgrade_system(self):
-        subprocess.Popen(['xterm', '-e', 'epkg', 'autoupgrade'])
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoupgrade'])
 
     def remove_orphans(self):
-        subprocess.Popen(['xterm', '-e', 'epkg', 'autoclean'])
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoclean'])
 
     def accesories_category(self):
         self.window = Accesories()
