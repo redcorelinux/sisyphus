@@ -22,14 +22,14 @@ class Development(QtWidgets.QMainWindow):
 
     def install_package(self):
         pkgname = self.table_development.item(self.table_development.currentRow(), 1).text()
-        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoinstall'] + pkgname.split())
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'auto-install'] + pkgname.split())
     
     def uninstall_package(self):
         pkgname = self.table_development.item(self.table_development.currentRow(), 1).text()
-        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoremove'] + pkgname.split())
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'auto-uninstall'] + pkgname.split())
 
     def remove_orphans(self):
-        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoremove'])
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'auto-uninstall'])
 
     def exit_category(self):
         self.close()

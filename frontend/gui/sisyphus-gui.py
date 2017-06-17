@@ -48,17 +48,17 @@ class Sisyphus(QtWidgets.QMainWindow):
 
     def install_package(self):
         pkgname = self.input.text()
-        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoinstall'] + pkgname.split())
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'auto-install'] + pkgname.split())
 
     def uninstall_package(self):
         pkgname = self.input.text()
-        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoremove'] + pkgname.split())
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'auto-uninstall'] + pkgname.split())
 
     def upgrade_system(self):
         subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoupgrade'])
 
     def remove_orphans(self):
-        subprocess.Popen(['xterm', '-e', 'sisyphus', 'autoclean'])
+        subprocess.Popen(['xterm', '-e', 'sisyphus', 'remove-orphans'])
 
     def accesories_category(self):
         self.window = Accesories()

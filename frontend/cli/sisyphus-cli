@@ -14,19 +14,19 @@ case "$action" in
 		emerge -a "$@"
 		updatelocaldb
 		;;
-	remove)
+	uninstall)
 		checksync
 		localdbcsvpre
 		emerge --depclean -a "$@"
 		updatelocaldb
 		;;
-	forceremove)
+	force-uninstall)
 		checksync
 		localdbcsvpre
 		emerge --unmerge -a "$@"
 		updatelocaldb
 		;;
-	clean)
+	remove-orphans)
 		checksync
 		localdbcsvpre
 		emerge --depclean -a
@@ -38,31 +38,31 @@ case "$action" in
 		emerge -uDaN --with-bdeps=y @system @world "$@"
 		updatelocaldb
 		;;
-	autoinstall)
+	auto-install)
 		redcoresync
 		localdbcsvpre
 		emerge "$@"
 		updatelocaldb
 		;;
-	autoremove)
+	auto-uninstall)
 		redcoresync
 		localdbcsvpre
 		emerge --depclean "$@"
 		updatelocaldb
 		;;
-	autoforceremove)
+	auto-force-uninstall)
 		redcoresync
 		localdbcsvpre
 		emerge --unmerge "$@"
 		updatelocaldb
 		;;
-	autoclean)
+	auto-remove-orphans)
 		redcoresync
 		localdbcsvpre
 		emerge --depclean -q
 		updatelocaldb
 		;;
-	autoupgrade)
+	auto-upgrade)
 		redcoresync
 		localdbcsvpre
 		emerge -uDN --with-bdeps=y @system @world "$@"
@@ -96,19 +96,19 @@ case "$action" in
 
 			Commands :
 				install - Install new packages
-				remove - Remove packages safely
-				forceremove - *Unsafely* remove packages
-				clean - Remove packages that are no longer needed
+				uninstall - Uninstall packages safely
+				force-uninstall - *Unsafely* uninstall packages
+				remove-orphans - Uninstall packages that are no longer needed
 				upgrade -  Upgrade system
-				autoinstall - Install new packages (no confirmation)
-				autoremove - Remove packages safely (no confirmation)
-				autoforceremove - *Unsafely* remove packages (no confirmation)
-				autoclean - Remove packages that are no longer needed (no confirmation)
-				autoupgrade - Upgrade system (no confirmation)
+				auto-install - Install new packages (no confirmation)
+				auto-uninstall - Uninstall packages safely (no confirmation)
+				auto-force-uninstall - *Unsafely* uninstall packages (no confirmation)
+				auto-remove-orphans - Uninstall packages that are no longer needed (no confirmation)
+				auto-upgrade - Upgrade system (no confirmation)
 				search - Search for packages
 				update - Resync portage tree, portage config && redcore overlay
 				belongs - List what package FILE(s) belong to
-				depends - List all packages directly depending on ATOM
+				depends - List all packages directly depending on given package
 				files - List all files installed by package
 				sysinfo - Display information about installed core packages and portage configuration
 		EOH
