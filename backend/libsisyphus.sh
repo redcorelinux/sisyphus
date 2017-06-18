@@ -103,22 +103,22 @@ syncportageconfig () {
 
 remotedbcsvsync () {
 	if ! cmp /var/lib/sisyphus/csv/remote_preinst.csv /var/lib/sisyphus/csv/remote_postinst.csv > /dev/null 2>&1 ; then
-		echo ">>> SisyphusDB :: syncing 'remote_packages' table"
+		echo ">>> Syncing 'SisyphusDB remote_packages' into '/var/lib/sisyphus/db/sisyphus.db'"
 		echo "/usr/bin/sqlite3 /var/lib/sisyphus/db/sisyphus.db"
 		pushd /var/lib/sisyphus/db > /dev/null 2>&1
-		sqlite3 sisyphus.db<<-EXIT_HERE
+		sqlite3 -echo sisyphus.db<<-EXIT_HERE
 		drop table if exists remote_packages;
 		create table remote_packages (category TEXT,name TEXT,version TEXT,slot TEXT,description TEXT);
 		.mode csv
 		.import /var/lib/sisyphus/csv/remote_postinst.csv remote_packages
 		EXIT_HERE
 		popd > /dev/null 2>&1
-		echo "=== SisyphusDB :: sync completed for 'remote_packages' table"
+		echo "=== Sync completed for 'SisyphusDB remote_packages'"
 	elif cmp /var/lib/sisyphus/csv/remote_preinst.csv /var/lib/sisyphus/csv/remote_postinst.csv > /dev/null 2>&1 ; then
-		echo ">>> SisyphusDB :: syncing 'remote_packages' table"
+		echo ">>> Syncing 'SisyphusDB remote_packages' into '/var/lib/sisyphus/db/sisyphus.db'"
 		echo "/usr/bin/sqlite3 /var/lib/sisyphus/db/sisyphus.db"
 		echo "Already up-to-date."
-		echo "=== SisyphusDB :: Sync completed for 'remote_packages' table"
+		echo "=== Sync completed for 'SisyphusDB remote_packages"
 	fi
 	mv /var/lib/sisyphus/csv/remote_postinst.csv /var/lib/sisyphus/csv/remote_preinst.csv
 }
@@ -155,17 +155,19 @@ localdbcsvpost () {
 
 localdbcsvsync () {
 	if cmp /var/lib/sisyphus/csv/local_preinst.csv /var/lib/sisyphus/csv/local_postinst.csv > /dev/null 2>&1 ; then
-		einfo "PortageDB unchanged :: SisyphusDB >>> no change(s) to commit..."
+		einfo "PortageDB && SisyphusDB local_packages in sync, nothing to do..."
 	else
-		einfo "PortageDB changed :: SisyphusDB >>> commit change(s)..."
+		einfo "PortageDB && SisyphusDB local_packages out of sync, syncing..."
+		echo "/usr/bin/sqlite3 /var/lib/sisyphus/db/sisyphus.db"
 		pushd /var/lib/sisyphus/db > /dev/null 2>&1
-		sqlite3 sisyphus.db<<-EXIT_HERE
+		sqlite3 -echo sisyphus.db<<-EXIT_HERE
 		drop table if exists local_packages;
 		create table local_packages (category TEXT,name TEXT,version TEXT,slot TEXT,description TEXT);
 		.mode csv
 		.import /var/lib/sisyphus/csv/local_postinst.csv local_packages
 		EXIT_HERE
 		popd > /dev/null 2>&1
+		einfo "Sync completed for SisyphusDB local_packages"
 	fi
 	mv /var/lib/sisyphus/csv/local_postinst.csv /var/lib/sisyphus/csv/local_preinst.csv
 }
