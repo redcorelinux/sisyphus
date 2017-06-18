@@ -118,7 +118,7 @@ remotedbcsvsync () {
 		echo ">>> Syncing 'SisyphusDB remote_packages' into '/var/lib/sisyphus/db/sisyphus.db'"
 		echo "/usr/bin/sqlite3 /var/lib/sisyphus/db/sisyphus.db"
 		echo "Already up-to-date."
-		echo "=== Sync completed for 'SisyphusDB remote_packages"
+		echo "=== Sync completed for 'SisyphusDB remote_packages'"
 	fi
 	mv /var/lib/sisyphus/csv/remote_postinst.csv /var/lib/sisyphus/csv/remote_preinst.csv
 }
@@ -155,9 +155,9 @@ localdbcsvpost () {
 
 localdbcsvsync () {
 	if cmp /var/lib/sisyphus/csv/local_preinst.csv /var/lib/sisyphus/csv/local_postinst.csv > /dev/null 2>&1 ; then
-		einfo "PortageDB && SisyphusDB local_packages in sync, nothing to do..."
+		einfo "'PortageDB' && 'SisyphusDB local_packages' are in sync, nothing to do..."
 	else
-		einfo "PortageDB && SisyphusDB local_packages out of sync, syncing..."
+		einfo "'PortageDB' && 'SisyphusDB local_packages' are out of sync, syncing now..."
 		echo "/usr/bin/sqlite3 /var/lib/sisyphus/db/sisyphus.db"
 		pushd /var/lib/sisyphus/db > /dev/null 2>&1
 		sqlite3 -echo sisyphus.db<<-EXIT_HERE
@@ -167,7 +167,7 @@ localdbcsvsync () {
 		.import /var/lib/sisyphus/csv/local_postinst.csv local_packages
 		EXIT_HERE
 		popd > /dev/null 2>&1
-		einfo "Sync completed for SisyphusDB local_packages"
+		einfo "'PortageDB' && 'SisyphusDB local_packages' resync complete..."
 	fi
 	mv /var/lib/sisyphus/csv/local_postinst.csv /var/lib/sisyphus/csv/local_preinst.csv
 }
