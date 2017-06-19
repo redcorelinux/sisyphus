@@ -62,7 +62,8 @@ class Games(QtWidgets.QMainWindow):
                                 'openttd',
                                 '0ad',
                                 'warzone2100',
-                                'wesnoth')
+                                'wesnoth'
+                                'xonotic')
                         ''')
             rows = cursor.fetchall()
             
