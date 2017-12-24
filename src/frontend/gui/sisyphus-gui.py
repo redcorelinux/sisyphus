@@ -1,10 +1,10 @@
 #!/usr/bin/python3
-import sys, subprocess, sqlite3
+import sys, subprocess, sqlite3, io, atexit
 from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from libsisyphus import *
 
-class Sisyphus(QtWidgets.QMainWindow):
+class Sisyphus( QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
         uic.loadUi('ui/sisyphus-gui.ui', self)
@@ -270,19 +270,67 @@ class UpdateThread(QtCore.QThread):
 class InstallThread(QtCore.QThread):
     def run(self):
         PKGLIST = Sisyphus.PKGLIST
+
+        def sisyphus_pkg_auto_install(PKGLIST):
+            redcore_sync()
+            generate_sisyphus_local_packages_table_csv_pre()
+            portage_call = subprocess.Popen(['emerge', '-q'] + PKGLIST, stdout=subprocess.PIPE)
+            atexit.register(kill_bg_portage, portage_call)
+            for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
+                if ">>>" in portage_output:
+                    print(portage_output.rstrip())
+            generate_sisyphus_local_packages_table_csv_post()
+            sync_sisyphus_local_packages_table_csv()
+
         sisyphus_pkg_auto_install(PKGLIST)
 
 class UninstallThread(QtCore.QThread):
     def run(self):
         PKGLIST = Sisyphus.PKGLIST
+
+        def sisyphus_pkg_auto_uninstall(PKGLIST):
+            redcore_sync()
+            generate_sisyphus_local_packages_table_csv_pre()
+            portage_call = subprocess.Popen(['emerge', '--depclean', '-q'] + PKGLIST, stdout=Sisyphus.LOG)
+            atexit.register(kill_bg_portage, portage_call)
+            for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
+                if ">>>" in portage_output:
+                    print(portage_output.rstrip())
+            generate_sisyphus_local_packages_table_csv_post()
+            sync_sisyphus_local_packages_table_csv()
+
         sisyphus_pkg_auto_uninstall(PKGLIST)
 
 class UpgradeThread(QtCore.QThread):
     def run(self):
+
+        def sisyphus_pkg_auto_system_upgrade():
+            redcore_sync()
+            generate_sisyphus_local_packages_table_csv_pre()
+            portage_call = subprocess.Popen(['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
+            atexit.register(kill_bg_portage, portage_call)
+            for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
+                if ">>>" in portage_output:
+                    print(portage_output.rstrip())
+            generate_sisyphus_local_packages_table_csv_post()
+            sync_sisyphus_local_packages_table_csv()
+
         sisyphus_pkg_auto_system_upgrade()
 
 class OrphansThread(QtCore.QThread):
     def run(self):
+
+        def sisyphus_pkg_auto_remove_orphans():
+            redcore_sync()
+            generate_sisyphus_local_packages_table_csv_pre()
+            portage_call = subprocess.Popen(['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
+            atexit.register(kill_bg_portage, portage_call)
+            for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
+                if ">>>" in portage_output:
+                    print(portage_output.rstrip())
+            generate_sisyphus_local_packages_table_csv_post()
+            sync_sisyphus_local_packages_table_csv()
+
         sisyphus_pkg_auto_remove_orphans()
 
 if __name__ == '__main__':
