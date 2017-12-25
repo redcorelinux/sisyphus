@@ -4,7 +4,7 @@ from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from libsisyphus import *
 
-class Sisyphus( QtWidgets.QMainWindow):
+class Sisyphus(QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
         uic.loadUi('ui/sisyphus-gui.ui', self)
@@ -39,9 +39,13 @@ class Sisyphus( QtWidgets.QMainWindow):
         
         self.input.textEdited.connect(self.filterDatabase)
 
-        self.updateThread = UpdateThread()
-        self.updateThread.started.connect(self.showProgressBar)
-        self.updateThread.finished.connect(self.jobDone)
+        self.sWorker = syWorker()
+        self.syThread = QtCore.QThread()
+        self.sWorker.moveToThread(self.syThread)
+        self.sWorker.started.connect(self.showProgressBar)
+        self.sWorker.finished.connect(self.syThread.quit)
+        self.syThread.started.connect(self.sWorker.startUpdate)
+        self.syThread.finished.connect(self.jobDone)
 
         self.install.clicked.connect(self.packageInstall)
         self.iWorker = inWorker()
@@ -219,7 +223,7 @@ class Sisyphus( QtWidgets.QMainWindow):
     def updateSystem(self):
         self.loadDatabase()
         self.statusBar().showMessage("I am syncing myself, hope to finish soon ...")
-        self.updateThread.start()
+        self.syThread.start()
 
     def packageInstall(self):
         indexes = self.database.selectionModel().selectedRows(1)
@@ -286,9 +290,15 @@ class Sisyphus( QtWidgets.QMainWindow):
     def sisyphusExit(self):
         self.close()
 
-class UpdateThread(QtCore.QThread):
-    def run(self):
+class syWorker(QtCore.QObject):
+    started = QtCore.pyqtSignal()
+    finished = QtCore.pyqtSignal()
+
+    @QtCore.pyqtSlot()
+    def startUpdate(self):
+        self.started.emit()
         sisyphus_pkg_system_update()
+        self.finished.emit()
 
 class inWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
