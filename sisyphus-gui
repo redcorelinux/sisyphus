@@ -1,12 +1,29 @@
 #!/usr/bin/env bash
 
-# Sisyphus is a simple GUI for sisyphus, the portage wrapper
+# Sisyphus-GUI is a simple frontend for libsisyphus
 # Main Author : Ghiunhan Mamut @ Redcore Linux Project
 
+if [[ -f /lib/gentoo/functions.sh ]] ; then
+        source /lib/gentoo/functions.sh
+else
+        echo "Cannot import Gentoo functions, I will abort now!"
+        exit 1
+fi
+
+checkifroot() {
+	if [[ "$(whoami)" != root ]] ; then
+		eerror "I won't do that, unless you're root!"
+		exit 1
+	fi
+}
+
+
 main() {
-	pushd /usr/share/sisyphus
-	python3 sisyphus-gui.py
-	popd
+	if checkifroot; then
+		pushd /usr/share/sisyphus
+		python3 sisyphus-gui.py
+		popd
+	fi
 }
 
 main
