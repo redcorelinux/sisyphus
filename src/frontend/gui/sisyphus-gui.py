@@ -49,7 +49,7 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.iWorker.moveToThread(self.iThread)
         self.iWorker.started.connect(self.showProgressBar)
         self.iWorker.finished.connect(self.iThread.quit)
-        self.iWorker.strReady.connect(self.centerOnScreen)
+        self.iWorker.strReady.connect(self.updateStatusBar)
         self.iThread.started.connect(self.iWorker.startInstall)
         self.iThread.finished.connect(self.jobDone)
 
@@ -59,7 +59,7 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.uWorker.moveToThread(self.uThread)
         self.uWorker.started.connect(self.showProgressBar)
         self.uWorker.finished.connect(self.uThread.quit)
-        self.uWorker.strReady.connect(self.centerOnScreen)
+        self.uWorker.strReady.connect(self.updateStatusBar)
         self.uThread.started.connect(self.uWorker.startUninstall)
         self.uThread.finished.connect(self.jobDone)
 
@@ -69,7 +69,7 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.usWorker.moveToThread(self.usThread)
         self.usWorker.started.connect(self.showProgressBar)
         self.usWorker.finished.connect(self.usThread.quit)
-        self.usWorker.strReady.connect(self.centerOnScreen)
+        self.usWorker.strReady.connect(self.updateStatusBar)
         self.usThread.started.connect(self.usWorker.startUpgrade)
         self.usThread.finished.connect(self.jobDone)
 
@@ -79,7 +79,7 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.ocWorker.moveToThread(self.ocThread)
         self.ocWorker.started.connect(self.showProgressBar)
         self.ocWorker.finished.connect(self.ocThread.quit)
-        self.ocWorker.strReady.connect(self.centerOnScreen)
+        self.ocWorker.strReady.connect(self.updateStatusBar)
         self.ocThread.started.connect(self.ocWorker.cleanOrphans)
         self.ocThread.finished.connect(self.jobDone)
 
@@ -280,6 +280,9 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.upgrade.show()
         self.abort.show()
 
+    def updateStatusBar(self, workerMessage):
+        self.statusBar().showMessage(workerMessage)
+
     def sisyphusExit(self):
         self.close()
 
@@ -301,9 +304,7 @@ class inWorker(QtCore.QObject):
         portage_call = subprocess.Popen(['emerge', '-q'] + PKGLIST, stdout=subprocess.PIPE)
         atexit.register(kill_bg_portage, portage_call)
         for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-            if ">>>" in portage_output:
-                print(portage_output.rstrip())
-                self.strReady.emit(portage_output.rstrip())
+            self.strReady.emit(portage_output.rstrip())
         generate_sisyphus_local_packages_table_csv_post()
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
@@ -322,9 +323,7 @@ class rmWorker(QtCore.QObject):
         portage_call = subprocess.Popen(['emerge', '--depclean', '-q'] + PKGLIST, stdout=subprocess.PIPE)
         atexit.register(kill_bg_portage, portage_call)
         for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-            if ">>>" in portage_output:
-                print(portage_output.rstrip())
-                self.strReady.emit(portage_output.rstrip())
+            self.strReady.emit(portage_output.rstrip())
         generate_sisyphus_local_packages_table_csv_post()
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
@@ -342,9 +341,7 @@ class suWorker(QtCore.QObject):
         portage_call = subprocess.Popen(['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
         atexit.register(kill_bg_portage, portage_call)
         for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-            if ">>>" in portage_output:
-                print(portage_output.rstrip())
-                self.strReady.emit(portage_output.rstrip())
+            self.strReady.emit(portage_output.rstrip())
         generate_sisyphus_local_packages_table_csv_post()
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
@@ -362,9 +359,7 @@ class coWorker(QtCore.QObject):
         portage_call = subprocess.Popen(['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
         atexit.register(kill_bg_portage, portage_call)
         for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-            if ">>>" in portage_output:
-                print(portage_output.rstrip())
-                self.strReady.emit(portage_output.rstrip())
+            self.strReady.emit(portage_output.rstrip())
         generate_sisyphus_local_packages_table_csv_post()
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
