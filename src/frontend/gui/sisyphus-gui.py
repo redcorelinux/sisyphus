@@ -43,25 +43,45 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.updateThread.started.connect(self.showProgressBar)
         self.updateThread.finished.connect(self.jobDone)
 
-        self.installThread = InstallThread()
         self.install.clicked.connect(self.packageInstall)
-        self.installThread.started.connect(self.showProgressBar)
-        self.installThread.finished.connect(self.jobDone)
+        self.iWorker = inWorker()
+        self.iThread = QtCore.QThread()
+        self.iWorker.moveToThread(self.iThread)
+        self.iWorker.started.connect(self.showProgressBar)
+        self.iWorker.finished.connect(self.iThread.quit)
+        self.iWorker.strReady.connect(self.centerOnScreen)
+        self.iThread.started.connect(self.iWorker.startInstall)
+        self.iThread.finished.connect(self.jobDone)
 
-        self.uninstallThread = UninstallThread()
         self.uninstall.clicked.connect(self.packageUninstall)
-        self.uninstallThread.started.connect(self.showProgressBar)
-        self.uninstallThread.finished.connect(self.jobDone)
+        self.uWorker = rmWorker()
+        self.uThread = QtCore.QThread()
+        self.uWorker.moveToThread(self.uThread)
+        self.uWorker.started.connect(self.showProgressBar)
+        self.uWorker.finished.connect(self.uThread.quit)
+        self.uWorker.strReady.connect(self.centerOnScreen)
+        self.uThread.started.connect(self.uWorker.startUninstall)
+        self.uThread.finished.connect(self.jobDone)
 
-        self.upgradeThread = UpgradeThread()
         self.upgrade.clicked.connect(self.systemUpgrade)
-        self.upgradeThread.started.connect(self.showProgressBar)
-        self.upgradeThread.finished.connect(self.jobDone)
+        self.usWorker = suWorker()
+        self.usThread = QtCore.QThread()
+        self.usWorker.moveToThread(self.usThread)
+        self.usWorker.started.connect(self.showProgressBar)
+        self.usWorker.finished.connect(self.usThread.quit)
+        self.usWorker.strReady.connect(self.centerOnScreen)
+        self.usThread.started.connect(self.usWorker.startUpgrade)
+        self.usThread.finished.connect(self.jobDone)
 
-        self.orphansThread = OrphansThread()
         self.orphans.clicked.connect(self.orphansRemove)
-        self.orphansThread.started.connect(self.showProgressBar)
-        self.orphansThread.finished.connect(self.jobDone)
+        self.ocWorker = coWorker()
+        self.ocThread = QtCore.QThread()
+        self.ocWorker.moveToThread(self.ocThread)
+        self.ocWorker.started.connect(self.showProgressBar)
+        self.ocWorker.finished.connect(self.ocThread.quit)
+        self.ocWorker.strReady.connect(self.centerOnScreen)
+        self.ocThread.started.connect(self.ocWorker.cleanOrphans)
+        self.ocThread.finished.connect(self.jobDone)
 
         self.updateSystem()
         self.progress.hide()
@@ -210,7 +230,7 @@ class Sisyphus( QtWidgets.QMainWindow):
             for index in sorted(indexes):
                 Sisyphus.PKGLIST.append(index.data())
             self.statusBar().showMessage("I am installing %d package(s) for you ..." %len(Sisyphus.PKGLIST))
-            self.installThread.start()
+            self.iThread.start()
 
     def packageUninstall(self):
         indexes = self.database.selectionModel().selectedRows(1)
@@ -221,15 +241,15 @@ class Sisyphus( QtWidgets.QMainWindow):
             for index in sorted(indexes):
                 Sisyphus.PKGLIST.append(index.data())
             self.statusBar().showMessage("I am removing %d package(s) as requested ..." %len(Sisyphus.PKGLIST))
-            self.uninstallThread.start()
+            self.uThread.start()
 
     def systemUpgrade(self):
         self.statusBar().showMessage("I am upgrading the system, please be patient ...")
-        self.upgradeThread.start()
+        self.usThread.start()
 
     def orphansRemove(self):
         self.statusBar().showMessage("I am busy with some cleaning, please don't rush me ...")
-        self.orphansThread.start()
+        self.ocThread.start()
 
     def jobDone(self):
         self.hideProgressBar()
@@ -267,71 +287,87 @@ class UpdateThread(QtCore.QThread):
     def run(self):
         sisyphus_pkg_system_update()
 
-class InstallThread(QtCore.QThread):
-    def run(self):
+class inWorker(QtCore.QObject):
+    started = QtCore.pyqtSignal()
+    finished = QtCore.pyqtSignal()
+    strReady = QtCore.pyqtSignal(str)
+
+    @QtCore.pyqtSlot()
+    def startInstall(self):
+        self.started.emit()
         PKGLIST = Sisyphus.PKGLIST
+        redcore_sync()
+        generate_sisyphus_local_packages_table_csv_pre()
+        portage_call = subprocess.Popen(['emerge', '-q'] + PKGLIST, stdout=subprocess.PIPE)
+        atexit.register(kill_bg_portage, portage_call)
+        for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
+            if ">>>" in portage_output:
+                print(portage_output.rstrip())
+                self.strReady.emit(portage_output.rstrip())
+        generate_sisyphus_local_packages_table_csv_post()
+        sync_sisyphus_local_packages_table_csv()
+        self.finished.emit()
 
-        def sisyphus_pkg_auto_install(PKGLIST):
-            redcore_sync()
-            generate_sisyphus_local_packages_table_csv_pre()
-            portage_call = subprocess.Popen(['emerge', '-q'] + PKGLIST, stdout=subprocess.PIPE)
-            atexit.register(kill_bg_portage, portage_call)
-            for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-                if ">>>" in portage_output:
-                    print(portage_output.rstrip())
-            generate_sisyphus_local_packages_table_csv_post()
-            sync_sisyphus_local_packages_table_csv()
+class rmWorker(QtCore.QObject):
+    started = QtCore.pyqtSignal()
+    finished = QtCore.pyqtSignal()
+    strReady = QtCore.pyqtSignal(str)
 
-        sisyphus_pkg_auto_install(PKGLIST)
-
-class UninstallThread(QtCore.QThread):
-    def run(self):
+    @QtCore.pyqtSlot()
+    def startUninstall(self):
+        self.started.emit()
         PKGLIST = Sisyphus.PKGLIST
+        redcore_sync()
+        generate_sisyphus_local_packages_table_csv_pre()
+        portage_call = subprocess.Popen(['emerge', '--depclean', '-q'] + PKGLIST, stdout=subprocess.PIPE)
+        atexit.register(kill_bg_portage, portage_call)
+        for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
+            if ">>>" in portage_output:
+                print(portage_output.rstrip())
+                self.strReady.emit(portage_output.rstrip())
+        generate_sisyphus_local_packages_table_csv_post()
+        sync_sisyphus_local_packages_table_csv()
+        self.finished.emit()
 
-        def sisyphus_pkg_auto_uninstall(PKGLIST):
-            redcore_sync()
-            generate_sisyphus_local_packages_table_csv_pre()
-            portage_call = subprocess.Popen(['emerge', '--depclean', '-q'] + PKGLIST, stdout=Sisyphus.LOG)
-            atexit.register(kill_bg_portage, portage_call)
-            for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-                if ">>>" in portage_output:
-                    print(portage_output.rstrip())
-            generate_sisyphus_local_packages_table_csv_post()
-            sync_sisyphus_local_packages_table_csv()
+class suWorker(QtCore.QObject):
+    started = QtCore.pyqtSignal()
+    finished = QtCore.pyqtSignal()
+    strReady = QtCore.pyqtSignal(str)
 
-        sisyphus_pkg_auto_uninstall(PKGLIST)
+    @QtCore.pyqtSlot()
+    def startUpgrade(self):
+        self.started.emit()
+        redcore_sync()
+        generate_sisyphus_local_packages_table_csv_pre()
+        portage_call = subprocess.Popen(['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
+        atexit.register(kill_bg_portage, portage_call)
+        for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
+            if ">>>" in portage_output:
+                print(portage_output.rstrip())
+                self.strReady.emit(portage_output.rstrip())
+        generate_sisyphus_local_packages_table_csv_post()
+        sync_sisyphus_local_packages_table_csv()
+        self.finished.emit()
 
-class UpgradeThread(QtCore.QThread):
-    def run(self):
+class coWorker(QtCore.QObject):
+    started = QtCore.pyqtSignal()
+    finished = QtCore.pyqtSignal()
+    strReady = QtCore.pyqtSignal(str)
 
-        def sisyphus_pkg_auto_system_upgrade():
-            redcore_sync()
-            generate_sisyphus_local_packages_table_csv_pre()
-            portage_call = subprocess.Popen(['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
-            atexit.register(kill_bg_portage, portage_call)
-            for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-                if ">>>" in portage_output:
-                    print(portage_output.rstrip())
-            generate_sisyphus_local_packages_table_csv_post()
-            sync_sisyphus_local_packages_table_csv()
-
-        sisyphus_pkg_auto_system_upgrade()
-
-class OrphansThread(QtCore.QThread):
-    def run(self):
-
-        def sisyphus_pkg_auto_remove_orphans():
-            redcore_sync()
-            generate_sisyphus_local_packages_table_csv_pre()
-            portage_call = subprocess.Popen(['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
-            atexit.register(kill_bg_portage, portage_call)
-            for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-                if ">>>" in portage_output:
-                    print(portage_output.rstrip())
-            generate_sisyphus_local_packages_table_csv_post()
-            sync_sisyphus_local_packages_table_csv()
-
-        sisyphus_pkg_auto_remove_orphans()
+    @QtCore.pyqtSlot()
+    def cleanOrphans(self):
+        self.started.emit()
+        redcore_sync()
+        generate_sisyphus_local_packages_table_csv_pre()
+        portage_call = subprocess.Popen(['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
+        atexit.register(kill_bg_portage, portage_call)
+        for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
+            if ">>>" in portage_output:
+                print(portage_output.rstrip())
+                self.strReady.emit(portage_output.rstrip())
+        generate_sisyphus_local_packages_table_csv_post()
+        sync_sisyphus_local_packages_table_csv()
+        self.finished.emit()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
