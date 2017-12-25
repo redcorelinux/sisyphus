@@ -48,8 +48,8 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.iThread = QtCore.QThread()
         self.iWorker.moveToThread(self.iThread)
         self.iWorker.started.connect(self.showProgressBar)
-        self.iWorker.finished.connect(self.iThread.quit)
         self.iWorker.strReady.connect(self.updateStatusBar)
+        self.iWorker.finished.connect(self.iThread.quit)
         self.iThread.started.connect(self.iWorker.startInstall)
         self.iThread.finished.connect(self.jobDone)
 
@@ -58,8 +58,8 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.uThread = QtCore.QThread()
         self.uWorker.moveToThread(self.uThread)
         self.uWorker.started.connect(self.showProgressBar)
-        self.uWorker.finished.connect(self.uThread.quit)
         self.uWorker.strReady.connect(self.updateStatusBar)
+        self.uWorker.finished.connect(self.uThread.quit)
         self.uThread.started.connect(self.uWorker.startUninstall)
         self.uThread.finished.connect(self.jobDone)
 
@@ -68,8 +68,8 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.usThread = QtCore.QThread()
         self.usWorker.moveToThread(self.usThread)
         self.usWorker.started.connect(self.showProgressBar)
-        self.usWorker.finished.connect(self.usThread.quit)
         self.usWorker.strReady.connect(self.updateStatusBar)
+        self.usWorker.finished.connect(self.usThread.quit)
         self.usThread.started.connect(self.usWorker.startUpgrade)
         self.usThread.finished.connect(self.jobDone)
 
@@ -78,8 +78,8 @@ class Sisyphus( QtWidgets.QMainWindow):
         self.ocThread = QtCore.QThread()
         self.ocWorker.moveToThread(self.ocThread)
         self.ocWorker.started.connect(self.showProgressBar)
-        self.ocWorker.finished.connect(self.ocThread.quit)
         self.ocWorker.strReady.connect(self.updateStatusBar)
+        self.ocWorker.finished.connect(self.ocThread.quit)
         self.ocThread.started.connect(self.ocWorker.cleanOrphans)
         self.ocThread.finished.connect(self.jobDone)
 
@@ -229,7 +229,7 @@ class Sisyphus( QtWidgets.QMainWindow):
             Sisyphus.PKGLIST = []
             for index in sorted(indexes):
                 Sisyphus.PKGLIST.append(index.data())
-            self.statusBar().showMessage("I am installing %d package(s) for you ..." %len(Sisyphus.PKGLIST))
+            self.statusBar().showMessage("I am installing requested package(s), please wait ...")
             self.iThread.start()
 
     def packageUninstall(self):
@@ -240,7 +240,7 @@ class Sisyphus( QtWidgets.QMainWindow):
             Sisyphus.PKGLIST = []
             for index in sorted(indexes):
                 Sisyphus.PKGLIST.append(index.data())
-            self.statusBar().showMessage("I am removing %d package(s) as requested ..." %len(Sisyphus.PKGLIST))
+            self.statusBar().showMessage("I am removing requested package(s), please wait ...")
             self.uThread.start()
 
     def systemUpgrade(self):
