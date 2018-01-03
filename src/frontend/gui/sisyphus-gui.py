@@ -39,53 +39,53 @@ class Sisyphus(QtWidgets.QMainWindow):
         
         self.input.textEdited.connect(self.filterDatabase)
 
-        self.sWorker = syWorker()
-        self.syThread = QtCore.QThread()
-        self.sWorker.moveToThread(self.syThread)
-        self.sWorker.started.connect(self.showProgressBar)
-        self.sWorker.finished.connect(self.syThread.quit)
-        self.syThread.started.connect(self.sWorker.startUpdate)
-        self.syThread.finished.connect(self.jobDone)
+        self.updateWorker = UpdateWorker()
+        self.updateThread = QtCore.QThread()
+        self.updateWorker.moveToThread(self.updateThread)
+        self.updateWorker.started.connect(self.showProgressBar)
+        self.updateWorker.finished.connect(self.updateThread.quit)
+        self.updateThread.started.connect(self.updateWorker.startUpdate)
+        self.updateThread.finished.connect(self.jobDone)
 
         self.install.clicked.connect(self.packageInstall)
-        self.iWorker = inWorker()
-        self.iThread = QtCore.QThread()
-        self.iWorker.moveToThread(self.iThread)
-        self.iWorker.started.connect(self.showProgressBar)
-        self.iWorker.strReady.connect(self.updateStatusBar)
-        self.iWorker.finished.connect(self.iThread.quit)
-        self.iThread.started.connect(self.iWorker.startInstall)
-        self.iThread.finished.connect(self.jobDone)
+        self.installWorker = InstallWorker()
+        self.installThread = QtCore.QThread()
+        self.installWorker.moveToThread(self.installThread)
+        self.installWorker.started.connect(self.showProgressBar)
+        self.installWorker.strReady.connect(self.updateStatusBar)
+        self.installWorker.finished.connect(self.installThread.quit)
+        self.installThread.started.connect(self.installWorker.startInstall)
+        self.installThread.finished.connect(self.jobDone)
 
         self.uninstall.clicked.connect(self.packageUninstall)
-        self.uWorker = rmWorker()
-        self.uThread = QtCore.QThread()
-        self.uWorker.moveToThread(self.uThread)
-        self.uWorker.started.connect(self.showProgressBar)
-        self.uWorker.strReady.connect(self.updateStatusBar)
-        self.uWorker.finished.connect(self.uThread.quit)
-        self.uThread.started.connect(self.uWorker.startUninstall)
-        self.uThread.finished.connect(self.jobDone)
+        self.uninstallWorker = UninstallWorker()
+        self.uninstallThread = QtCore.QThread()
+        self.uninstallWorker.moveToThread(self.uninstallThread)
+        self.uninstallWorker.started.connect(self.showProgressBar)
+        self.uninstallWorker.strReady.connect(self.updateStatusBar)
+        self.uninstallWorker.finished.connect(self.uninstallThread.quit)
+        self.uninstallThread.started.connect(self.uninstallWorker.startUninstall)
+        self.uninstallThread.finished.connect(self.jobDone)
 
         self.upgrade.clicked.connect(self.systemUpgrade)
-        self.usWorker = suWorker()
-        self.usThread = QtCore.QThread()
-        self.usWorker.moveToThread(self.usThread)
-        self.usWorker.started.connect(self.showProgressBar)
-        self.usWorker.strReady.connect(self.updateStatusBar)
-        self.usWorker.finished.connect(self.usThread.quit)
-        self.usThread.started.connect(self.usWorker.startUpgrade)
-        self.usThread.finished.connect(self.jobDone)
+        self.upgradeWorker = UpgradeWorker()
+        self.upgradeThread = QtCore.QThread()
+        self.upgradeWorker.moveToThread(self.upgradeThread)
+        self.upgradeWorker.started.connect(self.showProgressBar)
+        self.upgradeWorker.strReady.connect(self.updateStatusBar)
+        self.upgradeWorker.finished.connect(self.upgradeThread.quit)
+        self.upgradeThread.started.connect(self.upgradeWorker.startUpgrade)
+        self.upgradeThread.finished.connect(self.jobDone)
 
         self.orphans.clicked.connect(self.orphansRemove)
-        self.ocWorker = coWorker()
-        self.ocThread = QtCore.QThread()
-        self.ocWorker.moveToThread(self.ocThread)
-        self.ocWorker.started.connect(self.showProgressBar)
-        self.ocWorker.strReady.connect(self.updateStatusBar)
-        self.ocWorker.finished.connect(self.ocThread.quit)
-        self.ocThread.started.connect(self.ocWorker.cleanOrphans)
-        self.ocThread.finished.connect(self.jobDone)
+        self.orphanupdateWorker = OrphanupdateWorker()
+        self.orphansThread = QtCore.QThread()
+        self.orphanupdateWorker.moveToThread(self.orphansThread)
+        self.orphanupdateWorker.started.connect(self.showProgressBar)
+        self.orphanupdateWorker.strReady.connect(self.updateStatusBar)
+        self.orphanupdateWorker.finished.connect(self.orphansThread.quit)
+        self.orphansThread.started.connect(self.orphanupdateWorker.cleanOrphans)
+        self.orphansThread.finished.connect(self.jobDone)
 
         self.updateSystem()
         self.progress.hide()
@@ -223,7 +223,7 @@ class Sisyphus(QtWidgets.QMainWindow):
     def updateSystem(self):
         self.loadDatabase()
         self.statusBar().showMessage("I am syncing myself, hope to finish soon ...")
-        self.syThread.start()
+        self.updateThread.start()
 
     def packageInstall(self):
         indexes = self.database.selectionModel().selectedRows(1)
@@ -234,7 +234,7 @@ class Sisyphus(QtWidgets.QMainWindow):
             for index in sorted(indexes):
                 Sisyphus.PKGLIST.append(index.data())
             self.statusBar().showMessage("I am installing requested package(s), please wait ...")
-            self.iThread.start()
+            self.installThread.start()
 
     def packageUninstall(self):
         indexes = self.database.selectionModel().selectedRows(1)
@@ -245,15 +245,15 @@ class Sisyphus(QtWidgets.QMainWindow):
             for index in sorted(indexes):
                 Sisyphus.PKGLIST.append(index.data())
             self.statusBar().showMessage("I am removing requested package(s), please wait ...")
-            self.uThread.start()
+            self.uninstallThread.start()
 
     def systemUpgrade(self):
         self.statusBar().showMessage("I am upgrading the system, please be patient ...")
-        self.usThread.start()
+        self.upgradeThread.start()
 
     def orphansRemove(self):
         self.statusBar().showMessage("I am busy with some cleaning, please don't rush me ...")
-        self.ocThread.start()
+        self.orphansThread.start()
 
     def jobDone(self):
         self.hideProgressBar()
@@ -290,7 +290,7 @@ class Sisyphus(QtWidgets.QMainWindow):
     def sisyphusExit(self):
         self.close()
 
-class syWorker(QtCore.QObject):
+class UpdateWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
 
@@ -300,7 +300,7 @@ class syWorker(QtCore.QObject):
         sisyphus_pkg_system_update()
         self.finished.emit()
 
-class inWorker(QtCore.QObject):
+class InstallWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
     strReady = QtCore.pyqtSignal(str)
@@ -319,7 +319,7 @@ class inWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-class rmWorker(QtCore.QObject):
+class UninstallWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
     strReady = QtCore.pyqtSignal(str)
@@ -338,7 +338,7 @@ class rmWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-class suWorker(QtCore.QObject):
+class UpgradeWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
     strReady = QtCore.pyqtSignal(str)
@@ -356,7 +356,7 @@ class suWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-class coWorker(QtCore.QObject):
+class OrphanupdateWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
     strReady = QtCore.pyqtSignal(str)
