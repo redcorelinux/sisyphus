@@ -78,13 +78,13 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.upgradeThread.finished.connect(self.jobDone)
 
         self.orphans.clicked.connect(self.orphansRemove)
-        self.orphanupdateWorker = OrphanupdateWorker()
+        self.orphansWorker = OrphansWorker()
         self.orphansThread = QtCore.QThread()
-        self.orphanupdateWorker.moveToThread(self.orphansThread)
-        self.orphanupdateWorker.started.connect(self.showProgressBar)
-        self.orphanupdateWorker.strReady.connect(self.updateStatusBar)
-        self.orphanupdateWorker.finished.connect(self.orphansThread.quit)
-        self.orphansThread.started.connect(self.orphanupdateWorker.cleanOrphans)
+        self.orphansWorker.moveToThread(self.orphansThread)
+        self.orphansWorker.started.connect(self.showProgressBar)
+        self.orphansWorker.strReady.connect(self.updateStatusBar)
+        self.orphansWorker.finished.connect(self.orphansThread.quit)
+        self.orphansThread.started.connect(self.orphansWorker.cleanOrphans)
         self.orphansThread.finished.connect(self.jobDone)
 
         self.updateSystem()
@@ -356,7 +356,7 @@ class UpgradeWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-class OrphanupdateWorker(QtCore.QObject):
+class OrphansWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
     strReady = QtCore.pyqtSignal(str)
