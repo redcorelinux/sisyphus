@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SisyphusGUI</class>
- <widget class="QWidget" name="SisyphusGUI">
+ <class>Sisyphus</class>
+ <widget class="QMainWindow" name="Sisyphus">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -32,16 +32,8 @@
    <iconset>
     <normaloff>../icon/sisyphus.png</normaloff>../icon/sisyphus.png</iconset>
   </property>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>51</y>
-     <width>601</width>
-     <height>391</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="SisyphusGrid">
+  <widget class="QWidget" name="layoutGrid">
+   <layout class="QGridLayout" name="mainGrid">
     <property name="leftMargin">
      <number>25</number>
     </property>
@@ -58,7 +50,7 @@
      <number>25</number>
     </property>
     <item row="1" column="0">
-     <widget class="QTableView" name="database">
+     <widget class="QTableView" name="databaseTable">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -107,7 +99,7 @@
      </widget>
     </item>
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="Filters">
+     <layout class="QHBoxLayout" name="inputGrid">
       <property name="spacing">
        <number>25</number>
       </property>
@@ -118,10 +110,10 @@
        <number>25</number>
       </property>
       <item>
-       <widget class="QComboBox" name="selectfield"/>
+       <widget class="QComboBox" name="applicationFilter"/>
       </item>
       <item>
-       <widget class="QLineEdit" name="input">
+       <widget class="QLineEdit" name="inputBox">
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Write package name and press Enter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -131,12 +123,12 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="selectfilter"/>
+       <widget class="QComboBox" name="databaseFilter"/>
       </item>
      </layout>
     </item>
     <item row="2" column="0">
-     <layout class="QHBoxLayout" name="Buttons">
+     <layout class="QHBoxLayout" name="actionGrid">
       <property name="spacing">
        <number>25</number>
       </property>
@@ -147,7 +139,7 @@
        <number>25</number>
       </property>
       <item>
-       <widget class="QPushButton" name="install">
+       <widget class="QPushButton" name="installButton">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -173,7 +165,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="uninstall">
+       <widget class="QPushButton" name="uninstallButton">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -199,7 +191,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="upgrade">
+       <widget class="QPushButton" name="upgradeButton">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -222,7 +214,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="orphans">
+       <widget class="QPushButton" name="orphansButton">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -248,7 +240,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="abort">
+       <widget class="QPushButton" name="exitButton">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -273,7 +265,7 @@
      </layout>
     </item>
     <item row="3" column="0">
-     <widget class="QProgressBar" name="progress">
+     <widget class="QProgressBar" name="progressBar">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
@@ -287,17 +279,33 @@
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
  </widget>
  <tabstops>
-  <tabstop>selectfield</tabstop>
-  <tabstop>input</tabstop>
-  <tabstop>selectfilter</tabstop>
-  <tabstop>database</tabstop>
-  <tabstop>install</tabstop>
-  <tabstop>uninstall</tabstop>
-  <tabstop>upgrade</tabstop>
-  <tabstop>orphans</tabstop>
-  <tabstop>abort</tabstop>
+  <tabstop>applicationFilter</tabstop>
+  <tabstop>inputBox</tabstop>
+  <tabstop>databaseFilter</tabstop>
+  <tabstop>databaseTable</tabstop>
+  <tabstop>installButton</tabstop>
+  <tabstop>uninstallButton</tabstop>
+  <tabstop>upgradeButton</tabstop>
+  <tabstop>orphansButton</tabstop>
+  <tabstop>exitButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

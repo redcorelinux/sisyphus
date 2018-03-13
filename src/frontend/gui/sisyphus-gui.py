@@ -16,33 +16,33 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.centerOnScreen()
         self.show()
 
-        self.SEARCHFIELDS = OrderedDict([
+        self.filterApplications = OrderedDict([
             ('Search by Name', 'pn'),
             ('Search by Category', 'cat'),
             ('Search by Description', 'descr')
         ])
-        self.selectfield.addItems(self.SEARCHFIELDS.keys())
-        self.selectfield.setCurrentText('Search by Name')
-        Sisyphus.SEARCHFIELD = self.SEARCHFIELDS['Search by Name']
-        self.selectfield.currentIndexChanged.connect(self.setSearchField)
+        self.applicationFilter.addItems(self.filterApplications.keys())
+        self.applicationFilter.setCurrentText('Search by Name')
+        self.applicationFilter.currentIndexChanged.connect(self.setApplicationFilter)
+        Sisyphus.applicationView = self.filterApplications['Search by Name']
 
-        self.SEARCHFILTERS = OrderedDict([
+        self.filterDatabases = OrderedDict([
             ('All Packages', 'all'),
             ('Installed Packages', 'instaled'),
             ('Installable Packages', 'installable'),
             ('Safely Removable Packages', 'removable'),
             ('Upgradable/Rebuilt Packages', 'upgradable')
         ])
-        Sisyphus.SEARCHFILTER = self.SEARCHFILTERS['All Packages']
-        self.selectfilter.addItems(self.SEARCHFILTERS.keys())
-        self.selectfilter.setCurrentText('All Packages')
-        self.selectfilter.currentIndexChanged.connect(self.setSearchFilter)
+        self.databaseFilter.addItems(self.filterDatabases.keys())
+        self.databaseFilter.setCurrentText('All Packages')
+        self.databaseFilter.currentIndexChanged.connect(self.setDatabaseFilter)
+        Sisyphus.databaseView = self.filterDatabases['All Packages']
 
-        Sisyphus.SEARCHTERM = "'%%'"
+        Sisyphus.searchTerm = "'%%'"
 
-        self.database.clicked.connect(self.rowClicked)
+        self.databaseTable.clicked.connect(self.rowClicked)
 
-        self.input.textEdited.connect(self.filterDatabase)
+        self.inputBox.textEdited.connect(self.searchDatabase)
 
         self.updateWorker = UpdateWorker()
         self.updateThread = QtCore.QThread()
@@ -52,7 +52,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.updateThread.started.connect(self.updateWorker.startUpdate)
         self.updateThread.finished.connect(self.jobDone)
 
-        self.install.clicked.connect(self.packageInstall)
+        self.installButton.clicked.connect(self.packageInstall)
         self.installWorker = InstallWorker()
         self.installThread = QtCore.QThread()
         self.installWorker.moveToThread(self.installThread)
@@ -62,7 +62,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.installThread.started.connect(self.installWorker.startInstall)
         self.installThread.finished.connect(self.jobDone)
 
-        self.uninstall.clicked.connect(self.packageUninstall)
+        self.uninstallButton.clicked.connect(self.packageUninstall)
         self.uninstallWorker = UninstallWorker()
         self.uninstallThread = QtCore.QThread()
         self.uninstallWorker.moveToThread(self.uninstallThread)
@@ -73,7 +73,7 @@ class Sisyphus(QtWidgets.QMainWindow):
             self.uninstallWorker.startUninstall)
         self.uninstallThread.finished.connect(self.jobDone)
 
-        self.upgrade.clicked.connect(self.systemUpgrade)
+        self.upgradeButton.clicked.connect(self.systemUpgrade)
         self.upgradeWorker = UpgradeWorker()
         self.upgradeThread = QtCore.QThread()
         self.upgradeWorker.moveToThread(self.upgradeThread)
@@ -83,7 +83,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.upgradeThread.started.connect(self.upgradeWorker.startUpgrade)
         self.upgradeThread.finished.connect(self.jobDone)
 
-        self.orphans.clicked.connect(self.orphansRemove)
+        self.orphansButton.clicked.connect(self.orphansRemove)
         self.orphansWorker = OrphansWorker()
         self.orphansThread = QtCore.QThread()
         self.orphansWorker.moveToThread(self.orphansThread)
@@ -94,9 +94,9 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.orphansThread.finished.connect(self.jobDone)
 
         self.updateSystem()
-        self.progress.hide()
+        self.progressBar.hide()
 
-        self.abort.clicked.connect(self.sisyphusExit)
+        self.exitButton.clicked.connect(self.sisyphusExit)
 
     def centerOnScreen(self):
         resolution = QtWidgets.QDesktopWidget().screenGeometry()
@@ -104,27 +104,27 @@ class Sisyphus(QtWidgets.QMainWindow):
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
 
     def rowClicked(self):
-        Sisyphus.PKGSELECTED = len(
-            self.database.selectionModel().selectedRows())
+        Sisyphus.pkgSelect = len(
+            self.databaseTable.selectionModel().selectedRows())
         self.showPackageCount()
 
     def showPackageCount(self):
         self.statusBar().showMessage("Found: %d, Selected: %d packages" %
-                                     (Sisyphus.PKGCOUNT, Sisyphus.PKGSELECTED))
+                                     (Sisyphus.pkgCount, Sisyphus.pkgSelect))
 
-    def setSearchField(self):
-        Sisyphus.SEARCHFIELD = self.SEARCHFIELDS[self.selectfield.currentText(
+    def setApplicationFilter(self):
+        Sisyphus.applicationView = self.filterApplications[self.applicationFilter.currentText(
         )]
         self.loadDatabase()
 
-    def setSearchFilter(self):
-        Sisyphus.SEARCHFILTER = self.SEARCHFILTERS[self.selectfilter.currentText(
+    def setDatabaseFilter(self):
+        Sisyphus.databaseView = self.filterDatabases[self.databaseFilter.currentText(
         )]
-        Sisyphus.SELECT = self.selectfilter.currentText()
+        Sisyphus.SELECT = self.databaseFilter.currentText()
         self.loadDatabase()
 
     def loadDatabase(self):
-        FILTEROUT = "AND cat NOT LIKE 'virtual'"
+        noVirtual = "AND cat NOT LIKE 'virtual'"
         self.SELECTS = OrderedDict([
             ('all', '''SELECT
                 i.category AS cat,
@@ -149,7 +149,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND a.name = i.name
                 AND a.slot = i.slot
                 WHERE %s LIKE %s %s
-            ''' % (Sisyphus.SEARCHFIELD, Sisyphus.SEARCHTERM, FILTEROUT, Sisyphus.SEARCHFIELD, Sisyphus.SEARCHTERM, FILTEROUT)),
+            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual, Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
             ('instaled', '''SELECT
                 i.category AS cat,
                 i.name AS pn,
@@ -162,7 +162,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND i.name = a.name
                 AND i.slot = a.slot
                 WHERE %s LIKE %s %s
-            ''' % (Sisyphus.SEARCHFIELD, Sisyphus.SEARCHTERM, FILTEROUT)),
+            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
             ('installable', '''SELECT
                 a.category AS cat,
                 a.name AS pn,
@@ -176,7 +176,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND a.slot = i.slot
                 WHERE %s LIKE %s %s
                 AND iv IS NULL
-            ''' % (Sisyphus.SEARCHFIELD, Sisyphus.SEARCHTERM, FILTEROUT)),
+            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
             ('removable', '''SELECT
                 i.category AS cat,
                 i.name AS pn,
@@ -193,7 +193,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND i.name = rm.name
                 AND i.slot = rm.slot
                 WHERE %s LIKE %s %s
-            ''' % (Sisyphus.SEARCHFIELD, Sisyphus.SEARCHTERM, FILTEROUT)),
+            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
             ('upgradable', '''SELECT
                 i.category AS cat,
                 i.name AS pn,
@@ -207,14 +207,14 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND i.slot = a.slot
                 WHERE %s LIKE %s %s
                 AND a.timestamp > i.timestamp
-            ''' % (Sisyphus.SEARCHFIELD, Sisyphus.SEARCHTERM, FILTEROUT)),
+            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
         ])
         with sqlite3.connect(sisyphus_database_path) as db:
             cursor = db.cursor()
-            cursor.execute('%s' % (self.SELECTS[Sisyphus.SEARCHFILTER]))
+            cursor.execute('%s' % (self.SELECTS[Sisyphus.databaseView]))
             rows = cursor.fetchall()
-            Sisyphus.PKGCOUNT = len(rows)
-            Sisyphus.PKGSELECTED = 0
+            Sisyphus.pkgCount = len(rows)
+            Sisyphus.pkgSelect = 0
             model = QtGui.QStandardItemModel(len(rows), 5)
             model.setHorizontalHeaderLabels(
                 ['Category', 'Name', 'Available Version', 'Installed Version', 'Description'])
@@ -223,12 +223,12 @@ class Sisyphus(QtWidgets.QMainWindow):
                 for column in range(0, 5):
                     item = QtGui.QStandardItem("%s" % (row[column]))
                     model.setItem(indx, column, item)
-            self.database.setModel(model)
+            self.databaseTable.setModel(model)
             self.showPackageCount()
 
-    def filterDatabase(self):
-        search = self.input.text()
-        Sisyphus.SEARCHTERM = "'%" + search + "%'"
+    def searchDatabase(self):
+        search = self.inputBox.text()
+        Sisyphus.searchTerm = "'%" + search + "%'"
         self.loadDatabase()
 
     def updateSystem(self):
@@ -237,24 +237,24 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.updateThread.start()
 
     def packageInstall(self):
-        indexes = self.database.selectionModel().selectedRows(1)
+        indexes = self.databaseTable.selectionModel().selectedRows(1)
         if len(indexes) == 0:
             self.statusBar().showMessage("No package selected, please pick at least one!")
         else:
-            Sisyphus.PKGLIST = []
+            Sisyphus.pkgList = []
             for index in sorted(indexes):
-                Sisyphus.PKGLIST.append(index.data())
+                Sisyphus.pkgList.append(index.data())
             self.statusBar().showMessage("I am installing requested package(s), please wait ...")
             self.installThread.start()
 
     def packageUninstall(self):
-        indexes = self.database.selectionModel().selectedRows(1)
+        indexes = self.databaseTable.selectionModel().selectedRows(1)
         if len(indexes) == 0:
             self.statusBar().showMessage("No package selected, please pick at least one!")
         else:
-            Sisyphus.PKGLIST = []
+            Sisyphus.pkgList = []
             for index in sorted(indexes):
-                Sisyphus.PKGLIST.append(index.data())
+                Sisyphus.pkgList.append(index.data())
             self.statusBar().showMessage("I am removing requested package(s), please wait ...")
             self.uninstallThread.start()
 
@@ -272,28 +272,28 @@ class Sisyphus(QtWidgets.QMainWindow):
 
     def showProgressBar(self):
         self.hideButtons()
-        self.progress.setRange(0, 0)
-        self.progress.show()
+        self.progressBar.setRange(0, 0)
+        self.progressBar.show()
 
     def hideProgressBar(self):
-        self.progress.setRange(0, 1)
-        self.progress.setValue(1)
-        self.progress.hide()
+        self.progressBar.setRange(0, 1)
+        self.progressBar.setValue(1)
+        self.progressBar.hide()
         self.showButtons()
 
     def hideButtons(self):
-        self.install.hide()
-        self.uninstall.hide()
-        self.orphans.hide()
-        self.upgrade.hide()
-        self.abort.hide()
+        self.installButton.hide()
+        self.uninstallButton.hide()
+        self.orphansButton.hide()
+        self.upgradeButton.hide()
+        self.exitButton.hide()
 
     def showButtons(self):
-        self.install.show()
-        self.uninstall.show()
-        self.orphans.show()
-        self.upgrade.show()
-        self.abort.show()
+        self.installButton.show()
+        self.uninstallButton.show()
+        self.orphansButton.show()
+        self.upgradeButton.show()
+        self.exitButton.show()
 
     def updateStatusBar(self, workerMessage):
         self.statusBar().showMessage(workerMessage)
@@ -321,11 +321,11 @@ class InstallWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startInstall(self):
         self.started.emit()
-        PKGLIST = Sisyphus.PKGLIST
+        pkgList = Sisyphus.pkgList
         redcore_sync()
         generate_sisyphus_local_packages_table_csv_pre()
         portage_call = subprocess.Popen(
-            ['emerge', '-q'] + PKGLIST, stdout=subprocess.PIPE)
+            ['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
         atexit.register(kill_bg_portage, portage_call)
         for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
             self.strReady.emit(portage_output.rstrip())
@@ -342,11 +342,11 @@ class UninstallWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
-        PKGLIST = Sisyphus.PKGLIST
+        pkgList = Sisyphus.pkgList
         redcore_sync()
         generate_sisyphus_local_packages_table_csv_pre()
         portage_call = subprocess.Popen(
-            ['emerge', '--depclean', '-q'] + PKGLIST, stdout=subprocess.PIPE)
+            ['emerge', '--depclean', '-q'] + pkgList, stdout=subprocess.PIPE)
         atexit.register(kill_bg_portage, portage_call)
         for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
             self.strReady.emit(portage_output.rstrip())
