@@ -1,0 +1,13 @@
+#######################################################
+# Support for multiple mirrors is somewhat incomplete #
+#    Uncomment only one mirror from the list bellow   #
+#######################################################
+
+# Princeton University (USA) mirror
+# PORTAGE_BINHOST="http://mirror.math.princeton.edu/pub/redcorelinux/packages/"
+
+# Alpix.eu (Germany) mirror
+PORTAGE_BINHOST="http://mirror.alpix.eu/redcorelinux/packages/"
+
+# Yandex.ru (Russia) mirror
+# PORTAGE_BINHOST="http://mirror.yandex.ru/mirrors/redcorelinux/packages/"
