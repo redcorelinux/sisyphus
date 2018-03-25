@@ -68,6 +68,9 @@
           <height>25</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Configure Mirrors&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="icon">
          <iconset>
           <normaloff>../icon/settings.png</normaloff>../icon/settings.png</iconset>
