@@ -11,8 +11,8 @@ class SisyphusConfig(QtWidgets.QMainWindow):
         self.MIRRORLIST = getMirrors()
         self.updateMirrorList()
         self.show()
-        self.closeButton.clicked.connect(self.SisyphusConfigExit)
-        self.applyButton.clicked.connect(self.SisyphusConfigApply)
+        self.applyButton.pressed.connect(self.SisyphusConfigApply)
+        self.applyButton.released.connect(self.SisyphusConfigExit)
         self.mirrorCombo.activated.connect(self.setMirrorList)
 
     def centerOnScreen(self):
