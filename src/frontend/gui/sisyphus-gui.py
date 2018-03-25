@@ -7,6 +7,7 @@ import atexit
 from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from libsisyphus import *
+from sisyphusconfig import SisyphusConfig
 
 
 class Sisyphus(QtWidgets.QMainWindow):
@@ -43,6 +44,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.databaseTable.clicked.connect(self.rowClicked)
 
         self.inputBox.textEdited.connect(self.searchDatabase)
+
+        self.settingsButton.clicked.connect(self.sisyphusSettings)
 
         self.updateWorker = UpdateWorker()
         self.updateThread = QtCore.QThread()
@@ -297,6 +300,10 @@ class Sisyphus(QtWidgets.QMainWindow):
 
     def updateStatusBar(self, workerMessage):
         self.statusBar().showMessage(workerMessage)
+
+    def sisyphusSettings(self):
+        self.window = SisyphusConfig()
+        self.window.show()
 
     def sisyphusExit(self):
         self.close()

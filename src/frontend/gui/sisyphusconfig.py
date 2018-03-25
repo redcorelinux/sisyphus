@@ -42,8 +42,3 @@ class SisyphusConfig(QtWidgets.QMainWindow):
 
     def SisyphusConfigExit(self):
         self.close()
-
-if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    window = SisyphusConfig()
-    sys.exit(app.exec_())
