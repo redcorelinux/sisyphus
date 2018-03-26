@@ -8,7 +8,8 @@ from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from libsisyphus import *
 
-# main window
+
+# main window class
 class Sisyphus(QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
@@ -23,7 +24,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         ])
         self.applicationFilter.addItems(self.filterApplications.keys())
         self.applicationFilter.setCurrentText('Search by Name')
-        self.applicationFilter.currentIndexChanged.connect(self.setApplicationFilter)
+        self.applicationFilter.currentIndexChanged.connect(
+            self.setApplicationFilter)
         Sisyphus.applicationView = self.filterApplications['Search by Name']
 
         self.filterDatabases = OrderedDict([
@@ -44,57 +46,57 @@ class Sisyphus(QtWidgets.QMainWindow):
 
         self.inputBox.textEdited.connect(self.searchDatabase)
 
-        self.settingsButton.clicked.connect(self.mirrorSettings)
-        self.licenseButton.clicked.connect(self.showLicense)
+        self.settingsButton.clicked.connect(self.showMirrorWindow)
+        self.licenseButton.clicked.connect(self.showLicenseWindow)
 
-        self.updateWorker = UpdateWorker()
+        self.updateWorker = MainWorker()
         self.updateThread = QtCore.QThread()
         self.updateWorker.moveToThread(self.updateThread)
         self.updateWorker.started.connect(self.showProgressBar)
-        self.updateWorker.finished.connect(self.updateThread.quit)
         self.updateThread.started.connect(self.updateWorker.startUpdate)
         self.updateThread.finished.connect(self.jobDone)
+        self.updateWorker.finished.connect(self.updateThread.quit)
 
         self.installButton.clicked.connect(self.packageInstall)
-        self.installWorker = InstallWorker()
+        self.installWorker = MainWorker()
         self.installThread = QtCore.QThread()
         self.installWorker.moveToThread(self.installThread)
         self.installWorker.started.connect(self.showProgressBar)
-        self.installWorker.strReady.connect(self.updateStatusBar)
-        self.installWorker.finished.connect(self.installThread.quit)
         self.installThread.started.connect(self.installWorker.startInstall)
+        self.installWorker.strReady.connect(self.updateStatusBar)
         self.installThread.finished.connect(self.jobDone)
+        self.installWorker.finished.connect(self.installThread.quit)
 
         self.uninstallButton.clicked.connect(self.packageUninstall)
-        self.uninstallWorker = UninstallWorker()
+        self.uninstallWorker = MainWorker()
         self.uninstallThread = QtCore.QThread()
         self.uninstallWorker.moveToThread(self.uninstallThread)
         self.uninstallWorker.started.connect(self.showProgressBar)
-        self.uninstallWorker.strReady.connect(self.updateStatusBar)
-        self.uninstallWorker.finished.connect(self.uninstallThread.quit)
         self.uninstallThread.started.connect(
             self.uninstallWorker.startUninstall)
+        self.uninstallWorker.strReady.connect(self.updateStatusBar)
         self.uninstallThread.finished.connect(self.jobDone)
+        self.uninstallWorker.finished.connect(self.uninstallThread.quit)
 
         self.upgradeButton.clicked.connect(self.systemUpgrade)
-        self.upgradeWorker = UpgradeWorker()
+        self.upgradeWorker = MainWorker()
         self.upgradeThread = QtCore.QThread()
         self.upgradeWorker.moveToThread(self.upgradeThread)
         self.upgradeWorker.started.connect(self.showProgressBar)
-        self.upgradeWorker.strReady.connect(self.updateStatusBar)
-        self.upgradeWorker.finished.connect(self.upgradeThread.quit)
         self.upgradeThread.started.connect(self.upgradeWorker.startUpgrade)
+        self.upgradeWorker.strReady.connect(self.updateStatusBar)
         self.upgradeThread.finished.connect(self.jobDone)
+        self.upgradeWorker.finished.connect(self.upgradeThread.quit)
 
         self.orphansButton.clicked.connect(self.orphansRemove)
-        self.orphansWorker = OrphansWorker()
+        self.orphansWorker = MainWorker()
         self.orphansThread = QtCore.QThread()
         self.orphansWorker.moveToThread(self.orphansThread)
         self.orphansWorker.started.connect(self.showProgressBar)
-        self.orphansWorker.strReady.connect(self.updateStatusBar)
-        self.orphansWorker.finished.connect(self.orphansThread.quit)
         self.orphansThread.started.connect(self.orphansWorker.cleanOrphans)
+        self.orphansWorker.strReady.connect(self.updateStatusBar)
         self.orphansThread.finished.connect(self.jobDone)
+        self.orphansWorker.finished.connect(self.orphansThread.quit)
 
         self.updateSystem()
         self.progressBar.hide()
@@ -301,21 +303,22 @@ class Sisyphus(QtWidgets.QMainWindow):
     def updateStatusBar(self, workerMessage):
         self.statusBar().showMessage(workerMessage)
 
-    def mirrorSettings(self):
-        self.window = MirrorCfg()
+    def showMirrorWindow(self):
+        self.window = MirrorConfiguration()
         self.window.show()
 
-    def showLicense(self):
-        self.window = License()
+    def showLicenseWindow(self):
+        self.window = LicenseInformation()
         self.window.show()
 
     def sisyphusExit(self):
         self.close()
 
-# mirror configuration window
-class MirrorCfg(QtWidgets.QMainWindow):
+
+# mirror configuration window class
+class MirrorConfiguration(QtWidgets.QMainWindow):
     def __init__(self):
-        super(MirrorCfg, self).__init__()
+        super(MirrorConfiguration, self).__init__()
         uic.loadUi('ui/mirrorcfg.ui', self)
         self.centerOnScreen()
         self.MIRRORLIST = getMirrors()
@@ -327,7 +330,7 @@ class MirrorCfg(QtWidgets.QMainWindow):
     def centerOnScreen(self):
         resolution = QtWidgets.QDesktopWidget().screenGeometry()
         self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
-                    (resolution.height() / 2) - (self.frameSize().height() / 2))
+                  (resolution.height() / 2) - (self.frameSize().height() / 2))
 
     def updateMirrorList(self):
         model = QtGui.QStandardItemModel()
@@ -336,7 +339,7 @@ class MirrorCfg(QtWidgets.QMainWindow):
             item = QtGui.QStandardItem()
             item.setText(row['Url'])
             model.setItem(indx, item)
-            if row['isActive'] :
+            if row['isActive']:
                 self.ACTIVEMIRRORINDEX = indx
         self.mirrorCombo.setModel(model)
         self.mirrorCombo.setCurrentIndex(self.ACTIVEMIRRORINDEX)
@@ -352,33 +355,31 @@ class MirrorCfg(QtWidgets.QMainWindow):
     def mirrorCfgExit(self):
         self.close()
 
-# license information window
-class License(QtWidgets.QMainWindow):
+
+# license information window class
+class LicenseInformation(QtWidgets.QMainWindow):
     def __init__(self):
-        super(License, self).__init__()
+        super(LicenseInformation, self).__init__()
         uic.loadUi('ui/license.ui', self)
         self.centerOnScreen()
 
     def centerOnScreen(self):
         resolution = QtWidgets.QDesktopWidget().screenGeometry()
         self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
-                    (resolution.height() / 2) - (self.frameSize().height() / 2))
-# update worker
-class UpdateWorker(QtCore.QObject):
+                  (resolution.height() / 2) - (self.frameSize().height() / 2))
+
+
+# worker/multithreading class
+class MainWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
+    strReady = QtCore.pyqtSignal(str)
 
     @QtCore.pyqtSlot()
     def startUpdate(self):
         self.started.emit()
         sisyphus_pkg_system_update()
         self.finished.emit()
-
-# install worker
-class InstallWorker(QtCore.QObject):
-    started = QtCore.pyqtSignal()
-    finished = QtCore.pyqtSignal()
-    strReady = QtCore.pyqtSignal(str)
 
     @QtCore.pyqtSlot()
     def startInstall(self):
@@ -395,12 +396,6 @@ class InstallWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-# uninstall worker
-class UninstallWorker(QtCore.QObject):
-    started = QtCore.pyqtSignal()
-    finished = QtCore.pyqtSignal()
-    strReady = QtCore.pyqtSignal(str)
-
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
@@ -416,12 +411,6 @@ class UninstallWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-# upgrade worker
-class UpgradeWorker(QtCore.QObject):
-    started = QtCore.pyqtSignal()
-    finished = QtCore.pyqtSignal()
-    strReady = QtCore.pyqtSignal(str)
-
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
@@ -436,12 +425,6 @@ class UpgradeWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-# orphans worker
-class OrphansWorker(QtCore.QObject):
-    started = QtCore.pyqtSignal()
-    finished = QtCore.pyqtSignal()
-    strReady = QtCore.pyqtSignal(str)
-
     @QtCore.pyqtSlot()
     def cleanOrphans(self):
         self.started.emit()
@@ -455,6 +438,7 @@ class OrphansWorker(QtCore.QObject):
         generate_sisyphus_local_packages_table_csv_post()
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
+
 
 # launch application
 if __name__ == '__main__':
