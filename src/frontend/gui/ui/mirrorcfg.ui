@@ -26,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Sisyphus settings</string>
+   <string>Configure mirrors</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -37,7 +37,7 @@
     <item>
      <widget class="QGroupBox" name="mirrorGroupBox">
       <property name="title">
-       <string>Select Mirror</string>
+       <string>Select active mirror</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>

@@ -7,13 +7,12 @@ import atexit
 from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from libsisyphus import *
-from sisyphusconfig import SisyphusConfig
 
-
+# main window
 class Sisyphus(QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
-        uic.loadUi('ui/sisyphus-gui.ui', self)
+        uic.loadUi('ui/sisyphus.ui', self)
         self.centerOnScreen()
         self.show()
 
@@ -45,7 +44,7 @@ class Sisyphus(QtWidgets.QMainWindow):
 
         self.inputBox.textEdited.connect(self.searchDatabase)
 
-        self.settingsButton.clicked.connect(self.sisyphusSettings)
+        self.settingsButton.clicked.connect(self.mirrorSettings)
 
         self.updateWorker = UpdateWorker()
         self.updateThread = QtCore.QThread()
@@ -301,14 +300,54 @@ class Sisyphus(QtWidgets.QMainWindow):
     def updateStatusBar(self, workerMessage):
         self.statusBar().showMessage(workerMessage)
 
-    def sisyphusSettings(self):
-        self.window = SisyphusConfig()
+    def mirrorSettings(self):
+        self.window = MirrorCfg()
         self.window.show()
 
     def sisyphusExit(self):
         self.close()
 
+# mirror config window
+class MirrorCfg(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(MirrorCfg, self).__init__()
+        uic.loadUi('ui/mirrorcfg.ui', self)
+        self.centerOnScreen()
+        self.MIRRORLIST = getMirrors()
+        self.updateMirrorList()
+        self.applyButton.pressed.connect(self.mirrorCfgApply)
+        self.applyButton.released.connect(self.mirrorCfgExit)
+        self.mirrorCombo.activated.connect(self.setMirrorList)
 
+    def centerOnScreen(self):
+        resolution = QtWidgets.QDesktopWidget().screenGeometry()
+        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
+                    (resolution.height() / 2) - (self.frameSize().height() / 2))
+
+    def updateMirrorList(self):
+        model = QtGui.QStandardItemModel()
+        for row in self.MIRRORLIST:
+            indx = self.MIRRORLIST.index(row)
+            item = QtGui.QStandardItem()
+            item.setText(row['Url'])
+            model.setItem(indx, item)
+            if row['isActive'] :
+                self.ACTIVEMIRRORINDEX = indx
+        self.mirrorCombo.setModel(model)
+        self.mirrorCombo.setCurrentIndex(self.ACTIVEMIRRORINDEX)
+
+    def setMirrorList(self):
+        self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = False
+        self.ACTIVEMIRRORINDEX = self.mirrorCombo.currentIndex()
+        self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = True
+
+    def mirrorCfgApply(self):
+        setActiveMirror(self.MIRRORLIST)
+
+    def mirrorCfgExit(self):
+        self.close()
+
+# update worker
 class UpdateWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
@@ -319,7 +358,7 @@ class UpdateWorker(QtCore.QObject):
         sisyphus_pkg_system_update()
         self.finished.emit()
 
-
+# install worker
 class InstallWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
@@ -340,7 +379,7 @@ class InstallWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-
+# uninstall worker
 class UninstallWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
@@ -361,7 +400,7 @@ class UninstallWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-
+# upgrade worker
 class UpgradeWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
@@ -381,7 +420,7 @@ class UpgradeWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-
+# orphans worker
 class OrphansWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
@@ -401,7 +440,7 @@ class OrphansWorker(QtCore.QObject):
         sync_sisyphus_local_packages_table_csv()
         self.finished.emit()
 
-
+# launch application
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Sisyphus()
