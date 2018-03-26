@@ -45,6 +45,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.inputBox.textEdited.connect(self.searchDatabase)
 
         self.settingsButton.clicked.connect(self.mirrorSettings)
+        self.licenseButton.clicked.connect(self.showLicense)
 
         self.updateWorker = UpdateWorker()
         self.updateThread = QtCore.QThread()
@@ -304,10 +305,14 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.window = MirrorCfg()
         self.window.show()
 
+    def showLicense(self):
+        self.window = License()
+        self.window.show()
+
     def sisyphusExit(self):
         self.close()
 
-# mirror config window
+# mirror configuration window
 class MirrorCfg(QtWidgets.QMainWindow):
     def __init__(self):
         super(MirrorCfg, self).__init__()
@@ -347,6 +352,17 @@ class MirrorCfg(QtWidgets.QMainWindow):
     def mirrorCfgExit(self):
         self.close()
 
+# license information window
+class License(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(License, self).__init__()
+        uic.loadUi('ui/license.ui', self)
+        self.centerOnScreen()
+
+    def centerOnScreen(self):
+        resolution = QtWidgets.QDesktopWidget().screenGeometry()
+        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
+                    (resolution.height() / 2) - (self.frameSize().height() / 2))
 # update worker
 class UpdateWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()

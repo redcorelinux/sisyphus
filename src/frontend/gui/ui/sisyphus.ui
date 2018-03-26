@@ -99,6 +99,26 @@
       <item>
        <widget class="QComboBox" name="databaseFilter"/>
       </item>
+      <item>
+       <widget class="QPushButton" name="licenseButton">
+        <property name="maximumSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../icon/license.png</normaloff>../icon/license.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item row="3" column="0">
@@ -308,6 +328,7 @@
   <tabstop>applicationFilter</tabstop>
   <tabstop>inputBox</tabstop>
   <tabstop>databaseFilter</tabstop>
+  <tabstop>licenseButton</tabstop>
   <tabstop>databaseTable</tabstop>
   <tabstop>installButton</tabstop>
   <tabstop>uninstallButton</tabstop>
