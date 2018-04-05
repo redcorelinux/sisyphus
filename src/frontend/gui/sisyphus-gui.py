@@ -378,65 +378,65 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpdate(self):
         self.started.emit()
-        sisyphus_pkg_system_update()
+        startUpdate()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startInstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        redcore_sync()
-        generate_sisyphus_local_packages_table_csv_pre()
-        portage_call = subprocess.Popen(
+        syncAll()
+        makeLocalPkgCSVpre()
+        portageExec = subprocess.Popen(
             ['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
-        atexit.register(kill_bg_portage, portage_call)
-        for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-            self.strReady.emit(portage_output.rstrip())
-        generate_sisyphus_local_packages_table_csv_post()
-        sync_sisyphus_local_packages_table_csv()
+        atexit.register(portageKill, portageExec)
+        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+            self.strReady.emit(portageOutput.rstrip())
+        makeLocalPkgCSVpost()
+        syncLocalPkgTable()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        redcore_sync()
-        generate_sisyphus_local_packages_table_csv_pre()
-        portage_call = subprocess.Popen(
+        syncAll()
+        makeLocalPkgCSVpre()
+        portageExec = subprocess.Popen(
             ['emerge', '--depclean', '-q'] + pkgList, stdout=subprocess.PIPE)
-        atexit.register(kill_bg_portage, portage_call)
-        for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-            self.strReady.emit(portage_output.rstrip())
-        generate_sisyphus_local_packages_table_csv_post()
-        sync_sisyphus_local_packages_table_csv()
+        atexit.register(portageKill, portageExec)
+        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+            self.strReady.emit(portageOutput.rstrip())
+        makeLocalPkgCSVpost()
+        syncLocalPkgTable()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        redcore_sync()
-        generate_sisyphus_local_packages_table_csv_pre()
-        portage_call = subprocess.Popen(
+        syncAll()
+        makeLocalPkgCSVpre()
+        portageExec = subprocess.Popen(
             ['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
-        atexit.register(kill_bg_portage, portage_call)
-        for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-            self.strReady.emit(portage_output.rstrip())
-        generate_sisyphus_local_packages_table_csv_post()
-        sync_sisyphus_local_packages_table_csv()
+        atexit.register(portageKill, portageExec)
+        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+            self.strReady.emit(portageOutput.rstrip())
+        makeLocalPkgCSVpost()
+        syncLocalPkgTable()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def cleanOrphans(self):
         self.started.emit()
-        redcore_sync()
-        generate_sisyphus_local_packages_table_csv_pre()
-        portage_call = subprocess.Popen(
+        syncAll()
+        makeLocalPkgCSVpre()
+        portageExec = subprocess.Popen(
             ['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
-        atexit.register(kill_bg_portage, portage_call)
-        for portage_output in io.TextIOWrapper(portage_call.stdout, encoding="utf-8"):
-            self.strReady.emit(portage_output.rstrip())
-        generate_sisyphus_local_packages_table_csv_post()
-        sync_sisyphus_local_packages_table_csv()
+        atexit.register(portageKill, portageExec)
+        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+            self.strReady.emit(portageOutput.rstrip())
+        makeLocalPkgCSVpost()
+        syncLocalPkgTable()
         self.finished.emit()
 
 

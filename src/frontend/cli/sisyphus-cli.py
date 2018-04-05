@@ -3,42 +3,43 @@
 import sys
 from libsisyphus import *
 
-check_system_mode()
+#checkSystemMode()
 
-PKGLIST = sys.argv[2:]
+pkgList = sys.argv[2:]
 
 if "__main__" == __name__:
-    if "install" in sys.argv[1:]:
-        sisyphus_pkg_install(PKGLIST)
-    elif "uninstall" in sys.argv[1:]:
-        sisyphus_pkg_uninstall(PKGLIST)
-    elif "force-uninstall" in sys.argv[1:]:
-        sisyphus_pkg_force_uninstall(PKGLIST)
-    elif "remove-orphans" in sys.argv[1:]:
-        sisyphus_pkg_remove_orphans()
-    elif "update" in sys.argv[1:]:
-        sisyphus_pkg_system_update()
-    elif "upgrade" in sys.argv[1:]:
-        sisyphus_pkg_system_upgrade()
-    elif "search" in sys.argv[1:]:
-        sisyphus_pkg_search(PKGLIST)
-    elif "spmsync" in sys.argv[1:]:
-        sisyphus_pkg_spmsync()
-    elif "rescue" in sys.argv[1:]:
-        sisyphus_db_rescue()
-    elif "sysinfo" in sys.argv[1:]:
-        sisyphus_pkg_sysinfo()
-    elif "mirror" in sys.argv[1:]:
-        if not sys.argv[2:]:
-            sisyphus_pkg_help()
-        elif "list" in sys.argv[2]:
-            listRepo()
-        elif "set" in sys.argv[2:]:
-            if not sys.argv[3:]:
-                sisyphus_pkg_help()
+    if sys.argv[1:]:
+        if "install" in sys.argv[1:]:
+            startInstall(pkgList)
+        elif "uninstall" in sys.argv[1:]:
+            startUninstall(pkgList)
+        elif "force-uninstall" in sys.argv[1:]:
+            startUninstallForce(pkgList)
+        elif "remove-orphans" in sys.argv[1:]:
+            removeOrphans()
+        elif "update" in sys.argv[1:]:
+            startUpdate()
+        elif "upgrade" in sys.argv[1:]:
+            startUpgrade()
+        elif "search" in sys.argv[1:]:
+            startSearch(pkgList)
+        elif "spmsync" in sys.argv[1:]:
+            syncSpm()
+        elif "rescue" in sys.argv[1:]:
+            rescueDB()
+        elif "sysinfo" in sys.argv[1:]:
+            sysInfo()
+        elif "mirror" in sys.argv[1:]:
+            if "list" in sys.argv[2:]:
+                listRepo()
+            elif "set" in sys.argv[2:]:
+                if sys.argv[3:]:
+                    setRepo(sys.argv[3:])
+                else:
+                    showHelp()
             else:
-                setRepo(sys.argv[3:])
-    elif "help" in sys.argv[1:]:
-        sisyphus_pkg_help()
-    elif not sys.argv[1:]:
-        sisyphus_pkg_help()
+                showHelp()
+        elif "help" in sys.argv[1:]:
+            showHelp()
+    else:
+        showHelp()
