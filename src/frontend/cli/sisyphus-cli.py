@@ -24,7 +24,7 @@ if "__main__" == __name__:
         elif "search" in sys.argv[1:]:
             startSearch(pkgList)
         elif "spmsync" in sys.argv[1:]:
-            syncSpm()
+            startSyncSPM()
         elif "rescue" in sys.argv[1:]:
             rescueDB()
         elif "sysinfo" in sys.argv[1:]:
