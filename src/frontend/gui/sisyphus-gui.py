@@ -31,8 +31,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.filterDatabases = OrderedDict([
             ('All Packages', 'all'),
             ('Installed Packages', 'installed'),
-            ('Installable Packages', 'installable'),
-            ('Upgradable/Rebuilt Packages', 'upgradable')
+            ('Available Packages', 'installable'),
+            ('Upgradable Packages', 'upgradable')
         ])
         self.databaseFilter.addItems(self.filterDatabases.keys())
         self.databaseFilter.setCurrentText('All Packages')
