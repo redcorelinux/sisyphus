@@ -201,7 +201,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND iv <> av
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
         ])
-        with sqlite3.connect(sisyphus_database_path) as db:
+        with sqlite3.connect(sisyphusDB) as db:
             cursor = db.cursor()
             cursor.execute('%s' % (self.SELECTS[Sisyphus.databaseView]))
             rows = cursor.fetchall()
@@ -372,7 +372,6 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        syncAll()
         makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
@@ -387,7 +386,6 @@ class MainWorker(QtCore.QObject):
     def startUninstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        syncAll()
         makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '--depclean', '-q'] + pkgList, stdout=subprocess.PIPE)
@@ -401,7 +399,6 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        syncAll()
         makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
@@ -415,7 +412,6 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def cleanOrphans(self):
         self.started.emit()
-        syncAll()
         makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
