@@ -32,7 +32,6 @@ class Sisyphus(QtWidgets.QMainWindow):
             ('All Packages', 'all'),
             ('Installed Packages', 'installed'),
             ('Installable Packages', 'installable'),
-            ('Safely Removable Packages', 'removable'),
             ('Upgradable/Rebuilt Packages', 'upgradable')
         ])
         self.databaseFilter.addItems(self.filterDatabases.keys())
@@ -185,24 +184,6 @@ class Sisyphus(QtWidgets.QMainWindow):
 				LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
                 WHERE %s LIKE %s %s
                 AND iv IS NULL
-            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
-            ('removable', '''SELECT
-                i.category AS cat,
-                i.name AS pn,
-                a.version AS av,
-                i.version AS iv,
-                d.description AS descr
-                FROM local_packages AS i
-                LEFT JOIN remote_packages AS a
-                ON i.category = a.category
-                AND i.name = a.name
-                AND i.slot = a.slot
-                INNER JOIN removable_packages as rm
-                ON i.category = rm.category
-                AND i.name = rm.name
-                AND i.slot = rm.slot
-				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                WHERE %s LIKE %s %s
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
             ('upgradable', '''SELECT
                 i.category AS cat,
