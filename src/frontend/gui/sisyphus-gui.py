@@ -30,7 +30,7 @@ class Sisyphus(QtWidgets.QMainWindow):
 
         self.filterDatabases = OrderedDict([
             ('All Packages', 'all'),
-            ('Installed Packages', 'instaled'),
+            ('Installed Packages', 'installed'),
             ('Installable Packages', 'installable'),
             ('Safely Removable Packages', 'removable'),
             ('Upgradable/Rebuilt Packages', 'upgradable')
@@ -136,11 +136,12 @@ class Sisyphus(QtWidgets.QMainWindow):
                 i.name as pn,
                 IFNULL(a.version, 'None') AS av,
                 i.version AS iv,
-                i.description AS descr
+                d.description AS descr
                 FROM local_packages AS i LEFT OUTER JOIN remote_packages as a
                 ON i.category = a.category
                 AND i.name = a.name
                 AND i.slot = a.slot
+				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                 WHERE %s LIKE %s %s
                 UNION
                 SELECT
@@ -148,24 +149,26 @@ class Sisyphus(QtWidgets.QMainWindow):
                 a.name as pn,
                 a.version AS av,
                 IFNULL(i.version, 'None') AS iv,
-                a.description AS descr
+                d.description AS descr
                 FROM remote_packages AS a LEFT OUTER JOIN local_packages AS i
                 ON a.category = i.category
                 AND a.name = i.name
                 AND a.slot = i.slot
+				LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
                 WHERE %s LIKE %s %s
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual, Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
-            ('instaled', '''SELECT
+            ('installed', '''SELECT
                 i.category AS cat,
                 i.name AS pn,
                 a.version AS av,
                 i.version AS iv,
-                i.description AS descr
+                d.description AS descr
                 FROM local_packages AS i
                 LEFT JOIN remote_packages AS a
                 ON i.category = a.category
                 AND i.name = a.name
                 AND i.slot = a.slot
+				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                 WHERE %s LIKE %s %s
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
             ('installable', '''SELECT
@@ -173,12 +176,13 @@ class Sisyphus(QtWidgets.QMainWindow):
                 a.name AS pn,
                 a.version AS av,
                 i.version AS iv,
-                a.description AS descr
+                d.description AS descr
                 FROM remote_packages AS a
                 LEFT JOIN local_packages AS i
                 ON a.category = i.category
                 AND a.name = i.name
                 AND a.slot = i.slot
+				LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
                 WHERE %s LIKE %s %s
                 AND iv IS NULL
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
@@ -187,7 +191,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 i.name AS pn,
                 a.version AS av,
                 i.version AS iv,
-                i.description AS descr
+                d.description AS descr
                 FROM local_packages AS i
                 LEFT JOIN remote_packages AS a
                 ON i.category = a.category
@@ -197,21 +201,23 @@ class Sisyphus(QtWidgets.QMainWindow):
                 ON i.category = rm.category
                 AND i.name = rm.name
                 AND i.slot = rm.slot
+				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                 WHERE %s LIKE %s %s
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
             ('upgradable', '''SELECT
                 i.category AS cat,
                 i.name AS pn,
-                CASE WHEN a.version = i.version THEN 'Rebuilt' ELSE a.version END AS av,
+                a.version AS av,
                 i.version AS iv,
-                i.description AS descr
+                d.description AS descr
                 FROM local_packages AS i
                 INNER JOIN remote_packages AS a
                 ON i.category = a.category
                 AND i.name = a.name
                 AND i.slot = a.slot
+				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                 WHERE %s LIKE %s %s
-                AND a.timestamp > i.timestamp
+                AND iv <> av
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
         ])
         with sqlite3.connect(sisyphus_database_path) as db:
