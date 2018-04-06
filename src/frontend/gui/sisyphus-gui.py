@@ -373,14 +373,14 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
         pkgList = Sisyphus.pkgList
         syncAll()
-        makeLocalPkgCSVpre()
+        makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalPkgCSVpost()
-        syncLocalPkgTable()
+        makeLocalDatabaseCSVpost()
+        syncLocalDatabaseTable()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -388,42 +388,42 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
         pkgList = Sisyphus.pkgList
         syncAll()
-        makeLocalPkgCSVpre()
+        makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '--depclean', '-q'] + pkgList, stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalPkgCSVpost()
-        syncLocalPkgTable()
+        makeLocalDatabaseCSVpost()
+        syncLocalDatabaseTable()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
         syncAll()
-        makeLocalPkgCSVpre()
+        makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalPkgCSVpost()
-        syncLocalPkgTable()
+        makeLocalDatabaseCSVpost()
+        syncLocalDatabaseTable()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def cleanOrphans(self):
         self.started.emit()
         syncAll()
-        makeLocalPkgCSVpre()
+        makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalPkgCSVpost()
-        syncLocalPkgTable()
+        makeLocalDatabaseCSVpost()
+        syncLocalDatabaseTable()
         self.finished.emit()
 
 
