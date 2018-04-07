@@ -13,7 +13,7 @@ from libsisyphus import *
 class Sisyphus(QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
-        uic.loadUi('ui/sisyphus.ui', self)
+        uic.loadUi('/usr/share/sisyphus/ui/sisyphus.ui', self)
         self.centerOnScreen()
         self.show()
 
@@ -306,7 +306,7 @@ class Sisyphus(QtWidgets.QMainWindow):
 class MirrorConfiguration(QtWidgets.QMainWindow):
     def __init__(self):
         super(MirrorConfiguration, self).__init__()
-        uic.loadUi('ui/mirrorcfg.ui', self)
+        uic.loadUi('/usr/share/sisyphus/ui/mirrorcfg.ui', self)
         self.centerOnScreen()
         self.MIRRORLIST = getMirrors()
         self.updateMirrorList()
@@ -347,7 +347,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
 class LicenseInformation(QtWidgets.QMainWindow):
     def __init__(self):
         super(LicenseInformation, self).__init__()
-        uic.loadUi('ui/license.ui', self)
+        uic.loadUi('/usr/share/sisyphus/ui/license.ui', self)
         self.centerOnScreen()
 
     def centerOnScreen(self):
