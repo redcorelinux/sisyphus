@@ -133,8 +133,8 @@ class Sisyphus(QtWidgets.QMainWindow):
             ('all', '''SELECT
                 i.category AS cat,
                 i.name as pn,
+                i.version as iv,
                 IFNULL(a.version, 'None') AS av,
-                i.version AS iv,
                 d.description AS descr
                 FROM local_packages AS i LEFT OUTER JOIN remote_packages as a
                 ON i.category = a.category
@@ -146,8 +146,8 @@ class Sisyphus(QtWidgets.QMainWindow):
                 SELECT
                 a.category AS cat,
                 a.name as pn,
-                a.version AS av,
                 IFNULL(i.version, 'None') AS iv,
+                a.version as av,
                 d.description AS descr
                 FROM remote_packages AS a LEFT OUTER JOIN local_packages AS i
                 ON a.category = i.category
@@ -159,8 +159,8 @@ class Sisyphus(QtWidgets.QMainWindow):
             ('installed', '''SELECT
                 i.category AS cat,
                 i.name AS pn,
-                a.version AS av,
                 i.version AS iv,
+                a.version as av,
                 d.description AS descr
                 FROM local_packages AS i
                 LEFT JOIN remote_packages AS a
@@ -173,8 +173,8 @@ class Sisyphus(QtWidgets.QMainWindow):
             ('installable', '''SELECT
                 a.category AS cat,
                 a.name AS pn,
+                i.version as iv,
                 a.version AS av,
-                i.version AS iv,
                 d.description AS descr
                 FROM remote_packages AS a
                 LEFT JOIN local_packages AS i
@@ -188,8 +188,8 @@ class Sisyphus(QtWidgets.QMainWindow):
             ('upgradable', '''SELECT
                 i.category AS cat,
                 i.name AS pn,
+                i.version as iv,
                 a.version AS av,
-                i.version AS iv,
                 d.description AS descr
                 FROM local_packages AS i
                 INNER JOIN remote_packages AS a
@@ -209,7 +209,7 @@ class Sisyphus(QtWidgets.QMainWindow):
             Sisyphus.pkgSelect = 0
             model = QtGui.QStandardItemModel(len(rows), 5)
             model.setHorizontalHeaderLabels(
-                ['Category', 'Name', 'Available Version', 'Installed Version', 'Description'])
+                ['Category', 'Name', 'Installed Version', 'Available Version', 'Description'])
             for row in rows:
                 indx = rows.index(row)
                 for column in range(0, 5):
