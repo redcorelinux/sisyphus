@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-makecsv() {
-	qlist -ICScv|sed -e "s/\//\,/" -e "s/[\t ]/\,/" -e "s/\:/\,/" >> /tmp/localPackagesPost.csv
-	mv /tmp/localPackagesPost.csv /var/lib/sisyphus/csv/
-}
-
-makecsv

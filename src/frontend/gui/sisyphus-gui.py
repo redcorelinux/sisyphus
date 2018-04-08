@@ -372,13 +372,12 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalDatabaseCSVpost()
+        makeLocalDatabaseCSV()
         syncLocalDatabaseTable()
         self.finished.emit()
 
@@ -386,39 +385,36 @@ class MainWorker(QtCore.QObject):
     def startUninstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '--depclean', '-q'] + pkgList, stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalDatabaseCSVpost()
+        makeLocalDatabaseCSV()
         syncLocalDatabaseTable()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalDatabaseCSVpost()
+        makeLocalDatabaseCSV()
         syncLocalDatabaseTable()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def cleanOrphans(self):
         self.started.emit()
-        makeLocalDatabaseCSVpre()
         portageExec = subprocess.Popen(
             ['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalDatabaseCSVpost()
+        makeLocalDatabaseCSV()
         syncLocalDatabaseTable()
         self.finished.emit()
 
