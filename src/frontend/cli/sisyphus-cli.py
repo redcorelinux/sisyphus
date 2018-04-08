@@ -3,7 +3,7 @@
 import sys
 from libsisyphus import *
 
-#checkSystemMode()
+checkSystemMode()
 
 pkgList = sys.argv[2:]
 
