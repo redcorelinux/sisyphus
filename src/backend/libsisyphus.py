@@ -10,7 +10,6 @@ import sys
 import urllib3
 import io
 
-from datetime import datetime
 from dateutil import parser
 
 redcore_portage_config_path = '/opt/redcore-build'
@@ -101,11 +100,11 @@ def syncAll():
 
     reqRmtPkgTs = http.request('HEAD',rmtCsvUrl)
     rmtPkgTs = int(parser.parse(reqRmtPkgTs.headers['last-modified']).strftime("%s"))
-    lclPkgTs = int(datetime.utcnow().strftime("%s"))
+    lclPkgTs = int(os.path.getctime(rmtPkgCsv))
 
     reqRmtDscTs = http.request('HEAD',rmtDscUrl)
     rmtDscTs = int(parser.parse(reqRmtDscTs.headers['last-modified']).strftime("%s"))
-    lclDscTs = int(datetime.utcnow().strftime("%s"))
+    lclDscTs = int(os.path.getctime(rmtDscCsv))
 
     if rmtPkgTs > lclPkgTs or rmtDscTs > lclDscTs:
         fetchRemoteDatabaseCSV()
