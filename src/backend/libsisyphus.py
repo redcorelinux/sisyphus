@@ -9,7 +9,9 @@ import subprocess
 import sys
 import urllib3
 import io
+
 from datetime import datetime
+from dateutil import parser
 
 redcore_portage_config_path = '/opt/redcore-build'
 
@@ -98,11 +100,11 @@ def syncAll():
     http = urllib3.PoolManager()
 
     reqRmtPkgTs = http.request('HEAD',rmtCsvUrl)
-    rmtPkgTs = int(datetime.strptime(reqRmtPkgTs.headers['last-modified'], '%a, %d %b %Y %H:%M:%S %Z').strftime("%s"))
+    rmtPkgTs = int(parser.parse(reqRmtPkgTs.headers['last-modified']).strftime("%s"))
     lclPkgTs = int(datetime.utcnow().strftime("%s"))
 
     reqRmtDscTs = http.request('HEAD',rmtDscUrl)
-    rmtDscTs = int(datetime.strptime(reqRmtDscTs.headers['last-modified'], '%a, %d %b %Y %H:%M:%S %Z').strftime("%s"))
+    rmtDscTs = int(parser.parse(reqRmtDscTs.headers['last-modified']).strftime("%s"))
     lclDscTs = int(datetime.utcnow().strftime("%s"))
 
     if rmtPkgTs > lclPkgTs or rmtDscTs > lclDscTs:
