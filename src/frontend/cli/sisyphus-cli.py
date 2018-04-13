@@ -18,7 +18,7 @@ if "__main__" == __name__:
         elif "remove-orphans" in sys.argv[1:]:
             removeOrphans()
         elif "update" in sys.argv[1:]:
-            startUpdate()
+            startSync()
         elif "upgrade" in sys.argv[1:]:
             startUpgrade()
         elif "search" in sys.argv[1:]:

@@ -168,6 +168,10 @@ def startSearch(pkgList):
 def startUpdate():
     syncAll()
 
+def startSync():
+    syncGitRepos()
+    syncPortageCfg()
+
 def sysInfo():
     subprocess.check_call(['emerge', '--info'])
 
