@@ -168,6 +168,7 @@ def startSearch(pkgList):
 def startUpdate():
     syncAll()
 
+@animation.wait('syncing portage tree && portage config files')
 def startSync():
     syncGitRepos()
     syncPortageCfg()
