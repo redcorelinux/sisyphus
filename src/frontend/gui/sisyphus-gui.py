@@ -377,7 +377,6 @@ class MainWorker(QtCore.QObject):
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalDatabaseCSV()
         syncLocalDatabaseTable()
         self.finished.emit()
 
@@ -390,7 +389,6 @@ class MainWorker(QtCore.QObject):
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalDatabaseCSV()
         syncLocalDatabaseTable()
         self.finished.emit()
 
@@ -402,7 +400,6 @@ class MainWorker(QtCore.QObject):
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalDatabaseCSV()
         syncLocalDatabaseTable()
         self.finished.emit()
 
@@ -414,7 +411,6 @@ class MainWorker(QtCore.QObject):
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        makeLocalDatabaseCSV()
         syncLocalDatabaseTable()
         self.finished.emit()
 

@@ -41,12 +41,25 @@ def checkSystemMode():
             print("\nThe system is not set to binmode or mixedmode, refusing to run!\n")
             sys.exit(1)
 
-def fetchRemoteDatabaseCSV():
+def getRmtCsvUrl():
+    rmtCsvUrl = []
     portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput.rstrip():
             rmtCsvUrl = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
+    return rmtCsvUrl
+
+def getRmtDscUrl():
+    rmtDscUrl = []
+    portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
+    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+        if "PORTAGE_BINHOST" in portageOutput.rstrip():
             rmtDscUrl = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
+    return rmtDscUrl
+
+def fetchRemoteDatabaseCSV():
+    rmtCsvUrl = getRmtCsvUrl()
+    rmtDscUrl = getRmtDscUrl()
 
     http = urllib3.PoolManager()
 
@@ -56,14 +69,12 @@ def fetchRemoteDatabaseCSV():
     with http.request('GET', rmtDscUrl, preload_content=False) as tmp_buffer, open(rmtDscCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-def syncGitRepos():
-    subprocess.check_call(['emerge', '--sync', '--quiet'])
+def makeLocalDatabaseCSV():
+    subprocess.check_call(['/usr/share/sisyphus/helpers/make_local_csv']) # this is really hard to do in python, so we cheat with a bash helper script
 
-def syncPortageCfg():
-    os.chdir(redcore_portage_config_path)
-    subprocess.call(['git', 'pull', '--quiet'])
+def syncRemoteDatabaseTable():
+    fetchRemoteDatabaseCSV()
 
-def syncRemoteDatabaseCSV():
     sisyphusdb = sqlite3.connect(sisyphusDB)
     sisyphusdb.cursor().execute('''drop table if exists remote_packages''')
     sisyphusdb.cursor().execute('''create table remote_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
@@ -81,20 +92,31 @@ def syncRemoteDatabaseCSV():
             sisyphusdb.cursor().execute("insert into remote_descriptions (category, name, description) values (?, ?, ?);", row)
     sisyphusdb.commit()
     sisyphusdb.close()
-        
-def syncRemoteDatabaseTable():
-    fetchRemoteDatabaseCSV()
-    syncRemoteDatabaseCSV()
+
+def syncLocalDatabaseTable():
+    makeLocalDatabaseCSV()
+
+    sisyphusdb = sqlite3.connect(sisyphusDB)
+    sisyphusdb.cursor().execute('''drop table if exists local_packages''')
+    sisyphusdb.cursor().execute('''create table local_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
+    with open(lclPkgCsv) as lclCsv:
+        for row in csv.reader(lclCsv):
+            sisyphusdb.cursor().execute("insert into local_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
+    sisyphusdb.commit()
+    sisyphusdb.close()
+
+def syncGitRepos():
+    subprocess.check_call(['emerge', '--sync', '--quiet'])
+
+def syncPortageCfg():
+    os.chdir(redcore_portage_config_path)
+    subprocess.call(['git', 'pull', '--quiet'])
 
 @animation.wait('syncing remote database tables')
 def syncAll():
     checkRoot()
-
-    portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "PORTAGE_BINHOST" in portageOutput.rstrip():
-            rmtCsvUrl = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
-            rmtDscUrl = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
+    rmtCsvUrl = getRmtCsvUrl()
+    rmtDscUrl = getRmtDscUrl()
 
     http = urllib3.PoolManager()
 
@@ -107,59 +129,39 @@ def syncAll():
     lclDscTs = int(os.path.getctime(rmtDscCsv))
 
     if rmtPkgTs > lclPkgTs or rmtDscTs > lclDscTs:
-        fetchRemoteDatabaseCSV()
         syncGitRepos()
         syncPortageCfg()
         syncRemoteDatabaseTable()
 
-def makeLocalDatabaseCSV():
-    subprocess.check_call(['/usr/share/sisyphus/helpers/make_local_csv']) # this is really hard to do in python, so we cheat with a bash helper script
-
-def syncLocalDatabaseTable():
-    sisyphusdb = sqlite3.connect(sisyphusDB)
-    sisyphusdb.cursor().execute('''drop table if exists local_packages''')
-    sisyphusdb.cursor().execute('''create table local_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
-    with open(lclPkgCsv) as lclCsv:
-        for row in csv.reader(lclCsv):
-            sisyphusdb.cursor().execute("insert into local_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
-    sisyphusdb.commit()
-    sisyphusdb.close()
-
 @animation.wait('syncing local database tables')
 def startSyncSPM():
-    makeLocalDatabaseCSV()
     syncLocalDatabaseTable()
 
 def startInstall(pkgList):
     syncAll()
     portageExec = subprocess.Popen(['emerge', '-aq'] + pkgList)
     portageExec.communicate()
-    makeLocalDatabaseCSV()
     syncLocalDatabaseTable()
 
 def startUninstall(pkgList):
     portageExec = subprocess.Popen(['emerge', '--depclean', '-aq'] + pkgList)
     portageExec.communicate()
-    makeLocalDatabaseCSV()
     syncLocalDatabaseTable()
 
 def startUninstallForce(pkgList):
     portageExec = subprocess.Popen(['emerge', '--unmerge', '-aq'] + pkgList)
     portageExec.communicate()
-    makeLocalDatabaseCSV()
     syncLocalDatabaseTable()
 
 def removeOrphans():
     portageExec = subprocess.Popen(['emerge', '--depclean', '-aq'])
     portageExec.communicate()
-    makeLocalDatabaseCSV()
     syncLocalDatabaseTable()
 
 def startUpgrade():
     syncAll()
     portageExec = subprocess.Popen(['emerge', '-uDaNq', '--backtrack=100', '--with-bdeps=y', '@world'])
     portageExec.communicate()
-    makeLocalDatabaseCSV()
     syncLocalDatabaseTable()
 
 def startSearch(pkgList):
@@ -187,10 +189,7 @@ def rescueDB():
     if os.path.exists(sisyphusDB):
         os.remove(sisyphusDB)
 
-    fetchRemoteDatabaseCSV()
-    syncRemoteDatabaseCSV()
-
-    makeLocalDatabaseCSV()
+    syncRemoteDatabaseTable()
     syncLocalDatabaseTable()
 
 def portageKill(portageCmd):
