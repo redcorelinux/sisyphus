@@ -377,7 +377,7 @@ class MainWorker(QtCore.QObject):
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        syncLocalDatabaseTable()
+        syncLocalDatabase()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -389,7 +389,7 @@ class MainWorker(QtCore.QObject):
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        syncLocalDatabaseTable()
+        syncLocalDatabase()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -400,7 +400,7 @@ class MainWorker(QtCore.QObject):
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        syncLocalDatabaseTable()
+        syncLocalDatabase()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -411,7 +411,7 @@ class MainWorker(QtCore.QObject):
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
-        syncLocalDatabaseTable()
+        syncLocalDatabase()
         self.finished.emit()
 
 

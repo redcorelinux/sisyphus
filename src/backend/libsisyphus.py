@@ -9,20 +9,22 @@ import subprocess
 import sys
 import urllib3
 import io
-
 from dateutil import parser
 
 redcore_portage_config_path = '/opt/redcore-build'
-
-rmtPkgCsv = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
-rmtDscCsv = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
-lclPkgCsv = '/var/lib/sisyphus/csv/localPackagesPre.csv'
+remotePkgsDB = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
+remoteDscsDB = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
+localPkgsDB = '/var/lib/sisyphus/csv/localPackagesPre.csv'
 sisyphusDB = '/var/lib/sisyphus/db/sisyphus.db'
 mirrorCfg = '/etc/sisyphus/mirrors.conf'
+
+# only run as root (CLI + GUI frontend)
 
 def checkRoot():
     if not os.getuid() == 0:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
+
+# only run in binary mode (binmode) or hybrid mode (mixedmode) (CLI + GUI frontend)
 
 def checkSystemMode():
     portage_binmode_make_conf = '/opt/redcore-build/conf/intel/portage/make.conf.amd64-binmode'
@@ -41,44 +43,51 @@ def checkSystemMode():
             print("\nThe system is not set to binmode or mixedmode, refusing to run!\n")
             sys.exit(1)
 
-def getRmtCsvUrl():
-    rmtCsvUrl = []
+# get current mirror information, so we know where we download from (CLI + GUI frontend)
+
+def getRemotePkgsURL():
+    remotePkgsURL = []
     portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput.rstrip():
-            rmtCsvUrl = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
-    return rmtCsvUrl
+            remotePkgsURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
+    return remotePkgsURL
 
-def getRmtDscUrl():
-    rmtDscUrl = []
+def getRemoteDscsURL():
+    remoteDscsURL = []
     portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput.rstrip():
-            rmtDscUrl = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
-    return rmtDscUrl
+            remoteDscsURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
+    return remoteDscsURL
 
-def fetchRemoteDatabaseCSV():
-    rmtCsvUrl = getRmtCsvUrl()
-    rmtDscUrl = getRmtDscUrl()
+# download remote CSV's to be imported into the database (CLI + GUI frontend)
 
+def fetchRemoteDatabase():
+    remotePkgsURL = getRemotePkgsURL()
+    remoteDscsURL = getRemoteDscsURL()
     http = urllib3.PoolManager()
 
-    with http.request('GET', rmtCsvUrl, preload_content=False) as tmp_buffer, open(rmtPkgCsv, 'wb') as output_file:
+    with http.request('GET', remotePkgsURL, preload_content=False) as tmp_buffer, open(remotePkgsDB, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-    with http.request('GET', rmtDscUrl, preload_content=False) as tmp_buffer, open(rmtDscCsv, 'wb') as output_file:
+    with http.request('GET', remoteDscsURL, preload_content=False) as tmp_buffer, open(remoteDscsDB, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-def makeLocalDatabaseCSV():
+# generate local CSV's to be imported into the database (CLI + GUI frontend)
+
+def makeLocalDatabase():
     subprocess.check_call(['/usr/share/sisyphus/helpers/make_local_csv']) # this is really hard to do in python, so we cheat with a bash helper script
 
-def syncRemoteDatabaseTable():
-    fetchRemoteDatabaseCSV()
+# download and import remote CSV's into the database (CLI + GUI frontend)
+
+def syncRemoteDatabase():
+    fetchRemoteDatabase()
 
     sisyphusdb = sqlite3.connect(sisyphusDB)
     sisyphusdb.cursor().execute('''drop table if exists remote_packages''')
     sisyphusdb.cursor().execute('''create table remote_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
-    with open(rmtPkgCsv) as rmtCsv:
+    with open(remotePkgsDB) as rmtCsv:
         for row in csv.reader(rmtCsv):
             sisyphusdb.cursor().execute("insert into remote_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
     sisyphusdb.commit()
@@ -87,113 +96,155 @@ def syncRemoteDatabaseTable():
     sisyphusdb = sqlite3.connect(sisyphusDB)
     sisyphusdb.cursor().execute('''drop table if exists remote_descriptions''')
     sisyphusdb.cursor().execute('''create table remote_descriptions (category TEXT,name TEXT,description TEXT)''')
-    with open(rmtDscCsv) as rmtCsv:
+    with open(remoteDscsDB) as rmtCsv:
         for row in csv.reader(rmtCsv):
             sisyphusdb.cursor().execute("insert into remote_descriptions (category, name, description) values (?, ?, ?);", row)
     sisyphusdb.commit()
     sisyphusdb.close()
 
-def syncLocalDatabaseTable():
-    makeLocalDatabaseCSV()
+# generate and import local CSV's into the database (CLI + GUI frontend)
+
+def syncLocalDatabase():
+    makeLocalDatabase()
 
     sisyphusdb = sqlite3.connect(sisyphusDB)
     sisyphusdb.cursor().execute('''drop table if exists local_packages''')
     sisyphusdb.cursor().execute('''create table local_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
-    with open(lclPkgCsv) as lclCsv:
+    with open(localPkgsDB) as lclCsv:
         for row in csv.reader(lclCsv):
             sisyphusdb.cursor().execute("insert into local_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
     sisyphusdb.commit()
     sisyphusdb.close()
 
-def syncGitRepos():
-    subprocess.check_call(['emerge', '--sync', '--quiet'])
+# sync portage tree (CLI + GUI frontend)
+
+def syncPortageTree():
+    subprocess.call(['emerge', '--sync', '--quiet'])
+
+# sync portage configuration files (CLI + GUI frontend)
 
 def syncPortageCfg():
     os.chdir(redcore_portage_config_path)
     subprocess.call(['git', 'pull', '--quiet'])
 
-@animation.wait('syncing remote database tables')
+# check remote timestamps...if newer than local timestamps, sync everything (CLI + GUI frontend)
+
+@animation.wait('syncing remote database')
 def syncAll():
     checkRoot()
-    rmtCsvUrl = getRmtCsvUrl()
-    rmtDscUrl = getRmtDscUrl()
 
+    remotePkgsURL = getRemotePkgsURL()
+    remoteDscsURL = getRemoteDscsURL()
     http = urllib3.PoolManager()
 
-    reqRmtPkgTs = http.request('HEAD',rmtCsvUrl)
-    rmtPkgTs = int(parser.parse(reqRmtPkgTs.headers['last-modified']).strftime("%s"))
-    lclPkgTs = int(os.path.getctime(rmtPkgCsv))
+    reqRemotePkgsTS = http.request('HEAD',remotePkgsURL)
+    remotePkgsTS = int(parser.parse(reqRemotePkgsTS.headers['last-modified']).strftime("%s"))
+    localPkgsTS = int(os.path.getctime(remotePkgsDB))
 
-    reqRmtDscTs = http.request('HEAD',rmtDscUrl)
-    rmtDscTs = int(parser.parse(reqRmtDscTs.headers['last-modified']).strftime("%s"))
-    lclDscTs = int(os.path.getctime(rmtDscCsv))
+    reqRemoteDscsTS = http.request('HEAD',remoteDscsURL)
+    remoteDscsTS = int(parser.parse(reqRemoteDscsTS.headers['last-modified']).strftime("%s"))
+    localDscsTS = int(os.path.getctime(remoteDscsDB))
 
-    if rmtPkgTs > lclPkgTs or rmtDscTs > lclDscTs:
-        syncGitRepos()
+    if remotePkgsTs < localPkgsTs:
+        pass
+    elif remoteDscsTs < localDscsTs:
+        pass
+    else:
+        syncPortageTree()
         syncPortageCfg()
-        syncRemoteDatabaseTable()
+        syncRemoteDatabase()
 
-@animation.wait('syncing local database tables')
+# regenerate local CSV's and import them into the database (CLI frontend)
+# if something is installed with portage directly using emerge, sisyphus won't be aware of it
+# this will parse local portage database and import the changes into sisyphus database
+
+@animation.wait('syncing local database')
 def startSyncSPM():
-    syncLocalDatabaseTable()
+    syncLocalDatabase()
+
+# sync portage tree and portage configuration files (CLI frontend)
+
+@animation.wait('syncing portage')
+def startSync():
+    syncPortageTree()
+    syncPortageCfg()
+
+# regenerate sisyphus database (CLI frontend)
+# if for some reason sisyphus database gets corrupted or deleted, we can still regenerate it from portage database
+# this will fetch remote information from mirrors, parse local portage database and regenerate sisyphus database
+
+@animation.wait('resurrecting database')
+def rescueDB():
+    if os.path.exists(remotePkgsDB):
+        os.remove(remotePkgsDB)
+    if os.path.exists(remoteDscsDB):
+        os.remove(remoteDscsDB)
+    if os.path.exists(localPkgsDB):
+        os.remove(localPkgsDB)
+    if os.path.exists(sisyphusDB):
+        os.remove(sisyphusDB)
+
+    syncRemoteDatabase()
+    syncLocalDatabase()
+
+# call portage to install the package(s) (CLI frontend)
 
 def startInstall(pkgList):
     syncAll()
     portageExec = subprocess.Popen(['emerge', '-aq'] + pkgList)
     portageExec.communicate()
-    syncLocalDatabaseTable()
+    syncLocalDatabase()
+
+# call portage to uninstall the package(s) (CLI frontend)
 
 def startUninstall(pkgList):
     portageExec = subprocess.Popen(['emerge', '--depclean', '-aq'] + pkgList)
     portageExec.communicate()
-    syncLocalDatabaseTable()
+    syncLocalDatabase()
+
+# call portage to force-uninstall the package(s) (CLI frontend)
 
 def startUninstallForce(pkgList):
     portageExec = subprocess.Popen(['emerge', '--unmerge', '-aq'] + pkgList)
     portageExec.communicate()
-    syncLocalDatabaseTable()
+    syncLocalDatabase()
+
+# call portage to remove orphan package(s) (CLI frontend)
 
 def removeOrphans():
     portageExec = subprocess.Popen(['emerge', '--depclean', '-aq'])
     portageExec.communicate()
-    syncLocalDatabaseTable()
+    syncLocalDatabase()
+
+# call portage to perform a system upgrade (CLI frontend)
 
 def startUpgrade():
     syncAll()
     portageExec = subprocess.Popen(['emerge', '-uDaNq', '--backtrack=100', '--with-bdeps=y', '@world'])
     portageExec.communicate()
-    syncLocalDatabaseTable()
+    syncLocalDatabase()
+
+# call portage to search for package(s) (CLI frontend)
 
 def startSearch(pkgList):
     subprocess.check_call(['emerge', '--search'] + pkgList)
 
+# check remote timestamps...if newer than local timestamps, sync everything (CLI + GUI frontend)
+
 def startUpdate():
     syncAll()
 
-@animation.wait('syncing portage tree && portage config files')
-def startSync():
-    syncGitRepos()
-    syncPortageCfg()
+# display information about installed core packages and portage configuration (CLI frontend)
 
 def sysInfo():
     subprocess.check_call(['emerge', '--info'])
 
-@animation.wait('resurrecting database tables')
-def rescueDB():
-    if os.path.exists(rmtPkgCsv):
-        os.remove(rmtPkgCsv)
-    if os.path.exists(rmtDscCsv):
-        os.remove(rmtDscCsv)
-    if os.path.exists(lclPkgCsv):
-        os.remove(lclPkgCsv)
-    if os.path.exists(sisyphusDB):
-        os.remove(sisyphusDB)
-
-    syncRemoteDatabaseTable()
-    syncLocalDatabaseTable()
+# kill background portage process if sisyphus dies (CLI + GUI frontend)
 
 def portageKill(portageCmd):
         portageCmd.terminate()
+
+# get a list of mirrors (GUI frontend)
 
 def getMirrors():
     mirrorList = []
@@ -207,6 +258,8 @@ def getMirrors():
                 mirrorList.append(mirror)
     mirrorFile.close()
     return mirrorList
+
+# set the active mirror (GUI frontend)
 
 def setActiveMirror(mirrorList):
     with open(mirrorCfg, 'w+') as mirrorFile:
@@ -222,6 +275,8 @@ def setActiveMirror(mirrorList):
             mirrorFile.write(mirror + "\n")
             mirrorFile.write("\n")
 
+# get a list of mirrors (CLI frontend)
+
 def listRepo():
     mirrorList = getMirrors()
     for i, line in enumerate(mirrorList):
@@ -229,6 +284,8 @@ def listRepo():
             print(i+1,'*',line['Url'])
         else:
             print(i+1,' ',line['Url'])
+
+# set the active mirror (CLI frontend)
 
 def setRepo(mirror):
     mirror = int(mirror[0])
@@ -243,6 +300,8 @@ def setRepo(mirror):
             else:
                 mirrorList[i]['isActive'] = False
         setActiveMirror(mirrorList)
+
+# display help menu (CLI frontend)
 
 def showHelp():
     print("\nUsage : sisyphus command [package(s)] || [file(s)]\n")
