@@ -145,9 +145,9 @@ def syncAll():
     remoteDscsTS = int(parser.parse(reqRemoteDscsTS.headers['last-modified']).strftime("%s"))
     localDscsTS = int(os.path.getctime(remoteDscsDB))
 
-    if remotePkgsTs < localPkgsTs:
+    if remotePkgsTS < localPkgsTS:
         pass
-    elif remoteDscsTs < localDscsTs:
+    elif remoteDscsTS < localDscsTS:
         pass
     else:
         syncPortageTree()
