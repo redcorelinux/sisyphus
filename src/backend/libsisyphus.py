@@ -192,28 +192,28 @@ def rescueDB():
 def startInstall(pkgList):
     syncAll()
     portageExec = subprocess.Popen(['emerge', '-aq'] + pkgList)
-    portageExec.communicate()
+    portageExec.wait()
     syncLocalDatabase()
 
 # call portage to uninstall the package(s) (CLI frontend)
 
 def startUninstall(pkgList):
     portageExec = subprocess.Popen(['emerge', '--depclean', '-aq'] + pkgList)
-    portageExec.communicate()
+    portageExec.wait()
     syncLocalDatabase()
 
 # call portage to force-uninstall the package(s) (CLI frontend)
 
 def startUninstallForce(pkgList):
     portageExec = subprocess.Popen(['emerge', '--unmerge', '-aq'] + pkgList)
-    portageExec.communicate()
+    portageExec.wait()
     syncLocalDatabase()
 
 # call portage to remove orphan package(s) (CLI frontend)
 
 def removeOrphans():
     portageExec = subprocess.Popen(['emerge', '--depclean', '-aq'])
-    portageExec.communicate()
+    portageExec.wait()
     syncLocalDatabase()
 
 # call portage to perform a system upgrade (CLI frontend)
@@ -221,7 +221,7 @@ def removeOrphans():
 def startUpgrade():
     syncAll()
     portageExec = subprocess.Popen(['emerge', '-uDaNq', '--backtrack=100', '--with-bdeps=y', '@world'])
-    portageExec.communicate()
+    portageExec.wait()
     syncLocalDatabase()
 
 # call portage to search for package(s) (CLI frontend)
