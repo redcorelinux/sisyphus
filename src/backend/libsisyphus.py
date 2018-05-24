@@ -28,7 +28,6 @@ def checkRoot():
 
 def checkSystemMode():
     portage_binmode_make_conf = '/opt/redcore-build/conf/intel/portage/make.conf.amd64-binmode'
-    portage_mixedmode_make_conf = '/opt/redcore-build/conf/intel/portage/make.conf.amd64-mixedmode'
     portage_make_conf_symlink = '/etc/portage/make.conf'
 
     if not os.path.islink(portage_make_conf_symlink):
@@ -37,10 +36,8 @@ def checkSystemMode():
     else:
         if os.path.realpath(portage_make_conf_symlink) == portage_binmode_make_conf:
             pass
-        elif os.path.realpath(portage_make_conf_symlink) == portage_mixedmode_make_conf:
-            pass
         else:
-            print("\nThe system is not set to binmode or mixedmode, refusing to run!\n")
+            print("\nThe system is not set to binmode, refusing to run!\n")
             sys.exit(1)
 
 # get current mirror information, so we know where we download from (CLI + GUI frontend)
