@@ -284,7 +284,7 @@ def removeOrphans():
     portageExec.wait()
     syncLocalDatabase()
 
-# call portage to perform a system upgrade (CLI frontend)
+# fetch binaries and call portage to perform a system upgrade using local cache (CLI frontend)
 
 def startUpgrade():
     syncAll()
