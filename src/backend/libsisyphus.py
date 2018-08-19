@@ -205,7 +205,7 @@ def rescueDB():
 @animation.wait('resolving dependencies')
 def solvePkgDeps(pkgList):
     pkgDeps = []
-    portageExec = subprocess.Popen(['emerge', '-gpq'] + pkgList, stdout=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '-qgp'] + pkgList, stdout=subprocess.PIPE)
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "/" in portageOutput.rstrip():
             pkgDep = str(portageOutput.rstrip().split("]")[1].strip("\ "))
@@ -247,28 +247,28 @@ def startInstall(pkgList):
         if os.path.exists(str(binpkg + '.tbz2')):
             os.remove(str(binpkg + '.tbz2')) # we moved the binaries in cache, safe to delete
 
-    portageExec = subprocess.Popen(['emerge', '-Kq'] + pkgList)
+    portageExec = subprocess.Popen(['emerge', '-q'] + pkgList)
     portageExec.wait()
     syncLocalDatabase()
 
 # call portage to uninstall the package(s) (CLI frontend)
 
 def startUninstall(pkgList):
-    portageExec = subprocess.Popen(['emerge', '--depclean', '-aq'] + pkgList)
+    portageExec = subprocess.Popen(['emerge', '-cqa'] + pkgList)
     portageExec.wait()
     syncLocalDatabase()
 
 # call portage to force-uninstall the package(s) (CLI frontend)
 
 def startUninstallForce(pkgList):
-    portageExec = subprocess.Popen(['emerge', '--unmerge', '-aq'] + pkgList)
+    portageExec = subprocess.Popen(['emerge', '-Cqa'] + pkgList)
     portageExec.wait()
     syncLocalDatabase()
 
 # call portage to remove orphan package(s) (CLI frontend)
 
 def removeOrphans():
-    portageExec = subprocess.Popen(['emerge', '--depclean', '-aq'])
+    portageExec = subprocess.Popen(['emerge', '-cqa'])
     portageExec.wait()
     syncLocalDatabase()
 
@@ -276,14 +276,14 @@ def removeOrphans():
 
 def startUpgrade():
     syncAll()
-    portageExec = subprocess.Popen(['emerge', '-uDaNq', '--backtrack=100', '--with-bdeps=y', '@world'])
+    portageExec = subprocess.Popen(['emerge', '-uDNqa', '--backtrack=100', '--with-bdeps=y', '@world'])
     portageExec.wait()
     syncLocalDatabase()
 
 # call portage to search for package(s) (CLI frontend)
 
 def startSearch(pkgList):
-    subprocess.check_call(['emerge', '--search'] + pkgList)
+    subprocess.check_call(['emerge', '-sg'] + pkgList) # FIXME : query sisyphus.db instead of searching through portage
 
 # check remote timestamps...if newer than local timestamps, sync everything (CLI + GUI frontend)
 
