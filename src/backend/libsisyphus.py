@@ -241,6 +241,8 @@ def solvePkgDeps(pkgList):
         if "/" in portageOutput.rstrip():
             pkgDep = str(portageOutput.rstrip().split("]")[1].strip("\ "))
             pkgDeps.append(pkgDep)
+        else:
+            sys.exit("\n" + "Unable to find package(s); quitting." + "\n")
     return pkgDeps
 
 # call portage to solve world dependencies (CLI frontend)
@@ -256,6 +258,8 @@ def solveWorldDeps():
             worldDep = str(portageOutput.rstrip().split("]")[
                            1].split("[")[0].strip("\ "))
             worldDeps.append(worldDep)
+        else:
+            sys.exit("\n" + "Nothing to upgrade; quitting." + "\n")
     return worldDeps
 
 # fetch binaries and call portage to install the package(s) from local cache (CLI frontend)
