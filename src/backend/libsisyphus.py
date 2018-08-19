@@ -268,40 +268,43 @@ def startInstall(pkgList):
     pkgDeps = solvePkgDeps(pkgList)
     pkgBins = []
 
-    if input("Would you like to merge these packages?" + " " + str(pkgDeps) + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-        for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
-            print(">>> Fetching" + " " + url)
-            wget.download(url)
-            print("\n")
-    else:
-        sys.exit("\n" + "Quitting!")
-
-    for index, binpkg in enumerate(pkgDeps):
-        pkgBin = str(binpkg.rstrip().split("/")[1])
-        pkgBins.append(pkgBin)
-
-    for index, binpkg in enumerate(pkgBins):
-        subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-        CATEGORY = subprocess.check_output(
-            ['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-        # we extracted the categories, safe to delete
-        os.remove(str(binpkg + '.xpak'))
-
-        if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache +
-                                                            CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+    if not len(pkgDeps) == 0:
+        if input("Would you like to merge these packages?" + " " + str(pkgDeps) + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+            for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
+                print(">>> Fetching" + " " + url)
+                wget.download(url)
+                print("\n")
         else:
-            os.makedirs(portageCache + CATEGORY.decode().strip())
-            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache +
-                                                            CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+            sys.exit("\n" + "Quitting!")
 
-        if os.path.exists(str(binpkg + '.tbz2')):
-            # we moved the binaries in cache, safe to delete
-            os.remove(str(binpkg + '.tbz2'))
+        for index, binpkg in enumerate(pkgDeps):
+            pkgBin = str(binpkg.rstrip().split("/")[1])
+            pkgBins.append(pkgBin)
 
-    portageExec = subprocess.Popen(['emerge', '-q'] + pkgList)
-    portageExec.wait()
-    syncLocalDatabase()
+        for index, binpkg in enumerate(pkgBins):
+            subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
+            CATEGORY = subprocess.check_output(
+                ['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
+            # we extracted the categories, safe to delete
+            os.remove(str(binpkg + '.xpak'))
+
+            if os.path.isdir(portageCache + CATEGORY.decode().strip()):
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache +
+                                                                CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+            else:
+                os.makedirs(portageCache + CATEGORY.decode().strip())
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache +
+                                                                CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+
+            if os.path.exists(str(binpkg + '.tbz2')):
+                # we moved the binaries in cache, safe to delete
+                os.remove(str(binpkg + '.tbz2'))
+
+        portageExec = subprocess.Popen(['emerge', '-q'] + pkgList)
+        portageExec.wait()
+        syncLocalDatabase()
+    else:
+        sys.exit(1)
 
 # call portage to uninstall the package(s) (CLI frontend)
 
@@ -337,41 +340,44 @@ def startUpgrade():
     worldDeps = solveWorldDeps()
     worldBins = []
 
-    if input("Would you like to merge these packages?" + " " + str(worldDeps) + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-        for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
-            print(">>> Fetching" + " " + url)
-            wget.download(url)
-            print("\n")
-    else:
-        sys.exit("\n" + "Quitting!")
-
-    for index, worldpkg in enumerate(worldDeps):
-        worldBin = str(worldpkg.rstrip().split("/")[1])
-        worldBins.append(worldBin)
-
-    for index, worldpkg in enumerate(worldBins):
-        subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
-        CATEGORY = subprocess.check_output(
-            ['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
-        # we extracted the categories, safe to delete
-        os.remove(str(worldpkg + '.xpak'))
-
-        if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-            shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache +
-                                                              CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+    if not len(worldDeps) == 0:
+        if input("Would you like to merge these packages?" + " " + str(worldDeps) + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+            for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
+                print(">>> Fetching" + " " + url)
+                wget.download(url)
+                print("\n")
         else:
-            os.makedirs(portageCache + CATEGORY.decode().strip())
-            shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache +
-                                                              CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+            sys.exit("\n" + "Quitting!")
 
-        if os.path.exists(str(worldpkg + '.tbz2')):
-            # we moved the binaries in cache, safe to delete
-            os.remove(str(worldpkg + '.tbz2'))
+        for index, worldpkg in enumerate(worldDeps):
+            worldBin = str(worldpkg.rstrip().split("/")[1])
+            worldBins.append(worldBin)
 
-    portageExec = subprocess.Popen(
-        ['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'])
-    portageExec.wait()
-    syncLocalDatabase()
+        for index, worldpkg in enumerate(worldBins):
+            subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
+            CATEGORY = subprocess.check_output(
+                ['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
+            # we extracted the categories, safe to delete
+            os.remove(str(worldpkg + '.xpak'))
+
+            if os.path.isdir(portageCache + CATEGORY.decode().strip()):
+                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache +
+                                                                  CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+            else:
+                os.makedirs(portageCache + CATEGORY.decode().strip())
+                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache +
+                                                                  CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+
+            if os.path.exists(str(worldpkg + '.tbz2')):
+                # we moved the binaries in cache, safe to delete
+                os.remove(str(worldpkg + '.tbz2'))
+
+        portageExec = subprocess.Popen(
+            ['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'])
+        portageExec.wait()
+        syncLocalDatabase()
+    else:
+        sys.exit("\n" + "Nothing to upgrade; quitting." + "\n")
 
 # call portage to search for package(s) (CLI frontend)
 
