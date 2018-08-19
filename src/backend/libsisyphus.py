@@ -9,11 +9,9 @@ import subprocess
 import sys
 import urllib3
 import io
-import wget
 from dateutil import parser
 
-portageCfg = '/opt/redcore-build/'
-portageCache = '/var/cache/packages/'
+redcore_portage_config_path = '/opt/redcore-build'
 remotePkgsDB = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
 remoteDscsDB = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
 localPkgsDB = '/var/lib/sisyphus/csv/localPackagesPre.csv'
@@ -29,14 +27,14 @@ def checkRoot():
 # only run in binary mode (binmode) or hybrid mode (mixedmode) (CLI + GUI frontend)
 
 def checkSystemMode():
-    portageBinCfg = '/opt/redcore-build/conf/intel/portage/make.conf.amd64-binmode'
-    portageCfgSym = '/etc/portage/make.conf'
+    portage_binmode_make_conf = '/opt/redcore-build/conf/intel/portage/make.conf.amd64-binmode'
+    portage_make_conf_symlink = '/etc/portage/make.conf'
 
-    if not os.path.islink(portageCfgSym):
+    if not os.path.islink(portage_make_conf_symlink):
         print("\nmake.conf is not a symlink, refusing to run!\n")
         sys.exit(1)
     else:
-        if os.path.realpath(portageCfgSym) == portageBinCfg:
+        if os.path.realpath(portage_make_conf_symlink) == portage_binmode_make_conf:
             pass
         else:
             print("\nThe system is not set to binmode, refusing to run!\n")
@@ -44,34 +42,20 @@ def checkSystemMode():
 
 # get current mirror information, so we know where we download from (CLI + GUI frontend)
 
-def getBinhostURL():
-    binhostURL = []
-
-    portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "PORTAGE_BINHOST" in portageOutput.rstrip():
-            binhostURL = str(portageOutput.rstrip().split("=")[1].strip('\"'))
-
-    return binhostURL
-
 def getRemotePkgsURL():
     remotePkgsURL = []
-
     portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput.rstrip():
             remotePkgsURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
-
     return remotePkgsURL
 
 def getRemoteDscsURL():
     remoteDscsURL = []
-
     portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput.rstrip():
             remoteDscsURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
-
     return remoteDscsURL
 
 # download remote CSV's to be imported into the database (CLI + GUI frontend)
@@ -137,7 +121,7 @@ def syncPortageTree():
 # sync portage configuration files (CLI + GUI frontend)
 
 def syncPortageCfg():
-    os.chdir(portageCfg)
+    os.chdir(redcore_portage_config_path)
     subprocess.call(['git', 'pull', '--quiet'])
 
 # check remote timestamps...if newer than local timestamps, sync everything (CLI + GUI frontend)
@@ -200,59 +184,11 @@ def rescueDB():
     syncRemoteDatabase()
     syncLocalDatabase()
 
-# call portage to solve package(s) dependencies (CLI frontend)
-
-@animation.wait('resolving dependencies')
-def solveDeps(pkgList):
-    deps = []
-    portageExec = subprocess.Popen(['emerge', '-pq'] + pkgList, stdout=subprocess.PIPE)
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "/" in portageOutput.rstrip():
-            dep = str(portageOutput.rstrip().split("]")[1].strip("\ "))
-            deps.append(dep)
-    return deps
-
-# bypass portage buggy fetcher, use our method instead (CLI frontend)
-
-def fetchBins(pkgList):
-    binhostURL = getBinhostURL()
-    deps = solveDeps(pkgList)
-    pbins = []
-
-    if input("Would you like to merge these packages?" + " " + str(deps) + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-        for index, url in enumerate([binhostURL + package + '.tbz2' for package in deps]):
-            print("\n" + ">>> Fetching" + " " + url)
-            wget.download(url)
-
-        for index, package in enumerate(deps):
-            pbin = str(package.rstrip().split("/")[1])
-            pbins.append(pbin)
-
-        return pbins
-    else:
-        sys.exit("\n" + "Quitting!")
-
 # call portage to install the package(s) (CLI frontend)
 
 def startInstall(pkgList):
     syncAll()
-    pbins = fetchBins(pkgList)
-
-    for index, binary in enumerate(pbins):
-        subprocess.call(['qtbz2', '-x'] + str(binary + '.tbz2').split())
-        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binary + '.xpak').split() + ['CATEGORY'])
-        os.remove(str(binary + '.xpak')) # we extracted the categories, safe to delete
-
-        if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-            shutil.move(str(binary + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binary + '.tbz2'))))
-        else:
-            os.makedirs(portageCache + CATEGORY.decode().strip())
-            shutil.move(str(binary + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binary + '.tbz2'))))
-
-        if os.path.exists(str(binary + '.tbz2')):
-            os.remove(str(binary + '.tbz2')) # we moved the binaries in cache, safe to delete
-
-    portageExec = subprocess.Popen(['emerge', '-Kq'] + pkgList)
+    portageExec = subprocess.Popen(['emerge', '-aq'] + pkgList)
     portageExec.wait()
     syncLocalDatabase()
 
