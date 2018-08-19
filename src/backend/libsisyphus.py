@@ -212,6 +212,18 @@ def solvePkgDeps(pkgList):
             pkgDeps.append(pkgDep)
     return pkgDeps
 
+# call portage to solve world dependencies (CLI frontend)
+
+@animation.wait('resolving dependencies')
+def solveWorldDeps():
+    worldDeps = []
+    portageExec = subprocess.Popen(['emerge', '-uDNqgp', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
+    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+        if "/" in portageOutput.rstrip():
+            worldDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            worldDeps.append(worldDep)
+    return worldDeps
+
 # fetch binaries and call portage to install the package(s) from local cache (CLI frontend)
 
 def startInstall(pkgList):
@@ -276,7 +288,38 @@ def removeOrphans():
 
 def startUpgrade():
     syncAll()
-    portageExec = subprocess.Popen(['emerge', '-uDNqa', '--backtrack=100', '--with-bdeps=y', '@world'])
+
+    binhostURL = getBinhostURL()
+    worldDeps = solveWorldDeps()
+    worldBins = []
+
+    if input("Would you like to merge these packages?" + " " + str(worldDeps) + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+        for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
+            print(">>> Fetching" + " " + url)
+            wget.download(url)
+            print("\n")
+    else:
+        sys.exit("\n" + "Quitting!")
+
+    for index, worldpkg in enumerate(worldDeps):
+        worldBin = str(worldpkg.rstrip().split("/")[1])
+        worldBins.append(worldBin)
+
+    for index, worldpkg in enumerate(worldBins):
+        subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
+        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
+        os.remove(str(worldpkg + '.xpak')) # we extracted the categories, safe to delete
+
+        if os.path.isdir(portageCache + CATEGORY.decode().strip()):
+            shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+        else:
+            os.makedirs(portageCache + CATEGORY.decode().strip())
+            shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+
+        if os.path.exists(str(worldpkg + '.tbz2')):
+            os.remove(str(worldpkg + '.tbz2')) # we moved the binaries in cache, safe to delete
+
+    portageExec = subprocess.Popen(['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'])
     portageExec.wait()
     syncLocalDatabase()
 
