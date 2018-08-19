@@ -4,6 +4,8 @@ import subprocess
 import sqlite3
 import io
 import atexit
+import wget
+import shutil
 from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from libsisyphus import *
@@ -372,6 +374,39 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
+
+        binhostURL = getBinhostURL()
+        pkgDeps = solvePkgDeps(pkgList)
+        pkgBins = []
+
+        for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
+            self.strReady.emit(">>> Fetching" + " " + url)
+            wget.download(url)
+            print("\n")
+
+        for index, binpkg in enumerate(pkgDeps):
+            pkgBin = str(binpkg.rstrip().split("/")[1])
+            pkgBins.append(pkgBin)
+
+        for index, binpkg in enumerate(pkgBins):
+            subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
+            CATEGORY = subprocess.check_output(
+                ['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
+            # we extracted the categories, safe to delete
+            os.remove(str(binpkg + '.xpak'))
+
+            if os.path.isdir(portageCache + CATEGORY.decode().strip()):
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache +
+                                                                CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+            else:
+                os.makedirs(portageCache + CATEGORY.decode().strip())
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache +
+                                                                CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+
+            if os.path.exists(str(binpkg + '.tbz2')):
+                # we moved the binaries in cache, safe to delete
+                os.remove(str(binpkg + '.tbz2'))
+
         portageExec = subprocess.Popen(
             ['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
@@ -386,7 +421,7 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
         pkgList = Sisyphus.pkgList
         portageExec = subprocess.Popen(
-            ['emerge', '--depclean', '-q'] + pkgList, stdout=subprocess.PIPE)
+            ['emerge', '-cq'] + pkgList, stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
@@ -397,6 +432,39 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
+
+        binhostURL = getBinhostURL()
+        worldDeps = solveWorldDeps()
+        worldBins = []
+
+        for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
+            self.strReady.emit(">>> Fetching" + " " + url)
+            wget.download(url)
+            print("\n")
+
+        for index, worldpkg in enumerate(worldDeps):
+            worldBin = str(worldpkg.rstrip().split("/")[1])
+            worldBins.append(worldBin)
+
+        for index, worldpkg in enumerate(worldBins):
+            subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
+            CATEGORY = subprocess.check_output(
+                ['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
+            # we extracted the categories, safe to delete
+            os.remove(str(worldpkg + '.xpak'))
+
+            if os.path.isdir(portageCache + CATEGORY.decode().strip()):
+                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache +
+                                                                  CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+            else:
+                os.makedirs(portageCache + CATEGORY.decode().strip())
+                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache +
+                                                                  CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+
+            if os.path.exists(str(worldpkg + '.tbz2')):
+                # we moved the binaries in cache, safe to delete
+                os.remove(str(worldpkg + '.tbz2'))
+
         portageExec = subprocess.Popen(
             ['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
@@ -410,7 +478,7 @@ class MainWorker(QtCore.QObject):
     def cleanOrphans(self):
         self.started.emit()
         portageExec = subprocess.Popen(
-            ['emerge', '--depclean', '-q'], stdout=subprocess.PIPE)
+            ['emerge', '-cq'], stdout=subprocess.PIPE)
         atexit.register(portageKill, portageExec)
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
