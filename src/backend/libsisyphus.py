@@ -240,7 +240,8 @@ def solvePkgDeps(pkgList):
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "/" in portageOutput.rstrip():
             pkgDep = str(portageOutput.rstrip().split("]")[1].strip("\ "))
-            pkgDeps.append(pkgDep)
+            if not "blocking" in pkgDep:
+                pkgDeps.append(pkgDep)
     return pkgDeps
 
 # call portage to solve world dependencies (CLI frontend)
@@ -255,7 +256,8 @@ def solveWorldDeps():
         if "/" in portageOutput.rstrip():
             worldDep = str(portageOutput.rstrip().split("]")[
                            1].split("[")[0].strip("\ "))
-            worldDeps.append(worldDep)
+            if not "blocking" in worldDep:
+                worldDeps.append(worldDep)
     return worldDeps
 
 # fetch binaries and call portage to install the package(s) from local cache (CLI frontend)
