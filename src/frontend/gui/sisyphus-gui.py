@@ -11,7 +11,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from libsisyphus import *
 
 
-# main window class
 class Sisyphus(QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
@@ -26,8 +25,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         ])
         self.applicationFilter.addItems(self.filterApplications.keys())
         self.applicationFilter.setCurrentText('Search by Name')
-        self.applicationFilter.currentIndexChanged.connect(
-            self.setApplicationFilter)
+        self.applicationFilter.currentIndexChanged.connect(self.setApplicationFilter)
         Sisyphus.applicationView = self.filterApplications['Search by Name']
 
         self.filterDatabases = OrderedDict([
@@ -73,8 +71,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.uninstallThread = QtCore.QThread()
         self.uninstallWorker.moveToThread(self.uninstallThread)
         self.uninstallWorker.started.connect(self.showProgressBar)
-        self.uninstallThread.started.connect(
-            self.uninstallWorker.startUninstall)
+        self.uninstallThread.started.connect(self.uninstallWorker.startUninstall)
         self.uninstallWorker.strReady.connect(self.updateStatusBar)
         self.uninstallThread.finished.connect(self.jobDone)
         self.uninstallWorker.finished.connect(self.uninstallThread.quit)
@@ -110,22 +107,18 @@ class Sisyphus(QtWidgets.QMainWindow):
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
 
     def rowClicked(self):
-        Sisyphus.pkgSelect = len(
-            self.databaseTable.selectionModel().selectedRows())
+        Sisyphus.pkgSelect = len(self.databaseTable.selectionModel().selectedRows())
         self.showPackageCount()
 
     def showPackageCount(self):
-        self.statusBar().showMessage("Found: %d, Selected: %d packages" %
-                                     (Sisyphus.pkgCount, Sisyphus.pkgSelect))
+        self.statusBar().showMessage("Found: %d, Selected: %d packages" % (Sisyphus.pkgCount, Sisyphus.pkgSelect))
 
     def setApplicationFilter(self):
-        Sisyphus.applicationView = self.filterApplications[self.applicationFilter.currentText(
-        )]
+        Sisyphus.applicationView = self.filterApplications[self.applicationFilter.currentText()]
         self.loadDatabase()
 
     def setDatabaseFilter(self):
-        Sisyphus.databaseView = self.filterDatabases[self.databaseFilter.currentText(
-        )]
+        Sisyphus.databaseView = self.filterDatabases[self.databaseFilter.currentText()]
         Sisyphus.SELECT = self.databaseFilter.currentText()
         self.loadDatabase()
 
@@ -210,8 +203,7 @@ class Sisyphus(QtWidgets.QMainWindow):
             Sisyphus.pkgCount = len(rows)
             Sisyphus.pkgSelect = 0
             model = QtGui.QStandardItemModel(len(rows), 5)
-            model.setHorizontalHeaderLabels(
-                ['Category', 'Name', 'Installed Version', 'Available Version', 'Description'])
+            model.setHorizontalHeaderLabels(['Category', 'Name', 'Installed Version', 'Available Version', 'Description'])
             for row in rows:
                 indx = rows.index(row)
                 for column in range(0, 5):
@@ -304,13 +296,12 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.close()
 
 
-# mirror configuration window class
 class MirrorConfiguration(QtWidgets.QMainWindow):
     def __init__(self):
         super(MirrorConfiguration, self).__init__()
         uic.loadUi('ui/mirrorcfg.ui', self)
         self.centerOnScreen()
-        self.MIRRORLIST = getMirrors()
+        self.MIRRORLIST = getMirrorList()
         self.updateMirrorList()
         self.applyButton.pressed.connect(self.mirrorCfgApply)
         self.applyButton.released.connect(self.mirrorCfgExit)
@@ -339,13 +330,12 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = True
 
     def mirrorCfgApply(self):
-        setActiveMirror(self.MIRRORLIST)
+        writeMirrorCfg(self.MIRRORLIST)
 
     def mirrorCfgExit(self):
         self.close()
 
 
-# license information window class
 class LicenseInformation(QtWidgets.QMainWindow):
     def __init__(self):
         super(LicenseInformation, self).__init__()
@@ -376,7 +366,7 @@ class MainWorker(QtCore.QObject):
         pkgList = Sisyphus.pkgList
 
         binhostURL = getBinhostURL()
-        pkgDeps = solvePkgDeps(pkgList)
+        pkgDeps = getPkgDeps(pkgList)
         pkgBins = []
 
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
@@ -390,28 +380,25 @@ class MainWorker(QtCore.QObject):
 
         for index, binpkg in enumerate(pkgBins):
             subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-            CATEGORY = subprocess.check_output(
-                ['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-            # we extracted the categories, safe to delete
+            CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
             os.remove(str(binpkg + '.xpak'))
 
             if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache +
-                                                                CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
             else:
                 os.makedirs(portageCache + CATEGORY.decode().strip())
-                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache +
-                                                                CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
             if os.path.exists(str(binpkg + '.tbz2')):
-                # we moved the binaries in cache, safe to delete
                 os.remove(str(binpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(
-            ['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
+
         atexit.register(portageKill, portageExec)
+
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
+
         portageExec.wait()
         syncLocalDatabase()
         self.finished.emit()
@@ -420,11 +407,13 @@ class MainWorker(QtCore.QObject):
     def startUninstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        portageExec = subprocess.Popen(
-            ['emerge', '-cq'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '-cq'] + pkgList, stdout=subprocess.PIPE)
+
         atexit.register(portageKill, portageExec)
+
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
+
         portageExec.wait()
         syncLocalDatabase()
         self.finished.emit()
@@ -434,7 +423,7 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
 
         binhostURL = getBinhostURL()
-        worldDeps = solveWorldDeps()
+        worldDeps = getWorldDeps()
         worldBins = []
 
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
@@ -448,28 +437,25 @@ class MainWorker(QtCore.QObject):
 
         for index, worldpkg in enumerate(worldBins):
             subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
-            CATEGORY = subprocess.check_output(
-                ['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
-            # we extracted the categories, safe to delete
+            CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
             os.remove(str(worldpkg + '.xpak'))
 
             if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache +
-                                                                  CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
             else:
                 os.makedirs(portageCache + CATEGORY.decode().strip())
-                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache +
-                                                                  CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
 
             if os.path.exists(str(worldpkg + '.tbz2')):
-                # we moved the binaries in cache, safe to delete
                 os.remove(str(worldpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(
-            ['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
+
         atexit.register(portageKill, portageExec)
+
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
+
         portageExec.wait()
         syncLocalDatabase()
         self.finished.emit()
@@ -477,11 +463,13 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def cleanOrphans(self):
         self.started.emit()
-        portageExec = subprocess.Popen(
-            ['emerge', '-cq'], stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '-cq'], stdout=subprocess.PIPE)
+
         atexit.register(portageKill, portageExec)
+
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
+
         portageExec.wait()
         syncLocalDatabase()
         self.finished.emit()

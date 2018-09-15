@@ -31,10 +31,10 @@ if "__main__" == __name__:
             sysInfo()
         elif "mirror" in sys.argv[1:]:
             if "list" in sys.argv[2:]:
-                listRepo()
+                printMirrorList()
             elif "set" in sys.argv[2:]:
                 if sys.argv[3:]:
-                    setRepo(sys.argv[3:])
+                    setActiveMirror(sys.argv[3:])
                 else:
                     showHelp()
             else:
