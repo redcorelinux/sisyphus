@@ -232,7 +232,7 @@ def startInstall(pkgList):
     pkgBins = []
 
     if not len(pkgDeps) == 0:
-        if input(str(len(pkgDeps)) + " " + "package(s) will be merged, would you like to proceed ?" + " " + str(pkgDeps) + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+        if input("The following" + " " + str(len(pkgDeps)) + " " + "package(s) will be merged!" + "\n" + "\n" + str(pkgDeps) + "\n" + "\n" + "Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
             for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
                 print(">>> Fetching" + " " + url)
                 wget.download(url)
@@ -272,7 +272,7 @@ def startUpgrade():
     worldBins = []
 
     if not len(worldDeps) == 0:
-        if input(str(len(worldDeps)) + " " + "package(s) will be merged, would you like to proceed ?" + " " + str(worldDeps) + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+        if input("The following" + " " + str(len(worldDeps)) + " " + "package(s) will be merged!" + "\n" + "\n" + str(worldDeps) + "\n" + "\n" + "Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
             for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
                 print(">>> Fetching" + " " + url)
                 wget.download(url)
