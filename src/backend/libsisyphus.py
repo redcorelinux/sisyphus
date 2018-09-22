@@ -232,7 +232,7 @@ def startInstall(pkgList):
     pkgBins = []
 
     if not len(pkgDeps) == 0:
-        if input("The following" + " " + str(len(pkgDeps)) + " " + "package(s) will be merged!" + "\n" + "\n" + str(pkgDeps) + "\n" + "\n" + "Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+        if input("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(pkgDeps) + "\n\n" + "Total:" + " " + str(len(pkgDeps)) + " " + "package(s)" + "\n\n" "Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
             for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
                 print(">>> Fetching" + " " + url)
                 wget.download(url)
@@ -262,7 +262,7 @@ def startInstall(pkgList):
         portageExec.wait()
         syncLocalDatabase()
     else:
-        sys.exit(1)
+        sys.exit("\n" + "Nothing to install; quitting." + "\n")
 
 def startUpgrade():
     syncAll()
@@ -272,7 +272,7 @@ def startUpgrade():
     worldBins = []
 
     if not len(worldDeps) == 0:
-        if input("The following" + " " + str(len(worldDeps)) + " " + "package(s) will be merged!" + "\n" + "\n" + str(worldDeps) + "\n" + "\n" + "Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+        if input("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(worldDeps) + "\n\n" + "Total:" + " " + str(len(worldDeps)) + " " + "package(s)" + "\n\n" "Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
             for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
                 print(">>> Fetching" + " " + url)
                 wget.download(url)
