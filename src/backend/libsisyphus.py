@@ -87,7 +87,13 @@ def getPkgDeps(pkgList):
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "/" in portageOutput.rstrip():
             pkgDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            if not "blocks" and not "uninstall" in pkgDep:
+            if "blocks" in pkgDep:
+                pass
+            elif "blocking" in pkgDep:
+                pass
+            elif "uninstall" in pkgDep:
+                pass
+            else:
                 pkgDeps.append(pkgDep)
     return pkgDeps
 
@@ -99,7 +105,13 @@ def getWorldDeps():
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "/" in portageOutput.rstrip():
             worldDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            if not "blocks" and not "uninstall" in worldDep:
+            if "blocks" in worldDep:
+                pass
+            elif "blocking" in worldDep:
+                pass
+            elif "uninstall" in worldDep:
+                pass
+            else:
                 worldDeps.append(worldDep)
     return worldDeps
 
