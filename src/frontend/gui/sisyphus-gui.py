@@ -392,7 +392,7 @@ class MainWorker(QtCore.QObject):
             if os.path.exists(str(binpkg + '.tbz2')):
                 os.remove(str(binpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--usepkg', '--usepkgonly', '--rebuilt-binaries'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 
@@ -449,7 +449,7 @@ class MainWorker(QtCore.QObject):
             if os.path.exists(str(worldpkg + '.tbz2')):
                 os.remove(str(worldpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 
