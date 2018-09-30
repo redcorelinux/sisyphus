@@ -392,7 +392,7 @@ class MainWorker(QtCore.QObject):
             if os.path.exists(str(binpkg + '.tbz2')):
                 os.remove(str(binpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(['emerge', '-q'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--usepkg', '--usepkgonly', '--rebuilt-binaries'] + pkgList, stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 
@@ -407,7 +407,7 @@ class MainWorker(QtCore.QObject):
     def startUninstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        portageExec = subprocess.Popen(['emerge', '-cq'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean'] + pkgList, stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 
@@ -449,7 +449,7 @@ class MainWorker(QtCore.QObject):
             if os.path.exists(str(worldpkg + '.tbz2')):
                 os.remove(str(worldpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 
@@ -463,7 +463,7 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def cleanOrphans(self):
         self.started.emit()
-        portageExec = subprocess.Popen(['emerge', '-cq'], stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean'], stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 

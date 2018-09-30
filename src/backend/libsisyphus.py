@@ -24,20 +24,6 @@ def checkRoot():
     if not os.getuid() == 0:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
-def checkSystemMode():
-    portageBinCfg = '/opt/redcore-build/conf/intel/portage/make.conf.amd64-binmode'
-    portageCfgSym = '/etc/portage/make.conf'
-
-    if not os.path.islink(portageCfgSym):
-        print("\nmake.conf is not a symlink, refusing to run!\n")
-        sys.exit(1)
-    else:
-        if os.path.realpath(portageCfgSym) == portageBinCfg:
-            pass
-        else:
-            print("\nThe system is not set to binmode, refusing to run!\n")
-            sys.exit(1)
-
 def getMirrorList():
     mirrorList = []
 
@@ -82,7 +68,7 @@ def getRemoteDscsURL():
 @animation.wait('resolving dependencies')
 def getPkgDeps(pkgList):
     pkgDeps = []
-    portageExec = subprocess.Popen(['emerge', '-qgp'] + pkgList, stdout=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries'] + pkgList, stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "/" in portageOutput.rstrip():
@@ -100,7 +86,7 @@ def getPkgDeps(pkgList):
 @animation.wait('resolving dependencies')
 def getWorldDeps():
     worldDeps = []
-    portageExec = subprocess.Popen(['emerge', '-uDNqgp', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '@world'], stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "/" in portageOutput.rstrip():
@@ -219,7 +205,7 @@ def rescueDB():
     syncLocalDatabase()
 
 def startSearch(pkgList):
-    subprocess.check_call(['emerge', '-sg'] + pkgList)
+    subprocess.check_call(['emerge', '--search', '--getbinpkg'] + pkgList)
 
 def startUpdate():
     syncAll()
@@ -258,7 +244,7 @@ def startInstall(pkgList):
             if os.path.exists(str(binpkg + '.tbz2')):
                 os.remove(str(binpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(['emerge', '-q'] + pkgList)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--usepkg', '--usepkgonly', '--rebuilt-binaries'] + pkgList)
         portageExec.wait()
         syncLocalDatabase()
     else:
@@ -298,24 +284,24 @@ def startUpgrade():
             if os.path.exists(str(worldpkg + '.tbz2')):
                 os.remove(str(worldpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(['emerge', '-uDNq', '--backtrack=100', '--with-bdeps=y', '@world'])
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '@world'])
         portageExec.wait()
         syncLocalDatabase()
     else:
         sys.exit("\n" + "Nothing to upgrade; quitting." + "\n")
 
 def startUninstall(pkgList):
-    portageExec = subprocess.Popen(['emerge', '-cqa'] + pkgList)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + pkgList)
     portageExec.wait()
     syncLocalDatabase()
 
 def startUninstallForce(pkgList):
-    portageExec = subprocess.Popen(['emerge', '-Cqa'] + pkgList)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--unmerge', '--ask'] + pkgList)
     portageExec.wait()
     syncLocalDatabase()
 
 def removeOrphans():
-    portageExec = subprocess.Popen(['emerge', '-cqa'])
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'])
     portageExec.wait()
     syncLocalDatabase()
 

@@ -3,8 +3,6 @@
 import sys
 from libsisyphus import *
 
-checkSystemMode()
-
 pkgList = sys.argv[2:]
 
 if "__main__" == __name__:
