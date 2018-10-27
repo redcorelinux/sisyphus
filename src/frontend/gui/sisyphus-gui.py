@@ -371,6 +371,7 @@ class MainWorker(QtCore.QObject):
 
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
             self.strReady.emit(">>> Fetching" + " " + url)
+            print(">>> Fetching" + " " + url)
             wget.download(url)
             print("\n")
 
@@ -398,6 +399,7 @@ class MainWorker(QtCore.QObject):
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
+            print(portageOutput.rstrip())
 
         portageExec.wait()
         syncLocalDatabase()
@@ -428,6 +430,7 @@ class MainWorker(QtCore.QObject):
 
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
             self.strReady.emit(">>> Fetching" + " " + url)
+            print(">>> Fetching" + " " + url)
             wget.download(url)
             print("\n")
 
@@ -455,6 +458,7 @@ class MainWorker(QtCore.QObject):
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
+            print(portageOutput.rstrip())
 
         portageExec.wait()
         syncLocalDatabase()
