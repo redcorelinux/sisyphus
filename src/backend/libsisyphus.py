@@ -71,16 +71,9 @@ def getPkgDeps(pkgList):
     portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "/" in portageOutput.rstrip():
+        if "binary" in portageOutput.rstrip():
             pkgDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            if "blocks" in pkgDep:
-                pass
-            elif "blocking" in pkgDep:
-                pass
-            elif "uninstall" in pkgDep:
-                pass
-            else:
-                pkgDeps.append(pkgDep)
+            pkgDeps.append(pkgDep)
     return pkgDeps
 
 @animation.wait('resolving dependencies')
@@ -89,16 +82,9 @@ def getWorldDeps():
     portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "/" in portageOutput.rstrip():
+        if "binary" in portageOutput.rstrip():
             worldDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            if "blocks" in worldDep:
-                pass
-            elif "blocking" in worldDep:
-                pass
-            elif "uninstall" in worldDep:
-                pass
-            else:
-                worldDeps.append(worldDep)
+            worldDeps.append(worldDep)
     return worldDeps
 
 def fetchRemoteDatabase():
