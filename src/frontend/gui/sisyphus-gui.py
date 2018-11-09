@@ -369,6 +369,7 @@ class MainWorker(QtCore.QObject):
         pkgDeps = getPkgDeps(pkgList)
         pkgBins = []
 
+        os.chdir(portageCache)
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
             self.strReady.emit(">>> Fetching" + " " + url)
             print(">>> Fetching" + " " + url)
@@ -428,6 +429,7 @@ class MainWorker(QtCore.QObject):
         worldDeps = getWorldDeps()
         worldBins = []
 
+        os.chdir(portageCache)
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
             self.strReady.emit(">>> Fetching" + " " + url)
             print(">>> Fetching" + " " + url)
