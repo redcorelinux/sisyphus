@@ -235,7 +235,7 @@ def startInstall(pkgList):
         portageExec.wait()
         syncLocalDatabase()
     else:
-        sys.exit("\n" + "No such binary; quitting." + "\n")
+        sys.exit("\n" + "No such package; quitting." + "\n")
 
 def startUpgrade():
     syncAll()
