@@ -205,7 +205,8 @@ def startInstall(pkgList):
 
     if not len(pkgDeps) == 0:
         os.chdir(portageCache)
-        if input("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(pkgDeps) + "\n\n" + "Total:" + " " + str(len(pkgDeps)) + " " + "package(s)" + "\n\n" "Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+        print("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(pkgDeps) + "\n\n" + "Total:" + " " + str(len(pkgDeps)) + " " + "package(s)" + "\n")
+        if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
             for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
                 print(">>> Fetching" + " " + url)
                 wget.download(url)
@@ -246,7 +247,8 @@ def startUpgrade():
 
     if not len(worldDeps) == 0:
         os.chdir(portageCache)
-        if input("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(worldDeps) + "\n\n" + "Total:" + " " + str(len(worldDeps)) + " " + "package(s)" + "\n\n" "Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+        print("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(worldDeps) + "\n\n" + "Total:" + " " + str(len(worldDeps)) + " " + "package(s)" + "\n")
+        if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
             for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
                 print(">>> Fetching" + " " + url)
                 wget.download(url)
