@@ -416,6 +416,7 @@ class MainWorker(QtCore.QObject):
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
+            print(portageOutput.rstrip())
 
         portageExec.wait()
         syncLocalDatabase()
@@ -475,6 +476,7 @@ class MainWorker(QtCore.QObject):
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.strReady.emit(portageOutput.rstrip())
+            print(portageOutput.rstrip())
 
         portageExec.wait()
         syncLocalDatabase()
