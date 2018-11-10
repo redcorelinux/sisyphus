@@ -67,25 +67,25 @@ def getRemoteDscsURL():
 
 @animation.wait('resolving dependencies')
 def getPkgDeps(pkgList):
-    pkgDeps = []
+    binaryDeps = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
-            pkgDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            pkgDeps.append(pkgDep)
-    return pkgDeps
+            binaryDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            binaryDeps.append(binaryDep)
+    return binaryDeps
 
 @animation.wait('resolving dependencies')
 def getWorldDeps():
-    worldDeps = []
+    binaryDeps = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
-            worldDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            worldDeps.append(worldDep)
-    return worldDeps
+            binaryDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            binaryDeps.append(binaryDep)
+    return binaryDeps
 
 def fetchRemoteDatabase():
     remotePkgsURL = getRemotePkgsURL()
@@ -200,25 +200,25 @@ def startInstall(pkgList):
     syncAll()
 
     binhostURL = getBinhostURL()
-    pkgDeps = getPkgDeps(pkgList)
-    pkgBins = []
+    binaryDeps = getPkgDeps(pkgList)
+    binaryPkgs = []
 
-    if not len(pkgDeps) == 0:
+    if not len(binaryDeps) == 0:
         os.chdir(portageCache)
-        print("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(pkgDeps) + "\n\n" + "Total:" + " " + str(len(pkgDeps)) + " " + "package(s)" + "\n")
+        print("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "package(s)" + "\n")
         if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-            for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
+            for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
                 print(">>> Fetching" + " " + url)
                 wget.download(url)
                 print("\n")
         else:
             sys.exit("\n" + "Quitting!")
 
-        for index, binpkg in enumerate(pkgDeps):
-            pkgBin = str(binpkg.rstrip().split("/")[1])
-            pkgBins.append(pkgBin)
+        for index, binpkg in enumerate(binaryDeps):
+            binaryPkg = str(binpkg.rstrip().split("/")[1])
+            binaryPkgs.append(binaryPkg)
 
-        for index, binpkg in enumerate(pkgBins):
+        for index, binpkg in enumerate(binaryPkgs):
             subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
             CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
             os.remove(str(binpkg + '.xpak'))
@@ -242,25 +242,25 @@ def startUpgrade():
     syncAll()
 
     binhostURL = getBinhostURL()
-    worldDeps = getWorldDeps()
-    worldBins = []
+    binaryDeps = getWorldDeps()
+    binaryPkgs = []
 
-    if not len(worldDeps) == 0:
+    if not len(binaryDeps) == 0:
         os.chdir(portageCache)
-        print("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(worldDeps) + "\n\n" + "Total:" + " " + str(len(worldDeps)) + " " + "package(s)" + "\n")
+        print("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "package(s)" + "\n")
         if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-            for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
+            for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
                 print(">>> Fetching" + " " + url)
                 wget.download(url)
                 print("\n")
         else:
             sys.exit("\n" + "Quitting!")
 
-        for index, worldpkg in enumerate(worldDeps):
-            worldBin = str(worldpkg.rstrip().split("/")[1])
-            worldBins.append(worldBin)
+        for index, worldpkg in enumerate(binaryDeps):
+            binaryPkg = str(worldpkg.rstrip().split("/")[1])
+            binaryPkgs.append(binaryPkg)
 
-        for index, worldpkg in enumerate(worldBins):
+        for index, worldpkg in enumerate(binaryPkgs):
             subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
             CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
             os.remove(str(worldpkg + '.xpak'))

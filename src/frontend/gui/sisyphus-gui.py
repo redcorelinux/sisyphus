@@ -366,21 +366,21 @@ class MainWorker(QtCore.QObject):
         pkgList = Sisyphus.pkgList
 
         binhostURL = getBinhostURL()
-        pkgDeps = getPkgDeps(pkgList)
-        pkgBins = []
+        binaryDeps = getPkgDeps(pkgList)
+        binaryPkgs = []
 
         os.chdir(portageCache)
-        for index, url in enumerate([binhostURL + package + '.tbz2' for package in pkgDeps]):
+        for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
             self.strReady.emit(">>> Fetching" + " " + url)
             print(">>> Fetching" + " " + url)
             wget.download(url)
             print("\n")
 
-        for index, binpkg in enumerate(pkgDeps):
-            pkgBin = str(binpkg.rstrip().split("/")[1])
-            pkgBins.append(pkgBin)
+        for index, binpkg in enumerate(binaryDeps):
+            binaryPkg = str(binpkg.rstrip().split("/")[1])
+            binaryPkgs.append(binaryPkg)
 
-        for index, binpkg in enumerate(pkgBins):
+        for index, binpkg in enumerate(binaryPkgs):
             subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
             CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
             os.remove(str(binpkg + '.xpak'))
@@ -426,21 +426,21 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
 
         binhostURL = getBinhostURL()
-        worldDeps = getWorldDeps()
-        worldBins = []
+        binaryDeps = getWorldDeps()
+        binaryPkgs = []
 
         os.chdir(portageCache)
-        for index, url in enumerate([binhostURL + package + '.tbz2' for package in worldDeps]):
+        for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
             self.strReady.emit(">>> Fetching" + " " + url)
             print(">>> Fetching" + " " + url)
             wget.download(url)
             print("\n")
 
-        for index, worldpkg in enumerate(worldDeps):
-            worldBin = str(worldpkg.rstrip().split("/")[1])
-            worldBins.append(worldBin)
+        for index, worldpkg in enumerate(binaryDeps):
+            binaryPkg = str(worldpkg.rstrip().split("/")[1])
+            binaryPkgs.append(binaryPkg)
 
-        for index, worldpkg in enumerate(worldBins):
+        for index, worldpkg in enumerate(binaryPkgs):
             subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
             CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
             os.remove(str(worldpkg + '.xpak'))
