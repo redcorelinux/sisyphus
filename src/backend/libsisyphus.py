@@ -66,7 +66,7 @@ def getRemoteDscsURL():
     return remoteDscsURL
 
 @animation.wait('resolving dependencies')
-def getPkgDeps(pkgList):
+def getPkgBinaryDeps(pkgList):
     binaryDeps = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
@@ -77,7 +77,7 @@ def getPkgDeps(pkgList):
     return binaryDeps
 
 @animation.wait('resolving dependencies')
-def getWorldDeps():
+def getWorldBinaryDeps():
     binaryDeps = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
@@ -200,7 +200,7 @@ def startInstall(pkgList):
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps = getPkgDeps(pkgList)
+    binaryDeps = getPkgBinaryDeps(pkgList)
     binaryPkgs = []
 
     if not len(binaryDeps) == 0:
@@ -242,7 +242,7 @@ def startUpgrade():
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps = getWorldDeps()
+    binaryDeps = getWorldBinaryDeps()
     binaryPkgs = []
 
     if not len(binaryDeps) == 0:
