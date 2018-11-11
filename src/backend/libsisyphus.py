@@ -476,7 +476,7 @@ def showHelp():
     print("remove-orphans")
     print("* Uninstall packages that are no longer needed")
     print("* When you uninstall a package without it's reverse dependencies, those dependencies will become orphans if nothing else requires them")
-    print("* In addition, a package may no longer depend on another one, so that other package becomes orphan as well")
+    print("* In addition, a package may no longer depend on another one, so that other package becomes orphan as well if nothing else requires it")
     print("* Use this option to check the whole dependency chain for such packages, and uninstall them" + "\n")
     print("update")
     print("* Update the Portage tree, Overlay(s), Portage config files && Sisyphus's package database" + "\n")
