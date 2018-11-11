@@ -12,6 +12,11 @@ if "__main__" == __name__:
                 sys.exit("\n" + "Nothing to install, please give at least one package name; quitting" + "\n")
             else:
                 startInstall(pkgList)
+        elif "hybrid-install" in sys.argv[1:]:
+            if not pkgList:
+                sys.exit("\n" + "Nothing to install, please give at least one package name; quitting" + "\n")
+            else:
+                startHybridInstall(pkgList)
         elif "uninstall" in sys.argv[1:]:
             if not pkgList:
                 sys.exit("\n" + "Nothing to uninstall, please give at least one package name; quitting" + "\n")
@@ -28,6 +33,8 @@ if "__main__" == __name__:
             startSync()
         elif "upgrade" in sys.argv[1:]:
             startUpgrade()
+        elif "hybrid-upgrade" in sys.argv[1:]:
+            startHybridUpgrade()
         elif "search" in sys.argv[1:]:
             if not pkgList:
                 sys.exit("\n" + "Nothing to search, please give at least one package name; quitting" + "\n")

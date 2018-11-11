@@ -227,7 +227,7 @@ def startInstall(pkgList):
 
     if not len(binaryDeps) == 0:
         os.chdir(portageCache)
-        print("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "package(s)" + "\n")
+        print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "package(s)" + "\n")
         if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
             for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
                 print(">>> Fetching" + " " + url)
@@ -258,7 +258,53 @@ def startInstall(pkgList):
         portageExec.wait()
         syncLocalDatabase()
     else:
-        sys.exit("\n" + "No such package; quitting." + "\n")
+        sys.exit("\n" + "No such binary package; quitting." + "\n")
+
+def startHybridInstall(pkgList):
+    syncAll()
+
+    binhostURL = getBinhostURL()
+    binaryDeps = getPkgBinaryDeps(pkgList)
+    sourceDeps = getPkgSourceDeps(pkgList)
+    binaryPkgs = []
+
+    if len(sourceDeps) == 0:
+        if not len(binaryDeps) == 0:
+            os.chdir(portageCache)
+            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "package(s)" + "\n")
+            if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+                    print(">>> Fetching" + " " + url)
+                    wget.download(url)
+                    print("\n")
+            else:
+                sys.exit("\n" + "Quitting!")
+
+            for index, binpkg in enumerate(binaryDeps):
+                binaryPkg = str(binpkg.rstrip().split("/")[1])
+                binaryPkgs.append(binaryPkg)
+
+            for index, binpkg in enumerate(binaryPkgs):
+                subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
+                CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
+                os.remove(str(binpkg + '.xpak'))
+
+                if os.path.isdir(portageCache + CATEGORY.decode().strip()):
+                    shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                else:
+                    os.makedirs(portageCache + CATEGORY.decode().strip())
+                    shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+
+                if os.path.exists(str(binpkg + '.tbz2')):
+                    os.remove(str(binpkg + '.tbz2'))
+
+            portageExec = subprocess.Popen(['emerge', '--quiet', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList)
+            portageExec.wait()
+            syncLocalDatabase()
+        else:
+            sys.exit("\n" + "No such binary package; quitting." + "\n")
+    else:
+        sys.exit("\n" + "This part is not yet implemented; quitting." + "\n")
 
 def startUpgrade():
     syncAll()
@@ -269,7 +315,7 @@ def startUpgrade():
 
     if not len(binaryDeps) == 0:
         os.chdir(portageCache)
-        print("\n" + "These are the packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "package(s)" + "\n")
+        print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "package(s)" + "\n")
         if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
             for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
                 print(">>> Fetching" + " " + url)
@@ -301,6 +347,52 @@ def startUpgrade():
         syncLocalDatabase()
     else:
         sys.exit("\n" + "Nothing to upgrade; quitting." + "\n")
+
+def startHybridUpgrade():
+    syncAll()
+
+    binhostURL = getBinhostURL()
+    binaryDeps = getWorldBinaryDeps()
+    sourceDeps = getWorldSourceDeps()
+    binaryPkgs = []
+
+    if len(sourceDeps) == 0:
+        if not len(binaryDeps) == 0:
+            os.chdir(portageCache)
+            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "package(s)" + "\n")
+            if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+                    print(">>> Fetching" + " " + url)
+                    wget.download(url)
+                    print("\n")
+            else:
+                sys.exit("\n" + "Quitting!")
+
+            for index, worldpkg in enumerate(binaryDeps):
+                binaryPkg = str(worldpkg.rstrip().split("/")[1])
+                binaryPkgs.append(binaryPkg)
+
+            for index, worldpkg in enumerate(binaryPkgs):
+                subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
+                CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
+                os.remove(str(worldpkg + '.xpak'))
+
+                if os.path.isdir(portageCache + CATEGORY.decode().strip()):
+                    shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                else:
+                    os.makedirs(portageCache + CATEGORY.decode().strip())
+                    shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+
+                if os.path.exists(str(worldpkg + '.tbz2')):
+                    os.remove(str(worldpkg + '.tbz2'))
+
+            portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+            portageExec.wait()
+            syncLocalDatabase()
+        else:
+            sys.exit("\n" + "Nothing to upgrade; quitting." + "\n")
+    else:
+        sys.exit("\n" + "This part is not yet implemented; quitting." + "\n")
 
 def startUninstall(pkgList):
     portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + pkgList)
