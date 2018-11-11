@@ -65,7 +65,7 @@ def getRemoteDscsURL():
             remoteDscsURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
     return remoteDscsURL
 
-@animation.wait('resolving dependencies')
+@animation.wait('resolving binary dependencies')
 def getPkgBinaryDeps(pkgList):
     binaryDeps = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
@@ -76,7 +76,18 @@ def getPkgBinaryDeps(pkgList):
             binaryDeps.append(binaryDep)
     return binaryDeps
 
-@animation.wait('resolving dependencies')
+@animation.wait('resolving source dependencies')
+def getPkgSourceDeps(pkgList):
+    sourceDeps = []
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+
+    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+        if "ebuild" in portageOutput.rstrip():
+            sourceDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            sourceDeps.append(sourceDep)
+    return sourceDeps
+
+@animation.wait('resolving binary dependencies')
 def getWorldBinaryDeps():
     binaryDeps = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
@@ -86,6 +97,17 @@ def getWorldBinaryDeps():
             binaryDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             binaryDeps.append(binaryDep)
     return binaryDeps
+
+@animation.wait('resolving source dependencies')
+def getWorldSourceDeps():
+    sourceDeps = []
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
+
+    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+        if "ebuild" in portageOutput.rstrip():
+            sourceDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            sourceDeps.append(sourceDep)
+    return sourceDeps
 
 def fetchRemoteDatabase():
     remotePkgsURL = getRemotePkgsURL()
