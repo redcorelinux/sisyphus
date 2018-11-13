@@ -258,7 +258,7 @@ def startInstall(pkgList):
                 portageExec.wait()
                 syncLocalDatabase()
             else:
-                sys.exit("\n" + "Ok; Quitting.")
+                sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
             sys.exit("\n" + "No package found; Quitting." + "\n")
     else:
@@ -304,7 +304,7 @@ def startHybridInstall(pkgList):
                 portageExec.wait()
                 syncLocalDatabase()
             else:
-                sys.exit("\n" + "Ok; Quitting.")
+                sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
             sys.exit("\n" + "No package found; Quitting." + "\n")
     else:
@@ -336,13 +336,19 @@ def startHybridInstall(pkgList):
                     if os.path.exists(str(binpkg + '.tbz2')):
                         os.remove(str(binpkg + '.tbz2'))
 
-                portageExec = subprocess.Popen(['emerge', '--quiet', '--usepkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList)
+                portageExec = subprocess.Popen(['emerge', '--verbose', '--usepkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList)
                 portageExec.wait()
                 syncLocalDatabase()
             else:
-                sys.exit("\n" + "Ok; Quitting.")
+                sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
-            sys.exit("\n" + "This part is not yet implemented; quitting." + "\n")
+            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(sourceDeps) + "\n\n" + "Total:" + " " + str(len(sourceDeps)) + " " + "source package(s)" + "\n")
+            if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+                portageExec = subprocess.Popen(['emerge', '--verbose', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList)
+                portageExec.wait()
+                syncLocalDatabase()
+            else:
+                sys.exit("\n" + "Ok; Quitting." + "\n")
 
 def startUpgrade():
     syncAll()
@@ -384,7 +390,7 @@ def startUpgrade():
                 portageExec.wait()
                 syncLocalDatabase()
             else:
-                sys.exit("\n" + "Ok; Quitting.")
+                sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
             sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
     else:
@@ -430,7 +436,7 @@ def startHybridUpgrade():
                 portageExec.wait()
                 syncLocalDatabase()
             else:
-                sys.exit("\n" + "Ok; Quitting.")
+                sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
             sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
     else:
@@ -462,13 +468,19 @@ def startHybridUpgrade():
                     if os.path.exists(str(worldpkg + '.tbz2')):
                         os.remove(str(worldpkg + '.tbz2'))
 
-                portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                portageExec = subprocess.Popen(['emerge', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                 portageExec.wait()
                 syncLocalDatabase()
             else:
-                sys.exit("\n" + "Ok; Quitting.")
+                sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
-            sys.exit("\n" + "This part is not yet implemented; quitting." + "\n")
+            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(sourceDeps) + "\n\n" + "Total:" + " " + str(len(sourceDeps)) + " " + "source package(s)" + "\n")
+            if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
+                portageExec = subprocess.Popen(['emerge', '--verbose', '--update', '--deep', '--newuse', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                portageExec.wait()
+                syncLocalDatabase()
+            else:
+                sys.exit("\n" + "Ok; Quitting." + "\n")
 
 def startUninstall(pkgList):
     portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + pkgList)
