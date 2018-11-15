@@ -531,7 +531,7 @@ def setActiveMirror(mirror):
     mirror = int(mirror[0])
     mirrorList = getMirrorList()
     if mirror not in range(1, len(mirrorList) + 1):
-        print('mirror index is wrong, please check with "sisyphus mirror list"')
+        print('mirror index is wrong, please check with "sisyphus --mirror --list"')
     else:
         for i in range(0, len(mirrorList)):
             indx = i + 1
