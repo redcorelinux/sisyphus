@@ -47,23 +47,16 @@ def getBinhostURL():
             binhostURL = str(portageOutput.rstrip().split("=")[1].strip('\"'))
     return binhostURL
 
-def getRemotePkgsURL():
-    remotePkgsURL = []
+def getCsvUrl():
+    remotePkgCsv = []
+    remoteDescCsv = []
     portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput.rstrip():
-            remotePkgsURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
-    return remotePkgsURL
-
-def getRemoteDscsURL():
-    remoteDscsURL = []
-    portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
-
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "PORTAGE_BINHOST" in portageOutput.rstrip():
-            remoteDscsURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
-    return remoteDscsURL
+            remotePkgCsv = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
+            remoteDescCsv = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
+    return remotePkgCsv,remoteDescCsv
 
 @animation.wait('resolving dependencies')
 def getPackageDeps(pkgList):
@@ -98,14 +91,13 @@ def getWorldDeps():
     return binaryDeps,sourceDeps
 
 def fetchRemoteDatabase():
-    remotePkgsURL = getRemotePkgsURL()
-    remoteDscsURL = getRemoteDscsURL()
+    remotePkgCsv,remoteDescCsv = getCsvUrl()
     http = urllib3.PoolManager()
 
-    with http.request('GET', remotePkgsURL, preload_content=False) as tmp_buffer, open(remotePkgsDB, 'wb') as output_file:
+    with http.request('GET', remotePkgCsv, preload_content=False) as tmp_buffer, open(remotePkgsDB, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-    with http.request('GET', remoteDscsURL, preload_content=False) as tmp_buffer, open(remoteDscsDB, 'wb') as output_file:
+    with http.request('GET', remoteDescCsv, preload_content=False) as tmp_buffer, open(remoteDscsDB, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
 def makeLocalDatabase():
@@ -156,15 +148,14 @@ def syncPortageCfg():
 def syncAll():
     checkRoot()
 
-    remotePkgsURL = getRemotePkgsURL()
-    remoteDscsURL = getRemoteDscsURL()
+    remotePkgCsv,remoteDescCsv = getCsvUrl()
     http = urllib3.PoolManager()
 
-    reqRemotePkgsTS = http.request('HEAD', remotePkgsURL)
+    reqRemotePkgsTS = http.request('HEAD', remotePkgCsv)
     remotePkgsTS = int(parser.parse(reqRemotePkgsTS.headers['last-modified']).strftime("%s"))
     localPkgsTS = int(os.path.getctime(remotePkgsDB))
 
-    reqRemoteDscsTS = http.request('HEAD', remoteDscsURL)
+    reqRemoteDscsTS = http.request('HEAD', remoteDescCsv)
     remoteDscsTS = int(parser.parse(reqRemoteDscsTS.headers['last-modified']).strftime("%s"))
     localDscsTS = int(os.path.getctime(remoteDscsDB))
 
