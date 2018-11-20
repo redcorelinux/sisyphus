@@ -366,7 +366,7 @@ class MainWorker(QtCore.QObject):
         pkgList = Sisyphus.pkgList
 
         binhostURL = getBinhostURL()
-        binaryDeps = getPkgBinaryDeps(pkgList)
+        binaryDeps,sourceDeps = getPackageDeps(pkgList)
         binaryPkgs = []
 
         os.chdir(portageCache)
@@ -427,7 +427,7 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
 
         binhostURL = getBinhostURL()
-        binaryDeps = getWorldBinaryDeps()
+        binaryDeps,sourceDeps = getWorldDeps()
         binaryPkgs = []
 
         os.chdir(portageCache)

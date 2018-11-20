@@ -65,49 +65,37 @@ def getRemoteDscsURL():
             remoteDscsURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
     return remoteDscsURL
 
-@animation.wait('resolving binary dependencies')
-def getPkgBinaryDeps(pkgList):
+@animation.wait('resolving dependencies')
+def getPackageDeps(pkgList):
     binaryDeps = []
+    sourceDeps = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
             binaryDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             binaryDeps.append(binaryDep)
-    return binaryDeps
 
-@animation.wait('resolving source dependencies')
-def getPkgSourceDeps(pkgList):
-    sourceDeps = []
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
-
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "ebuild" in portageOutput.rstrip():
             sourceDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             sourceDeps.append(sourceDep)
-    return sourceDeps
+    return binaryDeps,sourceDeps
 
-@animation.wait('resolving binary dependencies')
-def getWorldBinaryDeps():
+@animation.wait('resolving dependencies')
+def getWorldDeps():
     binaryDeps = []
+    sourceDeps = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
             binaryDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             binaryDeps.append(binaryDep)
-    return binaryDeps
 
-@animation.wait('resolving source dependencies')
-def getWorldSourceDeps():
-    sourceDeps = []
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
-
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "ebuild" in portageOutput.rstrip():
             sourceDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             sourceDeps.append(sourceDep)
-    return sourceDeps
+    return binaryDeps,sourceDeps
 
 def fetchRemoteDatabase():
     remotePkgsURL = getRemotePkgsURL()
@@ -222,8 +210,7 @@ def startInstall(pkgList):
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps = getPkgBinaryDeps(pkgList)
-    sourceDeps = getPkgSourceDeps(pkgList)
+    binaryDeps,sourceDeps = getPackageDeps(pkgList)
     binaryPkgs = []
 
     if len(sourceDeps) == 0:
@@ -268,8 +255,7 @@ def startHybridInstall(pkgList):
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps = getPkgBinaryDeps(pkgList)
-    sourceDeps = getPkgSourceDeps(pkgList)
+    binaryDeps,sourceDeps = getPackageDeps(pkgList)
     binaryPkgs = []
 
     if len(sourceDeps) == 0:
@@ -354,8 +340,7 @@ def startUpgrade():
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps = getWorldBinaryDeps()
-    sourceDeps = getWorldSourceDeps()
+    binaryDeps,sourceDeps = getWorldDeps()
     binaryPkgs = []
 
     if len(sourceDeps) == 0:
@@ -400,8 +385,7 @@ def startHybridUpgrade():
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps = getWorldBinaryDeps()
-    sourceDeps = getWorldSourceDeps()
+    binaryDeps,sourceDeps = getWorldDeps()
     binaryPkgs = []
 
     if len(sourceDeps) == 0:
