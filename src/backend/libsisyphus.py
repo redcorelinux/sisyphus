@@ -499,6 +499,11 @@ def writeMirrorCfg(mirrorList):
     with open(mirrorCfg, 'w+') as mirrorFile:
         mirrorFile.write("#######################################################\n")
         mirrorFile.write("# Support for multiple mirrors is somewhat incomplete #\n")
+        mirrorFile.write("#######################################################\n")
+        mirrorFile.write("#       Please avoid using the Main Repository        #\n")
+        mirrorFile.write("#    http://mirrors.redcorelinux.org/redcorelinux     #\n")
+        mirrorFile.write("#  as the bandwidth is limited, use mirrors instead   #\n")
+        mirrorFile.write("#######################################################\n")
         mirrorFile.write("#    Uncomment only one mirror from the list bellow   #\n")
         mirrorFile.write("#######################################################\n")
         mirrorFile.write("\n")
