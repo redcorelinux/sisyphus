@@ -196,6 +196,9 @@ def rescueDB():
     syncLocalDatabase()
 
 def startSearch(pkgList):
+    subprocess.check_call(['emerge', '--search', '--getbinpkgonly'] + pkgList)
+
+def startHybridSearch(pkgList):
     subprocess.check_call(['emerge', '--search', '--getbinpkg'] + pkgList)
 
 def startUpdate():
@@ -552,9 +555,9 @@ def showHelp():
     print("--hybrid-upgrade")
     print("* Upgrade the system using binary and/or ebuild (source) packages" + "\n")
     print("--search")
-    print("* Search for packages")
-    print("* In binary mode this will return available binary packages")
-    print("* In source mode this will return binary and ebuild (source) packages" + "\n")
+    print("* Search for binary packages" + "\n")
+    print("--hybrid-search")
+    print("* Search for binary and/or ebuild (source) packages" + "\n")
     print("--spmsync")
     print("* Sync Sisyphus's package database with Portage's package database")
     print("* When you install something with Portage directly (emerge), Sisyphus is not aware of that package, and it doesn't track it in it's database")
