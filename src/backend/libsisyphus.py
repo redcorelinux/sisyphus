@@ -239,7 +239,13 @@ def startInstall(pkgList):
                     if os.path.exists(str(binpkg + '.tbz2')):
                         os.remove(str(binpkg + '.tbz2'))
 
-                portageExec = subprocess.Popen(['emerge', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList)
+                portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            print(portageOutput.rstrip())
+
                 portageExec.wait()
                 syncLocalDatabase()
             else:
@@ -284,7 +290,13 @@ def startHybridInstall(pkgList):
                     if os.path.exists(str(binpkg + '.tbz2')):
                         os.remove(str(binpkg + '.tbz2'))
 
-                portageExec = subprocess.Popen(['emerge', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList)
+                portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            print(portageOutput.rstrip())
+
                 portageExec.wait()
                 syncLocalDatabase()
             else:
@@ -320,7 +332,13 @@ def startHybridInstall(pkgList):
                     if os.path.exists(str(binpkg + '.tbz2')):
                         os.remove(str(binpkg + '.tbz2'))
 
-                portageExec = subprocess.Popen(['emerge', '--verbose', '--usepkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList)
+                portageExec = subprocess.Popen(['emerge', '--usepkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            print(portageOutput.rstrip())
+
                 portageExec.wait()
                 syncLocalDatabase()
             else:
@@ -328,7 +346,13 @@ def startHybridInstall(pkgList):
         else:
             print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(sourceDeps) + "\n\n" + "Total:" + " " + str(len(sourceDeps)) + " " + "source package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                portageExec = subprocess.Popen(['emerge', '--verbose', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList)
+                portageExec = subprocess.Popen(['emerge', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            print(portageOutput.rstrip())
+
                 portageExec.wait()
                 syncLocalDatabase()
             else:
@@ -369,7 +393,13 @@ def startUpgrade():
                     if os.path.exists(str(worldpkg + '.tbz2')):
                         os.remove(str(worldpkg + '.tbz2'))
 
-                portageExec = subprocess.Popen(['emerge', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            print(portageOutput.rstrip())
+
                 portageExec.wait()
                 syncLocalDatabase()
             else:
@@ -414,7 +444,13 @@ def startHybridUpgrade():
                     if os.path.exists(str(worldpkg + '.tbz2')):
                         os.remove(str(worldpkg + '.tbz2'))
 
-                portageExec = subprocess.Popen(['emerge', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            print(portageOutput.rstrip())
+
                 portageExec.wait()
                 syncLocalDatabase()
             else:
@@ -450,7 +486,13 @@ def startHybridUpgrade():
                     if os.path.exists(str(worldpkg + '.tbz2')):
                         os.remove(str(worldpkg + '.tbz2'))
 
-                portageExec = subprocess.Popen(['emerge', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            print(portageOutput.rstrip())
+
                 portageExec.wait()
                 syncLocalDatabase()
             else:
@@ -458,7 +500,13 @@ def startHybridUpgrade():
         else:
             print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(sourceDeps) + "\n\n" + "Total:" + " " + str(len(sourceDeps)) + " " + "source package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                portageExec = subprocess.Popen(['emerge', '--verbose', '--update', '--deep', '--newuse', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            print(portageOutput.rstrip())
+
                 portageExec.wait()
                 syncLocalDatabase()
             else:
