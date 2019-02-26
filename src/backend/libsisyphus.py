@@ -64,35 +64,35 @@ def getCsvUrl():
 
 @animation.wait('resolving dependencies')
 def getPackageDeps(pkgList):
-    binaryDeps = []
-    sourceDeps = []
+    areBinaries = []
+    areSources = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
-            binaryDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            binaryDeps.append(binaryDep)
+            isBinary = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            areBinaries.append(isBinary)
 
         if "ebuild" in portageOutput.rstrip():
-            sourceDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            sourceDeps.append(sourceDep)
-    return binaryDeps,sourceDeps
+            isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            areSources.append(isSource)
+    return areBinaries,areSources
 
 @animation.wait('resolving dependencies')
 def getWorldDeps():
-    binaryDeps = []
-    sourceDeps = []
+    areBinaries = []
+    areSources = []
     portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
-            binaryDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            binaryDeps.append(binaryDep)
+            isBinary = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            areBinaries.append(isBinary)
 
         if "ebuild" in portageOutput.rstrip():
-            sourceDep = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
-            sourceDeps.append(sourceDep)
-    return binaryDeps,sourceDeps
+            isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
+            areSources.append(isSource)
+    return areBinaries,areSources
 
 def fetchRemoteDatabase():
     remotePkgCsv,remoteDescCsv = getCsvUrl()
@@ -208,20 +208,20 @@ def startInstall(pkgList):
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps,sourceDeps = getPackageDeps(pkgList)
+    areBinaries,areSources = getPackageDeps(pkgList)
     binaryPkgs = []
 
-    if len(sourceDeps) == 0:
-        if not len(binaryDeps) == 0:
+    if len(areSources) == 0:
+        if not len(areBinaries) == 0:
             os.chdir(portageCache)
-            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "binary package(s)" + "\n")
+            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
                     print(">>> Fetching" + " " + url)
                     wget.download(url)
                     print("\n")
 
-                for index, binpkg in enumerate(binaryDeps):
+                for index, binpkg in enumerate(areBinaries):
                     binaryPkg = str(binpkg.rstrip().split("/")[1])
                     binaryPkgs.append(binaryPkg)
 
@@ -259,20 +259,20 @@ def startHybridInstall(pkgList):
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps,sourceDeps = getPackageDeps(pkgList)
+    areBinaries,areSources = getPackageDeps(pkgList)
     binaryPkgs = []
 
-    if len(sourceDeps) == 0:
-        if not len(binaryDeps) == 0:
+    if len(areSources) == 0:
+        if not len(areBinaries) == 0:
             os.chdir(portageCache)
-            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "binary package(s)" + "\n")
+            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
                     print(">>> Fetching" + " " + url)
                     wget.download(url)
                     print("\n")
 
-                for index, binpkg in enumerate(binaryDeps):
+                for index, binpkg in enumerate(areBinaries):
                     binaryPkg = str(binpkg.rstrip().split("/")[1])
                     binaryPkgs.append(binaryPkg)
 
@@ -304,17 +304,17 @@ def startHybridInstall(pkgList):
         else:
             sys.exit("\n" + "No package found; Quitting." + "\n")
     else:
-        if not len(binaryDeps) == 0:
+        if not len(areBinaries) == 0:
             os.chdir(portageCache)
-            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "binary package(s)" + "\n")
-            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(sourceDeps) + "\n\n" + "Total:" + " " + str(len(sourceDeps)) + " " + "source package(s)" + "\n")
+            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
+            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
                     print(">>> Fetching" + " " + url)
                     wget.download(url)
                     print("\n")
 
-                for index, binpkg in enumerate(binaryDeps):
+                for index, binpkg in enumerate(areBinaries):
                     binaryPkg = str(binpkg.rstrip().split("/")[1])
                     binaryPkgs.append(binaryPkg)
 
@@ -344,7 +344,7 @@ def startHybridInstall(pkgList):
             else:
                 sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
-            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(sourceDeps) + "\n\n" + "Total:" + " " + str(len(sourceDeps)) + " " + "source package(s)" + "\n")
+            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                 portageExec = subprocess.Popen(['emerge', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
@@ -362,36 +362,36 @@ def startUpgrade():
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps,sourceDeps = getWorldDeps()
+    areBinaries,areSources = getWorldDeps()
     binaryPkgs = []
 
-    if len(sourceDeps) == 0:
-        if not len(binaryDeps) == 0:
+    if len(areSources) == 0:
+        if not len(areBinaries) == 0:
             os.chdir(portageCache)
-            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "binary package(s)" + "\n")
+            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
                     print(">>> Fetching" + " " + url)
                     wget.download(url)
                     print("\n")
 
-                for index, worldpkg in enumerate(binaryDeps):
-                    binaryPkg = str(worldpkg.rstrip().split("/")[1])
+                for index, binpkg in enumerate(areBinaries):
+                    binaryPkg = str(binpkg.rstrip().split("/")[1])
                     binaryPkgs.append(binaryPkg)
 
-                for index, worldpkg in enumerate(binaryPkgs):
-                    subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
-                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
-                    os.remove(str(worldpkg + '.xpak'))
+                for index, binpkg in enumerate(binaryPkgs):
+                    subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
+                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
+                    os.remove(str(binpkg + '.xpak'))
 
                     if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                        shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                     else:
                         os.makedirs(portageCache + CATEGORY.decode().strip())
-                        shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
-                    if os.path.exists(str(worldpkg + '.tbz2')):
-                        os.remove(str(worldpkg + '.tbz2'))
+                    if os.path.exists(str(binpkg + '.tbz2')):
+                        os.remove(str(binpkg + '.tbz2'))
 
                 portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
@@ -413,36 +413,36 @@ def startHybridUpgrade():
     syncAll()
 
     binhostURL = getBinhostURL()
-    binaryDeps,sourceDeps = getWorldDeps()
+    areBinaries,areSources = getWorldDeps()
     binaryPkgs = []
 
-    if len(sourceDeps) == 0:
-        if not len(binaryDeps) == 0:
+    if len(areSources) == 0:
+        if not len(areBinaries) == 0:
             os.chdir(portageCache)
-            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "binary package(s)" + "\n")
+            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
                     print(">>> Fetching" + " " + url)
                     wget.download(url)
                     print("\n")
 
-                for index, worldpkg in enumerate(binaryDeps):
-                    binaryPkg = str(worldpkg.rstrip().split("/")[1])
+                for index, binpkg in enumerate(areBinaries):
+                    binaryPkg = str(binpkg.rstrip().split("/")[1])
                     binaryPkgs.append(binaryPkg)
 
-                for index, worldpkg in enumerate(binaryPkgs):
-                    subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
-                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
-                    os.remove(str(worldpkg + '.xpak'))
+                for index, binpkg in enumerate(binaryPkgs):
+                    subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
+                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
+                    os.remove(str(binpkg + '.xpak'))
 
                     if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                        shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                     else:
                         os.makedirs(portageCache + CATEGORY.decode().strip())
-                        shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
-                    if os.path.exists(str(worldpkg + '.tbz2')):
-                        os.remove(str(worldpkg + '.tbz2'))
+                    if os.path.exists(str(binpkg + '.tbz2')):
+                        os.remove(str(binpkg + '.tbz2'))
 
                 portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
@@ -458,33 +458,33 @@ def startHybridUpgrade():
         else:
             sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
     else:
-        if not len(binaryDeps) == 0:
+        if not len(areBinaries) == 0:
             os.chdir(portageCache)
-            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + str(binaryDeps) + "\n\n" + "Total:" + " " + str(len(binaryDeps)) + " " + "binary package(s)" + "\n")
-            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(sourceDeps) + "\n\n" + "Total:" + " " + str(len(sourceDeps)) + " " + "source package(s)" + "\n")
+            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
+            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
                     print(">>> Fetching" + " " + url)
                     wget.download(url)
                     print("\n")
 
-                for index, worldpkg in enumerate(binaryDeps):
-                    binaryPkg = str(worldpkg.rstrip().split("/")[1])
+                for index, binpkg in enumerate(areBinaries):
+                    binaryPkg = str(binpkg.rstrip().split("/")[1])
                     binaryPkgs.append(binaryPkg)
 
-                for index, worldpkg in enumerate(binaryPkgs):
-                    subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
-                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
-                    os.remove(str(worldpkg + '.xpak'))
+                for index, binpkg in enumerate(binaryPkgs):
+                    subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
+                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
+                    os.remove(str(binpkg + '.xpak'))
 
                     if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                        shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                     else:
                         os.makedirs(portageCache + CATEGORY.decode().strip())
-                        shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
-                    if os.path.exists(str(worldpkg + '.tbz2')):
-                        os.remove(str(worldpkg + '.tbz2'))
+                    if os.path.exists(str(binpkg + '.tbz2')):
+                        os.remove(str(binpkg + '.tbz2'))
 
                 portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
@@ -498,7 +498,7 @@ def startHybridUpgrade():
             else:
                 sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
-            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(sourceDeps) + "\n\n" + "Total:" + " " + str(len(sourceDeps)) + " " + "source package(s)" + "\n")
+            print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                 portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 

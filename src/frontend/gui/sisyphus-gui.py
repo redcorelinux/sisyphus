@@ -366,17 +366,17 @@ class MainWorker(QtCore.QObject):
         pkgList = Sisyphus.pkgList
 
         binhostURL = getBinhostURL()
-        binaryDeps,sourceDeps = getPackageDeps(pkgList)
+        areBinaries,areSources = getPackageDeps(pkgList)
         binaryPkgs = []
 
         os.chdir(portageCache)
-        for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+        for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
             self.strReady.emit(">>> Fetching" + " " + url)
             print(">>> Fetching" + " " + url)
             wget.download(url)
             print("\n")
 
-        for index, binpkg in enumerate(binaryDeps):
+        for index, binpkg in enumerate(areBinaries):
             binaryPkg = str(binpkg.rstrip().split("/")[1])
             binaryPkgs.append(binaryPkg)
 
@@ -427,33 +427,33 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
 
         binhostURL = getBinhostURL()
-        binaryDeps,sourceDeps = getWorldDeps()
+        areBinaries,areSources = getWorldDeps()
         binaryPkgs = []
 
         os.chdir(portageCache)
-        for index, url in enumerate([binhostURL + package + '.tbz2' for package in binaryDeps]):
+        for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
             self.strReady.emit(">>> Fetching" + " " + url)
             print(">>> Fetching" + " " + url)
             wget.download(url)
             print("\n")
 
-        for index, worldpkg in enumerate(binaryDeps):
-            binaryPkg = str(worldpkg.rstrip().split("/")[1])
+        for index, binpkg in enumerate(areBinaries):
+            binaryPkg = str(binpkg.rstrip().split("/")[1])
             binaryPkgs.append(binaryPkg)
 
-        for index, worldpkg in enumerate(binaryPkgs):
-            subprocess.call(['qtbz2', '-x'] + str(worldpkg + '.tbz2').split())
-            CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(worldpkg + '.xpak').split() + ['CATEGORY'])
-            os.remove(str(worldpkg + '.xpak'))
+        for index, binpkg in enumerate(binaryPkgs):
+            subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
+            CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
+            os.remove(str(binpkg + '.xpak'))
 
             if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
             else:
                 os.makedirs(portageCache + CATEGORY.decode().strip())
-                shutil.move(str(worldpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(worldpkg + '.tbz2'))))
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
-            if os.path.exists(str(worldpkg + '.tbz2')):
-                os.remove(str(worldpkg + '.tbz2'))
+            if os.path.exists(str(binpkg + '.tbz2')):
+                os.remove(str(binpkg + '.tbz2'))
 
         portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
