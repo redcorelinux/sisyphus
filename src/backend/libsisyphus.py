@@ -66,7 +66,15 @@ def getCsvUrl():
 def getPackageDeps(pkgList):
     areBinaries = []
     areSources = []
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+    needsConfig = int()
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    for portageOutput in io.TextIOWrapper(portageExec.stderr, encoding="utf-8"):
+        if "The following keyword changes are necessary to proceed:" in portageOutput.rstrip():
+            needsConfig = int(1)
+
+        if "The following mask changes are necessary to proceed:" in portageOutput.rstrip():
+            needsConfig = int(1)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
@@ -76,13 +84,21 @@ def getPackageDeps(pkgList):
         if "ebuild" in portageOutput.rstrip():
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
-    return areBinaries,areSources
+    return areBinaries,areSources,needsConfig
 
 @animation.wait('resolving dependencies')
 def getWorldDeps():
     areBinaries = []
     areSources = []
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
+    needsConfig = int()
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    for portageOutput in io.TextIOWrapper(portageExec.stderr, encoding="utf-8"):
+        if "The following keyword changes are necessary to proceed:" in portageOutput.rstrip():
+            needsConfig = int(1)
+
+        if "The following mask changes are necessary to proceed:" in portageOutput.rstrip():
+            needsConfig = int(1)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
@@ -92,7 +108,7 @@ def getWorldDeps():
         if "ebuild" in portageOutput.rstrip():
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
-    return areBinaries,areSources
+    return areBinaries,areSources,needsConfig
 
 def fetchRemoteDatabase():
     remotePkgCsv,remoteDescCsv = getCsvUrl()
