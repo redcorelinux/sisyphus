@@ -76,6 +76,12 @@ def getPackageDeps(pkgList):
         if "The following mask changes are necessary to proceed:" in portageOutput.rstrip():
             needsConfig = int(1)
 
+        if "The following USE changes are necessary to proceed:" in portageOutput.rstrip():
+            needsConfig = int(1)
+
+        if "The following REQUIRED_USE flag constraints are unsatisfied:" in portageOutput.rstrip():
+            needsConfig = int(1)
+
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "binary" in portageOutput.rstrip():
             isBinary = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
@@ -98,6 +104,12 @@ def getWorldDeps():
             needsConfig = int(1)
 
         if "The following mask changes are necessary to proceed:" in portageOutput.rstrip():
+            needsConfig = int(1)
+
+        if "The following USE changes are necessary to proceed:" in portageOutput.rstrip():
+            needsConfig = int(1)
+
+        if "The following REQUIRED_USE flag constraints are unsatisfied:" in portageOutput.rstrip():
             needsConfig = int(1)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
