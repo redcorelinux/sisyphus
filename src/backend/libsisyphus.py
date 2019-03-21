@@ -264,11 +264,11 @@ def startInstall(pkgList):
                     CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                     os.remove(str(binpkg + '.xpak'))
 
-                    if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                    if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
                     else:
-                        os.makedirs(portageCacheDir + CATEGORY.decode().strip())
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
 
                     if os.path.exists(str(binpkg + '.tbz2')):
                         os.remove(str(binpkg + '.tbz2'))
@@ -316,11 +316,11 @@ def startHybridInstall(pkgList):
                         CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                         os.remove(str(binpkg + '.xpak'))
 
-                        if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
                         else:
-                            os.makedirs(portageCacheDir + CATEGORY.decode().strip())
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                            os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
 
                         if os.path.exists(str(binpkg + '.tbz2')):
                             os.remove(str(binpkg + '.tbz2'))
@@ -358,11 +358,11 @@ def startHybridInstall(pkgList):
                         CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                         os.remove(str(binpkg + '.xpak'))
 
-                        if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
                         else:
-                            os.makedirs(portageCacheDir + CATEGORY.decode().strip())
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                            os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
 
                         if os.path.exists(str(binpkg + '.tbz2')):
                             os.remove(str(binpkg + '.tbz2'))
@@ -430,11 +430,11 @@ def startUpgrade():
                     CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                     os.remove(str(binpkg + '.xpak'))
 
-                    if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                    if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
                     else:
-                        os.makedirs(portageCacheDir + CATEGORY.decode().strip())
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
 
                     if os.path.exists(str(binpkg + '.tbz2')):
                         os.remove(str(binpkg + '.tbz2'))
@@ -482,11 +482,11 @@ def startHybridUpgrade():
                         CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                         os.remove(str(binpkg + '.xpak'))
 
-                        if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
                         else:
-                            os.makedirs(portageCacheDir + CATEGORY.decode().strip())
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                            os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
 
                         if os.path.exists(str(binpkg + '.tbz2')):
                             os.remove(str(binpkg + '.tbz2'))
@@ -524,11 +524,11 @@ def startHybridUpgrade():
                         CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                         os.remove(str(binpkg + '.xpak'))
 
-                        if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
                         else:
-                            os.makedirs(portageCacheDir + CATEGORY.decode().strip())
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                            os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
 
                         if os.path.exists(str(binpkg + '.tbz2')):
                             os.remove(str(binpkg + '.tbz2'))
