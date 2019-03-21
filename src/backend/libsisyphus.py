@@ -12,8 +12,10 @@ import io
 import wget
 from dateutil import parser
 
-portageCfg = '/opt/redcore-build/'
-portageCache = '/var/cache/packages/'
+gentooEbuildDir = '/usr/ports/gentoo'
+redcoreEbuildDir = '/usr/ports/redcore'
+portageConfigDir = '/opt/redcore-build'
+portageCacheDir = '/var/cache/packages'
 remotePkgsDB = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
 remoteDscsDB = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
 localPkgsDB = '/var/lib/sisyphus/csv/localPackagesPre.csv'
@@ -170,10 +172,14 @@ def syncLocalDatabase():
     sisyphusdb.close()
 
 def syncPortageTree():
-    subprocess.call(['emerge', '--sync', '--quiet'])
+    os.chdir(gentooEbuildDir)
+    subprocess.call(['git', 'pull', '--quiet'])
+
+    os.chdir(redcoreEbuildDir)
+    subprocess.call(['git', 'pull', '--quiet'])
 
 def syncPortageCfg():
-    os.chdir(portageCfg)
+    os.chdir(portageConfigDir)
     subprocess.call(['git', 'pull', '--quiet'])
 
 @animation.wait('syncing remote database')
@@ -241,7 +247,7 @@ def startInstall(pkgList):
 
     if len(areSources) == 0:
         if not len(areBinaries) == 0:
-            os.chdir(portageCache)
+            os.chdir(portageCacheDir)
             print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                 for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
@@ -258,11 +264,11 @@ def startInstall(pkgList):
                     CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                     os.remove(str(binpkg + '.xpak'))
 
-                    if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                    if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                     else:
-                        os.makedirs(portageCache + CATEGORY.decode().strip())
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        os.makedirs(portageCacheDir + CATEGORY.decode().strip())
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
                     if os.path.exists(str(binpkg + '.tbz2')):
                         os.remove(str(binpkg + '.tbz2'))
@@ -293,7 +299,7 @@ def startHybridInstall(pkgList):
     if needsConfig == 0:
         if len(areSources) == 0:
             if not len(areBinaries) == 0:
-                os.chdir(portageCache)
+                os.chdir(portageCacheDir)
                 print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                     for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
@@ -310,11 +316,11 @@ def startHybridInstall(pkgList):
                         CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                         os.remove(str(binpkg + '.xpak'))
 
-                        if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                         else:
-                            os.makedirs(portageCache + CATEGORY.decode().strip())
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                            os.makedirs(portageCacheDir + CATEGORY.decode().strip())
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
                         if os.path.exists(str(binpkg + '.tbz2')):
                             os.remove(str(binpkg + '.tbz2'))
@@ -334,7 +340,7 @@ def startHybridInstall(pkgList):
                 sys.exit("\n" + "No package found; Quitting." + "\n")
         else:
             if not len(areBinaries) == 0:
-                os.chdir(portageCache)
+                os.chdir(portageCacheDir)
                 print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                 print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
@@ -352,11 +358,11 @@ def startHybridInstall(pkgList):
                         CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                         os.remove(str(binpkg + '.xpak'))
 
-                        if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                         else:
-                            os.makedirs(portageCache + CATEGORY.decode().strip())
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                            os.makedirs(portageCacheDir + CATEGORY.decode().strip())
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
                         if os.path.exists(str(binpkg + '.tbz2')):
                             os.remove(str(binpkg + '.tbz2'))
@@ -407,7 +413,7 @@ def startUpgrade():
 
     if len(areSources) == 0:
         if not len(areBinaries) == 0:
-            os.chdir(portageCache)
+            os.chdir(portageCacheDir)
             print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
             if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                 for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
@@ -424,11 +430,11 @@ def startUpgrade():
                     CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                     os.remove(str(binpkg + '.xpak'))
 
-                    if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                    if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                     else:
-                        os.makedirs(portageCache + CATEGORY.decode().strip())
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        os.makedirs(portageCacheDir + CATEGORY.decode().strip())
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
                     if os.path.exists(str(binpkg + '.tbz2')):
                         os.remove(str(binpkg + '.tbz2'))
@@ -459,7 +465,7 @@ def startHybridUpgrade():
     if needsConfig == 0:
         if len(areSources) == 0:
             if not len(areBinaries) == 0:
-                os.chdir(portageCache)
+                os.chdir(portageCacheDir)
                 print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                     for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
@@ -476,11 +482,11 @@ def startHybridUpgrade():
                         CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                         os.remove(str(binpkg + '.xpak'))
 
-                        if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                         else:
-                            os.makedirs(portageCache + CATEGORY.decode().strip())
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                            os.makedirs(portageCacheDir + CATEGORY.decode().strip())
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
                         if os.path.exists(str(binpkg + '.tbz2')):
                             os.remove(str(binpkg + '.tbz2'))
@@ -500,7 +506,7 @@ def startHybridUpgrade():
                 sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
         else:
             if not len(areBinaries) == 0:
-                os.chdir(portageCache)
+                os.chdir(portageCacheDir)
                 print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                 print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
@@ -518,11 +524,11 @@ def startHybridUpgrade():
                         CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
                         os.remove(str(binpkg + '.xpak'))
 
-                        if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                        if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
                         else:
-                            os.makedirs(portageCache + CATEGORY.decode().strip())
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                            os.makedirs(portageCacheDir + CATEGORY.decode().strip())
+                            shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
                         if os.path.exists(str(binpkg + '.tbz2')):
                             os.remove(str(binpkg + '.tbz2'))

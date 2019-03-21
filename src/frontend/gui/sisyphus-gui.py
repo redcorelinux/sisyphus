@@ -369,7 +369,7 @@ class MainWorker(QtCore.QObject):
         areBinaries,areSources,needsConfig = getPackageDeps(pkgList)
         binaryPkgs = []
 
-        os.chdir(portageCache)
+        os.chdir(portageCacheDir)
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
             self.strReady.emit(">>> Fetching" + " " + url)
             print(">>> Fetching" + " " + url)
@@ -385,11 +385,11 @@ class MainWorker(QtCore.QObject):
             CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
             os.remove(str(binpkg + '.xpak'))
 
-            if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+            if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
             else:
-                os.makedirs(portageCache + CATEGORY.decode().strip())
-                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                os.makedirs(portageCacheDir + CATEGORY.decode().strip())
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
             if os.path.exists(str(binpkg + '.tbz2')):
                 os.remove(str(binpkg + '.tbz2'))
@@ -430,7 +430,7 @@ class MainWorker(QtCore.QObject):
         areBinaries,areSources,needsConfig = getWorldDeps()
         binaryPkgs = []
 
-        os.chdir(portageCache)
+        os.chdir(portageCacheDir)
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
             self.strReady.emit(">>> Fetching" + " " + url)
             print(">>> Fetching" + " " + url)
@@ -446,11 +446,11 @@ class MainWorker(QtCore.QObject):
             CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
             os.remove(str(binpkg + '.xpak'))
 
-            if os.path.isdir(portageCache + CATEGORY.decode().strip()):
-                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+            if os.path.isdir(portageCacheDir + CATEGORY.decode().strip()):
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
             else:
-                os.makedirs(portageCache + CATEGORY.decode().strip())
-                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCache + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
+                os.makedirs(portageCacheDir + CATEGORY.decode().strip())
+                shutil.move(str(binpkg + '.tbz2'), os.path.join(portageCacheDir + CATEGORY.decode().strip(), os.path.basename(str(binpkg + '.tbz2'))))
 
             if os.path.exists(str(binpkg + '.tbz2')):
                 os.remove(str(binpkg + '.tbz2'))
