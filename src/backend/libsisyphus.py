@@ -10,7 +10,6 @@ import sys
 import urllib3
 import io
 import wget
-from dateutil import parser
 
 gentooEbuildDir = '/usr/ports/gentoo'
 redcoreEbuildDir = '/usr/ports/redcore'
@@ -185,26 +184,9 @@ def syncPortageCfg():
 @animation.wait('syncing remote database')
 def syncAll():
     checkRoot()
-
-    remotePkgCsv,remoteDescCsv = getCsvUrl()
-    http = urllib3.PoolManager()
-
-    reqRemotePkgsTS = http.request('HEAD', remotePkgCsv)
-    remotePkgsTS = int(parser.parse(reqRemotePkgsTS.headers['last-modified']).strftime("%s"))
-    localPkgsTS = int(os.path.getctime(remotePkgsDB))
-
-    reqRemoteDscsTS = http.request('HEAD', remoteDescCsv)
-    remoteDscsTS = int(parser.parse(reqRemoteDscsTS.headers['last-modified']).strftime("%s"))
-    localDscsTS = int(os.path.getctime(remoteDscsDB))
-
-    if remotePkgsTS < localPkgsTS:
-        pass
-    elif remoteDscsTS < localDscsTS:
-        pass
-    else:
-        syncPortageTree()
-        syncPortageCfg()
-        syncRemoteDatabase()
+    syncPortageTree()
+    syncPortageCfg()
+    syncRemoteDatabase()
 
 @animation.wait('syncing local database')
 def startSyncSPM():
