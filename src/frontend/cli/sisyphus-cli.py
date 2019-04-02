@@ -30,7 +30,7 @@ if "__main__" == __name__:
         elif "--remove-orphans" in sys.argv[1:]:
             removeOrphans()
         elif "--update" in sys.argv[1:]:
-            startSync()
+            startUpdate()
         elif "--upgrade" in sys.argv[1:]:
             startUpgrade()
         elif "--hybrid-upgrade" in sys.argv[1:]:

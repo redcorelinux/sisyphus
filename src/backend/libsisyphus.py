@@ -182,7 +182,7 @@ def syncPortageCfg():
     subprocess.call(['git', 'pull', '--quiet'])
 
 @animation.wait('syncing remote database')
-def syncAll():
+def startUpdate():
     checkRoot()
     syncPortageTree()
     syncPortageCfg()
@@ -191,11 +191,6 @@ def syncAll():
 @animation.wait('syncing local database')
 def startSyncSPM():
     syncLocalDatabase()
-
-@animation.wait('syncing portage')
-def startSync():
-    syncPortageTree()
-    syncPortageCfg()
 
 @animation.wait('resurrecting database')
 def rescueDB():
@@ -217,11 +212,8 @@ def startSearch(pkgList):
 def startHybridSearch(pkgList):
     subprocess.check_call(['emerge', '--search', '--getbinpkg'] + pkgList)
 
-def startUpdate():
-    syncAll()
-
 def startInstall(pkgList):
-    syncAll()
+    startUpdate()
 
     binhostURL = getBinhostURL()
     areBinaries,areSources,needsConfig = getPackageDeps(pkgList)
@@ -272,7 +264,7 @@ def startInstall(pkgList):
         sys.exit("\n" + "No binary package found; Source package found; Use sisyphus --hybrid-install; Quitting." + "\n")
 
 def startHybridInstall(pkgList):
-    syncAll()
+    startUpdate()
 
     binhostURL = getBinhostURL()
     areBinaries,areSources,needsConfig = getPackageDeps(pkgList)
@@ -387,7 +379,7 @@ def startHybridInstall(pkgList):
         sys.exit("\n" + "Cannot proceed; Apply the above changes to your portage configuration files and try again; Quitting." + "\n")
 
 def startUpgrade():
-    syncAll()
+    startUpdate()
 
     binhostURL = getBinhostURL()
     areBinaries,areSources,needsConfig = getWorldDeps()
@@ -438,7 +430,7 @@ def startUpgrade():
         sys.exit("\n" + "No binary package upgrades found; Source package upgrades found; Use sisyphus --hybrid-upgrade; Quitting." + "\n")
 
 def startHybridUpgrade():
-    syncAll()
+    startUpdate()
 
     binhostURL = getBinhostURL()
     areBinaries,areSources,needsConfig = getWorldDeps()
