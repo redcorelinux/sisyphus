@@ -181,9 +181,18 @@ def syncPortageCfg():
     os.chdir(portageConfigDir)
     subprocess.call(['git', 'pull', '--quiet'])
 
+def cleanCacheDir():
+    if os.path.isdir(portageCacheDir):
+        for files in os.listdir(portageCacheDir):
+            if os.path.isfile(os.path.join(portageCacheDir, files)):
+                os.remove(os.path.join(portageCacheDir, files))
+            else:
+                shutil.rmtree(os.path.join(portageCacheDir, files))
+
 @animation.wait('syncing remote database')
 def startUpdate():
     checkRoot()
+    cleanCacheDir()
     syncPortageTree()
     syncPortageCfg()
     syncRemoteDatabase()
