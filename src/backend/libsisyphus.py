@@ -172,14 +172,14 @@ def syncLocalDatabase():
 
 def syncPortageTree():
     os.chdir(gentooEbuildDir)
-    subprocess.call(['git', 'pull', '--quiet'])
+    subprocess.call(['git', 'pull', '--depth=1', '--quiet'])
 
     os.chdir(redcoreEbuildDir)
-    subprocess.call(['git', 'pull', '--quiet'])
+    subprocess.call(['git', 'pull', '--depth=1', '--quiet'])
 
 def syncPortageCfg():
     os.chdir(portageConfigDir)
-    subprocess.call(['git', 'pull', '--quiet'])
+    subprocess.call(['git', 'pull', '--depth=1', '--quiet'])
 
 def cleanCacheDir():
     if os.path.isdir(portageCacheDir):
