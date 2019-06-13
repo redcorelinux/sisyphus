@@ -10,6 +10,7 @@ import sys
 import urllib3
 import io
 import wget
+import shutil
 
 gentooEbuildDir = '/usr/ports/gentoo'
 redcoreEbuildDir = '/usr/ports/redcore'
@@ -134,7 +135,7 @@ def fetchRemoteDatabase():
         shutil.copyfileobj(tmp_buffer, output_file)
 
 def makeLocalDatabase():
-    subprocess.check_call(['/usr/share/sisyphus/helpers/make_local_csv'])
+    subprocess.call(['/usr/share/sisyphus/helpers/make_local_csv'])
 
 def syncRemoteDatabase():
     fetchRemoteDatabase()
@@ -216,7 +217,7 @@ def rescueDB():
     syncLocalDatabase()
 
 def startSearch(pkgList):
-    subprocess.check_call(['emerge', '--search', '--getbinpkg'] + pkgList)
+    subprocess.call(['emerge', '--search', '--getbinpkg'] + pkgList)
 
 def startInstall(pkgList):
     startUpdate()
@@ -464,11 +465,10 @@ def removeOrphans():
     syncLocalDatabase()
 
 def sysInfo():
-    subprocess.check_call(['emerge', '--info'])
+    subprocess.call(['emerge', '--info'])
 
 def portageKill(portageCmd):
     portageCmd.terminate()
-
 
 def printMirrorList():
     mirrorList = getMirrorList()
@@ -511,6 +511,109 @@ def setActiveMirror(mirror):
             else:
                 mirrorList[i]['isActive'] = False
         writeMirrorCfg(mirrorList)
+
+@animation.wait('I am resetting portage environment')
+def resetPortageEnv():
+    if os.path.isdir(gentooEbuildDir):
+        for files in os.listdir(gentooEbuildDir):
+            if os.path.isfile(os.path.join(gentooEbuildDir, files)):
+                os.remove(os.path.join(gentooEbuildDir, files))
+            else:
+                shutil.rmtree(os.path.join(gentooEbuildDir, files))
+    else:
+        os.makedirs(gentooEbuildDir)
+
+    if os.path.isdir(redcoreEbuildDir):
+        for files in os.listdir(redcoreEbuildDir):
+            if os.path.isfile(os.path.join(redcoreEbuildDir, files)):
+                os.remove(os.path.join(redcoreEbuildDir, files))
+            else:
+                shutil.rmtree(os.path.join(redcoreEbuildDir, files))
+    else:
+        os.makedirs(redcoreEbuildDir)
+
+    if os.path.isdir(portageConfigDir):
+        for files in os.listdir(portageConfigDir):
+            if os.path.isfile(os.path.join(portageConfigDir, files)):
+                os.remove(os.path.join(portageConfigDir, files))
+            else:
+                shutil.rmtree(os.path.join(portageConfigDir, files))
+    else:
+        os.makedirs(portageConfigDir)
+
+def setPortageEnvStable():
+    if not os.path.isdir(os.path.join(gentooEbuildDir, '.git')):
+        print("\nI am injecting Gentoo Linux portage tree (master)\n")
+        os.chdir(gentooEbuildDir)
+        subprocess.call(['git', 'init', '-q'])
+        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/portage.git'])
+        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'master'])
+        subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
+
+    if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
+        print("\nI am injecting Redcore Linux overlay (master)\n")
+        os.chdir(redcoreEbuildDir)
+        subprocess.call(['git', 'init', '-q'])
+        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-desktop.git'])
+        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'master'])
+        subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
+
+    if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
+        print("\nI am injecting Redcore Linux portage configuration (master)\n")
+        os.chdir(portageConfigDir)
+        subprocess.call(['git', 'init', '-q'])
+        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-build.git'])
+        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'master'])
+        subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
+
+def setPortageEnvTesting():
+    if not os.path.isdir(os.path.join(gentooEbuildDir, '.git')):
+        print("\nI am injecting Gentoo Linux portage tree (next)\n")
+        os.chdir(gentooEbuildDir)
+        subprocess.call(['git', 'init', '-q'])
+        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/portage.git'])
+        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
+        subprocess.call(['git', 'checkout', '-b', 'next', 'origin/next'])
+
+    if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
+        print("\nI am injecting Redcore Linux overlay (next)\n")
+        os.chdir(redcoreEbuildDir)
+        subprocess.call(['git', 'init', '-q'])
+        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-desktop.git'])
+        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
+        subprocess.call(['git', 'checkout', '-b', 'next', 'origin/next'])
+
+    if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
+        print("\nI am injecting Redcore Linux portage configuration (next)\n")
+        os.chdir(portageConfigDir)
+        subprocess.call(['git', 'init', '-q'])
+        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-build.git'])
+        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
+        subprocess.call(['git', 'checkout', '-b', 'next', 'origin/next'])
+
+def setHardenedProfile():
+    subprocess.call(['eselect', 'profile', 'set', 'default/linux/amd64/17.0/hardened'])
+    subprocess.call(['env-update'])
+
+def resetPortage():
+    resetPortageEnv()
+
+def setJobs():
+    subprocess.call(['/usr/share/sisyphus/helpers/set_jobs'])
+
+def setupStable():
+    checkRoot()
+    resetPortageEnv()
+    setPortageEnvStable()
+    setHardenedProfile()
+    setJobs()
+
+def setupTesting():
+    checkRoot()
+    resetPortageEnv()
+    setPortageEnvTesting()
+    setHardenedProfile()
+    setJobs()
 
 def showHelp():
     print("\n" + "Usage : sisyphus command [package(s)] || [file(s)]" + "\n")

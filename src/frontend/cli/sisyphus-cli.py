@@ -49,6 +49,13 @@ if "__main__" == __name__:
                     showHelp()
             else:
                 showHelp()
+        elif "--branch" in sys.argv[1:]:
+            if "--master" in sys.argv[2:]:
+                setupStable()
+            elif "--next" in sys.argv[2:]:
+                setupTesting()
+            else:
+                showHelp()
         elif "--help" in sys.argv[1:]:
             showHelp()
     else:
