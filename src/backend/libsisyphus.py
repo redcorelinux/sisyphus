@@ -216,63 +216,10 @@ def rescueDB():
     syncLocalDatabase()
 
 def startSearch(pkgList):
-    subprocess.check_call(['emerge', '--search', '--getbinpkgonly'] + pkgList)
-
-def startHybridSearch(pkgList):
     subprocess.check_call(['emerge', '--search', '--getbinpkg'] + pkgList)
 
+
 def startInstall(pkgList):
-    startUpdate()
-
-    binhostURL = getBinhostURL()
-    areBinaries,areSources,needsConfig = getPackageDeps(pkgList)
-    binaryPkgs = []
-
-    if len(areSources) == 0:
-        if not len(areBinaries) == 0:
-            os.chdir(portageCacheDir)
-            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
-            if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
-                    print(">>> Fetching" + " " + url)
-                    wget.download(url)
-                    print("\n")
-
-                for index, binpkg in enumerate(areBinaries):
-                    binaryPkg = str(binpkg.rstrip().split("/")[1])
-                    binaryPkgs.append(binaryPkg)
-
-                for index, binpkg in enumerate(binaryPkgs):
-                    subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-                    os.remove(str(binpkg + '.xpak'))
-
-                    if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
-                    else:
-                        os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
-
-                    if os.path.exists(str(binpkg + '.tbz2')):
-                        os.remove(str(binpkg + '.tbz2'))
-
-                portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
-
-                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
-                        if not "Calculating dependencies" in portageOutput.rstrip():
-                            print(portageOutput.rstrip())
-
-                portageExec.wait()
-                syncLocalDatabase()
-            else:
-                sys.exit("\n" + "Ok; Quitting." + "\n")
-        else:
-            sys.exit("\n" + "No package found; Quitting." + "\n")
-    else:
-        sys.exit("\n" + "No binary package found; Source package found; Use sisyphus --hybrid-install; Quitting." + "\n")
-
-def startHybridInstall(pkgList):
     startUpdate()
 
     binhostURL = getBinhostURL()
@@ -388,57 +335,6 @@ def startHybridInstall(pkgList):
         sys.exit("\n" + "Cannot proceed; Apply the above changes to your portage configuration files and try again; Quitting." + "\n")
 
 def startUpgrade():
-    startUpdate()
-
-    binhostURL = getBinhostURL()
-    areBinaries,areSources,needsConfig = getWorldDeps()
-    binaryPkgs = []
-
-    if len(areSources) == 0:
-        if not len(areBinaries) == 0:
-            os.chdir(portageCacheDir)
-            print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
-            if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
-                    print(">>> Fetching" + " " + url)
-                    wget.download(url)
-                    print("\n")
-
-                for index, binpkg in enumerate(areBinaries):
-                    binaryPkg = str(binpkg.rstrip().split("/")[1])
-                    binaryPkgs.append(binaryPkg)
-
-                for index, binpkg in enumerate(binaryPkgs):
-                    subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-                    os.remove(str(binpkg + '.xpak'))
-
-                    if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
-                    else:
-                        os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
-
-                    if os.path.exists(str(binpkg + '.tbz2')):
-                        os.remove(str(binpkg + '.tbz2'))
-
-                portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
-
-                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
-                        if not "Calculating dependencies" in portageOutput.rstrip():
-                            print(portageOutput.rstrip())
-
-                portageExec.wait()
-                syncLocalDatabase()
-            else:
-                sys.exit("\n" + "Ok; Quitting." + "\n")
-        else:
-            sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
-    else:
-        sys.exit("\n" + "No binary package upgrades found; Source package upgrades found; Use sisyphus --hybrid-upgrade; Quitting." + "\n")
-
-def startHybridUpgrade():
     startUpdate()
 
     binhostURL = getBinhostURL()
@@ -624,8 +520,6 @@ def showHelp():
     print("Debian/RedHat-based systems to Gentoo." + "\n")
     print("Commands :" + "\n")
     print("--install")
-    print("* Install binary packages" + "\n")
-    print("--hybrid-install")
     print("* Install binary and/or ebuild (source) packages" + "\n")
     print("--uninstall")
     print("* Uninstall packages *SAFELY* by checking for reverse dependencies")
@@ -645,12 +539,8 @@ def showHelp():
     print("--update")
     print("* Update the Portage tree, Overlay(s), Portage config files && Sisyphus's package database" + "\n")
     print("--upgrade")
-    print("* Upgrade the system using binary packages" + "\n")
-    print("--hybrid-upgrade")
     print("* Upgrade the system using binary and/or ebuild (source) packages" + "\n")
     print("--search")
-    print("* Search for binary packages" + "\n")
-    print("--hybrid-search")
     print("* Search for binary and/or ebuild (source) packages" + "\n")
     print("--spmsync")
     print("* Sync Sisyphus's package database with Portage's package database")

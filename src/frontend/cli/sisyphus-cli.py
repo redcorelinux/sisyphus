@@ -12,11 +12,6 @@ if "__main__" == __name__:
                 sys.exit("\n" + "Nothing to install, please provide at least one package name; quitting" + "\n")
             else:
                 startInstall(pkgList)
-        elif "--hybrid-install" in sys.argv[1:]:
-            if not pkgList:
-                sys.exit("\n" + "Nothing to install, please provide at least one package name; quitting" + "\n")
-            else:
-                startHybridInstall(pkgList)
         elif "--uninstall" in sys.argv[1:]:
             if not pkgList:
                 sys.exit("\n" + "Nothing to uninstall, please provide at least one package name; quitting" + "\n")
@@ -33,18 +28,11 @@ if "__main__" == __name__:
             startUpdate()
         elif "--upgrade" in sys.argv[1:]:
             startUpgrade()
-        elif "--hybrid-upgrade" in sys.argv[1:]:
-            startHybridUpgrade()
         elif "--search" in sys.argv[1:]:
             if not pkgList:
                 sys.exit("\n" + "Nothing to search, please provide at least one package name; quitting" + "\n")
             else:
                 startSearch(pkgList)
-        elif "--hybrid-search" in sys.argv[1:]:
-            if not pkgList:
-                sys.exit("\n" + "Nothing to search, please provide at least one package name; quitting" + "\n")
-            else:
-                startHybridSearch(pkgList)
         elif "--spmsync" in sys.argv[1:]:
             startSyncSPM()
         elif "--rescue" in sys.argv[1:]:
