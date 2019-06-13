@@ -218,7 +218,6 @@ def rescueDB():
 def startSearch(pkgList):
     subprocess.check_call(['emerge', '--search', '--getbinpkg'] + pkgList)
 
-
 def startInstall(pkgList):
     startUpdate()
 
