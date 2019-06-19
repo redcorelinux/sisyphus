@@ -573,7 +573,7 @@ def setPortageEnvTesting():
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/portage.git'])
         subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
-        subprocess.call(['git', 'checkout', '-b', 'next', 'origin/next'])
+        subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
 
     if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
         print("\nI am injecting Redcore Linux overlay (next)\n")
@@ -581,7 +581,7 @@ def setPortageEnvTesting():
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-desktop.git'])
         subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
-        subprocess.call(['git', 'checkout', '-b', 'next', 'origin/next'])
+        subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
 
     if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
         print("\nI am injecting Redcore Linux portage configuration (next)\n")
@@ -589,7 +589,7 @@ def setPortageEnvTesting():
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-build.git'])
         subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
-        subprocess.call(['git', 'checkout', '-b', 'next', 'origin/next'])
+        subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
 
 def setHardenedProfile():
     subprocess.call(['eselect', 'profile', 'set', 'default/linux/amd64/17.0/hardened'])
