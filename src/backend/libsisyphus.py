@@ -173,14 +173,14 @@ def syncLocalDatabase():
 
 def syncPortageTree():
     os.chdir(gentooEbuildDir)
-    subprocess.call(['git', 'pull', '--depth=1', '--update-shallow', '--quiet'])
+    subprocess.call(['git', 'pull', '--quiet'])
 
     os.chdir(redcoreEbuildDir)
-    subprocess.call(['git', 'pull', '--depth=1', '--update-shallow', '--quiet'])
+    subprocess.call(['git', 'pull', '--quiet'])
 
 def syncPortageCfg():
     os.chdir(portageConfigDir)
-    subprocess.call(['git', 'pull', '--depth=1', '--update-shallow', '--quiet'])
+    subprocess.call(['git', 'pull', '--quiet'])
 
 def cleanCacheDir():
     if os.path.isdir(portageCacheDir):
@@ -547,7 +547,7 @@ def setPortageEnvStable():
         os.chdir(gentooEbuildDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/portage.git'])
-        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'master'])
+        subprocess.call(['git', 'pull', 'origin', 'master'])
         subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
 
     if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
@@ -555,7 +555,7 @@ def setPortageEnvStable():
         os.chdir(redcoreEbuildDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-desktop.git'])
-        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'master'])
+        subprocess.call(['git', 'pull', 'origin', 'master'])
         subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
 
     if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
@@ -563,7 +563,7 @@ def setPortageEnvStable():
         os.chdir(portageConfigDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-build.git'])
-        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'master'])
+        subprocess.call(['git', 'pull', 'origin', 'master'])
         subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
 
 def setPortageEnvTesting():
@@ -572,7 +572,7 @@ def setPortageEnvTesting():
         os.chdir(gentooEbuildDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/portage.git'])
-        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
+        subprocess.call(['git', 'pull', 'origin', 'next'])
         subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
 
     if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
@@ -580,7 +580,7 @@ def setPortageEnvTesting():
         os.chdir(redcoreEbuildDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-desktop.git'])
-        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
+        subprocess.call(['git', 'pull', 'origin', 'next'])
         subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
 
     if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
@@ -588,7 +588,7 @@ def setPortageEnvTesting():
         os.chdir(portageConfigDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-build.git'])
-        subprocess.call(['git', 'pull', '--depth=1', 'origin', 'next'])
+        subprocess.call(['git', 'pull', 'origin', 'next'])
         subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
 
 def setHardenedProfile():
