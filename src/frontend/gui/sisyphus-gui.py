@@ -48,6 +48,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.settingsButton.clicked.connect(self.showMirrorWindow)
         self.licenseButton.clicked.connect(self.showLicenseWindow)
 
+        sys.stdout = MainWorker(workerOutput=self.updateStatusBox) # capture stdout
+
         self.updateWorker = MainWorker()
         self.updateThread = QtCore.QThread()
         self.updateWorker.moveToThread(self.updateThread)
@@ -61,8 +63,9 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.installThread = QtCore.QThread()
         self.installWorker.moveToThread(self.installThread)
         self.installWorker.started.connect(self.showProgressBar)
+        self.installWorker.started.connect(self.clearProgressBox)
         self.installThread.started.connect(self.installWorker.startInstall)
-        self.installWorker.strReady.connect(self.updateStatusBar)
+        self.installWorker.workerOutput.connect(self.updateStatusBox)
         self.installThread.finished.connect(self.jobDone)
         self.installWorker.finished.connect(self.installThread.quit)
 
@@ -71,8 +74,9 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.uninstallThread = QtCore.QThread()
         self.uninstallWorker.moveToThread(self.uninstallThread)
         self.uninstallWorker.started.connect(self.showProgressBar)
+        self.uninstallWorker.started.connect(self.clearProgressBox)
         self.uninstallThread.started.connect(self.uninstallWorker.startUninstall)
-        self.uninstallWorker.strReady.connect(self.updateStatusBar)
+        self.uninstallWorker.workerOutput.connect(self.updateStatusBox)
         self.uninstallThread.finished.connect(self.jobDone)
         self.uninstallWorker.finished.connect(self.uninstallThread.quit)
 
@@ -81,8 +85,9 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.upgradeThread = QtCore.QThread()
         self.upgradeWorker.moveToThread(self.upgradeThread)
         self.upgradeWorker.started.connect(self.showProgressBar)
+        self.upgradeWorker.started.connect(self.clearProgressBox)
         self.upgradeThread.started.connect(self.upgradeWorker.startUpgrade)
-        self.upgradeWorker.strReady.connect(self.updateStatusBar)
+        self.upgradeWorker.workerOutput.connect(self.updateStatusBox)
         self.upgradeThread.finished.connect(self.jobDone)
         self.upgradeWorker.finished.connect(self.upgradeThread.quit)
 
@@ -91,8 +96,9 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.orphansThread = QtCore.QThread()
         self.orphansWorker.moveToThread(self.orphansThread)
         self.orphansWorker.started.connect(self.showProgressBar)
+        self.orphansWorker.started.connect(self.clearProgressBox)
         self.orphansThread.started.connect(self.orphansWorker.cleanOrphans)
-        self.orphansWorker.strReady.connect(self.updateStatusBar)
+        self.orphansWorker.workerOutput.connect(self.updateStatusBox)
         self.orphansThread.finished.connect(self.jobDone)
         self.orphansWorker.finished.connect(self.orphansThread.quit)
 
@@ -281,8 +287,12 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.upgradeButton.show()
         self.exitButton.show()
 
-    def updateStatusBar(self, workerMessage):
-        self.statusBar().showMessage(workerMessage)
+    def clearProgressBox(self):
+        self.progressBox.clear()
+
+    def updateStatusBox(self, workerMessage):
+        self.progressBox.insertPlainText(workerMessage)
+        self.progressBox.ensureCursorVisible()
 
     def showMirrorWindow(self):
         self.window = MirrorConfiguration()
@@ -295,7 +305,10 @@ class Sisyphus(QtWidgets.QMainWindow):
     def sisyphusExit(self):
         self.close()
 
+    def __del__(self):
+        sys.stdout = sys.__stdout__ # restore stdout
 
+# mirror configuration window
 class MirrorConfiguration(QtWidgets.QMainWindow):
     def __init__(self):
         super(MirrorConfiguration, self).__init__()
@@ -336,6 +349,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         self.close()
 
 
+# license information window
 class LicenseInformation(QtWidgets.QMainWindow):
     def __init__(self):
         super(LicenseInformation, self).__init__()
@@ -352,12 +366,21 @@ class LicenseInformation(QtWidgets.QMainWindow):
 class MainWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
-    strReady = QtCore.pyqtSignal(str)
+    workerOutput = QtCore.pyqtSignal(str)
+
+    def write(self, text):
+        self.workerOutput.emit(str(text))
+
+    def flush(self):
+        pass
+
+    def fileno(self):
+        return 0
 
     @QtCore.pyqtSlot()
     def startUpdate(self):
         self.started.emit()
-        startUpdate()
+        startUpdate.__wrapped__() #undecorate
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -366,15 +389,15 @@ class MainWorker(QtCore.QObject):
         pkgList = Sisyphus.pkgList
 
         binhostURL = getBinhostURL()
-        areBinaries,areSources,needsConfig = getPackageDeps(pkgList)
+        areBinaries,areSources,needsConfig = getPackageDeps.__wrapped__(pkgList) #undecorate
         binaryPkgs = []
 
         os.chdir(portageCacheDir)
+        self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
         for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
-            self.strReady.emit(">>> Fetching" + " " + url)
-            print(">>> Fetching" + " " + url)
+            self.workerOutput.emit(">>> Fetching" + " " + url)
             wget.download(url)
-            print("\n")
+            self.workerOutput.emit("\n")
 
         for index, binpkg in enumerate(areBinaries):
             binaryPkg = str(binpkg.rstrip().split("/")[1])
@@ -394,13 +417,14 @@ class MainWorker(QtCore.QObject):
             if os.path.exists(str(binpkg + '.tbz2')):
                 os.remove(str(binpkg + '.tbz2'))
 
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-            self.strReady.emit(portageOutput.rstrip())
-            print(portageOutput.rstrip())
+            if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                if not "Calculating dependencies" in portageOutput.rstrip():
+                    self.workerOutput.emit(portageOutput.rstrip() + "\n")
 
         portageExec.wait()
         syncLocalDatabase()
@@ -410,13 +434,12 @@ class MainWorker(QtCore.QObject):
     def startUninstall(self):
         self.started.emit()
         pkgList = Sisyphus.pkgList
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--depclean'] + pkgList, stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-            self.strReady.emit(portageOutput.rstrip())
-            print(portageOutput.rstrip())
+            self.workerOutput.emit(portageOutput.rstrip() + "\n")
 
         portageExec.wait()
         syncLocalDatabase()
@@ -427,56 +450,63 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
 
         binhostURL = getBinhostURL()
-        areBinaries,areSources,needsConfig = getWorldDeps()
+        areBinaries,areSources,needsConfig = getWorldDeps.__wrapped__() #undecorate
         binaryPkgs = []
 
-        os.chdir(portageCacheDir)
-        for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
-            self.strReady.emit(">>> Fetching" + " " + url)
-            print(">>> Fetching" + " " + url)
-            wget.download(url)
-            print("\n")
+        if not len(areSources) == 0:
+            self.workerOutput.emit("\n" + "Source package upgrades detected; Use sisyphus CLI to perform the upgrade; Aborting." + "\n")
+        else:
+            if not len(areBinaries) == 0:
+                self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
+                os.chdir(portageCacheDir)
+                for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
+                    self.workerOutput.emit(">>> Fetching" + " " + url)
+                    wget.download(url)
+                    self.workerOutput.emit("\n")
 
-        for index, binpkg in enumerate(areBinaries):
-            binaryPkg = str(binpkg.rstrip().split("/")[1])
-            binaryPkgs.append(binaryPkg)
+                for index, binpkg in enumerate(areBinaries):
+                    binaryPkg = str(binpkg.rstrip().split("/")[1])
+                    binaryPkgs.append(binaryPkg)
 
-        for index, binpkg in enumerate(binaryPkgs):
-            subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-            CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-            os.remove(str(binpkg + '.xpak'))
+                for index, binpkg in enumerate(binaryPkgs):
+                    subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
+                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
+                    os.remove(str(binpkg + '.xpak'))
 
-            if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                    if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                    else:
+                        os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
+                        shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+
+                    if os.path.exists(str(binpkg + '.tbz2')):
+                        os.remove(str(binpkg + '.tbz2'))
+
+                portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
+
+                atexit.register(portageKill, portageExec)
+
+                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
+                        if not "Calculating dependencies" in portageOutput.rstrip():
+                            self.workerOutput.emit(portageOutput.rstrip() + "\n")
+
+                portageExec.wait()
+                syncLocalDatabase()
             else:
-                os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                self.workerOutput.emit("\n" + "No package upgrades found; Quitting." + "\n")
 
-            if os.path.exists(str(binpkg + '.tbz2')):
-                os.remove(str(binpkg + '.tbz2'))
-
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
-
-        atexit.register(portageKill, portageExec)
-
-        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-            self.strReady.emit(portageOutput.rstrip())
-            print(portageOutput.rstrip())
-
-        portageExec.wait()
-        syncLocalDatabase()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def cleanOrphans(self):
         self.started.emit()
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean'], stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--depclean'], stdout=subprocess.PIPE)
 
         atexit.register(portageKill, portageExec)
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-            self.strReady.emit(portageOutput.rstrip())
-            print(portageOutput.rstrip())
+            self.workerOutput.emit(portageOutput.rstrip() + "\n")
 
         portageExec.wait()
         syncLocalDatabase()
