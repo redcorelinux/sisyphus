@@ -518,4 +518,5 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Breeze')
     window = Sisyphus()
+    window.inputBox.setFocus()
     sys.exit(app.exec_())
