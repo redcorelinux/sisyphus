@@ -516,5 +516,6 @@ class MainWorker(QtCore.QObject):
 # launch application
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    app.setStyle('Breeze')
     window = Sisyphus()
     sys.exit(app.exec_())

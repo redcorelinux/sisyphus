@@ -37,8 +37,9 @@ def getMirrorList():
                 if line.startswith('#'):
                     mirror['isActive'] = False
                 mirrorList.append(mirror)
-            mirrorFile.close()
-        return mirrorList
+        mirrorFile.close()
+
+    return mirrorList
 
 def getBinhostURL():
     binhostURL = []
@@ -47,6 +48,8 @@ def getBinhostURL():
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput.rstrip():
             binhostURL = str(portageOutput.rstrip().split("=")[1].strip('\"'))
+
+    portageExec.wait()
     return binhostURL
 
 def getCsvUrl():
@@ -62,6 +65,8 @@ def getCsvUrl():
             else:
                 remotePkgCsv = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
                 remoteDescCsv = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
+
+    portageExec.wait()
     return remotePkgCsv,remoteDescCsv
 
 @animation.wait('resolving dependencies')
@@ -92,6 +97,8 @@ def getPackageDeps(pkgList):
         if "ebuild" in portageOutput.rstrip():
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
+
+    portageExec.wait()
     return areBinaries,areSources,needsConfig
 
 @animation.wait('resolving dependencies')
@@ -122,6 +129,8 @@ def getWorldDeps():
         if "ebuild" in portageOutput.rstrip():
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
+
+    portageExec.wait()
     return areBinaries,areSources,needsConfig
 
 def fetchRemoteDatabase():
