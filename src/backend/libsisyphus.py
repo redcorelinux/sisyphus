@@ -233,7 +233,6 @@ def startInstall(pkgList):
 
     binhostURL = getBinhostURL()
     areBinaries,areSources,needsConfig = getPackageDeps(pkgList)
-    binaryPkgs = []
 
     if needsConfig == 0:
         if len(areSources) == 0:
@@ -241,28 +240,25 @@ def startInstall(pkgList):
                 os.chdir(portageCacheDir)
                 print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                    for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
-                        print(">>> Fetching" + " " + url)
-                        wget.download(url)
+                    for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
+                        print(">>> Fetching" + " " + binhostURL + binary)
+                        wget.download(binhostURL + binary)
                         print("\n")
 
-                    for index, binpkg in enumerate(areBinaries):
-                        binaryPkg = str(binpkg.rstrip().split("/")[1])
-                        binaryPkgs.append(binaryPkg)
+                        subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
+                        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + binary.rstrip().split("/")[1].replace('tbz2', 'xpak').split() + ['CATEGORY'])
 
-                    for index, binpkg in enumerate(binaryPkgs):
-                        subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-                        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-                        os.remove(str(binpkg + '.xpak'))
+                        if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
+                            os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
 
                         if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                            shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
                         else:
                             os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                            shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
 
-                        if os.path.exists(str(binpkg + '.tbz2')):
-                            os.remove(str(binpkg + '.tbz2'))
+                        if os.path.exists(binary.rstrip().split("/")[1]):
+                            os.remove(binary.rstrip().split("/")[1])
 
                     portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
@@ -283,28 +279,25 @@ def startInstall(pkgList):
                 print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                 print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                    for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
-                        print(">>> Fetching" + " " + url)
-                        wget.download(url)
+                    for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
+                        print(">>> Fetching" + " " + binhostURL + binary)
+                        wget.download(binhostURL + binary)
                         print("\n")
 
-                    for index, binpkg in enumerate(areBinaries):
-                        binaryPkg = str(binpkg.rstrip().split("/")[1])
-                        binaryPkgs.append(binaryPkg)
+                        subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
+                        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + binary.rstrip().split("/")[1].replace('tbz2', 'xpak').split() + ['CATEGORY'])
 
-                    for index, binpkg in enumerate(binaryPkgs):
-                        subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-                        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-                        os.remove(str(binpkg + '.xpak'))
+                        if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
+                            os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
 
                         if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                            shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
                         else:
                             os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                            shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
 
-                        if os.path.exists(str(binpkg + '.tbz2')):
-                            os.remove(str(binpkg + '.tbz2'))
+                        if os.path.exists(binary.rstrip().split("/")[1]):
+                            os.remove(binary.rstrip().split("/")[1])
 
                     portageExec = subprocess.Popen(['emerge', '--usepkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
@@ -348,7 +341,6 @@ def startUpgrade():
 
     binhostURL = getBinhostURL()
     areBinaries,areSources,needsConfig = getWorldDeps()
-    binaryPkgs = []
 
     if needsConfig == 0:
         if len(areSources) == 0:
@@ -356,28 +348,25 @@ def startUpgrade():
                 os.chdir(portageCacheDir)
                 print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                    for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
-                        print(">>> Fetching" + " " + url)
-                        wget.download(url)
+                    for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
+                        print(">>> Fetching" + " " + binhostURL + binary)
+                        wget.download(binhostURL + binary)
                         print("\n")
 
-                    for index, binpkg in enumerate(areBinaries):
-                        binaryPkg = str(binpkg.rstrip().split("/")[1])
-                        binaryPkgs.append(binaryPkg)
+                        subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
+                        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + binary.rstrip().split("/")[1].replace('tbz2', 'xpak').split() + ['CATEGORY'])
 
-                    for index, binpkg in enumerate(binaryPkgs):
-                        subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-                        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-                        os.remove(str(binpkg + '.xpak'))
+                        if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
+                            os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
 
                         if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                            shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
                         else:
                             os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                            shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
 
-                        if os.path.exists(str(binpkg + '.tbz2')):
-                            os.remove(str(binpkg + '.tbz2'))
+                        if os.path.exists(binary.rstrip().split("/")[1]):
+                            os.remove(binary.rstrip().split("/")[1])
 
                     portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
@@ -398,28 +387,25 @@ def startUpgrade():
                 print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                 print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                    for index, url in enumerate([binhostURL + package + '.tbz2' for package in areBinaries]):
-                        print(">>> Fetching" + " " + url)
-                        wget.download(url)
+                    for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
+                        print(">>> Fetching" + " " + binhostURL + binary)
+                        wget.download(binhostURL + binary)
                         print("\n")
 
-                    for index, binpkg in enumerate(areBinaries):
-                        binaryPkg = str(binpkg.rstrip().split("/")[1])
-                        binaryPkgs.append(binaryPkg)
+                        subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
+                        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + binary.rstrip().split("/")[1].replace('tbz2', 'xpak').split() + ['CATEGORY'])
 
-                    for index, binpkg in enumerate(binaryPkgs):
-                        subprocess.call(['qtbz2', '-x'] + str(binpkg + '.tbz2').split())
-                        CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + str(binpkg + '.xpak').split() + ['CATEGORY'])
-                        os.remove(str(binpkg + '.xpak'))
+                        if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
+                            os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
 
                         if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                            shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
                         else:
                             os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                            shutil.move(str(binpkg + '.tbz2'), os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(str(binpkg + '.tbz2'))))
+                            shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
 
-                        if os.path.exists(str(binpkg + '.tbz2')):
-                            os.remove(str(binpkg + '.tbz2'))
+                        if os.path.exists(binary.rstrip().split("/")[1]):
+                            os.remove(binary.rstrip().split("/")[1])
 
                     portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
