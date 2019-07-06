@@ -51,9 +51,19 @@ if "__main__" == __name__:
                 showHelp()
         elif "--branch" in sys.argv[1:]:
             if "--master" in sys.argv[2:]:
-                setupStable()
+                if "--gitlab" in sys.argv[3:]:
+                    injectGitlabMaster()
+                elif "--pagure" in sys.argv[3:]:
+                    injectPagureMaster()
+                else:
+                    showHelp()
             elif "--next" in sys.argv[2:]:
-                setupTesting()
+                if "--gitlab" in sys.argv[3:]:
+                    injectGitlabNext()
+                elif "--pagure" in sys.argv[3:]:
+                    injectPagureNext()
+                else:
+                    showHelp()
             else:
                 showHelp()
         elif "--help" in sys.argv[1:]:

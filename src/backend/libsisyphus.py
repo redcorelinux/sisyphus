@@ -11,6 +11,7 @@ import urllib3
 import io
 import wget
 import shutil
+import pygit2
 
 gentooEbuildDir = '/usr/ports/gentoo'
 redcoreEbuildDir = '/usr/ports/redcore'
@@ -507,8 +508,8 @@ def setActiveMirror(mirror):
                 mirrorList[i]['isActive'] = False
         writeMirrorCfg(mirrorList)
 
-@animation.wait('resetting environment')
-def resetPortageEnv():
+@animation.wait('resetting branch configuration')
+def resetBranch():
     if os.path.isdir(gentooEbuildDir):
         for files in os.listdir(gentooEbuildDir):
             if os.path.isfile(os.path.join(gentooEbuildDir, files)):
@@ -536,77 +537,156 @@ def resetPortageEnv():
     else:
         os.makedirs(portageConfigDir)
 
-def setPortageEnvStable():
+@animation.wait('injecting gentoo linux portage tree - branch master')
+def setGitlabMasterStage1():
     if not os.path.isdir(os.path.join(gentooEbuildDir, '.git')):
-        print("\ninjecting Gentoo Linux portage tree (master)\n")
-        os.chdir(gentooEbuildDir)
-        subprocess.call(['git', 'init', '-q'])
-        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/portage.git'])
-        subprocess.call(['git', 'pull', 'origin', 'master'])
-        subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
+        repo_url = 'https://gitlab.com/redcore/portage.git'
+        repo_path = '/usr/ports/gentoo'
+        repo_branch = 'master'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
 
+@animation.wait('injecting redcore linux ebuild tree - branch master')
+def setGitlabMasterStage2():
     if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
-        print("\ninjecting Redcore Linux overlay (master)\n")
-        os.chdir(redcoreEbuildDir)
-        subprocess.call(['git', 'init', '-q'])
-        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-desktop.git'])
-        subprocess.call(['git', 'pull', 'origin', 'master'])
-        subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
+        repo_url = 'https://gitlab.com/redcore/redcore-desktop.git'
+        repo_path = '/usr/ports/redcore'
+        repo_branch = 'master'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
 
+@animation.wait('injecting redcore linux portage configuration - branch master')
+def setGitlabMasterStage3():
     if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
-        print("\ninjecting Redcore Linux portage configuration (master)\n")
-        os.chdir(portageConfigDir)
-        subprocess.call(['git', 'init', '-q'])
-        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-build.git'])
-        subprocess.call(['git', 'pull', 'origin', 'master'])
-        subprocess.call(['git', 'branch', '-u', 'origin/master', 'master'])
+        repo_url = 'https://gitlab.com/redcore/redcore-build.git'
+        repo_path = '/opt/redcore-build'
+        repo_branch = 'master'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
 
-def setPortageEnvTesting():
+def setGitlabMaster():
+    setGitlabMasterStage1()
+    setGitlabMasterStage2()
+    setGitlabMasterStage3()
+
+@animation.wait('injecting gentoo linux portage tree - branch master')
+def setPagureMasterStage1():
     if not os.path.isdir(os.path.join(gentooEbuildDir, '.git')):
-        print("\ninjecting Gentoo Linux portage tree (next)\n")
-        os.chdir(gentooEbuildDir)
-        subprocess.call(['git', 'init', '-q'])
-        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/portage.git'])
-        subprocess.call(['git', 'pull', 'origin', 'next'])
-        subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
+        repo_url = 'https://pagure.io/redcore/portage.git'
+        repo_path = '/usr/ports/gentoo'
+        repo_branch = 'master'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
 
+@animation.wait('injecting redcore linux ebuild tree - branch master')
+def setPagureMasterStage2():
     if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
-        print("\ninjecting Redcore Linux overlay (next)\n")
-        os.chdir(redcoreEbuildDir)
-        subprocess.call(['git', 'init', '-q'])
-        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-desktop.git'])
-        subprocess.call(['git', 'pull', 'origin', 'next'])
-        subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
+        repo_url = 'https://pagure.io/redcore/redcore-desktop.git'
+        repo_path = '/usr/ports/redcore'
+        repo_branch = 'master'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
 
+@animation.wait('injecting redcore linux portage configuration - branch master')
+def setPagureMasterStage3():
     if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
-        print("\ninjecting Redcore Linux portage configuration (next)\n")
-        os.chdir(portageConfigDir)
-        subprocess.call(['git', 'init', '-q'])
-        subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-build.git'])
-        subprocess.call(['git', 'pull', 'origin', 'next'])
-        subprocess.call(['git', 'branch', '-u', 'origin/next', 'master'])
+        repo_url = 'https://pagure.io/redcore/redcore-build.git'
+        repo_path = '/opt/redcore-build'
+        repo_branch = 'master'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
 
+def setPagureMaster():
+    setPagureMasterStage1()
+    setPagureMasterStage2()
+    setPagureMasterStage3()
+
+@animation.wait('injecting gentoo linux portage tree - branch next')
+def setGitlabNextStage1():
+    if not os.path.isdir(os.path.join(gentooEbuildDir, '.git')):
+        repo_url = 'https://gitlab.com/redcore/portage.git'
+        repo_path = '/usr/ports/gentoo'
+        repo_branch = 'next'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
+
+@animation.wait('injecting redcore linux ebuild tree - branch next')
+def setGitlabNextStage2():
+    if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
+        repo_url = 'https://gitlab.com/redcore/redcore-desktop.git'
+        repo_path = '/usr/ports/redcore'
+        repo_branch = 'next'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
+
+@animation.wait('injecting redcore linux portage configuration - branch next')
+def setGitlabNextStage3():
+    if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
+        repo_url = 'https://gitlab.com/redcore/redcore-build.git'
+        repo_path = '/opt/redcore-build'
+        repo_branch = 'next'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
+
+def setGitlabNext():
+    setGitlabNextStage1()
+    setGitlabNextStage2()
+    setGitlabNextStage3()
+
+@animation.wait('injecting gentoo linux portage tree - branch next')
+def setPagureNextStage1():
+    if not os.path.isdir(os.path.join(gentooEbuildDir, '.git')):
+        repo_url = 'https://pagure.io/redcore/portage.git'
+        repo_path = '/usr/ports/gentoo'
+        repo_branch = 'next'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
+
+@animation.wait('injecting redcore linux ebuild tree - branch next')
+def setPagureNextStage2():
+    if not os.path.isdir(os.path.join(redcoreEbuildDir, '.git')):
+        repo_url = 'https://pagure.io/redcore/redcore-desktop.git'
+        repo_path = '/usr/ports/redcore'
+        repo_branch = 'next'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
+
+@animation.wait('injecting redcore linux portage configuration - branch next')
+def setPagureNextStage3():
+    if not os.path.isdir(os.path.join(portageConfigDir, '.git')):
+        repo_url = 'https://pagure.io/redcore/redcore-build.git'
+        repo_path = '/opt/redcore-build'
+        repo_branch = 'next'
+        pygit2.clone_repository(repo_url, repo_path, checkout_branch=repo_branch, bare=False)
+
+def setPagureNext():
+    setPagureNextStage1()
+    setPagureNextStage2()
+    setPagureNextStage3()
+
+@animation.wait('setting up hardened profile')
 def setHardenedProfile():
     subprocess.call(['eselect', 'profile', 'set', 'default/linux/amd64/17.0/hardened'])
     subprocess.call(['env-update'])
 
-def resetPortage():
-    resetPortageEnv()
-
+@animation.wait('adjusting MAKEOPTS')
 def setJobs():
     subprocess.call(['/usr/share/sisyphus/helpers/set_jobs'])
 
-def setupStable():
+def injectGitlabMaster():
     checkRoot()
-    resetPortageEnv()
-    setPortageEnvStable()
+    resetBranch()
+    setGitlabMaster()
     setHardenedProfile()
     setJobs()
 
-def setupTesting():
+def injectPagureMaster():
     checkRoot()
-    resetPortageEnv()
-    setPortageEnvTesting()
+    resetBranch()
+    setPagureMaster()
+    setHardenedProfile()
+    setJobs()
+
+def injectGitlabNext():
+    checkRoot()
+    resetBranch()
+    setGitlabNext()
+    setHardenedProfile()
+    setJobs()
+
+def injectPagureNext():
+    checkRoot()
+    resetBranch()
+    setPagureNext()
     setHardenedProfile()
     setJobs()
 
