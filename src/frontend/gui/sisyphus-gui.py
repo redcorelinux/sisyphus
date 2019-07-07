@@ -266,12 +266,14 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.hideButtons()
         self.progressBar.setRange(0, 0)
         self.progressBar.show()
+        self.inputBox.setFocus()
 
     def hideProgressBar(self):
         self.progressBar.setRange(0, 1)
         self.progressBar.setValue(1)
         self.progressBar.hide()
         self.showButtons()
+        self.inputBox.setFocus()
 
     def hideButtons(self):
         self.installButton.hide()
