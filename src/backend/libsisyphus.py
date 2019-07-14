@@ -10,7 +10,6 @@ import sys
 import urllib3
 import io
 import wget
-import shutil
 import pygit2
 
 gentooEbuildDir = '/usr/ports/gentoo'
