@@ -3,6 +3,7 @@
 import sys
 from libsisyphus import *
 
+setJobs.__wrapped__() #undecorate
 pkgList = sys.argv[2:]
 
 if "__main__" == __name__:
