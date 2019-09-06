@@ -15,6 +15,7 @@ gentooEbuildDir = '/usr/ports/gentoo'
 redcoreEbuildDir = '/usr/ports/redcore'
 portageConfigDir = '/opt/redcore-build'
 portageCacheDir = '/var/cache/packages'
+portageMetadataDir = '/var/cache/edb'
 remotePkgsDB = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
 remoteDscsDB = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
 localPkgsDB = '/var/lib/sisyphus/csv/localPackagesPre.csv'
@@ -212,6 +213,20 @@ def syncPortageCfg():
         subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
         subprocess.call(['git', 'reset', '--hard', 'origin/next', '--quiet'])
 
+def syncPortageMtd():
+    if os.path.isdir(portageMetadataDir):
+        for files in os.listdir(portageMetadataDir):
+            if os.path.isfile(os.path.join(portageMetadataDir, files)):
+                os.remove(os.path.join(portageMetadataDir, files))
+            else:
+                shutil.rmtree(os.path.join(portageMetadataDir, files))
+
+    portageExecStage1 = subprocess.Popen(['emerge', '--quiet', '--regen'], stdout=subprocess.PIPE)
+    portageExecStage2 = subprocess.Popen(['emerge', '--quiet', '--metadata'], stdout=subprocess.PIPE)
+
+    portageExecStage1.wait()
+    portageExecStage2.wait()
+
 def cleanCacheDir():
     if os.path.isdir(portageCacheDir):
         for files in os.listdir(portageCacheDir):
@@ -227,6 +242,7 @@ def startUpdate():
     syncPortageTree()
     syncOverlayTree()
     syncPortageCfg()
+    syncPortageMtd()
     syncRemoteDatabase()
 
 @animation.wait('syncing spm changes')
