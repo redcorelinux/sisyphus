@@ -185,51 +185,33 @@ def syncPortageTree():
     currentBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
     if currentBranch.decode().strip() is 'master':
-        gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'], stdoud=subprocess.PIPE)
-        gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard', 'origin/master', '--quiet'], stdout=subprocess.PIPE)
-
-        gitExecStage1.wait()
-        gitExecStage2.wait()
+        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'])
+        subprocess.call(['git', 'reset', '--hard', 'origin/master', '--quiet'])
     elif currentBranch.decode().strip() is 'next':
-        gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'], stdoud=subprocess.PIPE)
-        gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard', 'origin/next', '--quiet'], stdout=subprocess.PIPE)
-
-        gitExecStage1.wait()
-        gitExecStage2.wait()
+        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
+        subprocess.call(['git', 'reset', '--hard', 'origin/next', '--quiet'])
 
 def syncOverlayTree():
     os.chdir(redcoreEbuildDir)
     currentBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
     if currentBranch.decode().strip() is 'master':
-        gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'], stdoud=subprocess.PIPE)
-        gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard', 'origin/master', '--quiet'], stdout=subprocess.PIPE)
-
-        gitExecStage1.wait()
-        gitExecStage2.wait()
+        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'])
+        subprocess.call(['git', 'reset', '--hard', 'origin/master', '--quiet'])
     elif currentBranch.decode().strip() is 'next':
-        gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'], stdoud=subprocess.PIPE)
-        gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard', 'origin/next', '--quiet'], stdout=subprocess.PIPE)
-
-        gitExecStage1.wait()
-        gitExecStage2.wait()
+        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
+        subprocess.call(['git', 'reset', '--hard', 'origin/next', '--quiet'])
 
 def syncPortageCfg():
     os.chdir(portageConfigDir)
     currentBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
     if currentBranch.decode().strip() is 'master':
-        gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'], stdoud=subprocess.PIPE)
-        gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard', 'origin/master', '--quiet'], stdout=subprocess.PIPE)
-
-        gitExecStage1.wait()
-        gitExecStage2.wait()
+        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'])
+        subprocess.call(['git', 'reset', '--hard', 'origin/master', '--quiet'])
     elif currentBranch.decode().strip() is 'next':
-        gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'], stdoud=subprocess.PIPE)
-        gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard', 'origin/next', '--quiet'], stdout=subprocess.PIPE)
-
-        gitExecStage1.wait()
-        gitExecStage2.wait()
+        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
+        subprocess.call(['git', 'reset', '--hard', 'origin/next', '--quiet'])
 
 def syncPortageMtd():
     if os.path.isdir(portageMetadataDir):
