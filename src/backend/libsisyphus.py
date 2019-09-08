@@ -180,38 +180,59 @@ def syncLocalDatabase():
     sisyphusdb.commit()
     sisyphusdb.close()
 
+def checkPortageTree():
+    os.chdir(gentooEbuildDir)
+    needsPortageTreeSync = int()
+
+    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    localHash = subprocess.check_output(['git', 'rev-parse', '@'])
+    remoteHash = subprocess.check_output(['git', 'rev-parse', '@{u}'])
+
+    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
+
+    if not localHash.decode().strip() == remoteHash.decode().strip():
+        needsPortageTreeSync = int(1)
+
+    return needsPortageTreeSync
+
+def checkOverlayTree():
+    os.chdir(redcoreEbuildDir)
+    needsOverlayTreeSync = int()
+
+    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    localHash = subprocess.check_output(['git', 'rev-parse', '@'])
+    remoteHash = subprocess.check_output(['git', 'rev-parse', '@{u}'])
+
+    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
+
+    if not localHash.decode().strip() == remoteHash.decode().strip():
+        needsOverlayTreeSync = int(1)
+
+    return needsOverlayTreeSync
+
 def syncPortageTree():
     os.chdir(gentooEbuildDir)
-    currentBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    if currentBranch.decode().strip() is 'master':
-        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'])
-        subprocess.call(['git', 'reset', '--hard', 'origin/master', '--quiet'])
-    elif currentBranch.decode().strip() is 'next':
-        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
-        subprocess.call(['git', 'reset', '--hard', 'origin/next', '--quiet'])
+    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
+    subprocess.call(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'])
 
 def syncOverlayTree():
     os.chdir(redcoreEbuildDir)
-    currentBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    if currentBranch.decode().strip() is 'master':
-        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'])
-        subprocess.call(['git', 'reset', '--hard', 'origin/master', '--quiet'])
-    elif currentBranch.decode().strip() is 'next':
-        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
-        subprocess.call(['git', 'reset', '--hard', 'origin/next', '--quiet'])
+    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
+    subprocess.call(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'])
 
 def syncPortageCfg():
     os.chdir(portageConfigDir)
-    currentBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    if currentBranch.decode().strip() is 'master':
-        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'master', '--quiet'])
-        subprocess.call(['git', 'reset', '--hard', 'origin/master', '--quiet'])
-    elif currentBranch.decode().strip() is 'next':
-        subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
-        subprocess.call(['git', 'reset', '--hard', 'origin/next', '--quiet'])
+    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
+    subprocess.call(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'])
 
 def syncPortageMtd():
     if os.path.isdir(portageMetadataDir):
@@ -239,11 +260,16 @@ def cleanCacheDir():
 def startUpdate():
     checkRoot()
     cleanCacheDir()
-    syncPortageTree()
-    syncOverlayTree()
-    syncPortageCfg()
-    syncPortageMtd()
-    syncRemoteDatabase()
+
+    needsPortageTreeSync = checkPortageTree()
+    needsOverlayTreeSync = checkOverlayTree()
+
+    if (needsPortageTreeSync == 1) or (needsOverlayTreeSync == 1):
+        syncPortageTree()
+        syncOverlayTree()
+        syncPortageCfg()
+        syncPortageMtd()
+        syncRemoteDatabase()
 
 @animation.wait('syncing spm changes')
 def startSyncSPM():
