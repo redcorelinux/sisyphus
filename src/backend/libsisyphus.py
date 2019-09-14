@@ -188,11 +188,12 @@ def checkPortageTree():
     localHash = subprocess.check_output(['git', 'rev-parse', '@'])
     remoteHash = subprocess.check_output(['git', 'rev-parse', '@{u}'])
 
-    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
+    gitExec = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
 
     if not localHash.decode().strip() == remoteHash.decode().strip():
         needsPortageTreeSync = int(1)
 
+    gitExec.wait()
     return needsPortageTreeSync
 
 def checkOverlayTree():
@@ -203,11 +204,12 @@ def checkOverlayTree():
     localHash = subprocess.check_output(['git', 'rev-parse', '@'])
     remoteHash = subprocess.check_output(['git', 'rev-parse', '@{u}'])
 
-    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
+    gitExec = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
 
     if not localHash.decode().strip() == remoteHash.decode().strip():
         needsOverlayTreeSync = int(1)
 
+    gitExec.wait()
     return needsOverlayTreeSync
 
 def syncPortageTree():
@@ -215,24 +217,30 @@ def syncPortageTree():
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
-    subprocess.call(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'])
+    gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+    gitExecStage1.wait()
+    gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
+    gitExecStage2.wait()
 
 def syncOverlayTree():
     os.chdir(redcoreEbuildDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
-    subprocess.call(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'])
+    gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+    gitExecStage1.wait()
+    gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
+    gitExecStage2.wait()
 
 def syncPortageCfg():
     os.chdir(portageConfigDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'])
-    subprocess.call(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'])
+    gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+    gitExecStage1.wait()
+    gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
+    gitExecStage2.wait()
 
 def syncPortageMtd():
     if os.path.isdir(portageMetadataDir):
@@ -243,9 +251,8 @@ def syncPortageMtd():
                 shutil.rmtree(os.path.join(portageMetadataDir, files))
 
     portageExecStage1 = subprocess.Popen(['emerge', '--quiet', '--regen'], stdout=subprocess.PIPE)
-    portageExecStage2 = subprocess.Popen(['emerge', '--quiet', '--metadata'], stdout=subprocess.PIPE)
-
     portageExecStage1.wait()
+    portageExecStage2 = subprocess.Popen(['emerge', '--quiet', '--metadata'], stdout=subprocess.PIPE)
     portageExecStage2.wait()
 
 def cleanCacheDir():
@@ -256,6 +263,10 @@ def cleanCacheDir():
             else:
                 shutil.rmtree(os.path.join(portageCacheDir, files))
 
+def checkSync():
+    checkPortageTree()
+    checkOverlayTree()
+
 @animation.wait('fetching updates')
 def startUpdate():
     checkRoot()
@@ -264,12 +275,28 @@ def startUpdate():
     needsPortageTreeSync = checkPortageTree()
     needsOverlayTreeSync = checkOverlayTree()
 
-    if (needsPortageTreeSync == 1) or (needsOverlayTreeSync == 1):
-        syncPortageTree()
-        syncOverlayTree()
-        syncPortageCfg()
-        syncPortageMtd()
-        syncRemoteDatabase()
+    if needsPortageTreeSync == 1:
+        if needsOverlayTreeSync == 1:
+            syncPortageTree()
+            syncOverlayTree()
+            syncPortageCfg()
+            syncPortageMtd()
+            syncRemoteDatabase()
+        elif not needsOverlayTreeSync == 1:
+            syncPortageTree()
+            syncOverlayTree()
+            syncPortageCfg()
+            syncPortageMtd()
+            syncRemoteDatabase()
+    elif not needsPortageTreeSync == 1:
+        if needsOverlayTreeSync == 1:
+            syncPortageTree()
+            syncOverlayTree()
+            syncPortageCfg()
+            syncPortageMtd()
+            syncRemoteDatabase()
+        elif not needsOverlayTreeSync == 1:
+            pass
 
 @animation.wait('syncing spm changes')
 def startSyncSPM():

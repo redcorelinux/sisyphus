@@ -382,6 +382,7 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpdate(self):
         self.started.emit()
+        checkSync()
         setJobs.__wrapped__() #undecorate
         startUpdate.__wrapped__() #undecorate
         self.finished.emit()
