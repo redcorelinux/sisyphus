@@ -3,7 +3,7 @@
 import sys
 from libsisyphus import *
 
-checkSync()
+checkUpdate()
 setJobs.__wrapped__() #undecorate
 pkgList = sys.argv[2:]
 

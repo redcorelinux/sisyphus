@@ -232,7 +232,7 @@ def syncOverlayTree():
     gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
     gitExecStage2.wait()
 
-def syncPortageCfg():
+def syncPortageConfig():
     os.chdir(portageConfigDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
@@ -242,7 +242,7 @@ def syncPortageCfg():
     gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
     gitExecStage2.wait()
 
-def syncPortageMtd():
+def regenPortageMetadata():
     if os.path.isdir(portageMetadataDir):
         for files in os.listdir(portageMetadataDir):
             if os.path.isfile(os.path.join(portageMetadataDir, files)):
@@ -263,7 +263,7 @@ def cleanCacheDir():
             else:
                 shutil.rmtree(os.path.join(portageCacheDir, files))
 
-def checkSync():
+def checkUpdate():
     checkPortageTree()
     checkOverlayTree()
 
@@ -279,22 +279,22 @@ def startUpdate():
         if needsOverlayTreeSync == 1:
             syncPortageTree()
             syncOverlayTree()
-            syncPortageCfg()
-            syncPortageMtd()
+            syncPortageConfig()
             syncRemoteDatabase()
+            regenPortageMetadata()
         elif not needsOverlayTreeSync == 1:
             syncPortageTree()
             syncOverlayTree()
-            syncPortageCfg()
-            syncPortageMtd()
+            syncPortageConfig()
             syncRemoteDatabase()
+            regenPortageMetadata()
     elif not needsPortageTreeSync == 1:
         if needsOverlayTreeSync == 1:
             syncPortageTree()
             syncOverlayTree()
-            syncPortageCfg()
-            syncPortageMtd()
+            syncPortageConfig()
             syncRemoteDatabase()
+            regenPortageMetadata()
         elif not needsOverlayTreeSync == 1:
             pass
 
@@ -770,6 +770,7 @@ def injectGitlabMaster():
     setGitlabMaster()
     setHardenedProfile()
     setJobs()
+    regenPortageMetadata()
 
 def injectPagureMaster():
     checkRoot()
@@ -777,6 +778,7 @@ def injectPagureMaster():
     setPagureMaster()
     setHardenedProfile()
     setJobs()
+    regenPortageMetadata()
 
 def injectGitlabNext():
     checkRoot()
@@ -784,6 +786,7 @@ def injectGitlabNext():
     setGitlabNext()
     setHardenedProfile()
     setJobs()
+    regenPortageMetadata()
 
 def injectPagureNext():
     checkRoot()
@@ -791,6 +794,7 @@ def injectPagureNext():
     setPagureNext()
     setHardenedProfile()
     setJobs()
+    regenPortageMetadata()
 
 def showHelp():
     print("\n" + "Usage : sisyphus command [package(s)] || [file(s)]" + "\n")
