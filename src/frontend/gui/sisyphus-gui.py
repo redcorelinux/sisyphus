@@ -228,25 +228,30 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.statusBar().showMessage("I am syncing myself, hope to finish soon ...")
         self.updateThread.start()
 
+    def getSelectedPackages(self):
+        def byRow(e):
+            return e['row']
+
+        pkg_categs = [{'row': pkg.row(), 'cat': pkg.data()} for pkg in self.databaseTable.selectionModel().selectedRows(0)]
+        pkg_names = [{'row': pkg.row(), 'name': pkg.data()} for pkg in self.databaseTable.selectionModel().selectedRows(1)]
+        pkg_categs = sorted(pkg_categs, key=byRow)
+        pkg_names = sorted(pkg_names, key=byRow)
+        selected_pkgs = [pkg_categs[i]['cat'] + '/' + pkg_names[i]['name'] for i in range(len(pkg_categs))]
+        return(selected_pkgs)
+
     def packageInstall(self):
-        indexes = self.databaseTable.selectionModel().selectedRows(1)
-        if len(indexes) == 0:
+        if not self.databaseTable.selectionModel().hasSelection():
             self.statusBar().showMessage("No package selected, please pick at least one!")
         else:
-            Sisyphus.pkgList = []
-            for index in sorted(indexes):
-                Sisyphus.pkgList.append(index.data())
+            Sisyphus.pkgList = self.getSelectedPackages()
             self.statusBar().showMessage("I am installing requested package(s), please wait ...")
             self.installThread.start()
 
     def packageUninstall(self):
-        indexes = self.databaseTable.selectionModel().selectedRows(1)
-        if len(indexes) == 0:
+        if not self.databaseTable.selectionModel().hasSelection():
             self.statusBar().showMessage("No package selected, please pick at least one!")
         else:
-            Sisyphus.pkgList = []
-            for index in sorted(indexes):
-                Sisyphus.pkgList.append(index.data())
+            Sisyphus.pkgList = self.getSelectedPackages()
             self.statusBar().showMessage("I am removing requested package(s), please wait ...")
             self.uninstallThread.start()
 
