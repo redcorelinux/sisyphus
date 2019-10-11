@@ -296,7 +296,7 @@ def startUpdate():
             syncRemoteDatabase()
             regenPortageMetadata()
         elif not needsOverlayTreeSync == 1:
-            pass
+            syncPortageConfig()
 
 @animation.wait('syncing spm changes')
 def startSyncSPM():
