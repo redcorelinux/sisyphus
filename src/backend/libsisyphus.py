@@ -245,6 +245,10 @@ def syncPortageConfig():
     gitExecStage3.wait()
     gitExecStage4 = subprocess.Popen(['git', 'stash', 'apply'], stdout=subprocess.PIPE)
     gitExecStage4.wait()
+    gitExecStage5 = subprocess.Popen(['git', 'stash', 'clear'], stdout=subprocess.PIPE)
+    gitExecStage5.wait()
+    gitExecStage6 = subprocess.Popen(['git', 'gc', '--prune=now'], stdout=subprocess.PIPE)
+    gitExecStage6.wait()
 
 def regenPortageMetadata():
     if os.path.isdir(portageMetadataDir):
