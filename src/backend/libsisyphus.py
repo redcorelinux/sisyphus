@@ -90,11 +90,11 @@ def getPackageDeps(pkgList):
             needsConfig = int(1)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "binary" in portageOutput.rstrip():
+        if "[binary" in portageOutput.rstrip():
             isBinary = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areBinaries.append(isBinary)
 
-        if "ebuild" in portageOutput.rstrip():
+        if "[ebuild" in portageOutput.rstrip():
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
 
@@ -122,11 +122,11 @@ def getWorldDeps():
             needsConfig = int(1)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "binary" in portageOutput.rstrip():
+        if "[binary" in portageOutput.rstrip():
             isBinary = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areBinaries.append(isBinary)
 
-        if "ebuild" in portageOutput.rstrip():
+        if "[ebuild" in portageOutput.rstrip():
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
 
