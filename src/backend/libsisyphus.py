@@ -250,7 +250,8 @@ def syncPortageConfig():
     gitExecStage6 = subprocess.Popen(['git', 'gc', '--prune=now', '--quiet'], stdout=subprocess.PIPE)
     gitExecStage6.wait()
 
-def regenPortageMetadata():
+@animation.wait('refreshing metadata')
+def refreshPortageMetadata():
     if os.path.isdir(portageMetadataDir):
         for files in os.listdir(portageMetadataDir):
             if os.path.isfile(os.path.join(portageMetadataDir, files)):
@@ -289,20 +290,20 @@ def startUpdate():
             syncOverlayTree()
             syncPortageConfig()
             syncRemoteDatabase()
-            regenPortageMetadata()
+            refreshPortageMetadata()
         elif not needsOverlayTreeSync == 1:
             syncPortageTree()
             syncOverlayTree()
             syncPortageConfig()
             syncRemoteDatabase()
-            regenPortageMetadata()
+            refreshPortageMetadata()
     elif not needsPortageTreeSync == 1:
         if needsOverlayTreeSync == 1:
             syncPortageTree()
             syncOverlayTree()
             syncPortageConfig()
             syncRemoteDatabase()
-            regenPortageMetadata()
+            refreshPortageMetadata()
         elif not needsOverlayTreeSync == 1:
             syncPortageConfig()
 
@@ -778,7 +779,7 @@ def injectGitlabMaster():
     setGitlabMaster()
     setHardenedProfile()
     setJobs()
-    regenPortageMetadata()
+    refreshPortageMetadata()
 
 def injectPagureMaster():
     checkRoot()
@@ -786,7 +787,7 @@ def injectPagureMaster():
     setPagureMaster()
     setHardenedProfile()
     setJobs()
-    regenPortageMetadata()
+    refreshPortageMetadata()
 
 def injectGitlabNext():
     checkRoot()
@@ -794,7 +795,7 @@ def injectGitlabNext():
     setGitlabNext()
     setHardenedProfile()
     setJobs()
-    regenPortageMetadata()
+    refreshPortageMetadata()
 
 def injectPagureNext():
     checkRoot()
@@ -802,7 +803,7 @@ def injectPagureNext():
     setPagureNext()
     setHardenedProfile()
     setJobs()
-    regenPortageMetadata()
+    refreshPortageMetadata()
 
 def showHelp():
     print("\n" + "Usage : sisyphus command [package(s)] || [file(s)]" + "\n")
