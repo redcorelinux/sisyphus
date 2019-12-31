@@ -250,7 +250,6 @@ def syncPortageConfig():
     gitExecStage6 = subprocess.Popen(['git', 'gc', '--prune=now', '--quiet'], stdout=subprocess.PIPE)
     gitExecStage6.wait()
 
-@animation.wait('refreshing metadata')
 def refreshPortageMetadata():
     if os.path.isdir(portageMetadataDir):
         for files in os.listdir(portageMetadataDir):
