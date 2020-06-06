@@ -1,19 +1,6 @@
 #!/usr/bin/python3
 
-import sisyphus.branchinject
-import sisyphus.check
-import sisyphus.help
-import sisyphus.install
-import sisyphus.mirror
-import sisyphus.removeorphans
-import sisyphus.rescue
-import sisyphus.search
-import sisyphus.setjobs
-import sisyphus.sysinfo
-import sisyphus.uninstall
-import sisyphus.uninstallforce
-import sisyphus.update
-import sisyphus.upgrade
+import sisyphus
 import sys
 
 sisyphus.check.update()
