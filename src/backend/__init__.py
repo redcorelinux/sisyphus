@@ -7,6 +7,7 @@ from .cache import *
 from .check import *
 from .csvfiles import *
 from .database import *
+from .filesystem import *
 from .help import *
 from .install import *
 from .killportage import *
@@ -24,4 +25,3 @@ from .uninstallforce import *
 from .uninstall import *
 from .update import *
 from .upgrade import *
-

@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
-mirrorCfg = '/etc/sisyphus/mirrors.conf'
+import sisyphus.filesystem
 
 def getList():
     mirrorList = []
 
-    with open(mirrorCfg) as mirrorFile:
+    with open(sisyphus.filesystem.mirrorCfg) as mirrorFile:
         for line in mirrorFile.readlines():
             if 'PORTAGE_BINHOST=' in line:
                 url = line.split("=")[1].replace('"', '').rstrip()
@@ -27,7 +27,7 @@ def printList():
             print(i + 1, ' ', line['Url'])
 
 def writeList(mirrorList):
-    with open(mirrorCfg, 'w+') as mirrorFile:
+    with open(sisyphus.filesystem.mirrorCfg, 'w+') as mirrorFile:
         mirrorFile.write("#######################################################\n")
         mirrorFile.write("# Support for multiple mirrors is somewhat incomplete #\n")
         mirrorFile.write("#######################################################\n")

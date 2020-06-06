@@ -3,22 +3,18 @@
 import animation
 import os
 import sisyphus.database
-
-remotePkgsDB = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
-remoteDscsDB = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
-localPkgsDB = '/var/lib/sisyphus/csv/localPackagesPre.csv'
-sisyphusDB = '/var/lib/sisyphus/db/sisyphus.db'
+import sisyphus.filesystem
 
 @animation.wait('recovering databases')
 def start():
-    if os.path.exists(remotePkgsDB):
-        os.remove(remotePkgsDB)
-    if os.path.exists(remoteDscsDB):
-        os.remove(remoteDscsDB)
-    if os.path.exists(localPkgsDB):
-        os.remove(localPkgsDB)
-    if os.path.exists(sisyphusDB):
-        os.remove(sisyphusDB)
+    if os.path.exists(sisyphus.filesystem.remotePkgsDB):
+        os.remove(sisyphus.filesystem.remotePkgsDB)
+    if os.path.exists(sisyphus.filesystem.remoteDscsDB):
+        os.remove(sisyphus.filesystem.remoteDscsDB)
+    if os.path.exists(sisyphus.filesystem.localPkgsDB):
+        os.remove(sisyphus.filesystem.localPkgsDB)
+    if os.path.exists(sisyphus.filesystem.sisyphusDB):
+        os.remove(sisyphus.filesystem.sisyphusDB)
 
     sisyphus.database.syncRemote()
     sisyphus.database.syncLocal()

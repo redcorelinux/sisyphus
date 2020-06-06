@@ -204,7 +204,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND iv <> av
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
         ])
-        with sqlite3.connect(sisyphus.database.sisyphusDB) as db:
+        with sqlite3.connect(sisyphus.filesystem.sisyphusDB) as db:
             cursor = db.cursor()
             cursor.execute('%s' % (self.SELECTS[Sisyphus.databaseView]))
             rows = cursor.fetchall()
@@ -323,7 +323,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         super(MirrorConfiguration, self).__init__()
         uic.loadUi('/usr/share/sisyphus/ui/mirrorcfg.ui', self)
         self.centerOnScreen()
-        self.MIRRORLIST = getMirrorList()
+        self.MIRRORLIST = sisyphus.mirror.getList()
         self.updateMirrorList()
         self.applyButton.pressed.connect(self.mirrorCfgApply)
         self.applyButton.released.connect(self.mirrorCfgExit)
@@ -352,7 +352,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = True
 
     def mirrorCfgApply(self):
-        writeMirrorCfg(self.MIRRORLIST)
+        sisyphus.mirror.writeList(self.MIRRORLIST)
 
     def mirrorCfgExit(self):
         self.close()
@@ -402,7 +402,7 @@ class MainWorker(QtCore.QObject):
         binhostURL = sisyphus.binhost.getURL()
         areBinaries,areSources,needsConfig = sisyphus.solvedeps.package.__wrapped__(pkgList) #undecorate
 
-        os.chdir(sisyphus.cache.portageCacheDir)
+        os.chdir(sisyphus.filesystem.portageCacheDir)
         self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
         for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
             self.workerOutput.emit(">>> Fetching" + " " + binhostURL + binary)
@@ -415,11 +415,11 @@ class MainWorker(QtCore.QObject):
             if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
                 os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
 
-            if os.path.isdir(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip())):
-                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+            if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip())):
+                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
             else:
-                os.makedirs(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()))
-                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()))
+                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
 
             if os.path.exists(binary.rstrip().split("/")[1]):
                 os.remove(binary.rstrip().split("/")[1])
@@ -466,7 +466,7 @@ class MainWorker(QtCore.QObject):
         else:
             if not len(areBinaries) == 0:
                 self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
-                os.chdir(sisyphus.cache.portageCacheDir)
+                os.chdir(sisyphus.filesystem.portageCacheDir)
                 for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
                     self.workerOutput.emit(">>> Fetching" + " " + binhostURL + binary)
                     wget.download(binhostURL + binary)
@@ -478,11 +478,11 @@ class MainWorker(QtCore.QObject):
                     if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
                         os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
 
-                    if os.path.isdir(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip())):
-                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                    if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip())):
+                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
                     else:
-                        os.makedirs(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()))
-                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                        os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()))
+                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
 
                     if os.path.exists(binary.rstrip().split("/")[1]):
                         os.remove(binary.rstrip().split("/")[1])

@@ -4,16 +4,15 @@ import animation
 import os
 import shutil
 import subprocess
-
-portageMetadataDir = '/var/cache/edb'
+import sisyphus.filesystem
 
 def regenSilent():
-    if os.path.isdir(portageMetadataDir):
-        for files in os.listdir(portageMetadataDir):
-            if os.path.isfile(os.path.join(portageMetadataDir, files)):
-                os.remove(os.path.join(portageMetadataDir, files))
+    if os.path.isdir(sisyphus.filesystem.portageMetadataDir):
+        for files in os.listdir(sisyphus.filesystem.portageMetadataDir):
+            if os.path.isfile(os.path.join(sisyphus.filesystem.portageMetadataDir, files)):
+                os.remove(os.path.join(sisyphus.filesystem.portageMetadataDir, files))
             else:
-                shutil.rmtree(os.path.join(portageMetadataDir, files))
+                shutil.rmtree(os.path.join(sisyphus.filesystem.portageMetadataDir, files))
 
     portageExecStage1 = subprocess.Popen(['emerge', '--quiet', '--regen'], stdout=subprocess.PIPE)
     portageExecStage1.wait()
@@ -22,12 +21,12 @@ def regenSilent():
 
 @animation.wait("refreshing metadata")
 def regenAnimated():
-    if os.path.isdir(portageMetadataDir):
-        for files in os.listdir(portageMetadataDir):
-            if os.path.isfile(os.path.join(portageMetadataDir, files)):
-                os.remove(os.path.join(portageMetadataDir, files))
+    if os.path.isdir(sisyphus.filesystem.portageMetadataDir):
+        for files in os.listdir(sisyphus.filesystem.portageMetadataDir):
+            if os.path.isfile(os.path.join(sisyphus.filesystem.portageMetadataDir, files)):
+                os.remove(os.path.join(sisyphus.filesystem.portageMetadataDir, files))
             else:
-                shutil.rmtree(os.path.join(portageMetadataDir, files))
+                shutil.rmtree(os.path.join(sisyphus.filesystem.portageMetadataDir, files))
 
     portageExecStage1 = subprocess.Popen(['emerge', '--quiet', '--regen'], stdout=subprocess.PIPE)
     portageExecStage1.wait()

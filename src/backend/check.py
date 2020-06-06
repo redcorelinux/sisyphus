@@ -3,16 +3,14 @@
 import os
 import sys
 import subprocess
-
-gentooEbuildDir = '/usr/ports/gentoo'
-redcoreEbuildDir = '/usr/ports/redcore'
+import sisyphus.filesystem
 
 def root():
     if not os.getuid() == 0:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
 def portage():
-    os.chdir(gentooEbuildDir)
+    os.chdir(sisyphus.filesystem.gentooEbuildDir)
     needsPortageSync = int()
 
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
@@ -28,7 +26,7 @@ def portage():
     return needsPortageSync
 
 def overlay():
-    os.chdir(redcoreEbuildDir)
+    os.chdir(sisyphus.filesystem.redcoreEbuildDir)
     needsOverlaySync = int()
 
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])

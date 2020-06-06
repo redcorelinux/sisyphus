@@ -2,13 +2,10 @@
 
 import os
 import subprocess
-
-gentooEbuildDir = '/usr/ports/gentoo'
-redcoreEbuildDir = '/usr/ports/redcore'
-portageConfigDir = '/opt/redcore-build'
+import sisyphus.filesystem
 
 def portage():
-    os.chdir(gentooEbuildDir)
+    os.chdir(sisyphus.filesystem.gentooEbuildDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
@@ -18,7 +15,7 @@ def portage():
     gitExecStage2.wait()
 
 def overlay():
-    os.chdir(redcoreEbuildDir)
+    os.chdir(sisyphus.filesystem.redcoreEbuildDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
@@ -28,7 +25,7 @@ def overlay():
     gitExecStage2.wait()
 
 def portageCfg():
-    os.chdir(portageConfigDir)
+    os.chdir(sisyphus.filesystem.portageConfigDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
