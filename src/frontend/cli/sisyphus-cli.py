@@ -1,10 +1,23 @@
 #!/usr/bin/python3
 
+import sisyphus.branchinject
+import sisyphus.check
+import sisyphus.help
+import sisyphus.install
+import sisyphus.mirror
+import sisyphus.removeorphans
+import sisyphus.rescue
+import sisyphus.search
+import sisyphus.setjobs
+import sisyphus.sysinfo
+import sisyphus.uninstall
+import sisyphus.uninstallforce
+import sisyphus.update
+import sisyphus.upgrade
 import sys
-from libsisyphus import *
 
-checkUpdate()
-setJobs.__wrapped__() #undecorate
+sisyphus.check.update()
+sisyphus.setjobs.start.__wrapped__() # undecorate
 pkgList = sys.argv[2:]
 
 if "__main__" == __name__:
@@ -13,59 +26,57 @@ if "__main__" == __name__:
             if not pkgList:
                 sys.exit("\n" + "Nothing to install, please provide at least one package name; quitting" + "\n")
             else:
-                startInstall(pkgList)
+                sisyphus.install.start(pkgList)
         elif "--uninstall" in sys.argv[1:]:
             if not pkgList:
                 sys.exit("\n" + "Nothing to uninstall, please provide at least one package name; quitting" + "\n")
             else:
-                startUninstall(pkgList)
+                sisyphus.uninstall.start(pkgList)
         elif "--force-uninstall" in sys.argv[1:]:
             if not pkgList:
                 sys.exit("\n" + "Nothing to force uninstall, please provide at least one package name; quitting" + "\n")
             else:
-                startUninstallForce(pkgList)
+                sisyphus.uninstallforce.start(pkgList)
         elif "--remove-orphans" in sys.argv[1:]:
-            removeOrphans()
-        elif "--update" in sys.argv[1:]:
-            startUpdate()
-        elif "--upgrade" in sys.argv[1:]:
-            startUpgrade()
+            sisyphus.removeorphans.start()
         elif "--search" in sys.argv[1:]:
             if not pkgList:
                 sys.exit("\n" + "Nothing to search, please provide at least one package name; quitting" + "\n")
             else:
-                startSearch(pkgList)
-        elif "--spmsync" in sys.argv[1:]:
-            startSyncSPM()
+                sisyphus.search.start(pkgList)
+        elif "--update" in sys.argv[1:]:
+            sisyphus.update.start()
+        elif "--upgrade" in sys.argv[1:]:
+            sisyphus.upgrade.start()
         elif "--rescue" in sys.argv[1:]:
-            rescueDB()
+            sisyphus.rescue.start()
         elif "--sysinfo" in sys.argv[1:]:
-            sysInfo()
+            sisyphus.sysinfo.show()
         elif "--mirror" in sys.argv[1:]:
             if "--list" in sys.argv[2:]:
-                printMirrorList()
+                sisyphus.mirror.printList()
             elif "--set" in sys.argv[2:]:
                 if sys.argv[3:]:
-                    setActiveMirror(sys.argv[3:])
+                    sisyphus.mirror.setActive(sys.argv[3:])
                 else:
-                    showHelp()
+                    sisyphus.help.show()
             else:
-                showHelp()
+                sisyphus.help.show()
         elif "--branch=master" in sys.argv[1:]:
             if "--remote=gitlab" in sys.argv[2:]:
-                injectGitlabMaster()
+                sisyphus.branchinject.gitlabMaster()
             elif "--remote=pagure" in sys.argv[2:]:
-                injectPagureMaster()
+                sisyphus.branchinject.pagureMaster()
             else:
-                showHelp()
+                sisyphus.help.show()
         elif "--branch=next" in sys.argv[1:]:
             if "--remote=gitlab" in sys.argv[2:]:
-                injectGitlabNext()
+                sisyphus.branchinject.gitlabNext()
             elif "--remote=pagure" in sys.argv[2:]:
-                injectPagureNext()
+                sisyphus.branchinject.pagureNext()
             else:
-                showHelp()
+                sisyphus.help.show()
         elif "--help" in sys.argv[1:]:
-            showHelp()
+            sisyphus.help.show()
     else:
-        showHelp()
+        sisyphus.help.show()
