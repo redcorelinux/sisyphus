@@ -3,8 +3,8 @@ from .branchinject import *
 from .branchmaster import *
 from .branchnext import *
 from .branchreset import *
+from .cache import *
 from .check import *
-from .clean import *
 from .csvfiles import *
 from .database import *
 from .help import *

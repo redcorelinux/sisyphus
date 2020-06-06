@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+
+import os
 import sys
 import subprocess
 import sqlite3
@@ -6,9 +8,9 @@ import io
 import atexit
 import wget
 import shutil
+import sisyphus
 from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
-from libsisyphus import *
 
 
 class Sisyphus(QtWidgets.QMainWindow):
@@ -202,7 +204,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND iv <> av
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
         ])
-        with sqlite3.connect(sisyphusDB) as db:
+        with sqlite3.connect(sisyphus.database.sisyphusDB) as db:
             cursor = db.cursor()
             cursor.execute('%s' % (self.SELECTS[Sisyphus.databaseView]))
             rows = cursor.fetchall()
@@ -387,9 +389,9 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpdate(self):
         self.started.emit()
-        checkUpdate()
-        setJobs.__wrapped__() #undecorate
-        startUpdate.__wrapped__() #undecorate
+        sisyphus.check.update()
+        sisyphus.setjobs.start.__wrapped__() # undecorate
+        sisyphus.update.start.__wrapped__() # undecorate
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -397,10 +399,10 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
         pkgList = Sisyphus.pkgList
 
-        binhostURL = getBinhostURL()
-        areBinaries,areSources,needsConfig = getPackageDeps.__wrapped__(pkgList) #undecorate
+        binhostURL = sisyphus.binhost.getURL()
+        areBinaries,areSources,needsConfig = sisyphus.solvedeps.package.__wrapped__(pkgList) #undecorate
 
-        os.chdir(portageCacheDir)
+        os.chdir(sisyphus.cache.portageCacheDir)
         self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
         for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
             self.workerOutput.emit(">>> Fetching" + " " + binhostURL + binary)
@@ -413,18 +415,19 @@ class MainWorker(QtCore.QObject):
             if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
                 os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
 
-            if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+            if os.path.isdir(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip())):
+                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
             else:
-                os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                os.makedirs(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()))
+                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
 
             if os.path.exists(binary.rstrip().split("/")[1]):
                 os.remove(binary.rstrip().split("/")[1])
 
         portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
 
-        atexit.register(portageKill, portageExec)
+        # kill portage if the program dies or it's terminated by the user
+        atexit.register(sisyphus.killportage.start, portageExec)
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
@@ -432,7 +435,7 @@ class MainWorker(QtCore.QObject):
                     self.workerOutput.emit(portageOutput.rstrip() + "\n")
 
         portageExec.wait()
-        syncLocalDatabase()
+        sisyphus.database.syncLocal()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -441,28 +444,29 @@ class MainWorker(QtCore.QObject):
         pkgList = Sisyphus.pkgList
         portageExec = subprocess.Popen(['emerge', '--depclean'] + pkgList, stdout=subprocess.PIPE)
 
-        atexit.register(portageKill, portageExec)
+        # kill portage if the program dies or it's terminated by the user
+        atexit.register(sisyphus.killportage.start, portageExec)
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.workerOutput.emit(portageOutput.rstrip() + "\n")
 
         portageExec.wait()
-        syncLocalDatabase()
+        sisyphus.database.syncLocal()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
 
-        binhostURL = getBinhostURL()
-        areBinaries,areSources,needsConfig = getWorldDeps.__wrapped__() #undecorate
+        binhostURL = sisyphus.binhost.getURL()
+        areBinaries,areSources,needsConfig = sisyphus.solvedeps.world.__wrapped__() #undecorate
 
         if not len(areSources) == 0:
             self.workerOutput.emit("\n" + "Source package upgrades detected; Use sisyphus CLI to perform the upgrade; Aborting." + "\n")
         else:
             if not len(areBinaries) == 0:
                 self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
-                os.chdir(portageCacheDir)
+                os.chdir(sisyphus.cache.portageCacheDir)
                 for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
                     self.workerOutput.emit(">>> Fetching" + " " + binhostURL + binary)
                     wget.download(binhostURL + binary)
@@ -474,18 +478,19 @@ class MainWorker(QtCore.QObject):
                     if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
                         os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
 
-                    if os.path.isdir(os.path.join(portageCacheDir, CATEGORY.decode().strip())):
-                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                    if os.path.isdir(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip())):
+                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
                     else:
-                        os.makedirs(os.path.join(portageCacheDir, CATEGORY.decode().strip()))
-                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                        os.makedirs(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()))
+                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.cache.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
 
                     if os.path.exists(binary.rstrip().split("/")[1]):
                         os.remove(binary.rstrip().split("/")[1])
 
                 portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
 
-                atexit.register(portageKill, portageExec)
+                # kill portage if the program dies or it's terminated by the user
+                atexit.register(sisyphus.killportage.start, portageExec)
 
                 for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                     if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
@@ -493,7 +498,7 @@ class MainWorker(QtCore.QObject):
                             self.workerOutput.emit(portageOutput.rstrip() + "\n")
 
                 portageExec.wait()
-                syncLocalDatabase()
+                sisyphus.database.syncLocal()
             else:
                 self.workerOutput.emit("\n" + "No package upgrades found; Quitting." + "\n")
 
@@ -504,13 +509,14 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
         portageExec = subprocess.Popen(['emerge', '--depclean'], stdout=subprocess.PIPE)
 
-        atexit.register(portageKill, portageExec)
+        # kill portage if the program dies or it's terminated by the user
+        atexit.register(sisyphus.killportage.start, portageExec)
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             self.workerOutput.emit(portageOutput.rstrip() + "\n")
 
         portageExec.wait()
-        syncLocalDatabase()
+        sisyphus.database.syncLocal()
         self.finished.emit()
 
 

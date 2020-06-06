@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 import animation
+import sisyphus.cache
 import sisyphus.check
-import sisyphus.clean
 import sisyphus.database
 import sisyphus.metadata
 import sisyphus.sync
@@ -10,7 +10,7 @@ import sisyphus.sync
 @animation.wait('fetching updates')
 def start():
     sisyphus.check.root()
-    sisyphus.clean.cache()
+    sisyphus.cache.clean()
 
     needsPortage = sisyphus.check.portage()
     needsOverlay = sisyphus.check.overlay()
