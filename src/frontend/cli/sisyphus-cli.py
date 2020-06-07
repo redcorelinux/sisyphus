@@ -37,6 +37,8 @@ if "__main__" == __name__:
             sisyphus.upgrade.start()
         elif "--rescue" in sys.argv[1:]:
             sisyphus.rescue.start()
+        elif "--spmsync" in sys.argv[1:]:
+            sisyphus.spmsync.start()
         elif "--sysinfo" in sys.argv[1:]:
             sisyphus.sysinfo.show()
         elif "--mirror" in sys.argv[1:]:
