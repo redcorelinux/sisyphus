@@ -19,6 +19,7 @@ from .search import *
 from .setjobs import *
 from .setprofile import *
 from .solvedeps import *
+from .spmsync import *
 from .sync import *
 from .sysinfo import *
 from .uninstallforce import *
