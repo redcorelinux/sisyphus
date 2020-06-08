@@ -10,7 +10,7 @@ def root():
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
 def portage():
-    os.chdir(sisyphus.filesystem.gentooEbuildDir)
+    os.chdir(sisyphus.filesystem.portageRepoDir)
     needsPortageSync = int()
 
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
@@ -26,7 +26,7 @@ def portage():
     return needsPortageSync
 
 def overlay():
-    os.chdir(sisyphus.filesystem.redcoreEbuildDir)
+    os.chdir(sisyphus.filesystem.redcoreRepoDir)
     needsOverlaySync = int()
 
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])

@@ -9,13 +9,13 @@ import sisyphus.csvfiles
 import sisyphus.filesystem
 
 def getRemote():
-    remotePkgCsv,remoteDescCsv = sisyphus.csvfiles.getURL()
+    remotePackagesCsvURL,remoteDescriptionsCsvURL = sisyphus.csvfiles.getURL()
     http = urllib3.PoolManager()
 
-    with http.request('GET', remotePkgCsv, preload_content=False) as tmp_buffer, open(sisyphus.filesystem.remotePkgsDB, 'wb') as output_file:
+    with http.request('GET', remotePackagesCsvURL, preload_content=False) as tmp_buffer, open(sisyphus.filesystem.remotePackagesCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-    with http.request('GET', remoteDescCsv, preload_content=False) as tmp_buffer, open(sisyphus.filesystem.remoteDscsDB, 'wb') as output_file:
+    with http.request('GET', remoteDescriptionsCsvURL, preload_content=False) as tmp_buffer, open(sisyphus.filesystem.remoteDescriptionsCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
 def makeLocal():
@@ -24,18 +24,18 @@ def makeLocal():
 def syncRemote():
     getRemote()
 
-    sisyphusdb = sqlite3.connect(sisyphus.filesystem.sisyphusDB)
+    sisyphusdb = sqlite3.connect(sisyphus.filesystem.localDatabase)
     sisyphusdb.cursor().execute('''drop table if exists remote_packages''')
     sisyphusdb.cursor().execute('''drop table if exists remote_descriptions''')
     sisyphusdb.cursor().execute('''create table remote_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
     sisyphusdb.cursor().execute('''create table remote_descriptions (category TEXT,name TEXT,description TEXT)''')
 
-    with open(sisyphus.filesystem.remotePkgsDB) as rmtCsv:
-        for row in csv.reader(rmtCsv):
+    with open(sisyphus.filesystem.remotePackagesCsv) as input_file:
+        for row in csv.reader(input_file):
             sisyphusdb.cursor().execute("insert into remote_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
 
-    with open(sisyphus.filesystem.remoteDscsDB) as rmtCsv:
-        for row in csv.reader(rmtCsv):
+    with open(sisyphus.filesystem.remoteDescriptionsCsv) as input_file:
+        for row in csv.reader(input_file):
             sisyphusdb.cursor().execute("insert into remote_descriptions (category, name, description) values (?, ?, ?);", row)
 
     sisyphusdb.commit()
@@ -44,12 +44,12 @@ def syncRemote():
 def syncLocal():
     makeLocal()
 
-    sisyphusdb = sqlite3.connect(sisyphus.filesystem.sisyphusDB)
+    sisyphusdb = sqlite3.connect(sisyphus.filesystem.localDatabase)
     sisyphusdb.cursor().execute('''drop table if exists local_packages''')
     sisyphusdb.cursor().execute('''create table local_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
 
-    with open(sisyphus.filesystem.localPkgsDB) as lclCsv:
-        for row in csv.reader(lclCsv):
+    with open(sisyphus.filesystem.localPackagesCsv) as input_file:
+        for row in csv.reader(input_file):
             sisyphusdb.cursor().execute("insert into local_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
 
     sisyphusdb.commit()

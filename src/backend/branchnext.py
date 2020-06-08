@@ -7,8 +7,8 @@ import sisyphus.filesystem
 
 @animation.wait('injecting gentoo linux portage tree - branch next')
 def setGitlabNextStage1():
-    if not os.path.isdir(os.path.join(sisyphus.filesystem.gentooEbuildDir, '.git')):
-        os.chdir(sisyphus.filesystem.gentooEbuildDir)
+    if not os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):
+        os.chdir(sisyphus.filesystem.portageRepoDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://gitlab.com/redcore/portage.git'])
         subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
@@ -16,8 +16,8 @@ def setGitlabNextStage1():
 
 @animation.wait('injecting redcore linux ebuild tree - branch next')
 def setGitlabNextStage2():
-    if not os.path.isdir(os.path.join(sisyphus.filesystem.redcoreEbuildDir, '.git')):
-        os.chdir(sisyphus.filesystem.redcoreEbuildDir)
+    if not os.path.isdir(os.path.join(sisyphus.filesystem.redcoreRepoDir, '.git')):
+        os.chdir(sisyphus.filesystem.redcoreRepoDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://gitlab.com/redcore/redcore-desktop.git'])
         subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
@@ -39,8 +39,8 @@ def startGitlab():
 
 @animation.wait('injecting gentoo linux portage tree - branch next')
 def setPagureNextStage1():
-    if not os.path.isdir(os.path.join(sisyphus.filesystem.gentooEbuildDir, '.git')):
-        os.chdir(sisyphus.filesystem.gentooEbuildDir)
+    if not os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):
+        os.chdir(sisyphus.filesystem.portageRepoDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/portage.git'])
         subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])
@@ -48,8 +48,8 @@ def setPagureNextStage1():
 
 @animation.wait('injecting redcore linux ebuild tree - branch next')
 def setPagureNextStage2():
-    if not os.path.isdir(os.path.join(sisyphus.filesystem.redcoreEbuildDir, '.git')):
-        os.chdir(sisyphus.filesystem.redcoreEbuildDir)
+    if not os.path.isdir(os.path.join(sisyphus.filesystem.redcoreRepoDir, '.git')):
+        os.chdir(sisyphus.filesystem.redcoreRepoDir)
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin', 'https://pagure.io/redcore/redcore-desktop.git'])
         subprocess.call(['git', 'fetch', '--depth=1', 'origin', 'next', '--quiet'])

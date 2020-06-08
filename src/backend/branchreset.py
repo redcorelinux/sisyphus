@@ -7,23 +7,23 @@ import sisyphus.filesystem
 
 @animation.wait('resetting branch configuration')
 def start():
-    if os.path.isdir(sisyphus.filesystem.gentooEbuildDir):
-        for files in os.listdir(sisyphus.filesystem.gentooEbuildDir):
-            if os.path.isfile(os.path.join(sisyphus.filesystem.gentooEbuildDir, files)):
-                os.remove(os.path.join(sisyphus.filesystem.gentooEbuildDir, files))
+    if os.path.isdir(sisyphus.filesystem.portageRepoDir):
+        for files in os.listdir(sisyphus.filesystem.portageRepoDir):
+            if os.path.isfile(os.path.join(sisyphus.filesystem.portageRepoDir, files)):
+                os.remove(os.path.join(sisyphus.filesystem.portageRepoDir, files))
             else:
-                shutil.rmtree(os.path.join(sisyphus.filesystem.gentooEbuildDir, files))
+                shutil.rmtree(os.path.join(sisyphus.filesystem.portageRepoDir, files))
     else:
-        os.makedirs(sisyphus.filesystem.gentooEbuildDir)
+        os.makedirs(sisyphus.filesystem.portageRepoDir)
 
-    if os.path.isdir(sisyphus.filesystem.redcoreEbuildDir):
-        for files in os.listdir(sisyphus.filesystem.redcoreEbuildDir):
-            if os.path.isfile(os.path.join(sisyphus.filesystem.redcoreEbuildDir, files)):
-                os.remove(os.path.join(sisyphus.filesystem.redcoreEbuildDir, files))
+    if os.path.isdir(sisyphus.filesystem.redcoreRepoDir):
+        for files in os.listdir(sisyphus.filesystem.redcoreRepoDir):
+            if os.path.isfile(os.path.join(sisyphus.filesystem.redcoreRepoDir, files)):
+                os.remove(os.path.join(sisyphus.filesystem.redcoreRepoDir, files))
             else:
-                shutil.rmtree(os.path.join(sisyphus.filesystem.redcoreEbuildDir, files))
+                shutil.rmtree(os.path.join(sisyphus.filesystem.redcoreRepoDir, files))
     else:
-        os.makedirs(sisyphus.filesystem.redcoreEbuildDir)
+        os.makedirs(sisyphus.filesystem.redcoreRepoDir)
 
     if os.path.isdir(sisyphus.filesystem.portageConfigDir):
         for files in os.listdir(sisyphus.filesystem.portageConfigDir):

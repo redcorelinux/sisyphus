@@ -5,7 +5,7 @@ import subprocess
 import sisyphus.filesystem
 
 def portage():
-    os.chdir(sisyphus.filesystem.gentooEbuildDir)
+    os.chdir(sisyphus.filesystem.portageRepoDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
@@ -15,7 +15,7 @@ def portage():
     gitExecStage2.wait()
 
 def overlay():
-    os.chdir(sisyphus.filesystem.redcoreEbuildDir)
+    os.chdir(sisyphus.filesystem.redcoreRepoDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 

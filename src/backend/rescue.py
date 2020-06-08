@@ -7,14 +7,14 @@ import sisyphus.filesystem
 
 @animation.wait('recovering databases')
 def start():
-    if os.path.exists(sisyphus.filesystem.remotePkgsDB):
-        os.remove(sisyphus.filesystem.remotePkgsDB)
-    if os.path.exists(sisyphus.filesystem.remoteDscsDB):
-        os.remove(sisyphus.filesystem.remoteDscsDB)
-    if os.path.exists(sisyphus.filesystem.localPkgsDB):
-        os.remove(sisyphus.filesystem.localPkgsDB)
-    if os.path.exists(sisyphus.filesystem.sisyphusDB):
-        os.remove(sisyphus.filesystem.sisyphusDB)
+    if os.path.exists(sisyphus.filesystem.remotePackagesCsv):
+        os.remove(sisyphus.filesystem.remotePackagesCsv)
+    if os.path.exists(sisyphus.filesystem.remoteDescriptionsCsv):
+        os.remove(sisyphus.filesystem.remoteDescriptionsCsv)
+    if os.path.exists(sisyphus.filesystem.localPackagesCsv):
+        os.remove(sisyphus.filesystem.localPackagesCsv)
+    if os.path.exists(sisyphus.filesystem.localDatabase):
+        os.remove(sisyphus.filesystem.localDatabase)
 
     sisyphus.database.syncRemote()
     sisyphus.database.syncLocal()
