@@ -46,7 +46,6 @@ def writeList(mirrorList):
             mirrorFile.write("\n")
 
 def setActive(mirror):
-    mirror = int(mirror[0])
     mirrorList = getList()
     if mirror not in range(1, len(mirrorList) + 1):
         print("\n" + "Mirror index is wrong, please check with sisyphus --mirror --list" + "\n")

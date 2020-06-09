@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
+import sisyphus
 import typer
 from typing import List
 
 app = typer.Typer()
-mirror_cmd = typer.Typer()
-app.add_typer(mirror_cmd, name="mirror", help='List/set the active binary repository mirror.')
+mirrorSetup = typer.Typer()
+app.add_typer(mirrorSetup, name="mirror", help='List/Set the active binary repository mirror.')
 
 @app.callback()
 def app_callback():
@@ -114,16 +115,15 @@ def sysinfo():
     """Display information about installed core packages and portage configuration."""
     typer.echo("Syncing sisyphus database ...")
 
-@mirror_cmd.command("list")
-def mirror_list():
-    """List available binary package repository mirrors
-    (the active one is marked with *)"""
-    typer.echo("Listing available mirrors ...")
+@mirrorSetup.command("list")
+def mirrorlist():
+    """List available binary package repository mirrors (* means active)."""
+    sisyphus.mirror.printList()
 
-@mirror_cmd.command("set")
-def mirror_set(index: int):
+@mirrorSetup.command("set")
+def mirrorset(index: int):
     """Change the binary package repository to the selected mirror."""
-    typer.echo(f"Setting mirror to: {index}")
+    sisyphus.mirror.setActive(index)
 
 if __name__ == "__main__":
     app()
