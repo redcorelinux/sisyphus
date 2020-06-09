@@ -5,5 +5,7 @@ import subprocess
 
 @animation.wait('setting up hardened profile')
 def start():
-    subprocess.call(['eselect', 'profile', 'set', 'default/linux/amd64/17.0/hardened'])
-    subprocess.call(['env-update'])
+    eselectExec = subprocess.Popen(['eselect', 'profile', 'set', 'default/linux/amd64/17.0/hardened'])
+    eselectExec.wait()
+    envExec = subprocess.Popen(['env-update'], stdout=subprocess.DEVNULL)
+    envExec.wait()

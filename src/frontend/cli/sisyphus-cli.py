@@ -4,6 +4,9 @@ import sisyphus
 import typer
 from typing import List
 
+sisyphus.check.update()
+sisyphus.setjobs.start.__wrapped__() # undecorate
+
 app = typer.Typer()
 mirrorSetup = typer.Typer()
 app.add_typer(mirrorSetup, name="mirror", help='List/Set the active binary repository mirror.')
@@ -86,15 +89,15 @@ def branch(branch: str = typer.Argument(...), remote: str = typer.Option(...)):
     """Pull the branch 'BRANCH' of the Portage tree, Redcore overlay and Portage configs,
     using 'REMOTE' git repositories.
 
-    'BRANCH' can be one of the following : master, next (default is master)
+    'BRANCH' can be one of the following : master, next
 
-    'REMOTE' can be one of the following : gitlab, pagure (default is pagure)
+    'REMOTE' can be one of the following : gitlab, pagure
 
     * Examples:
 
-    'branch master --remote gitlab' will pull the branch 'master' from gitlab.com
+    'branch master --remote=gitlab' will pull the branch 'master' from gitlab.com
 
-    'branch next --remote pagure' will pull the branch 'next' from pagure.io
+    'branch next --remote=pagure' will pull the branch 'next' from pagure.io
 
     !!! WARNING !!!
 
@@ -108,7 +111,7 @@ def branch(branch: str = typer.Argument(...), remote: str = typer.Option(...)):
 
     * Examples : 'sisyphus mirror set 2' or 'sisyphus mirror set 8'
     """
-    typer.echo(f"Injecting {branch} branch from {remote} repository")
+    sisyphus.branchsetup.start(branch, remote)
 
 @app.command("sysinfo")
 def sysinfo():

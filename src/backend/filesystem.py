@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-remoteGitlab = 'https://gitlab.com/redcore/'
-remotePagure = 'https://pagure.io/redcore/'
+remoteGitlab = 'https://gitlab.com/redcore'
+remotePagure = 'https://pagure.io/redcore'
 
 portageRepo = 'portage.git'
 redcoreRepo = 'redcore-desktop.git'
