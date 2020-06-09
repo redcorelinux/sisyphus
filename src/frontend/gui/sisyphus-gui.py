@@ -245,7 +245,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         if not self.databaseTable.selectionModel().hasSelection():
             self.statusBar().showMessage("No package selected, please pick at least one!")
         else:
-            Sisyphus.pkgList = self.getSelectedPackages()
+            Sisyphus.pkgname = self.getSelectedPackages()
             self.statusBar().showMessage("I am installing requested package(s), please wait ...")
             self.installThread.start()
 
@@ -253,7 +253,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         if not self.databaseTable.selectionModel().hasSelection():
             self.statusBar().showMessage("No package selected, please pick at least one!")
         else:
-            Sisyphus.pkgList = self.getSelectedPackages()
+            Sisyphus.pkgname = self.getSelectedPackages()
             self.statusBar().showMessage("I am removing requested package(s), please wait ...")
             self.uninstallThread.start()
 
@@ -397,10 +397,10 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startInstall(self):
         self.started.emit()
-        pkgList = Sisyphus.pkgList
+        pkgname = Sisyphus.pkgname
 
         binhostURL = sisyphus.binhost.getURL()
-        areBinaries,areSources,needsConfig = sisyphus.solvedeps.package.__wrapped__(pkgList) #undecorate
+        areBinaries,areSources,needsConfig = sisyphus.solvedeps.package.__wrapped__(pkgname) #undecorate
 
         os.chdir(sisyphus.filesystem.portageCacheDir)
         self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
@@ -424,7 +424,7 @@ class MainWorker(QtCore.QObject):
             if os.path.exists(binary.rstrip().split("/")[1]):
                 os.remove(binary.rstrip().split("/")[1])
 
-        portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE)
 
         # kill portage if the program dies or it's terminated by the user
         atexit.register(sisyphus.killportage.start, portageExec)
@@ -441,8 +441,8 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
-        pkgList = Sisyphus.pkgList
-        portageExec = subprocess.Popen(['emerge', '--depclean'] + pkgList, stdout=subprocess.PIPE)
+        pkgname = Sisyphus.pkgname
+        portageExec = subprocess.Popen(['emerge', '--depclean'] + pkgname, stdout=subprocess.PIPE)
 
         # kill portage if the program dies or it's terminated by the user
         atexit.register(sisyphus.killportage.start, portageExec)

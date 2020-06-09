@@ -12,11 +12,11 @@ import sisyphus.filesystem
 import sisyphus.solvedeps
 import sisyphus.update
 
-def start(pkgList):
+def start(pkgname):
     sisyphus.update.start()
 
     binhostURL = sisyphus.binhost.getURL()
-    areBinaries,areSources,needsConfig = sisyphus.solvedeps.package(pkgList)
+    areBinaries,areSources,needsConfig = sisyphus.solvedeps.package(pkgname)
 
     if needsConfig == 0:
         if len(areSources) == 0:
@@ -44,7 +44,7 @@ def start(pkgList):
                         if os.path.exists(binary.rstrip().split("/")[1]):
                             os.remove(binary.rstrip().split("/")[1])
 
-                    portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+                    portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
 
                     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                         if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
@@ -83,7 +83,7 @@ def start(pkgList):
                         if os.path.exists(binary.rstrip().split("/")[1]):
                             os.remove(binary.rstrip().split("/")[1])
 
-                    portageExec = subprocess.Popen(['emerge', '--usepkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+                    portageExec = subprocess.Popen(['emerge', '--usepkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
 
                     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                         if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
@@ -97,7 +97,7 @@ def start(pkgList):
             else:
                 print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + str(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                 if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                    portageExec = subprocess.Popen(['emerge', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+                    portageExec = subprocess.Popen(['emerge', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
 
                     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                         if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
@@ -109,7 +109,7 @@ def start(pkgList):
                 else:
                     sys.exit("\n" + "Ok; Quitting." + "\n")
     else:
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
 
         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
             if not "Local copy of remote index is up-to-date and will be used." in portageOutput.rstrip():

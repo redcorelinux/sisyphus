@@ -1,3 +1,4 @@
+from .autoremove import *
 from .binhost import *
 from .branchinject import *
 from .branchmaster import *
@@ -13,7 +14,6 @@ from .install import *
 from .killportage import *
 from .metadata import *
 from .mirror import *
-from .removeorphans import *
 from .rescue import *
 from .search import *
 from .setjobs import *

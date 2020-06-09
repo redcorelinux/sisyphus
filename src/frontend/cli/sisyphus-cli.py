@@ -23,23 +23,13 @@ def search(pkgname: List[str]):
     """Search for binary and/or ebuild (source) packages."""
     sisyphus.search.start(pkgname)
 
-@app.command("update")
-def update():
-    """Update the Portage tree, the Redcore Overlay(s), Portage configs and Sisyphus's package database."""
-    typer.echo("Updating system ...")
-
-@app.command("upgrade")
-def upgrade():
-    """Upgrade the system using binary and/or ebuild (source) packages."""
-    typer.echo("Upgrading all packages ...")
-
 @app.command("install")
-def install(pkglist: List[str]):
+def install(pkgname: List[str]):
     """Install binary and/or ebuild (source) packages."""
-    [typer.echo(f"Installing {pkg}") for pkg in pkglist]
+    sisyphus.install.start(pkgname)
 
 @app.command("uninstall")
-def uninstall(pkglist: List[str], force: bool = False):
+def uninstall(pkgname: List[str], force: bool = False):
     """Uninstall packages *SAFELY* by checking for reverse dependencies.
     If reverse dependencies exist, the package(s) will NOT be uninstalled to prevent the possible breakage of the system.
     If you really want to uninstall the package, make sure you uninstall all reverse dependencies as well.
@@ -51,9 +41,9 @@ def uninstall(pkglist: List[str], force: bool = False):
     Upgrading the system may pull the packages back in, to fix the reverse dependency chain.
     """
     if not force:
-        [typer.echo(f"Safely removing {pkg}") for pkg in pkglist]
+        sisyphus.uninstall.start(pkgname)
     else:
-        [typer.echo(f"Force removing {pkg}") for pkg in pkglist]
+        sisyphus.uninstallforce.start(pkgname)
 
 @app.command("autoremove")
 def autoremove():
@@ -62,7 +52,17 @@ def autoremove():
     In addition, a package may no longer depend on another one, so that other package becomes orphan as well if nothing else requires it.
     Use this option to check the whole dependency chain for such packages, and uninstall them.
     """
-    typer.echo("Performing cleanup ... ")
+    sisyphus.autoremove.start()
+
+@app.command("update")
+def update():
+    """Update the Portage tree, the Redcore Overlay(s), Portage configs and Sisyphus's package database."""
+    sisyphus.update.start()
+
+@app.command("upgrade")
+def upgrade():
+    """Upgrade the system using binary and/or ebuild (source) packages."""
+    sisyphus.upgrade.start()
 
 @app.command("spmsync")
 def spmsync():
@@ -70,7 +70,7 @@ def spmsync():
     When you install something with Portage directly (emerge), Sisyphus is not aware of that package, and it doesn't track it in it's database.
     Use this command to synchronize Sisyphus's package database with Portage's package database.
     """
-    typer.echo("Syncing sisyphus database ...")
+    sisyphus.spmsync.start()
 
 @app.command("rescue")
 def rescue():
@@ -79,10 +79,10 @@ def rescue():
     If Portage's package database is corrupted (in this case you're screwed anyway :D), only a partial resurrection will be possible.
     If Portage's package database is intact, full resurrection will be possible.
     """
-    typer.echo("Syncing sisyphus database ...")
+    sisyphus.rescue.start()
 
 @app.command("branch")
-def branch(branch: str = typer.Argument('master'), remote: str = typer.Option('pagure')):
+def branch(branch: str = typer.Argument(...), remote: str = typer.Option(...)):
     """Pull the branch 'BRANCH' of the Portage tree, Redcore overlay and Portage configs,
     using 'REMOTE' git repositories.
 
@@ -117,7 +117,7 @@ def sysinfo():
 
 @mirrorSetup.command("list")
 def mirrorlist():
-    """List available binary package repository mirrors (* means active)."""
+    """List available binary package repository mirrors (the active one is marked with *)."""
     sisyphus.mirror.printList()
 
 @mirrorSetup.command("set")

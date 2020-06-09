@@ -5,11 +5,11 @@ import subprocess
 import io
 
 @animation.wait('resolving dependencies')
-def package(pkgList):
+def package(pkgname):
     areBinaries = []
     areSources = []
     needsConfig = int()
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgList, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stderr, encoding="utf-8"):
         if "The following keyword changes are necessary to proceed:" in portageOutput.rstrip():

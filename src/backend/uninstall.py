@@ -4,8 +4,8 @@ import subprocess
 import sisyphus.check
 import sisyphus.sync
 
-def start(pkgList):
+def start(pkgname):
     sisyphus.check.root()
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + pkgList)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + list(pkgname))
     portageExec.wait()
     sisyphus.database.syncLocal()
