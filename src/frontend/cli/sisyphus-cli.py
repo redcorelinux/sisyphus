@@ -18,6 +18,11 @@ def app_callback():
     """
     pass
 
+@app.command("search")
+def search(pkgname: List[str]):
+    """Search for binary and/or ebuild (source) packages."""
+    sisyphus.search.start(pkgname)
+
 @app.command("update")
 def update():
     """Update the Portage tree, the Redcore Overlay(s), Portage configs and Sisyphus's package database."""
@@ -58,11 +63,6 @@ def autoremove():
     Use this option to check the whole dependency chain for such packages, and uninstall them.
     """
     typer.echo("Performing cleanup ... ")
-
-@app.command("search")
-def install(pkglist: List[str]):
-    """Search for binary and/or ebuild (source) packages."""
-    [typer.echo(f"Searching for {pkg}") for pkg in pkglist]
 
 @app.command("spmsync")
 def spmsync():

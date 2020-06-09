@@ -2,5 +2,5 @@
 
 import subprocess
 
-def start(pkgList):
-    subprocess.call(['emerge', '--search', '--getbinpkg'] + pkgList)
+def start(pkgname):
+    subprocess.call(['emerge', '--search', '--getbinpkg'] + list(pkgname))
