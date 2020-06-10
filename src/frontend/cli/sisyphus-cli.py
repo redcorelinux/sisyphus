@@ -38,10 +38,30 @@ def uninstall(pkgname: List[str], force: bool = False):
     If you really want to uninstall the package, make sure you uninstall all reverse dependencies as well.
     This will not allways be possible, as the reverse dependency chain may be way to long and require you to uninstall critical system packages.
 
-    Using the --force option, packages are uninstalled *UNSAFELY* by ignoring reverse dependencies.
-    This may break your system if you uninstall critical system packages.
+    * Examples:
+
+    'sisyphus uninstall firefox' or 'sisyphus uninstall firefox --no-force' 
+
+    will succeed, as nothing depends on it
+
+    'sisyphus uninstall pulseaudio' or 'sisyphus uninstall pulseaudio --no-force'
+
+    will fail, many packages depend on it
+
+    With --force option, packages are uninstalled *UNSAFELY* by ignoring reverse dependencies.
+    This may break your system if you uninstall critical packages.
     It will try the best it can to preserve the libraries required by other packages to prevent such a breakage.
     Upgrading the system may pull the packages back in, to fix the reverse dependency chain.
+
+    * Examples :
+
+    'sisyphus uninstall pulseaudio --force'
+
+    will succeed, but you may no longer have audio
+
+    'sisyphus uninstall openrc --force'
+
+    will succeed, but the system will be broken
     """
     if not force:
         sisyphus.uninstall.start(pkgname)
