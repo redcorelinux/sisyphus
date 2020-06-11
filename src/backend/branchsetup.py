@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import animation
 import os
 import subprocess
 import sisyphus.check
@@ -7,7 +8,11 @@ import sisyphus.branchreset
 import sisyphus.filesystem
 import sys
 
-def start(branch,remote):
+def getBranchRemote(branch,remote):
+    portageRemote = []
+    redcoreRemote = []
+    portageConfigRemote = []
+    remoteBranch = []
     if "master" in branch:
         if "gitlab" in remote:
             remote = sisyphus.filesystem.remoteGitlab
@@ -38,34 +43,62 @@ def start(branch,remote):
     redcoreRemote = [remote, sisyphus.filesystem.redcoreRepo]
     portageConfigRemote = [remote, sisyphus.filesystem.portageConfigRepo]
     remoteBranch = ['origin', branch]
-   
-    sisyphus.check.root()
-    sisyphus.branchreset.start()
+
+    return portageRemote,redcoreRemote,portageConfigRemote,remoteBranch
+
+@animation.wait('injecting Gentoo Linux portage tree')
+def injectGentooPortageTree(branch,remote):
+    portageRemote,redcoreRemote,portageConfigRemote,remoteBranch = getBranchRemote(branch,remote)
 
     if not os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):
         os.chdir(sisyphus.filesystem.portageRepoDir)
-        print("\nInjecting branch" + " " + "'" + branch + "'" +  " " + "from" + " " + "/".join(portageRemote))
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin'] + "/".join(portageRemote).split())
         subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + branch.split() +  ['--quiet'])
         subprocess.call(['git', 'checkout', '-b'] + branch.split() + "/".join(remoteBranch).split() + ['--quiet'])
 
+@animation.wait('injecting Redcore Linux ebuild overlay')
+def injectRedcoreEbuildOverlay(branch,remote):
+    portageRemote,redcoreRemote,portageConfigRemote,remoteBranch = getBranchRemote(branch,remote)
+
     if not os.path.isdir(os.path.join(sisyphus.filesystem.redcoreRepoDir, '.git')):
         os.chdir(sisyphus.filesystem.redcoreRepoDir)
-        print("\nInjecting branch" + " " + "'" + branch + "'" +  " " + "from" + " " + "/".join(redcoreRemote) + "\n")
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin'] + "/".join(redcoreRemote).split())
         subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + branch.split() +  ['--quiet'])
         subprocess.call(['git', 'checkout', '-b'] + branch.split() + "/".join(remoteBranch).split() + ['--quiet'])
 
+@animation.wait('injecting Redcore Linux portage config')
+def injectRedcorePortageConfig(branch,remote):
+    portageRemote,redcoreRemote,portageConfigRemote,remoteBranch = getBranchRemote(branch,remote)
+
     if not os.path.isdir(os.path.join(sisyphus.filesystem.portageConfigDir, '.git')):
         os.chdir(sisyphus.filesystem.portageConfigDir)
-        print("Injecting branch" + " " + "'" + branch + "'" +  " " + "from" + " " + "/".join(portageConfigRemote) + "\n")
         subprocess.call(['git', 'init', '-q'])
         subprocess.call(['git', 'remote', 'add', 'origin'] + "/".join(portageConfigRemote).split())
         subprocess.call(['git', 'fetch', '--depth=1', 'origin'] + branch.split() +  ['--quiet'])
         subprocess.call(['git', 'checkout', '-b'] + branch.split() + "/".join(remoteBranch).split() + ['--quiet'])
 
+def warnAboutBinaryRepository(branch,remote):
+    if "master" in branch:
+        print("\nThe switch to branch" + " " + "'" + branch + "'" +  " " + "from remote" + " " + "'" + remote + "'" + " " + "is now complete")
+        print("You must pair this branch with the stable binary package repository")
+        print("Hint : Use the odd numbers (1,3,5,7) from 'sisyphus mirror list'")
+        print("Examples : 'sisyphus mirror set 1' or 'sisyphus mirror set 5'\n")
+    elif "next" in branch:
+        print("\nThe switch to branch" + " " + "'" + branch + "'" +  " " + "from remote" + " " + "'" + remote + "'" + " " + "is now complete")
+        print("You must pair this branch with the testing binary package repository")
+        print("Hint : Use the even numbers (2,4,6,8) from 'sisyphus mirror list'")
+        print("Examples : 'sisyphus mirror set 4' or 'sisyphus mirror set 8'\n")
+
+
+def start(branch,remote):
+    sisyphus.check.root()
+    sisyphus.branchreset.start()
+    injectGentooPortageTree(branch,remote)
+    injectRedcoreEbuildOverlay(branch,remote)
+    injectRedcorePortageConfig(branch,remote)
     sisyphus.setjobs.start()
     sisyphus.setprofile.start()
     sisyphus.metadata.regenAnimated()
+    warnAboutBinaryRepository(branch,remote)
