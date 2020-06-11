@@ -6,6 +6,9 @@ import subprocess
 import sisyphus.check
 import sisyphus.branchreset
 import sisyphus.filesystem
+import sisyphus.metadata
+import sisyphus.setjobs
+import sisyphus.setprofile
 import sys
 
 def getBranchRemote(branch,remote):

@@ -2,7 +2,7 @@
 
 import subprocess
 import sisyphus.check
-import sisyphus.sync
+import sisyphus.database
 
 def start(pkgname):
     sisyphus.check.root()
