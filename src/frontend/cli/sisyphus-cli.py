@@ -27,12 +27,31 @@ def search(pkgname: List[str]):
     sisyphus.search.start(pkgname)
 
 @app.command("install")
-def install(pkgname: List[str]):
-    """Install binary and/or ebuild (source) packages."""
-    sisyphus.install.start(pkgname)
+def install(pkgname: List[str], hybrid: bool = typer.Option(False, "--hybrid")):
+    """Install binary and/or ebuild(source) packages.
+    By default, only binary packages will be installed.
+    Use the --hybrid option to install ebuild(source) packages.
+
+    * Examples:
+
+    'sisyphus install pidgin'
+
+    will install pidgin binary package (if available); if there is none, but the ebuild(source) package for pidgin is found, it will stop and suggest the --hybrid option.
+
+    'sisyphus install pidgin --hybrid'
+
+    will compile pidgin from source
+
+    The --hybrid option will preffer to reuse binary packages(if available) to satisfy the dependencies for the ebuild(source) package, speeding up the installation.
+    You can use the --hybrid option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
+    """
+    if not hybrid:
+        sisyphus.install.start(pkgname)
+    else:
+        sisyphus.installhybrid.start(pkgname)
 
 @app.command("uninstall")
-def uninstall(pkgname: List[str], force: bool = False):
+def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force")):
     """Uninstall packages *SAFELY* by checking for reverse dependencies.
     If reverse dependencies exist, the package(s) will NOT be uninstalled to prevent the possible breakage of the system.
     If you really want to uninstall the package, make sure you uninstall all reverse dependencies as well.
@@ -40,11 +59,11 @@ def uninstall(pkgname: List[str], force: bool = False):
 
     * Examples:
 
-    'sisyphus uninstall firefox' or 'sisyphus uninstall firefox --no-force' 
+    'sisyphus uninstall firefox'
 
-    will succeed, as nothing depends on it
+    will succeed, nothing depends on it
 
-    'sisyphus uninstall pulseaudio' or 'sisyphus uninstall pulseaudio --no-force'
+    'sisyphus uninstall pulseaudio'
 
     will fail, many packages depend on it
 
@@ -83,9 +102,29 @@ def update():
     sisyphus.update.start()
 
 @app.command("upgrade")
-def upgrade():
-    """Upgrade the system using binary and/or ebuild (source) packages."""
-    sisyphus.upgrade.start()
+def upgrade(hybrid: bool = typer.Option(False, "--hybrid")):
+    """Upgrade the system using binary and/or ebuild (source) packages.
+    By default, only binary packages will be upgraded.
+    However, if you installed any ebuild(source) packages with the '--hybrid' option, it would make sense to upgrade them too.
+    Use the --hybrid option to upgrade **EVERYTHING**, binary and/or ebuild(source) packages.
+
+    * Examples:
+
+    'sisyphus upgrade'
+
+    will upgrade the system using binary packages; if any ebuild(source) package upgrade is detected, it will stop and suggest the --hybrid option
+
+    'sisyphus upgrade --hybrid'
+
+    will upgrade the system using both binary and/or ebuild(source) packages
+
+    The --hybrid option will preffer to reuse binary packages(if available) to satisfy the dependencies for the ebuild(source) packages, speeding up the upgrade.
+    You can use the --hybrid option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
+    """
+    if not hybrid:
+        sisyphus.upgrade.start()
+    else:
+        sisyphus.upgradehybrid.start()
 
 @app.command("spmsync")
 def spmsync():
@@ -136,7 +175,7 @@ def branch(branch: str = typer.Argument(...), remote: str = typer.Option(...)):
 @app.command("sysinfo")
 def sysinfo():
     """Display information about installed core packages and portage configuration."""
-    typer.echo("Syncing sisyphus database ...")
+    sisyphus.sysinfo.show()
 
 @mirrorSetup.command("list")
 def mirrorlist():
