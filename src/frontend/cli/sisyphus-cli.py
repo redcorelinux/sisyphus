@@ -3,6 +3,7 @@
 import sisyphus
 import typer
 from typing import List
+from enum import Enum
 
 sisyphus.check.update()
 sisyphus.setjobs.start.__wrapped__() # undecorate
@@ -12,14 +13,14 @@ mirrorSetup = typer.Typer()
 app.add_typer(mirrorSetup, name="mirror", help='List/Set the active binary repository mirror.')
 
 @app.callback()
-def app_callback():
+def app_callback(ctx: typer.Context):
     """Sisyphus is a simple python wrapper around portage, gentoolkit, and portage-utils
     which provides an apt-get/yum-alike interface to these commands,
     to assist newcomer people transitioning from Debian/RedHat-based systems to Gentoo.
 
     Use 'sisyphus COMMAND --help' for detailed usage.
     """
-    pass
+    ctx.info_name = 'sisyphus'
 
 @app.command("search")
 def search(pkgname: List[str]):
@@ -27,7 +28,7 @@ def search(pkgname: List[str]):
     sisyphus.search.start(pkgname)
 
 @app.command("install")
-def install(pkgname: List[str], hybrid: bool = typer.Option(False, "--hybrid")):
+def install(pkgname: List[str], hybrid: bool = typer.Option(False, "--hybrid", "-h")):
     """Install binary and/or ebuild(source) packages.
     By default, only binary packages will be installed.
     Use the --hybrid option to install ebuild(source) packages.
@@ -51,7 +52,7 @@ def install(pkgname: List[str], hybrid: bool = typer.Option(False, "--hybrid")):
         sisyphus.installhybrid.start(pkgname)
 
 @app.command("uninstall")
-def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force")):
+def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
     """Uninstall packages *SAFELY* by checking for reverse dependencies.
     If reverse dependencies exist, the package(s) will NOT be uninstalled to prevent the possible breakage of the system.
     If you really want to uninstall the package, make sure you uninstall all reverse dependencies as well.
@@ -102,7 +103,7 @@ def update():
     sisyphus.update.start()
 
 @app.command("upgrade")
-def upgrade(hybrid: bool = typer.Option(False, "--hybrid")):
+def upgrade(hybrid: bool = typer.Option(False, "--hybrid", "-h")):
     """Upgrade the system using binary and/or ebuild (source) packages.
     By default, only binary packages will be upgraded.
     However, if you installed any ebuild(source) packages with the '--hybrid' option, it would make sense to upgrade them too.
@@ -143,14 +144,22 @@ def rescue():
     """
     sisyphus.rescue.start()
 
+class Branch(str, Enum):
+    master = 'master'
+    next = 'next'
+
+class Remote(str, Enum):
+    gitlab = 'gitlab'
+    pagure = 'pagure'
+
 @app.command("branch")
-def branch(branch: str = typer.Argument(...), remote: str = typer.Option(...)):
-    """Pull the branch 'BRANCH' of the Portage tree, Redcore overlay and Portage configs,
-    using 'REMOTE' git repositories.
+def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(Remote.pagure, "--remote", "-r")):
+    """Pull the selected branch of the Portage tree, Redcore overlay and Portage configs.
+    The remote can be selected by using the --remote option.
 
     'BRANCH' can be one of the following : master, next
 
-    'REMOTE' can be one of the following : gitlab, pagure
+    'REMOTE' can be one of the following : gitlab, pagure (default is pagure)
 
     * Examples:
 
@@ -160,7 +169,7 @@ def branch(branch: str = typer.Argument(...), remote: str = typer.Option(...)):
 
     !!! WARNING !!!
 
-    Once you changed the branch, you must pair the branch 'BRANCH' with the correct binary repository.
+    Once you changed the branch, you must pair it with the correct binary repository.
 
     Branch 'master' must be paired with the stable binary repository (odd numbers in 'sisyphus mirror list').
 
@@ -170,7 +179,7 @@ def branch(branch: str = typer.Argument(...), remote: str = typer.Option(...)):
 
     * Examples : 'sisyphus mirror set 2' or 'sisyphus mirror set 8'
     """
-    sisyphus.branchsetup.start(branch, remote)
+    sisyphus.branchsetup.start(branch.value, remote.value)
 
 @app.command("sysinfo")
 def sysinfo():
