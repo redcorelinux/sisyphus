@@ -5,9 +5,6 @@ import typer
 from typing import List
 from enum import Enum
 
-sisyphus.check.update()
-sisyphus.setjobs.start.__wrapped__() # undecorate
-
 app = typer.Typer()
 mirrorSetup = typer.Typer()
 app.add_typer(mirrorSetup, name="mirror", help='List/Set the active binary repository mirror.')
@@ -197,4 +194,6 @@ def mirrorset(index: int):
     sisyphus.mirror.setActive(index)
 
 if __name__ == "__main__":
+    sisyphus.check.update()
+    sisyphus.setjobs.start.__wrapped__() # undecorate
     app()
