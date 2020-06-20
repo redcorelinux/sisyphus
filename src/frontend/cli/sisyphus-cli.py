@@ -4,6 +4,7 @@ import sisyphus
 import typer
 from typing import List
 from enum import Enum
+import sys
 
 app = typer.Typer()
 mirrorSetup = typer.Typer()
@@ -18,6 +19,10 @@ def app_callback(ctx: typer.Context):
     Use 'sisyphus COMMAND --help' for detailed usage.
     """
     ctx.info_name = 'sisyphus'
+    if not '--help' in sys.argv:
+        sisyphus.check.update()
+        sisyphus.setjobs.start.__wrapped__()  # undecorate
+
 
 @app.command("search")
 def search(pkgname: List[str]):
@@ -25,25 +30,25 @@ def search(pkgname: List[str]):
     sisyphus.search.start(pkgname)
 
 @app.command("install")
-def install(pkgname: List[str], hybrid: bool = typer.Option(False, "--hybrid", "-h")):
+def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     """Install binary and/or ebuild(source) packages.
     By default, only binary packages will be installed.
-    Use the --hybrid option to install ebuild(source) packages.
+    Use the --ebuild option to install ebuild(source) packages.
 
     * Examples:
 
     'sisyphus install pidgin'
 
-    will install pidgin binary package (if available); if there is none, but the ebuild(source) package for pidgin is found, it will stop and suggest the --hybrid option.
+    will install pidgin binary package (if available); if there is none, but the ebuild(source) package for pidgin is found, it will stop and suggest the --ebuild option.
 
-    'sisyphus install pidgin --hybrid'
+    'sisyphus install pidgin --ebuild'
 
     will compile pidgin from source
 
-    The --hybrid option will preffer to reuse binary packages(if available) to satisfy the dependencies for the ebuild(source) package, speeding up the installation.
-    You can use the --hybrid option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
+    The --ebuild option will preffer to reuse binary packages(if available) to satisfy the dependencies for the ebuild(source) package, speeding up the installation.
+    You can use the --ebuild option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
     """
-    if not hybrid:
+    if not ebuild:
         sisyphus.install.start(pkgname)
     else:
         sisyphus.installhybrid.start(pkgname)
@@ -100,26 +105,26 @@ def update():
     sisyphus.update.start()
 
 @app.command("upgrade")
-def upgrade(hybrid: bool = typer.Option(False, "--hybrid", "-h")):
+def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     """Upgrade the system using binary and/or ebuild (source) packages.
     By default, only binary packages will be upgraded.
-    However, if you installed any ebuild(source) packages with the '--hybrid' option, it would make sense to upgrade them too.
-    Use the --hybrid option to upgrade **EVERYTHING**, binary and/or ebuild(source) packages.
+    However, if you installed any ebuild(source) packages with the '--ebuild' option, it would make sense to upgrade them too.
+    Use the --ebuild option to upgrade **EVERYTHING**, binary and/or ebuild(source) packages.
 
     * Examples:
 
     'sisyphus upgrade'
 
-    will upgrade the system using binary packages; if any ebuild(source) package upgrade is detected, it will stop and suggest the --hybrid option
+    will upgrade the system using binary packages; if any ebuild(source) package upgrade is detected, it will stop and suggest the --ebuild option
 
-    'sisyphus upgrade --hybrid'
+    'sisyphus upgrade --ebuild'
 
     will upgrade the system using both binary and/or ebuild(source) packages
 
-    The --hybrid option will preffer to reuse binary packages(if available) to satisfy the dependencies for the ebuild(source) packages, speeding up the upgrade.
-    You can use the --hybrid option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
+    The --ebuild option will preffer to reuse binary packages(if available) to satisfy the dependencies for the ebuild(source) packages, speeding up the upgrade.
+    You can use the --ebuild option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
     """
-    if not hybrid:
+    if not ebuild:
         sisyphus.upgrade.start()
     else:
         sisyphus.upgradehybrid.start()
@@ -194,6 +199,4 @@ def mirrorset(index: int):
     sisyphus.mirror.setActive(index)
 
 if __name__ == "__main__":
-    sisyphus.check.update()
-    sisyphus.setjobs.start.__wrapped__() # undecorate
     app()
