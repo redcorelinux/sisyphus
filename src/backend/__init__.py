@@ -9,7 +9,7 @@ from .database import *
 from .filesystem import *
 from .help import *
 from .install import *
-from .installhybrid import *
+from .installebuild import *
 from .killportage import *
 from .metadata import *
 from .mirror import *
@@ -25,4 +25,4 @@ from .uninstallforce import *
 from .uninstall import *
 from .update import *
 from .upgrade import *
-from .upgradehybrid import *
+from .upgradeebuild import *

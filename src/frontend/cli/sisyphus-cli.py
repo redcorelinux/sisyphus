@@ -4,7 +4,6 @@ import sisyphus
 import typer
 from typing import List
 from enum import Enum
-import sys
 
 app = typer.Typer()
 mirrorSetup = typer.Typer()
@@ -19,10 +18,6 @@ def app_callback(ctx: typer.Context):
     Use 'sisyphus COMMAND --help' for detailed usage.
     """
     ctx.info_name = 'sisyphus'
-    if not '--help' in sys.argv:
-        sisyphus.check.update()
-        sisyphus.setjobs.start.__wrapped__()  # undecorate
-
 
 @app.command("search")
 def search(pkgname: List[str]):
@@ -51,7 +46,7 @@ def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "
     if not ebuild:
         sisyphus.install.start(pkgname)
     else:
-        sisyphus.installhybrid.start(pkgname)
+        sisyphus.installebuild.start(pkgname)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
@@ -127,7 +122,7 @@ def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     if not ebuild:
         sisyphus.upgrade.start()
     else:
-        sisyphus.upgradehybrid.start()
+        sisyphus.upgradeebuild.start()
 
 @app.command("spmsync")
 def spmsync():
@@ -199,4 +194,6 @@ def mirrorset(index: int):
     sisyphus.mirror.setActive(index)
 
 if __name__ == "__main__":
+    sisyphus.check.update()
+    sisyphus.setjobs.start.__wrapped__()  # undecorate
     app()
