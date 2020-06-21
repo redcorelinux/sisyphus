@@ -4,6 +4,7 @@ import sisyphus
 import typer
 from typing import List
 from enum import Enum
+import sys
 
 app = typer.Typer()
 mirrorSetup = typer.Typer()
@@ -194,6 +195,7 @@ def mirrorset(index: int):
     sisyphus.mirror.setActive(index)
 
 if __name__ == "__main__":
-    sisyphus.check.update()
-    sisyphus.setjobs.start.__wrapped__()  # undecorate
+    if not '--help' in sys.argv:
+        sisyphus.check.update()
+        sisyphus.setjobs.start.__wrapped__()  # undecorate
     app()
