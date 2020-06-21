@@ -7,7 +7,6 @@ from .check import *
 from .csvfiles import *
 from .database import *
 from .filesystem import *
-from .help import *
 from .install import *
 from .installebuild import *
 from .killportage import *
