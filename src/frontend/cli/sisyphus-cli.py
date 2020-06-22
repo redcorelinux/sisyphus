@@ -195,7 +195,7 @@ def mirrorset(index: int):
     sisyphus.mirror.setActive(index)
 
 if __name__ == "__main__":
-    if not '--help' in sys.argv:
+    if len(sys.argv) > 1 and not '--help' in sys.argv:
         sisyphus.check.update()
         sisyphus.setjobs.start.__wrapped__()  # undecorate
     app()
