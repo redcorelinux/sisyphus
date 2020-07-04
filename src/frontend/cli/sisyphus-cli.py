@@ -45,7 +45,7 @@ def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "
     You can use the --ebuild option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.install.start(pkgname)
+        sisyphus.installbinary.start(pkgname)
     else:
         sisyphus.installebuild.start(pkgname)
 
@@ -121,7 +121,7 @@ def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     You can use the --ebuild option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.upgrade.start()
+        sisyphus.upgradebinary.start()
     else:
         sisyphus.upgradeebuild.start()
 

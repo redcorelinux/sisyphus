@@ -7,7 +7,7 @@ from .check import *
 from .csvfiles import *
 from .database import *
 from .filesystem import *
-from .install import *
+from .installbinary import *
 from .installebuild import *
 from .killportage import *
 from .metadata import *
@@ -23,5 +23,5 @@ from .sysinfo import *
 from .uninstallforce import *
 from .uninstall import *
 from .update import *
-from .upgrade import *
+from .upgradebinary import *
 from .upgradeebuild import *

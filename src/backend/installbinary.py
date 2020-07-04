@@ -12,11 +12,11 @@ import sisyphus.filesystem
 import sisyphus.solvedeps
 import sisyphus.update
 
-def start():
+def start(pkgname):
     sisyphus.update.start()
 
     binhostURL = sisyphus.binhost.getURL()
-    areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()
+    areBinaries,areSources,needsConfig = sisyphus.solvedeps.package(pkgname)
 
     if needsConfig == 0:
         if len(areSources) == 0:
@@ -44,7 +44,7 @@ def start():
                         if os.path.exists(binary.rstrip().split("/")[1]):
                             os.remove(binary.rstrip().split("/")[1])
 
-                    portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
+                    portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
 
                     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                         if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
@@ -56,6 +56,6 @@ def start():
                 else:
                     sys.exit("\n" + "Ok; Quitting." + "\n")
             else:
-                sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
+                sys.exit("\n" + "No package found; Quitting." + "\n")
         else:
-            sys.exit("\n" + "Source package(s) found in the mix;" + " " + "Use" + " " + "'" + "sisyphus upgrade --hybrid" + "'" + ";" + " " + "Quitting." + "\n")
+            sys.exit("\n" + "Source package(s) found in the mix;" + " " + "Use" + " " + "'" + "sisyphus install" + " " + ''.join(pkgname) + " " + "--ebuild" + "'" + ";" + " " + "Quitting." + "\n")
