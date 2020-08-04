@@ -6,6 +6,7 @@ from .cache import *
 from .check import *
 from .csvfiles import *
 from .database import *
+from .dbsearch import *
 from .filesystem import *
 from .installbinary import *
 from .installebuild import *

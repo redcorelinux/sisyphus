@@ -60,9 +60,9 @@ The remote can be selected by using the --remote option.
 
 * Examples:
 
-'branch master --remote=gitlab' will pull the branch 'master' from gitlab.com
+    branch master --remote=gitlab   # pull the branch 'master' from gitlab.com
 
-'branch next --remote=pagure' will pull the branch 'next' from pagure.io
+    branch next --remote=pagure     # pull the branch 'next' from pagure.io
 
 !!! WARNING !!!
 
@@ -70,11 +70,19 @@ Once you changed the branch, you must pair it with the correct binary repository
 
 Branch 'master' must be paired with the stable binary repository (odd numbers in 'sisyphus mirror list').
 
-* Examples : 'sisyphus mirror set 1' or 'sisyphus mirror set 5'
+* Examples:
+
+    sisyphus mirror set 1
+
+    sisyphus mirror set 5
 
 Branch 'next' must be paired with the testing binary repository (even numbers in 'sisyphus mirror list').
 
-* Examples : 'sisyphus mirror set 2' or 'sisyphus mirror set 8'
+* Examples:
+
+    sisyphus mirror set 2
+
+    sisyphus mirror set 8
 
 **Usage**:
 
@@ -95,11 +103,11 @@ Use the --ebuild option to install ebuild(source) packages.
 
 * Examples:
 
-'sisyphus install pidgin'
+    sisyphus install pidgin
 
 will install pidgin binary package (if available); if there is none, but the ebuild(source) package for pidgin is found, it will stop and suggest the --ebuild option.
 
-'sisyphus install pidgin --ebuild'
+    sisyphus install pidgin --ebuild
 
 will compile pidgin from source
 
@@ -185,14 +193,73 @@ $ sisyphus rescue [OPTIONS]
 
 Search for binary and/or ebuild (source) packages.
 
+By default will search for binary packages, using internal database.
+The search term can be provided also in the category/name format, e.g:
+
+    sisyphus search openbox
+
+        OR
+
+    sisyphus search x11-wm/openbox
+
+Using * and ? wildcards is supported. An empty string will match everything (similar to *).
+
+* Examples:
+
+to search for all packages belonging to a category, use '*' or leave the name empty:
+
+    sisyphus search x11-wm/
+
+    sisyphus search x11-wm/*
+
+In addition, search can be performed by package description, using the -d (--description) option:
+
+    sisyphus search x11/open -d 'window manager'
+
+(use single or double quotes when the description contains spaces)
+
+Use the -s (--state) filters to select only packages of interest. Possible values:
+
+    all (default) - search the entire database
+
+    installed - search in all installed packages
+
+    local - search for installed packages but not available
+    (this filter can match packages installed from e-builds or packages no longer maintained as binaries)
+
+    remote - search for available packages but not installed
+
+    upgrade - search for installed packages where installed version is different from available version
+
+!!! NOTE !!! bash will expand a single * character as current folder listing.
+To search for all '--state' packages escape it, or surround it with quotes, or use an empty string:
+
+    sisyphus search * -s installed          # this is not valid!
+
+    sisyphus search \* -s local             # OK
+
+    sisyphus search '*' -s remote           # OK
+
+    sisyphus search '' -s upgrade           # OK
+
+
+To search for all (including source) packages, use the --ebuild option.
+This is slower since will perform an emerge --search actually.
+With this option, more than one package can be provided as search term.
+'-d', '-s' and '-q' (quiet) options are ignored in this mode.
+
 **Usage**:
 
 ```console
-$ sisyphus search [OPTIONS] PKGNAME...
+$ sisyphus search [OPTIONS] PACKAGE...
 ```
 
 **Options**:
 
+* `-d, --description TEXT`: Match description.
+* `-s, --state [all|installed|local|remote|upgrade]`: [default: all]
+* `-q`: Short (one line) output.
+* `-e, --ebuild`: Search in ebuilds (slower).
 * `--help`: Show this message and exit.
 
 ## `sisyphus spmsync`
@@ -234,11 +301,11 @@ This will not allways be possible, as the reverse dependency chain may be way to
 
 * Examples:
 
-'sisyphus uninstall firefox'
+    sisyphus uninstall firefox
 
 will succeed, nothing depends on it
 
-'sisyphus uninstall pulseaudio'
+    sisyphus uninstall pulseaudio
 
 will fail, many packages depend on it
 
@@ -249,11 +316,11 @@ Upgrading the system may pull the packages back in, to fix the reverse dependenc
 
 * Examples :
 
-'sisyphus uninstall pulseaudio --force'
+    sisyphus uninstall pulseaudio --force
 
 will succeed, but you may no longer have audio
 
-'sisyphus uninstall openrc --force'
+    sisyphus uninstall openrc --force
 
 will succeed, but the system will be broken
 
@@ -291,11 +358,11 @@ Use the --ebuild option to upgrade **EVERYTHING**, binary and/or ebuild(source) 
 
 * Examples:
 
-'sisyphus upgrade'
+    sisyphus upgrade
 
 will upgrade the system using binary packages; if any ebuild(source) package upgrade is detected, it will stop and suggest the --ebuild option
 
-'sisyphus upgrade --ebuild'
+    sisyphus upgrade --ebuild
 
 will upgrade the system using both binary and/or ebuild(source) packages
 
