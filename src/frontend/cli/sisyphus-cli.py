@@ -20,20 +20,17 @@ def app_callback(ctx: typer.Context):
     """
     ctx.info_name = 'sisyphus'
 
-class State(str, Enum):
-    all = 'all'
+class Filter(str, Enum):
+    any = 'any'
+    alien = 'alien'
     installed = 'installed'
-    local = 'local'
     remote = 'remote'
     upgrade = 'upgrade'
-
-def state_completion():
-    return ["all", "installed", "local", "remote", "upgrade"]
 
 @app.command("search")
 def search(package: List[str] = typer.Argument(...),
            desc: str = typer.Option('', '--description', '-d', help = 'Match description.'),
-           state: State = typer.Option(State.all, '--state', '-s', show_default=True, autocompletion=state_completion),
+           filter: Filter = typer.Option(Filter.any, '--filter', '-f', show_default=True),
            quiet: bool = typer.Option(False, '-q', help='Short (one line) output.'),
            ebuild: bool = typer.Option(False, "--ebuild", "-e", help = 'Search in ebuilds (slower).')):
     """Search for binary and/or ebuild (source) packages.
@@ -63,42 +60,44 @@ def search(package: List[str] = typer.Argument(...),
 
     (use single or double quotes when the description contains spaces)
 
-    Use the -s (--state) filters to select only packages of interest. Possible values:
+    Use the -f (--filter) option to select only packages of interest. Possible values:
 
-        all (default) - search the entire database
+        any (default) - search the entire database
+
+        alien - search for installed packages but not available
+        (this filter can match packages installed from e-builds or packages no longer maintained as binaries)
 
         installed - search in all installed packages
-
-        local - search for installed packages but not available
-        (this filter can match packages installed from e-builds or packages no longer maintained as binaries)
 
         remote - search for available packages but not installed
 
         upgrade - search for installed packages where installed version is different from available version
 
-    !!! NOTE !!! bash will expand a single * character as current folder listing.
-    To search for all '--state' packages escape it, or surround it with quotes, or use an empty string:
+    !!! NOTE !!!:
 
-        sisyphus search * -s installed          # this is not valid!
+    bash will expand a single * character as current folder listing.
+    To search for all matching '--filter' packages escape it, or surround it with quotes, or use an empty string:
 
-        sisyphus search \* -s local             # OK
+        sisyphus search * -f installed          # this is not valid!
 
-        sisyphus search '*' -s remote           # OK
+        sisyphus search \* -f alien             # OK
 
-        sisyphus search '' -s upgrade           # OK
+        sisyphus search '*' -f remote           # OK
+
+        sisyphus search '' -f upgrade           # OK
 
 
     To search for all (including source) packages, use the --ebuild option.
     This is slower since will perform an emerge --search actually.
     With this option, more than one package can be provided as search term.
-    '-d', '-s' and '-q' (quiet) options are ignored in this mode.
+    '-d', '-f' and '-q' (quiet) options are ignored in this mode.
     """
     if not ebuild:
         if '/' in package[0]:
             cat, pn = package[0].split('/')
         else:
             cat, pn = '', package[0]
-        sisyphus.dbsearch.showSearch(state.value, cat, pn, desc, quiet)
+        sisyphus.dbsearch.showSearch(filter.value, cat, pn, desc, quiet)
     else:
         if not package:
             raise typer.Exit('No search term provided, try: sisyphus search --help')

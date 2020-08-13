@@ -6,11 +6,11 @@ import sqlite3
 def searchDB(filter, cat = '', pn = '', desc = ''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
     SELECTS = {
-        'all': f'''SELECT
+        'any': f'''SELECT
                     i.category AS cat,
                     i.name as pn,
                     i.version as iv,
-                    IFNULL(a.version, 'None') AS av,
+                    IFNULL(a.version, 'alien') AS av,
                     d.description AS desc
                     FROM local_packages AS i LEFT OUTER JOIN remote_packages as a
                     ON i.category = a.category
@@ -44,11 +44,11 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
                     AND i.slot = a.slot
     				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                     WHERE cat LIKE '%{cat}%' AND pn LIKE '%{pn}%' AND desc LIKE '%{desc}%' {NOVIRT}''',
-        'local': f'''SELECT
+        'alien': f'''SELECT
                         i.category AS cat,
                         i.name AS pn,
                         i.version as iv,
-                        a.version AS av,
+                        IFNULL(a.version, 'alien') AS av,
                         d.description AS desc
                         FROM local_packages AS i
                         LEFT JOIN remote_packages AS a
@@ -57,7 +57,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
                         AND a.slot = i.slot
         				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                         WHERE cat LIKE '%{cat}%' AND pn LIKE '%{pn}%' AND desc LIKE '%{desc}%' {NOVIRT}
-                        AND av IS NULL''',
+                        AND av IS 'alien' ''',
         'remote': f'''SELECT
                     a.category AS cat,
                     a.name AS pn,
@@ -100,21 +100,27 @@ def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
 
 def showSearch(filter, cat, pn, desc, single = False):
+    sisyphus.update.start()
     print(f"Searching for {filter} packages ...\n")
     pkglist = searchDB(filter, tosql(cat), tosql(pn), tosql(desc))
 
     if len(pkglist) == 0:
         print("No binary package found!")
     else:
+        if single:
+            print(f"{'Package':45} {'Installed':20} Available")
         for pkg in pkglist:
             if not single:
                 print(f"*  {pkg['cat']}/{pkg['pn']}")
                 print(f"\tInstalled version: {pkg['iv']}")
-                print(f"\tLatest available version: {pkg['av']}")
+                if pkg['av'] != 'alien':
+                    print(f"\tLatest available version: {pkg['av']}")
+                else:
+                    print('\tAlien package')
                 print(f"\tDescription: {pkg['desc']}\n")
             else:
                 cpn = f"{pkg['cat']}/{pkg['pn']}"
-                print(f"{cpn:45} i:{str(pkg['iv']):20} a:{str(pkg['av'])}")
+                print(f"{cpn:45} {str(pkg['iv']):20} {str(pkg['av'])}")
         print(f"\nFound {len(pkglist)} binary package(s)")
 
     print("To search for source packages, use the '--ebuild' option.")
