@@ -116,7 +116,7 @@ def showSearch(filter, cat, pn, desc, single = False):
                 if pkg['av'] != 'alien':
                     print(f"\tLatest available version: {pkg['av']}")
                 else:
-                    print('\tAlien package')
+                    print('\tAlien package, use search --ebuild <PACKAGE> for available version')
                 print(f"\tDescription: {pkg['desc']}\n")
             else:
                 cpn = f"{pkg['cat']}/{pkg['pn']}"
