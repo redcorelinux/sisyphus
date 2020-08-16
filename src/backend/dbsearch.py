@@ -2,6 +2,7 @@
 
 import sisyphus
 import sqlite3
+import os
 
 def searchDB(filter, cat = '', pn = '', desc = ''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
@@ -100,8 +101,11 @@ def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
 
 def showSearch(filter, cat, pn, desc, single = False):
-    sisyphus.update.start()
-    print(f"Searching for {filter} packages ...\n")
+    if os.getuid() == 0:
+        sisyphus.update.start()
+    else:
+        print('You are not root, cannot fetch updates.\nSearch result may be inaccurate!')
+    print(f"Looking for {filter} matching packages ...\n")
     pkglist = searchDB(filter, tosql(cat), tosql(pn), tosql(desc))
 
     if len(pkglist) == 0:
