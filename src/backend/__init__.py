@@ -6,7 +6,6 @@ from .cache import *
 from .check import *
 from .csvfiles import *
 from .database import *
-from .dbsearch import *
 from .filesystem import *
 from .installbinary import *
 from .installebuild import *
@@ -14,7 +13,8 @@ from .killportage import *
 from .metadata import *
 from .mirror import *
 from .rescue import *
-from .search import *
+from .searchbinary import *
+from .searchebuild import *
 from .setjobs import *
 from .setprofile import *
 from .solvedeps import *

@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
-import sisyphus
-import sqlite3
 import os
+import sisyphus.filesystem
+import sisyphus.update
+import sqlite3
 
 def searchDB(filter, cat = '', pn = '', desc = ''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
@@ -100,7 +101,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
 def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
 
-def showSearch(filter, cat, pn, desc, single = False):
+def start(filter, cat, pn, desc, single = False):
     if os.getuid() == 0:
         sisyphus.update.start()
     else:
