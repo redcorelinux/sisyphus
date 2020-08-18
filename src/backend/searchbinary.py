@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import sisyphus.check
 import sisyphus.filesystem
 import sisyphus.update
 import sqlite3
@@ -116,7 +117,7 @@ def showSearch(filter, cat, pn, desc, single = False):
                 if pkg['av'] != 'alien':
                     print(f"\tLatest available version: {pkg['av']}")
                 else:
-                    print(f"\tAlien package, use `sisyphus search --ebuild {pkg['pn']}` for available version")
+                    print(f"\tAlien package: Use `sisyphus search --ebuild {pkg['pn']}` for available version")
                 print(f"\tDescription: {pkg['desc']}\n")
             else:
                 cpn = f"{pkg['cat']}/{pkg['pn']}"
