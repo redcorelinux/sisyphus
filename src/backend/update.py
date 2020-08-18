@@ -9,7 +9,6 @@ import sisyphus.sync
 
 @animation.wait('fetching updates')
 def start():
-    sisyphus.check.root()
     sisyphus.cache.clean()
 
     needsPortage = sisyphus.check.portage()

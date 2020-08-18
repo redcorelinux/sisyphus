@@ -82,12 +82,14 @@ def warnAboutBinaryRepository(branch,remote):
 
 
 def start(branch,remote):
-    sisyphus.check.root()
-    sisyphus.branchreset.start()
-    injectGentooPortageTree(branch,remote)
-    injectRedcoreEbuildOverlay(branch,remote)
-    injectRedcorePortageConfig(branch,remote)
-    sisyphus.setjobs.start()
-    sisyphus.setprofile.start()
-    sisyphus.metadata.regenAnimated()
-    warnAboutBinaryRepository(branch,remote)
+    if sisyphus.check.root() == 0:
+        sisyphus.branchreset.start()
+        injectGentooPortageTree(branch,remote)
+        injectRedcoreEbuildOverlay(branch,remote)
+        injectRedcorePortageConfig(branch,remote)
+        sisyphus.setjobs.start()
+        sisyphus.setprofile.start()
+        sisyphus.metadata.regenAnimated()
+        warnAboutBinaryRepository(branch,remote)
+    else:
+        sys.exit("\nYou need root permissions to do this, exiting!\n")

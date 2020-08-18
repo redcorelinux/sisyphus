@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 
 import os
-import sys
 import subprocess
 import sisyphus.filesystem
 
 def root():
-    if not os.getuid() == 0:
-        sys.exit("\nYou need root permissions to do this, exiting!\n")
+    if os.getuid() == 0:
+        return 0
 
 def portage():
     if os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):

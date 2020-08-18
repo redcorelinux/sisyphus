@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import os
 import sisyphus.filesystem
 import sisyphus.update
 import sqlite3
@@ -101,11 +100,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
 def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
 
-def start(filter, cat, pn, desc, single = False):
-    if os.getuid() == 0:
-        sisyphus.update.start()
-    else:
-        print('You are not root, cannot fetch updates.\nSearch result may be inaccurate!')
+def showSearch(filter, cat, pn, desc, single = False):
     print(f"Looking for {filter} matching packages ...\n")
     pkglist = searchDB(filter, tosql(cat), tosql(pn), tosql(desc))
 
@@ -129,3 +124,11 @@ def start(filter, cat, pn, desc, single = False):
         print(f"\nFound {len(pkglist)} binary package(s)")
 
     print("To search for source packages, use the '--ebuild' option.")
+
+def start(filter, cat, pn, desc, single = False):
+    if sisyphus.check.root() == 0:
+        sisyphus.update.start()
+        showSearch(filter, cat, pn, desc, single = False)
+    else:
+        print('\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n')
+        showSearch(filter, cat, pn, desc, single = False)
