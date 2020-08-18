@@ -129,7 +129,7 @@ def showSearch(filter, cat, pn, desc, single = False):
 def start(filter, cat, pn, desc, single = False):
     if sisyphus.check.root() == 0:
         sisyphus.update.start()
-        showSearch(filter, cat, pn, desc, single = False)
     else:
         print('\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n')
-        showSearch(filter, cat, pn, desc, single = False)
+
+    showSearch(filter, cat, pn, desc, single = False)
