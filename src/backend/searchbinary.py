@@ -132,4 +132,4 @@ def start(filter, cat, pn, desc, single = False):
     else:
         print('\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n')
 
-    showSearch(filter, cat, pn, desc, single = False)
+    showSearch(filter, cat, pn, desc, single)
