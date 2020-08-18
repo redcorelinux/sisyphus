@@ -5,8 +5,7 @@ import subprocess
 import sisyphus.filesystem
 
 def root():
-    if os.getuid() == 0:
-        return 0
+    return True if os.getuid() == 0 else False
 
 def portage():
     if os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):

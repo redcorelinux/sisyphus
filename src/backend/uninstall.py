@@ -6,7 +6,7 @@ import sisyphus.database
 import sys
 
 def start(pkgname):
-    if sisyphus.check.root() == 0:
+    if sisyphus.check.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + list(pkgname))
         portageExec.wait()
         sisyphus.database.syncLocal()

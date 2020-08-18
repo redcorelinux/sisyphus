@@ -127,7 +127,7 @@ def showSearch(filter, cat, pn, desc, single):
     print("To search for source packages, use the '--ebuild' option.")
 
 def start(filter, cat, pn, desc, single):
-    if sisyphus.check.root() == 0:
+    if sisyphus.check.root():
         sisyphus.update.start()
     else:
         print('\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n')

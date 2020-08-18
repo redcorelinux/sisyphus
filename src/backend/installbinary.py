@@ -14,7 +14,7 @@ import sisyphus.solvedeps
 import sisyphus.update
 
 def start(pkgname):
-    if sisyphus.check.root() == 0:
+    if sisyphus.check.root():
         sisyphus.update.start()
 
         binhostURL = sisyphus.binhost.getURL()
