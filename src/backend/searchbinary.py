@@ -101,7 +101,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
 def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
 
-def showSearch(filter, cat, pn, desc, single = False):
+def showSearch(filter, cat, pn, desc, single):
     print(f"Looking for {filter} matching packages ...\n")
     pkglist = searchDB(filter, tosql(cat), tosql(pn), tosql(desc))
 
@@ -126,7 +126,7 @@ def showSearch(filter, cat, pn, desc, single = False):
 
     print("To search for source packages, use the '--ebuild' option.")
 
-def start(filter, cat, pn, desc, single = False):
+def start(filter, cat, pn, desc, single):
     if sisyphus.check.root() == 0:
         sisyphus.update.start()
     else:
