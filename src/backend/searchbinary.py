@@ -102,7 +102,7 @@ def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
 
 def showSearch(filter, cat, pn, desc, single):
-    print(f"Looking for {filter} matching packages ...\n")
+    print(f"Looking into {filter} packages ...\n")
     pkglist = searchDB(filter, tosql(cat), tosql(pn), tosql(desc))
 
     if len(pkglist) == 0:
@@ -122,7 +122,7 @@ def showSearch(filter, cat, pn, desc, single):
             else:
                 cpn = f"{pkg['cat']}/{pkg['pn']}"
                 print(f"{cpn:45} {str(pkg['iv']):20} {str(pkg['av'])}")
-        print(f"\nFound {len(pkglist)} binary package(s)")
+        print(f"\nFound {len(pkglist)} matching package(s)")
 
     print("To search for source packages, use the '--ebuild' option.")
 
