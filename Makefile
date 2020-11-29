@@ -12,18 +12,21 @@ all:
 clean:
 	for d in $(SUBDIRS); do $(MAKE) -C $$d clean; done
 
-install:
+install-cli:
 	for d in $(SUBDIRS); do $(MAKE) -C $$d install; done
 
+	install -d $(DESTDIR)$(SISYPHUSDATADIR)
+	install -d $(DESTDIR)$(SISYPHUSDATADIR)/helpers
+	install -m 0755 src/helpers/* $(DESTDIR)$(SISYPHUSDATADIR)/helpers/
+	install -m 0755 src/frontend/cli/*.py $(DESTDIR)$(SISYPHUSDATADIR)/
+
+install-gui:
 	install -d $(DESTDIR)$(UBINDIR)
 	install -m 0755 sisyphus-gui $(DESTDIR)$(UBINDIR)/
 	install -m 0755 sisyphus-gui-pkexec $(DESTDIR)$(UBINDIR)/
 	install -d $(DESTDIR)$(SISYPHUSDATADIR)
-	install -d $(DESTDIR)$(SISYPHUSDATADIR)/helpers
 	install -d $(DESTDIR)$(SISYPHUSDATADIR)/icon
 	install -d $(DESTDIR)$(SISYPHUSDATADIR)/ui
-	install -m 0755 src/helpers/* $(DESTDIR)$(SISYPHUSDATADIR)/helpers/
-	install -m 0755 src/frontend/cli/*.py $(DESTDIR)$(SISYPHUSDATADIR)/
 	install -m 0755 src/frontend/gui/*.py $(DESTDIR)$(SISYPHUSDATADIR)/
 	install -m 0755 src/frontend/gui/icon/* $(DESTDIR)$(SISYPHUSDATADIR)/icon/
 	install -m 0755 src/frontend/gui/ui/* $(DESTDIR)$(SISYPHUSDATADIR)/ui/
@@ -33,6 +36,8 @@ install:
 	install -m 0644 sisyphus-gui.png $(DESTDIR)$(PIXMAPDIR)
 	install -d $(DESTDIR)$(POLKITDIR)
 	install -m 0644 org.redcorelinux.sisyphus-gui.policy $(DESTDIR)$(POLKITDIR)/
+
+install: install-cli install-gui
 
 uninstall:
 	rm -rf $(DESTDIR)$(UBINDIR)/sisyphus-gui
