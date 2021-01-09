@@ -93,16 +93,16 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.upgradeThread.finished.connect(self.jobDone)
         self.upgradeWorker.finished.connect(self.upgradeThread.quit)
 
-        self.orphansButton.clicked.connect(self.orphansRemove)
-        self.orphansWorker = MainWorker()
-        self.orphansThread = QtCore.QThread()
-        self.orphansWorker.moveToThread(self.orphansThread)
-        self.orphansWorker.started.connect(self.showProgressBar)
-        self.orphansWorker.started.connect(self.clearProgressBox)
-        self.orphansThread.started.connect(self.orphansWorker.cleanOrphans)
-        self.orphansWorker.workerOutput.connect(self.updateStatusBox)
-        self.orphansThread.finished.connect(self.jobDone)
-        self.orphansWorker.finished.connect(self.orphansThread.quit)
+        self.autoremoveButton.clicked.connect(self.autoRemove)
+        self.autoremoveWorker = MainWorker()
+        self.autoremoveThread = QtCore.QThread()
+        self.autoremoveWorker.moveToThread(self.autoremoveThread)
+        self.autoremoveWorker.started.connect(self.showProgressBar)
+        self.autoremoveWorker.started.connect(self.clearProgressBox)
+        self.autoremoveThread.started.connect(self.autoremoveWorker.startAutoremove)
+        self.autoremoveWorker.workerOutput.connect(self.updateStatusBox)
+        self.autoremoveThread.finished.connect(self.jobDone)
+        self.autoremoveWorker.finished.connect(self.autoremoveThread.quit)
 
         self.updateSystem()
         self.progressBar.hide()
@@ -261,9 +261,9 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.statusBar().showMessage("I am upgrading the system, please be patient ...")
         self.upgradeThread.start()
 
-    def orphansRemove(self):
+    def autoRemove(self):
         self.statusBar().showMessage("I am busy with some cleaning, please don't rush me ...")
-        self.orphansThread.start()
+        self.autoremoveThread.start()
 
     def jobDone(self):
         self.hideProgressBar()
@@ -285,14 +285,14 @@ class Sisyphus(QtWidgets.QMainWindow):
     def hideButtons(self):
         self.installButton.hide()
         self.uninstallButton.hide()
-        self.orphansButton.hide()
+        self.autoremoveButton.hide()
         self.upgradeButton.hide()
         self.exitButton.hide()
 
     def showButtons(self):
         self.installButton.show()
         self.uninstallButton.show()
-        self.orphansButton.show()
+        self.autoremoveButton.show()
         self.upgradeButton.show()
         self.exitButton.show()
 
@@ -403,7 +403,7 @@ class MainWorker(QtCore.QObject):
         areBinaries,areSources,needsConfig = sisyphus.solvedeps.package.__wrapped__(pkgname) #undecorate
 
         os.chdir(sisyphus.filesystem.portageCacheDir)
-        self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
+        self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
         for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
             self.workerOutput.emit(">>> Fetching" + " " + binhostURL + binary)
             wget.download(binhostURL + binary)
@@ -465,7 +465,7 @@ class MainWorker(QtCore.QObject):
             self.workerOutput.emit("\n" + "Source package upgrades detected; Use sisyphus CLI to perform the upgrade; Aborting." + "\n")
         else:
             if not len(areBinaries) == 0:
-                self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
+                self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
                 os.chdir(sisyphus.filesystem.portageCacheDir)
                 for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
                     self.workerOutput.emit(">>> Fetching" + " " + binhostURL + binary)
@@ -505,7 +505,7 @@ class MainWorker(QtCore.QObject):
         self.finished.emit()
 
     @QtCore.pyqtSlot()
-    def cleanOrphans(self):
+    def startAutoremove(self):
         self.started.emit()
         portageExec = subprocess.Popen(['emerge', '--depclean'], stdout=subprocess.PIPE)
 

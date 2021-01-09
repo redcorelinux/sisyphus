@@ -24,7 +24,7 @@ def start(pkgname):
             if len(areSources) == 0:
                 if not len(areBinaries) == 0:
                     os.chdir(sisyphus.filesystem.portageCacheDir)
-                    print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + str(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
+                    print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
                             print(">>> Fetching" + " " + binhostURL + binary)
@@ -60,6 +60,6 @@ def start(pkgname):
                 else:
                     sys.exit("\n" + "No package found; Quitting." + "\n")
             else:
-                sys.exit("\n" + "Source package(s) found in the mix;" + " " + "Use" + " " + "'" + "sisyphus install" + " " + ''.join(pkgname) + " " + "--ebuild" + "'" + ";" + " " + "Quitting." + "\n")
+                sys.exit("\n" + "Source package(s) found in the mix;" + " " + "Use" + " " + "'" + "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'" + ";" + " " + "Quitting." + "\n")
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
