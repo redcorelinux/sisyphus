@@ -229,16 +229,16 @@ In addition, search can be performed by package description, using the -d (--des
 
 Use the -f (--filter) option to select only packages of interest. Possible values:
 
-    any (default) - search the entire database
+    all (default) - search the entire database
 
     alien - search for installed packages but not available
     (this filter can match packages installed from e-builds or packages no longer maintained as binaries)
 
     installed - search in all installed packages
 
-    remote - search for available packages but not installed
+    available - search for available packages but not installed
 
-    upgrade - search for installed packages where installed version is different from available version
+    upgradeable - search for installed packages where installed version is different from available version
 
 !!! NOTE !!!:
 
@@ -249,9 +249,9 @@ To search for all matching '--filter' packages escape it, or surround it with qu
 
     sisyphus search \* -f alien             # OK
 
-    sisyphus search '*' -f remote           # OK
+    sisyphus search '*' -f available        # OK
 
-    sisyphus search '' -f upgrade           # OK
+    sisyphus search '' -f upgradeable       # OK
 
 
 To search for all (including source) packages, use the --ebuild option.
@@ -268,7 +268,7 @@ $ sisyphus search [OPTIONS] PACKAGE...
 **Options**:
 
 * `-d, --description TEXT`: Match description.
-* `-f, --filter [any|alien|installed|remote|upgrade]`: [default: any]
+* `-f, --filter [all|alien|installed|available|upgradeable]`: [default: all]
 * `-q`: Short (one line) output.
 * `-e, --ebuild`: Search in ebuilds (slower).
 * `--help`: Show this message and exit.

@@ -21,16 +21,16 @@ def app_callback(ctx: typer.Context):
     ctx.info_name = 'sisyphus'
 
 class Filter(str, Enum):
-    any = 'any'
+    all = 'all'
     alien = 'alien'
     installed = 'installed'
-    remote = 'remote'
-    upgrade = 'upgrade'
+    available = 'available'
+    upgradeable = 'upgradeable'
 
 @app.command("search")
 def search(package: List[str] = typer.Argument(...),
            desc: str = typer.Option('', '--description', '-d', help = 'Match description.'),
-           filter: Filter = typer.Option(Filter.any, '--filter', '-f', show_default=True),
+           filter: Filter = typer.Option(Filter.all, '--filter', '-f', show_default=True),
            quiet: bool = typer.Option(False, '-q', help='Short (one line) output.'),
            ebuild: bool = typer.Option(False, "--ebuild", "-e", help = 'Search in ebuilds (slower).')):
     """Search for binary and/or ebuild (source) packages.
@@ -62,16 +62,16 @@ def search(package: List[str] = typer.Argument(...),
 
     Use the -f (--filter) option to select only packages of interest. Possible values:
 
-        any (default) - search the entire database
+        all (default) - search the entire database
 
         alien - search for installed packages but not available
         (this filter can match packages installed from e-builds or packages no longer maintained as binaries)
 
         installed - search in all installed packages
 
-        remote - search for available packages but not installed
+        available - search for available packages but not installed
 
-        upgrade - search for installed packages where installed version is different from available version
+        upgradeable - search for installed packages where installed version is different from available version
 
     !!! NOTE !!!:
 
@@ -82,9 +82,9 @@ def search(package: List[str] = typer.Argument(...),
 
         sisyphus search \* -f alien             # OK
 
-        sisyphus search '*' -f remote           # OK
+        sisyphus search '*' -f available        # OK
 
-        sisyphus search '' -f upgrade           # OK
+        sisyphus search '' -f upgradeable       # OK
 
 
     To search for all (including source) packages, use the --ebuild option.

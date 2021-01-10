@@ -8,7 +8,7 @@ import sqlite3
 def searchDB(filter, cat = '', pn = '', desc = ''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
     SELECTS = {
-        'any': f'''SELECT
+        'all': f'''SELECT
                     i.category AS cat,
                     i.name as pn,
                     i.version as iv,
@@ -60,7 +60,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
         				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                         WHERE cat LIKE '%{cat}%' AND pn LIKE '%{pn}%' AND desc LIKE '%{desc}%' {NOVIRT}
                         AND av IS 'alien' ''',
-        'remote': f'''SELECT
+        'available': f'''SELECT
                     a.category AS cat,
                     a.name AS pn,
                     i.version as iv,
@@ -74,7 +74,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
     				LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
                     WHERE cat LIKE '%{cat}%' AND pn LIKE '%{pn}%' AND desc LIKE '%{desc}%' {NOVIRT}
                     AND iv IS NULL''',
-        'upgrade': f'''SELECT
+        'upgradeable': f'''SELECT
                     i.category AS cat,
                     i.name AS pn,
                     i.version as iv,
@@ -102,11 +102,11 @@ def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
 
 def showSearch(filter, cat, pn, desc, single):
-    print(f"Looking into {filter} packages ...\n")
+    print(f"Searching {filter} packages ... \n")
     pkglist = searchDB(filter, tosql(cat), tosql(pn), tosql(desc))
 
     if len(pkglist) == 0:
-        print("No binary package found!")
+        print("No package found!\nUse the '--ebuild' option to search for source packages!")
     else:
         if single:
             print(f"{'Package':45} {'Installed':20} Available")
@@ -117,19 +117,17 @@ def showSearch(filter, cat, pn, desc, single):
                 if pkg['av'] != 'alien':
                     print(f"\tLatest available version: {pkg['av']}")
                 else:
-                    print(f"\tAlien package: Use `sisyphus search --ebuild {pkg['pn']}` for available version")
+                    print(f"\tAlien package: Use `sisyphus search --ebuild {pkg['pn']}` for available version!")
                 print(f"\tDescription: {pkg['desc']}\n")
             else:
                 cpn = f"{pkg['cat']}/{pkg['pn']}"
                 print(f"{cpn:45} {str(pkg['iv']):20} {str(pkg['av'])}")
-        print(f"\nFound {len(pkglist)} matching package(s)")
-
-    print("To search for source packages, use the '--ebuild' option.")
+        print(f"\nFound {len(pkglist)} matching package(s) ...")
 
 def start(filter, cat, pn, desc, single):
     if sisyphus.check.root():
         sisyphus.update.start()
     else:
-        print('\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n')
+        print("\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n")
 
     showSearch(filter, cat, pn, desc, single)
