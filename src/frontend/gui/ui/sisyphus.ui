@@ -55,7 +55,7 @@
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Sunken</enum>
       </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOn</enum>
@@ -113,11 +113,139 @@
        <number>25</number>
       </property>
       <item>
+       <widget class="QLabel" name="label1">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="text">
+         <string>Search by</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::MarkdownText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::NoTextInteraction</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="applicationFilter">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label2">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="mouseTracking">
+         <bool>true</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="text">
+         <string>in</string>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::NoTextInteraction</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="databaseFilter">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="inputBox">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Write package name and press Enter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="licenseButton">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;License Information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../icon/license.png</normaloff>../icon/license.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="settingsButton">
         <property name="maximumSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>16777215</width>
+          <height>30</height>
          </size>
         </property>
         <property name="toolTip">
@@ -133,44 +261,8 @@
           <height>16</height>
          </size>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="applicationFilter"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="inputBox">
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Write package name and press Enter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="clearButtonEnabled">
+        <property name="flat">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="databaseFilter"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="licenseButton">
-        <property name="maximumSize">
-         <size>
-          <width>25</width>
-          <height>25</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;License Information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../icon/license.png</normaloff>../icon/license.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>16</width>
-          <height>16</height>
-         </size>
         </property>
        </widget>
       </item>
@@ -192,7 +284,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>25</height>
+          <height>30</height>
          </size>
         </property>
         <property name="toolTip">
@@ -211,6 +303,9 @@
           <height>16</height>
          </size>
         </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -218,7 +313,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>25</height>
+          <height>30</height>
          </size>
         </property>
         <property name="toolTip">
@@ -237,6 +332,9 @@
           <height>16</height>
          </size>
         </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -244,7 +342,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>25</height>
+          <height>30</height>
          </size>
         </property>
         <property name="toolTip">
@@ -260,6 +358,9 @@
           <height>16</height>
          </size>
         </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -267,7 +368,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>25</height>
+          <height>30</height>
          </size>
         </property>
         <property name="toolTip">
@@ -286,6 +387,9 @@
           <height>16</height>
          </size>
         </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -293,7 +397,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>25</height>
+          <height>30</height>
          </size>
         </property>
         <property name="toolTip">
@@ -308,6 +412,9 @@
           <width>16</width>
           <height>16</height>
          </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -331,14 +438,17 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>250</height>
+        <height>200</height>
        </size>
       </property>
       <property name="toolTip">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Progress Box&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Sunken</enum>
       </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOn</enum>
@@ -355,12 +465,12 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>settingsButton</tabstop>
   <tabstop>applicationFilter</tabstop>
-  <tabstop>inputBox</tabstop>
   <tabstop>databaseFilter</tabstop>
-  <tabstop>databaseTable</tabstop>
+  <tabstop>inputBox</tabstop>
   <tabstop>licenseButton</tabstop>
+  <tabstop>settingsButton</tabstop>
+  <tabstop>databaseTable</tabstop>
   <tabstop>progressBox</tabstop>
   <tabstop>installButton</tabstop>
   <tabstop>uninstallButton</tabstop>
