@@ -61,5 +61,8 @@ def start():
                     sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
             else:
                 sys.exit("\n" + "Source package(s) found in the mix;" + " " + "Use" + " " + "'" + "sisyphus upgrade --ebuild" + "'" + ";" + " " + "Quitting." + "\n")
+        else:
+            # don't silently fail if a source package requested without the --ebuild option needs a keyword, mask, REQUIRED_USE or USE change
+            sys.exit("\n" + "Invalid request;" " " + "Use" + " " + "'" + "sisyphus upgrade --ebuild" + "'" + ";" + " " + "Quitting." + "\n")
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
