@@ -65,27 +65,24 @@
     <item row="3" column="0">
      <layout class="QHBoxLayout" name="actionGrid">
       <property name="spacing">
-       <number>25</number>
+       <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>25</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>25</number>
+       <number>0</number>
       </property>
       <item>
-       <widget class="QPushButton" name="installButton">
+       <widget class="QToolButton" name="installButton">
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
-          <height>36</height>
+          <width>175</width>
+          <height>64</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Install the selected package(s)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
         <property name="text">
-         <string/>
+         <string>Install selected package(s)</string>
         </property>
         <property name="icon">
          <iconset>
@@ -97,24 +94,27 @@
           <height>36</height>
          </size>
         </property>
-        <property name="flat">
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
          <bool>true</bool>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::NoArrow</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="uninstallButton">
+       <widget class="QToolButton" name="uninstallButton">
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
-          <height>36</height>
+          <width>175</width>
+          <height>64</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Uninstall the selected package(s)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
         <property name="text">
-         <string/>
+         <string>Uninstall selected package(s)</string>
         </property>
         <property name="icon">
          <iconset>
@@ -126,21 +126,27 @@
           <height>36</height>
          </size>
         </property>
-        <property name="flat">
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
          <bool>true</bool>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::NoArrow</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="upgradeButton">
+       <widget class="QToolButton" name="upgradeButton">
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
-          <height>36</height>
+          <width>175</width>
+          <height>64</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Upgrade the system&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <property name="text">
+         <string>Upgrade the system</string>
         </property>
         <property name="icon">
          <iconset>
@@ -152,24 +158,24 @@
           <height>36</height>
          </size>
         </property>
-        <property name="flat">
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="autoremoveButton">
+       <widget class="QToolButton" name="autoremoveButton">
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
-          <height>36</height>
+          <width>175</width>
+          <height>64</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Uninstall no longer needed package(s)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
         <property name="text">
-         <string/>
+         <string>Cleanup orphan packages</string>
         </property>
         <property name="icon">
          <iconset>
@@ -181,21 +187,24 @@
           <height>36</height>
          </size>
         </property>
-        <property name="flat">
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="exitButton">
+       <widget class="QToolButton" name="exitButton">
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
-          <height>36</height>
+          <width>175</width>
+          <height>64</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Quit program&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <property name="text">
+         <string>Quit program</string>
         </property>
         <property name="icon">
          <iconset>
@@ -207,7 +216,10 @@
           <height>36</height>
          </size>
         </property>
-        <property name="flat">
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
