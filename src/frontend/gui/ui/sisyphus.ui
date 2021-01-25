@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>600</height>
+    <width>1280</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>1000</width>
-    <height>600</height>
+    <width>1280</width>
+    <height>720</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -75,6 +75,12 @@
       </property>
       <item>
        <widget class="QToolButton" name="installButton">
+        <property name="minimumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>175</width>
@@ -107,6 +113,12 @@
       </item>
       <item>
        <widget class="QToolButton" name="uninstallButton">
+        <property name="minimumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>175</width>
@@ -139,6 +151,12 @@
       </item>
       <item>
        <widget class="QToolButton" name="upgradeButton">
+        <property name="minimumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>175</width>
@@ -168,6 +186,12 @@
       </item>
       <item>
        <widget class="QToolButton" name="autoremoveButton">
+        <property name="minimumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>175</width>
@@ -197,6 +221,12 @@
       </item>
       <item>
        <widget class="QToolButton" name="exitButton">
+        <property name="minimumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>175</width>
@@ -234,6 +264,12 @@
         <height>200</height>
        </size>
       </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>200</height>
+       </size>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -256,6 +292,12 @@
     </item>
     <item row="1" column="0">
      <widget class="QTableView" name="databaseTable">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>200</height>
+       </size>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -319,6 +361,12 @@
       </property>
       <item>
        <widget class="QLabel" name="label1">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -349,6 +397,12 @@
       </item>
       <item>
        <widget class="QComboBox" name="applicationFilter">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -362,6 +416,12 @@
       </item>
       <item>
        <widget class="QLabel" name="label2">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -392,6 +452,12 @@
       </item>
       <item>
        <widget class="QComboBox" name="databaseFilter">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -405,6 +471,12 @@
       </item>
       <item>
        <widget class="QLineEdit" name="inputBox">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -421,6 +493,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="licenseButton">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -447,6 +525,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="settingsButton">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
