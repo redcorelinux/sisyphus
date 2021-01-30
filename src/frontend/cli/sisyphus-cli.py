@@ -97,12 +97,12 @@ def search(package: List[str] = typer.Argument(...),
             cat, pn = package[0].split('/')
         else:
             cat, pn = '', package[0]
-        sisyphus.searchbinary.start(filter.value, cat, pn, desc, quiet)
+        sisyphus.search.start(filter.value, cat, pn, desc, quiet)
     else:
         if not package:
             raise typer.Exit('No search term provided, try: sisyphus search --help')
         else:
-            sisyphus.searchebuild.start(package)
+            sisyphus.ebuildsearch.start(package)
 
 @app.command("install")
 def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "-e")):
@@ -124,9 +124,9 @@ def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "
     You can use the --ebuild option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.installbinary.start(pkgname)
+        sisyphus.install.start(pkgname)
     else:
-        sisyphus.installebuild.start(pkgname)
+        sisyphus.ebuildinstall.start(pkgname)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
@@ -163,7 +163,7 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
     if not force:
         sisyphus.uninstall.start(pkgname)
     else:
-        sisyphus.uninstallforce.start(pkgname)
+        sisyphus.forceuninstall.start(pkgname)
 
 @app.command("autoremove")
 def autoremove():
@@ -203,9 +203,9 @@ def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     You can use the --ebuild option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.upgradebinary.start()
+        sisyphus.upgrade.start()
     else:
-        sisyphus.upgradeebuild.start()
+        sisyphus.ebuildupgrade.start()
 
 @app.command("spmsync")
 def spmsync():

@@ -1,13 +1,7 @@
 #!/usr/bin/python3
 
-import os
 import sys
-import subprocess
 import sqlite3
-import io
-import atexit
-import wget
-import shutil
 import sisyphus
 from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
@@ -398,125 +392,26 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-
-        binhostURL = sisyphus.binhost.getURL()
-        areBinaries,areSources,needsConfig = sisyphus.solvedeps.package.__wrapped__(pkgname) #undecorate
-
-        os.chdir(sisyphus.filesystem.portageCacheDir)
-        self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
-        for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
-            self.workerOutput.emit(">>> Fetching" + " " + binhostURL + binary)
-            wget.download(binhostURL + binary)
-            self.workerOutput.emit("\n")
-
-            subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
-            CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + binary.rstrip().split("/")[1].replace('tbz2', 'xpak').split() + ['CATEGORY'])
-
-            if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
-                os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
-
-            if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip())):
-                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
-            else:
-                os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()))
-                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
-
-            if os.path.exists(binary.rstrip().split("/")[1]):
-                os.remove(binary.rstrip().split("/")[1])
-
-        portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE)
-
-        # kill portage if the program dies or it's terminated by the user
-        atexit.register(sisyphus.killportage.start, portageExec)
-
-        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-            if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
-                if not "Calculating dependencies" in portageOutput.rstrip():
-                    self.workerOutput.emit(portageOutput.rstrip() + "\n")
-
-        portageExec.wait()
-        sisyphus.database.syncLocal()
+        sisyphus.install.startqt(pkgname)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        portageExec = subprocess.Popen(['emerge', '--depclean'] + pkgname, stdout=subprocess.PIPE)
-
-        # kill portage if the program dies or it's terminated by the user
-        atexit.register(sisyphus.killportage.start, portageExec)
-
-        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-            self.workerOutput.emit(portageOutput.rstrip() + "\n")
-
-        portageExec.wait()
-        sisyphus.database.syncLocal()
+        sisyphus.uninstall.startqt(pkgname)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-
-        binhostURL = sisyphus.binhost.getURL()
-        areBinaries,areSources,needsConfig = sisyphus.solvedeps.world.__wrapped__() #undecorate
-
-        if not len(areSources) == 0:
-            self.workerOutput.emit("\n" + "Source package upgrades detected; Use sisyphus CLI to perform the upgrade; Aborting." + "\n")
-        else:
-            if not len(areBinaries) == 0:
-                self.workerOutput.emit("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
-                os.chdir(sisyphus.filesystem.portageCacheDir)
-                for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
-                    self.workerOutput.emit(">>> Fetching" + " " + binhostURL + binary)
-                    wget.download(binhostURL + binary)
-                    self.workerOutput.emit("\n")
-
-                    subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
-                    CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + binary.rstrip().split("/")[1].replace('tbz2', 'xpak').split() + ['CATEGORY'])
-
-                    if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
-                        os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
-
-                    if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip())):
-                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
-                    else:
-                        os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()))
-                        shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
-
-                    if os.path.exists(binary.rstrip().split("/")[1]):
-                        os.remove(binary.rstrip().split("/")[1])
-
-                portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE)
-
-                # kill portage if the program dies or it's terminated by the user
-                atexit.register(sisyphus.killportage.start, portageExec)
-
-                for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-                    if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
-                        if not "Calculating dependencies" in portageOutput.rstrip():
-                            self.workerOutput.emit(portageOutput.rstrip() + "\n")
-
-                portageExec.wait()
-                sisyphus.database.syncLocal()
-            else:
-                self.workerOutput.emit("\n" + "No package upgrades found; Quitting." + "\n")
-
+        sisyphus.upgrade.startqt()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        portageExec = subprocess.Popen(['emerge', '--depclean'], stdout=subprocess.PIPE)
-
-        # kill portage if the program dies or it's terminated by the user
-        atexit.register(sisyphus.killportage.start, portageExec)
-
-        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-            self.workerOutput.emit(portageOutput.rstrip() + "\n")
-
-        portageExec.wait()
-        sisyphus.database.syncLocal()
+        sisyphus.autoremove.startqt()
         self.finished.emit()
 
 
