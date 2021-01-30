@@ -69,7 +69,7 @@ def start():
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
-def startqt()
+def startqt():
     binhostURL = sisyphus.binhost.getURL()
     areBinaries,areSources,needsConfig = sisyphus.solvedeps.world.__wrapped__() #undecorate
 
