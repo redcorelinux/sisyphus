@@ -28,7 +28,7 @@ def start():
                     os.chdir(sisyphus.filesystem.portageCacheDir)
                     print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                        for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
+                        for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
                             wget.download(binhostURL + binary)
                             print("\n")
@@ -79,7 +79,7 @@ def startqt():
         if not len(areBinaries) == 0:
             os.chdir(sisyphus.filesystem.portageCacheDir)
             print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
-            for index, binary in enumerate([package + '.tbz2' for package in areBinaries]):
+            for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                 print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
                 wget.download(binhostURL + binary)
                 print("\n")
