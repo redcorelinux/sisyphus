@@ -1,21 +1,17 @@
 #!/usr/bin/python3
 
-import subprocess
-import io
+import sisyphus.binhost
 
 def getURL():
     remotePackagesCsvURL = []
     remoteDescriptionsCsvURL = []
-    portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE)
+    binhostURL = sisyphus.binhost.getURL()
 
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if "PORTAGE_BINHOST" in portageOutput.rstrip():
-            if "packages-next" in portageOutput.rstrip():
-                remotePackagesCsvURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages-next', 'csv-next') + 'remotePackagesPre.csv')
-                remoteDescriptionsCsvURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages-next', 'csv-next') + 'remoteDescriptionsPre.csv')
-            else:
-                remotePackagesCsvURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remotePackagesPre.csv')
-                remoteDescriptionsCsvURL = str(portageOutput.rstrip().split("=")[1].strip('\"').replace('packages', 'csv') + 'remoteDescriptionsPre.csv')
+    if "packages-next" in binhostURL:
+        remotePackagesCsvURL = binhostURL.replace('packages-next', 'csv-next') + 'remotePackagesPre.csv'
+        remoteDescriptionsCsvURL = binhostURL.replace('packages-next', 'csv-next') + 'remoteDescriptionsPre.csv'
+    else:
+        remotePackagesCsvURL = binhostURL.replace('packages', 'csv') + 'remotePackagesPre.csv'
+        remoteDescriptionsCsvURL = binhostURL.replace('packages', 'csv') + 'remoteDescriptionsPre.csv'
 
-    portageExec.wait()
     return remotePackagesCsvURL,remoteDescriptionsCsvURL
