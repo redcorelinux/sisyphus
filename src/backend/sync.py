@@ -4,26 +4,23 @@ import os
 import subprocess
 import sisyphus.filesystem
 
+localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
+
 def portage():
     os.chdir(sisyphus.filesystem.portageRepoDir)
-    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
     gitExecStage1 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
     gitExecStage1.wait()
 
 def overlay():
     os.chdir(sisyphus.filesystem.redcoreRepoDir)
-    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
     gitExecStage1 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
     gitExecStage1.wait()
 
 def portageCfg():
     os.chdir(sisyphus.filesystem.portageConfigDir)
-    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
     gitExecStage1 = subprocess.Popen(['git', 'stash'], stdout=subprocess.PIPE)
     gitExecStage1.wait()
