@@ -8,24 +8,26 @@ import sisyphus.filesystem
 def root():
     return True if os.getuid() == 0 else False
 
-def branch():
-    branchBinhostMatch = int()
-    binhostURL = sisyphus.binhost.getURL()
-    localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+def match():
+    if os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):
+        os.chdir(sisyphus.filesystem.portageRepoDir)
+        needsMatch = int()
 
-    os.chdir(sisyphus.filesystem.portageRepoDir)
-    if "packages-next" in binhostURL:
-        if localBranch.decode().strip() == "next":
-            branchBinhostMatch = int(1)
-        else:
-            branchBinhostMatch = int(0)
-    else:
-        if localBranch.decode().strip() == "master":
-            branchBinhostMatch = int(1)
-        else:
-            branchBinhostMatch = int(0)
+        binhostURL = sisyphus.binhost.getURL()
+        localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
-    return branchBinhostMatch,localBranch
+        if "packages-next" in binhostURL:
+            if localBranch.decode().strip() == "next":
+                needsMatch = int(0)
+            else:
+                needsMatch = int(1)
+        else:
+            if localBranch.decode().strip() == "master":
+                needsMatch = int(0)
+            else:
+                needsMatch = int(1)
+
+        return needsMatch,localBranch
 
 def portage():
     if os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):

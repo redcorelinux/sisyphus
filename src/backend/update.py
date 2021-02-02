@@ -37,9 +37,9 @@ def checksync():
 @animation.wait('fetching updates')
 def start():
     binhostURL = sisyphus.binhost.getURL()
-    branchBinhostMatch,localBranch = sisyphus.check.branch()
+    needsMatch,localBranch = sisyphus.check.match()
 
-    if branchBinhostMatch == 1:
+    if needsMatch == 0:
         checksync()
     else:
         if "packages-next" in binhostURL:
@@ -50,9 +50,9 @@ def start():
 
 def startqt():
     binhostURL = sisyphus.binhost.getURL()
-    branchBinhostMatch,localBranch = sisyphus.check.branch()
+    needsMatch,localBranch = sisyphus.check.match()
 
-    if branchBinhostMatch == 1:
+    if needsMatch == 0:
         checksync()
     else:
         if "packages-next" in binhostURL:
