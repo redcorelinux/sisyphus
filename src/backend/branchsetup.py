@@ -71,12 +71,12 @@ def injectRedcorePortageConfig(branch,remote):
 def warnAboutBinaryRepository(branch,remote):
     if "master" in branch:
         print("\nThe switch to branch" + " " + "'" + branch + "'" +  " " + "from remote" + " " + "'" + remote + "'" + " " + "is now complete")
-        print("You must pair this branch with the stable binary package repository")
+        print("You must pair this branch with the stable binhost (binary repository)")
         print("Hint : Use the odd numbers (1,3,5,7) from 'sisyphus mirror list'")
         print("Examples : 'sisyphus mirror set 1' or 'sisyphus mirror set 5'\n")
     elif "next" in branch:
         print("\nThe switch to branch" + " " + "'" + branch + "'" +  " " + "from remote" + " " + "'" + remote + "'" + " " + "is now complete")
-        print("You must pair this branch with the testing binary package repository")
+        print("You must pair this branch with the testing binhost (binary repository)")
         print("Hint : Use the even numbers (2,4,6,8) from 'sisyphus mirror list'")
         print("Examples : 'sisyphus mirror set 4' or 'sisyphus mirror set 8'\n")
 

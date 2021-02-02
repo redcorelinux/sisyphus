@@ -23,7 +23,7 @@ $ sisyphus [OPTIONS] COMMAND [ARGS]...
 * `autoremove`: Uninstall packages that are no longer needed.
 * `branch`: Pull the selected branch of the Portage tree,...
 * `install`: Install binary and/or ebuild(source)...
-* `mirror`: List/Set the active binary repository mirror.
+* `mirror`: List/Set the active binhost (binary repository) mirror.
 * `rescue`: Resurrect Sisyphus's package database if lost...
 * `search`: Search for binary and/or ebuild (source)...
 * `spmsync`: Sync Sisyphus's package database with...
@@ -70,9 +70,9 @@ The remote can be selected by using the --remote option.
 
 !!! WARNING !!!
 
-Once you changed the branch, you must pair it with the correct binary repository.
+Once you changed the branch, you must pair it with the correct binhost (binary repository).
 
-Branch 'master' must be paired with the stable binary repository (odd numbers in 'sisyphus mirror list').
+Branch 'master' must be paired with the stable binhost (binary repository) (odd numbers in 'sisyphus mirror list').
 
 * Examples:
 
@@ -82,7 +82,7 @@ Branch 'master' must be paired with the stable binary repository (odd numbers in
 `    sisyphus mirror set 5
 `
 
-Branch 'next' must be paired with the testing binary repository (even numbers in 'sisyphus mirror list').
+Branch 'next' must be paired with the testing binhost (binary repository) (even numbers in 'sisyphus mirror list').
 
 * Examples:
 
@@ -136,7 +136,7 @@ $ sisyphus install [OPTIONS] PKGNAME...
 
 ## `sisyphus mirror`
 
-List/Set the active binary repository mirror.
+List/Set the active binhost (binary repository) mirror.
 
 **Usage**:
 

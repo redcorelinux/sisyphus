@@ -9,23 +9,23 @@ def root():
     return True if os.getuid() == 0 else False
 
 def branch():
-    branchRepoMissmatch = int()
+    branchBinhostMatch = int()
     binhostURL = sisyphus.binhost.getURL()
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
     os.chdir(sisyphus.filesystem.portageRepoDir)
     if "packages-next" in binhostURL:
         if localBranch.decode().strip() == "next":
-            branchRepoMissmatch = int(0)
+            branchBinhostMatch = int(1)
         else:
-            branchRepoMissmatch = int(1)
+            branchBinhostMatch = int(0)
     else:
         if localBranch.decode().strip() == "master":
-            branchRepoMissmatch = int(0)
+            branchBinhostMatch = int(1)
         else:
-            branchRepoMissmatch = int(1)
+            branchBinhostMatch = int(0)
 
-    return branchRepoMissmatch,localBranch
+    return branchBinhostMatch,localBranch
 
 def portage():
     if os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):

@@ -8,7 +8,7 @@ import sys
 
 app = typer.Typer()
 mirrorSetup = typer.Typer()
-app.add_typer(mirrorSetup, name="mirror", help='List/Set the active binary repository mirror.')
+app.add_typer(mirrorSetup, name="mirror", help='List/Set the active binhost (binary repository) mirror.')
 
 @app.callback()
 def app_callback(ctx: typer.Context):
@@ -249,9 +249,9 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
 
     !!! WARNING !!!
 
-    Once you changed the branch, you must pair it with the correct binary repository.
+    Once you changed the branch, you must pair it with the correct binhost (binary repository).
 
-    Branch 'master' must be paired with the stable binary repository (odd numbers in 'sisyphus mirror list').
+    Branch 'master' must be paired with the stable binhost (binary repository) (odd numbers in 'sisyphus mirror list').
 
     * Examples:
 
@@ -259,7 +259,7 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
 
         sisyphus mirror set 5
 
-    Branch 'next' must be paired with the testing binary repository (even numbers in 'sisyphus mirror list').
+    Branch 'next' must be paired with the testing binhost (binary repository) (even numbers in 'sisyphus mirror list').
 
     * Examples:
 
@@ -287,5 +287,5 @@ def mirrorset(index: int):
 if __name__ == "__main__":
     if len(sys.argv) > 1 and not '--help' in sys.argv:
         sisyphus.check.update()
-        sisyphus.setjobs.start.__wrapped__()  # undecorate
+        sisyphus.setjobs.start()
     app()

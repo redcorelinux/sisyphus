@@ -384,8 +384,8 @@ class MainWorker(QtCore.QObject):
     def startUpdate(self):
         self.started.emit()
         sisyphus.check.update()
-        sisyphus.setjobs.start.__wrapped__() # undecorate
-        sisyphus.update.start.__wrapped__() # undecorate
+        sisyphus.setjobs.start()
+        sisyphus.update.startqt()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
