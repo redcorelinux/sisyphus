@@ -36,29 +36,29 @@ def checksync():
 
 @animation.wait('fetching updates')
 def start():
-    binhostURL = sisyphus.binhost.getURL()
+    isBinhost = sisyphus.binhost.start()
     needsMatch,localBranch = sisyphus.check.match()
 
     if needsMatch == 0:
         checksync()
     else:
-        if "packages-next" in binhostURL:
-            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + binhostURL + "' (testing)")
+        if "packages-next" in isBinhost:
+            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
         else:
-            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (testing)" + "\nCurrent binhost: '" + binhostURL + "' (stable)")
+            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (testing)" + "\nCurrent binhost: '" + isBinhost + "' (stable)")
         sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
 
 def startqt():
-    binhostURL = sisyphus.binhost.getURL()
+    isBinhost = sisyphus.binhost.start()
     needsMatch,localBranch = sisyphus.check.match()
 
     if needsMatch == 0:
         checksync()
     else:
-        if "packages-next" in binhostURL:
-            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + binhostURL + "' (testing)")
+        if "packages-next" in isBinhost:
+            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
         else:
-            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (testing)" + "\nCurrent binhost: '" + binhostURL + "' (stable)")
+            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (testing)" + "\nCurrent binhost: '" + isBinhost + "' (stable)")
         print("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting in 10 seconds.\n")
         t = int(10)
         while t:

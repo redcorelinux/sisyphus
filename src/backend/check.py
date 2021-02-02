@@ -13,10 +13,10 @@ def match():
         os.chdir(sisyphus.filesystem.portageRepoDir)
         needsMatch = int()
 
-        binhostURL = sisyphus.binhost.getURL()
+        isBinhost = sisyphus.binhost.start()
         localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
-        if "packages-next" in binhostURL:
+        if "packages-next" in isBinhost:
             if localBranch.decode().strip() == "next":
                 needsMatch = int(0)
             else:

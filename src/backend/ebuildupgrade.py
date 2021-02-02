@@ -17,7 +17,7 @@ def start():
     if sisyphus.check.root():
         sisyphus.update.start()
 
-        binhostURL = sisyphus.binhost.getURL()
+        binhostURL = sisyphus.binhost.start()
         areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()
 
         if needsConfig == 0:

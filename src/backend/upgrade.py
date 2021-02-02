@@ -19,7 +19,7 @@ def start():
     if sisyphus.check.root():
         sisyphus.update.start()
 
-        binhostURL = sisyphus.binhost.getURL()
+        isBinhost = sisyphus.binhost.start()
         areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()
 
         if needsConfig == 0:
@@ -30,7 +30,7 @@ def start():
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(binhostURL + binary)
+                            wget.download(isBinhost + binary)
                             print("\n")
 
                             subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
@@ -70,7 +70,7 @@ def start():
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
 def startqt():
-    binhostURL = sisyphus.binhost.getURL()
+    isBinhost = sisyphus.binhost.start()
     areBinaries,areSources,needsConfig = sisyphus.solvedeps.world.__wrapped__() #undecorate
 
     if not len(areSources) == 0:
@@ -81,7 +81,7 @@ def startqt():
             print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
             for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                 print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                wget.download(binhostURL + binary)
+                wget.download(isBinhost + binary)
                 print("\n")
 
                 subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())

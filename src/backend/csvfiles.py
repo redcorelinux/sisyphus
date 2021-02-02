@@ -2,16 +2,16 @@
 
 import sisyphus.binhost
 
-def getURL():
-    remotePackagesCsvURL = []
-    remoteDescriptionsCsvURL = []
-    binhostURL = sisyphus.binhost.getURL()
+def start():
+    isPackageCsv = []
+    isDescriptionCsv = []
+    isBinhost = sisyphus.binhost.start()
 
-    if "packages-next" in binhostURL:
-        remotePackagesCsvURL = binhostURL.replace('packages-next', 'csv-next') + 'remotePackagesPre.csv'
-        remoteDescriptionsCsvURL = binhostURL.replace('packages-next', 'csv-next') + 'remoteDescriptionsPre.csv'
+    if "packages-next" in isBinhost:
+        isPackageCsv = isBinhost.replace('packages-next', 'csv-next') + 'remotePackagesPre.csv'
+        isDescriptionCsv = isBinhost.replace('packages-next', 'csv-next') + 'remoteDescriptionsPre.csv'
     else:
-        remotePackagesCsvURL = binhostURL.replace('packages', 'csv') + 'remotePackagesPre.csv'
-        remoteDescriptionsCsvURL = binhostURL.replace('packages', 'csv') + 'remoteDescriptionsPre.csv'
+        isPackageCsv = isBinhost.replace('packages', 'csv') + 'remotePackagesPre.csv'
+        isDescriptionCsv = isBinhost.replace('packages', 'csv') + 'remoteDescriptionsPre.csv'
 
-    return remotePackagesCsvURL,remoteDescriptionsCsvURL
+    return isPackageCsv,isDescriptionCsv

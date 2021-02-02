@@ -17,7 +17,7 @@ def start(pkgname):
     if sisyphus.check.root():
         sisyphus.update.start()
 
-        binhostURL = sisyphus.binhost.getURL()
+        isBinhost = sisyphus.binhost.start()
         areBinaries,areSources,needsConfig = sisyphus.solvedeps.package(pkgname)
 
         if needsConfig == 0:
@@ -28,7 +28,7 @@ def start(pkgname):
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(binhostURL + binary)
+                            wget.download(isBinhost + binary)
                             print("\n")
 
                             subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
@@ -67,7 +67,7 @@ def start(pkgname):
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(binhostURL + binary)
+                            wget.download(isBinhost + binary)
                             print("\n")
 
                             subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())

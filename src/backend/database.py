@@ -9,13 +9,13 @@ import sisyphus.csvfiles
 import sisyphus.filesystem
 
 def getRemote():
-    remotePackagesCsvURL,remoteDescriptionsCsvURL = sisyphus.csvfiles.getURL()
+    isPackageCsv,isDescriptionCsv = sisyphus.csvfiles.start()
     http = urllib3.PoolManager()
 
-    with http.request('GET', remotePackagesCsvURL, preload_content=False) as tmp_buffer, open(sisyphus.filesystem.remotePackagesCsv, 'wb') as output_file:
+    with http.request('GET', isPackageCsv, preload_content=False) as tmp_buffer, open(sisyphus.filesystem.remotePackagesCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-    with http.request('GET', remoteDescriptionsCsvURL, preload_content=False) as tmp_buffer, open(sisyphus.filesystem.remoteDescriptionsCsv, 'wb') as output_file:
+    with http.request('GET', isDescriptionCsv, preload_content=False) as tmp_buffer, open(sisyphus.filesystem.remoteDescriptionsCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
 def makeLocal():
