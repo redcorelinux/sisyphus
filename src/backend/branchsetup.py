@@ -1,15 +1,15 @@
 #!/usr/bin/python3
 
 import animation
-import os
 import git
+import os
+import sys
 import sisyphus.check
 import sisyphus.branchreset
 import sisyphus.filesystem
 import sisyphus.metadata
 import sisyphus.setjobs
 import sisyphus.setprofile
-import sys
 
 def getBranchRemote(branch,remote):
     portageRemote = []

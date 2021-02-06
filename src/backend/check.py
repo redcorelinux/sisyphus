@@ -32,7 +32,7 @@ def match():
 def portage():
     if os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):
         os.chdir(sisyphus.filesystem.portageRepoDir)
-        needsPortageSync = int()
+        needsPortage = int()
 
         localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
         localHash = subprocess.check_output(['git', 'rev-parse', '@'])
@@ -41,15 +41,15 @@ def portage():
         gitExec = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
 
         if not localHash.decode().strip() == remoteHash.decode().strip():
-            needsPortageSync = int(1)
+            needsPortage = int(1)
 
         gitExec.wait()
-        return needsPortageSync
+        return needsPortage
 
 def overlay():
     if os.path.isdir(os.path.join(sisyphus.filesystem.redcoreRepoDir, '.git')):
         os.chdir(sisyphus.filesystem.redcoreRepoDir)
-        needsOverlaySync = int()
+        needsOverlay = int()
 
         localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
         localHash = subprocess.check_output(['git', 'rev-parse', '@'])
@@ -58,10 +58,10 @@ def overlay():
         gitExec = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] + localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
 
         if not localHash.decode().strip() == remoteHash.decode().strip():
-            needsOverlaySync = int(1)
+            needsOverlay = int(1)
 
         gitExec.wait()
-        return needsOverlaySync
+        return needsOverlay
 
 def update():
     portage()

@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 import subprocess
+import sys
 import sisyphus.check
 import sisyphus.database
-import sys
 
 def start(pkgname):
     if sisyphus.check.root():

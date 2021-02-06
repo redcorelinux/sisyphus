@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
+import io
 import os
 import shutil
 import subprocess
 import sys
-import io
 import wget
 import sisyphus.binhost
 import sisyphus.check

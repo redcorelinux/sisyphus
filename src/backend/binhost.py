@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-import subprocess
 import io
+import subprocess
 
 def start():
     isBinhost = []

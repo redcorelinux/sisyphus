@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 import animation
-import subprocess
 import io
+import subprocess
 
 @animation.wait('resolving dependencies')
 def package(pkgname):

@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
+import sqlite3
 import sisyphus.check
 import sisyphus.filesystem
 import sisyphus.update
-import sqlite3
 
 def searchDB(filter, cat = '', pn = '', desc = ''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
