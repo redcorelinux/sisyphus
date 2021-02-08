@@ -33,17 +33,11 @@ def start():
                             wget.download(isBinhost + binary)
                             print("\n")
 
-                            subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
-                            CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + binary.rstrip().split("/")[1].replace('tbz2', 'xpak').split() + ['CATEGORY'])
-
-                            if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
-                                os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
-
-                            if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip())):
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                            if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0])):
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
                             else:
-                                os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()))
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                                os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]))
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
 
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
@@ -84,17 +78,11 @@ def startqt():
                 wget.download(isBinhost + binary)
                 print("\n")
 
-                subprocess.call(['qtbz2', '-x'] + binary.rstrip().split("/")[1].split())
-                CATEGORY = subprocess.check_output(['qxpak', '-x', '-O'] + binary.rstrip().split("/")[1].replace('tbz2', 'xpak').split() + ['CATEGORY'])
-
-                if os.path.exists(binary.rstrip().split("/")[1].replace('tbz2', 'xpak')):
-                    os.remove(binary.rstrip().split("/")[1].replace('tbz2', 'xpak'))
-
-                if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip())):
-                    shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0])):
+                    shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
                 else:
-                    os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()))
-                    shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, CATEGORY.decode().strip()), os.path.basename(binary.rstrip().split("/")[1])))
+                    os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]))
+                    shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
 
                 if os.path.exists(binary.rstrip().split("/")[1]):
                     os.remove(binary.rstrip().split("/")[1])
