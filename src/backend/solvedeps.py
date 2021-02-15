@@ -9,7 +9,7 @@ def package(pkgname):
     areBinaries = []
     areSources = []
     needsConfig = int()
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     for portageOutput in io.TextIOWrapper(portageExec.stderr, encoding="utf-8"):
         if "The following keyword changes are necessary to proceed:" in portageOutput.rstrip():

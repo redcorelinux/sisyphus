@@ -10,14 +10,17 @@ import sisyphus.database
 import sisyphus.metadata
 import sisyphus.sync
 
-def dosync():
+def syncAll():
     sisyphus.sync.portage()
     sisyphus.sync.overlay()
     sisyphus.sync.portageCfg()
     sisyphus.database.syncRemote()
     sisyphus.metadata.regenSilent()
 
-def checksync():
+def syncCfg():
+    sisyphus.sync.portageCfg()
+
+def doSync():
     sisyphus.cache.clean()
 
     needsPortage = sisyphus.check.portage()
@@ -25,14 +28,14 @@ def checksync():
 
     if needsPortage == 1:
         if needsOverlay == 1:
-            dosync()
+            syncAll()
         elif not needsOverlay == 1:
-            dosync()
+            syncAll()
     elif not needsPortage == 1:
         if needsOverlay == 1:
-            dosync()
+            syncAll()
         elif not needsOverlay == 1:
-            sisyphus.sync.portageCfg()
+            syncCfg()
 
 @animation.wait('fetching updates')
 def start():
@@ -40,7 +43,7 @@ def start():
     needsMatch,localBranch = sisyphus.check.match()
 
     if needsMatch == 0:
-        checksync()
+        doSync()
     else:
         if "packages-next" in isBinhost:
             print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
@@ -53,7 +56,7 @@ def startqt():
     needsMatch,localBranch = sisyphus.check.match()
 
     if needsMatch == 0:
-        checksync()
+        doSync()
     else:
         if "packages-next" in isBinhost:
             print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")

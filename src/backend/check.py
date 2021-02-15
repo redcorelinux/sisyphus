@@ -62,8 +62,3 @@ def overlay():
 
         gitExec.wait()
         return needsOverlay
-
-def update():
-    portage()
-    overlay()
-    
