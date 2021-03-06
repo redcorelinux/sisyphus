@@ -4,11 +4,9 @@ import animation
 import git
 import os
 import sys
-import sisyphus.cache
 import sisyphus.check
-import sisyphus.branchreset
 import sisyphus.filesystem
-import sisyphus.metadata
+import sisyphus.purge
 import sisyphus.setjobs
 import sisyphus.setprofile
 
@@ -84,9 +82,9 @@ def warnAboutBinaryRepository(branch,remote):
 
 def start(branch,remote):
     if sisyphus.check.root():
-        sisyphus.branchreset.start()
-        sisyphus.cache.purge()
-        sisyphus.metadata.purge()
+        sisyphus.purge.branch()
+        sisyphus.purge.cache()
+        sisyphus.purge.metadata()
         injectGentooPortageTree(branch,remote)
         injectRedcoreEbuildOverlay(branch,remote)
         injectRedcorePortageConfig(branch,remote)

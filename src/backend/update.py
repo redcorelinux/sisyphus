@@ -3,13 +3,14 @@
 import animation
 import sys
 import time
-import sisyphus.cache
 import sisyphus.binhost
 import sisyphus.check
 import sisyphus.database
+import sisyphus.purge
 import sisyphus.sync
 
 def syncAll():
+    sisyphus.purge.cache()
     sisyphus.sync.portage()
     sisyphus.sync.overlay()
     sisyphus.sync.portageCfg()
