@@ -7,7 +7,6 @@ import sisyphus.cache
 import sisyphus.binhost
 import sisyphus.check
 import sisyphus.database
-import sisyphus.metadata
 import sisyphus.sync
 
 def syncAll():
@@ -15,13 +14,12 @@ def syncAll():
     sisyphus.sync.overlay()
     sisyphus.sync.portageCfg()
     sisyphus.database.syncRemote()
-    sisyphus.metadata.regenSilent()
 
 def syncCfg():
     sisyphus.sync.portageCfg()
 
 def doSync():
-    sisyphus.cache.clean()
+    sisyphus.cache.purge()
 
     needsPortage = sisyphus.check.portage()
     needsOverlay = sisyphus.check.overlay()

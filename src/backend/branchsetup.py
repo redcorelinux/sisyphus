@@ -4,6 +4,7 @@ import animation
 import git
 import os
 import sys
+import sisyphus.cache
 import sisyphus.check
 import sisyphus.branchreset
 import sisyphus.filesystem
@@ -84,12 +85,13 @@ def warnAboutBinaryRepository(branch,remote):
 def start(branch,remote):
     if sisyphus.check.root():
         sisyphus.branchreset.start()
+        sisyphus.cache.purge()
+        sisyphus.metadata.purge()
         injectGentooPortageTree(branch,remote)
         injectRedcoreEbuildOverlay(branch,remote)
         injectRedcorePortageConfig(branch,remote)
         sisyphus.setjobs.start()
         sisyphus.setprofile.start()
-        sisyphus.metadata.regenAnimated()
         warnAboutBinaryRepository(branch,remote)
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
