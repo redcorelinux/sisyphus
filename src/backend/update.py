@@ -15,33 +15,13 @@ def syncAll():
     sisyphus.sync.portageCfg()
     sisyphus.database.syncRemote()
 
-def syncCfg():
-    sisyphus.sync.portageCfg()
-
-def doSync():
-    sisyphus.cache.purge()
-
-    needsPortage = sisyphus.check.portage()
-    needsOverlay = sisyphus.check.overlay()
-
-    if needsPortage == 1:
-        if needsOverlay == 1:
-            syncAll()
-        elif not needsOverlay == 1:
-            syncAll()
-    elif not needsPortage == 1:
-        if needsOverlay == 1:
-            syncAll()
-        elif not needsOverlay == 1:
-            syncCfg()
-
 @animation.wait('fetching updates')
 def start():
     isBinhost = sisyphus.binhost.start()
-    needsMatch,localBranch = sisyphus.check.match()
+    needsMatch,localBranch = sisyphus.check.branch()
 
     if needsMatch == 0:
-        doSync()
+        syncAll()
     else:
         if "packages-next" in isBinhost:
             print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
@@ -51,10 +31,10 @@ def start():
 
 def startqt():
     isBinhost = sisyphus.binhost.start()
-    needsMatch,localBranch = sisyphus.check.match()
+    needsMatch,localBranch = sisyphus.check.branch()
 
     if needsMatch == 0:
-        doSync()
+        syncAll()
     else:
         if "packages-next" in isBinhost:
             print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
