@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>720</height>
+    <width>1024</width>
+    <height>576</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,8 +21,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>1280</width>
-    <height>720</height>
+    <width>1024</width>
+    <height>576</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -35,233 +35,26 @@
   <widget class="QWidget" name="layoutGrid">
    <layout class="QGridLayout" name="mainGrid">
     <property name="leftMargin">
-     <number>25</number>
+     <number>15</number>
     </property>
     <property name="topMargin">
-     <number>25</number>
+     <number>15</number>
     </property>
     <property name="rightMargin">
-     <number>25</number>
+     <number>15</number>
     </property>
     <property name="bottomMargin">
-     <number>25</number>
+     <number>15</number>
     </property>
     <property name="spacing">
-     <number>25</number>
+     <number>15</number>
     </property>
-    <item row="4" column="0">
-     <widget class="QProgressBar" name="progressBar">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="value">
-       <number>24</number>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <layout class="QHBoxLayout" name="actionGrid">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QToolButton" name="installButton">
-        <property name="minimumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Install selected package(s)</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../icon/install.png</normaloff>../icon/install.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>36</width>
-          <height>36</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-        <property name="arrowType">
-         <enum>Qt::NoArrow</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="uninstallButton">
-        <property name="minimumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Uninstall selected package(s)</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../icon/uninstall.png</normaloff>../icon/uninstall.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>36</width>
-          <height>36</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-        <property name="arrowType">
-         <enum>Qt::NoArrow</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="upgradeButton">
-        <property name="minimumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Upgrade the system</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../icon/upgrade.png</normaloff>../icon/upgrade.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>36</width>
-          <height>36</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="autoremoveButton">
-        <property name="minimumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Cleanup orphan packages</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../icon/orphans.png</normaloff>../icon/orphans.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>36</width>
-          <height>36</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="exitButton">
-        <property name="minimumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>175</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Quit program</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../icon/exit.png</normaloff>../icon/exit.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>36</width>
-          <height>36</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
     <item row="1" column="0">
      <widget class="QTableView" name="databaseTable">
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>200</height>
+        <height>175</height>
        </size>
       </property>
       <property name="frameShape">
@@ -313,6 +106,191 @@
        <bool>false</bool>
       </attribute>
      </widget>
+    </item>
+    <item row="3" column="0">
+     <layout class="QHBoxLayout" name="actionGrid">
+      <item>
+       <widget class="QToolButton" name="installButton">
+        <property name="minimumSize">
+         <size>
+          <width>125</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Install selected package(s)</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../icon/install.png</normaloff>../icon/install.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::NoArrow</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uninstallButton">
+        <property name="minimumSize">
+         <size>
+          <width>125</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Uninstall selected package(s)</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../icon/uninstall.png</normaloff>../icon/uninstall.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::NoArrow</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="upgradeButton">
+        <property name="minimumSize">
+         <size>
+          <width>125</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Upgrade the system</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../icon/upgrade.png</normaloff>../icon/upgrade.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="autoremoveButton">
+        <property name="minimumSize">
+         <size>
+          <width>125</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Uninstall orphan package(s)</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../icon/orphans.png</normaloff>../icon/orphans.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="exitButton">
+        <property name="minimumSize">
+         <size>
+          <width>125</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>175</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Quit program</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../icon/exit.png</normaloff>../icon/exit.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="inputGrid">
@@ -523,12 +501,22 @@
       </item>
      </layout>
     </item>
+    <item row="4" column="0">
+     <widget class="QProgressBar" name="progressBar">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>25</height>
+       </size>
+      </property>
+     </widget>
+    </item>
     <item row="2" column="0">
      <widget class="QPlainTextEdit" name="progressBox">
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>200</height>
+        <height>175</height>
        </size>
       </property>
       <property name="maximumSize">
