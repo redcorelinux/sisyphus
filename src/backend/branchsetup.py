@@ -83,7 +83,6 @@ def warnAboutBinaryRepository(branch,remote):
 def start(branch,remote):
     if sisyphus.check.root():
         sisyphus.purge.branch()
-        sisyphus.purge.cache()
         sisyphus.purge.metadata()
         injectGentooPortageTree(branch,remote)
         injectRedcoreEbuildOverlay(branch,remote)
