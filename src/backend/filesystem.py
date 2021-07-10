@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+import platform
+
 remoteGitlab = 'https://gitlab.com/redcore'
 remotePagure = 'https://pagure.io/redcore'
 
@@ -19,4 +21,8 @@ localPackagesCsv = '/var/lib/sisyphus/csv/localPackagesPre.csv'
 
 localDatabase = '/var/lib/sisyphus/db/sisyphus.db'
 
-mirrorCfg = '/etc/sisyphus/mirrors.conf'
+if platform.uname()[4] == 'x86_64':
+    mirrorCfg = '/etc/sisyphus/sisyphus-mirrors-amd64.conf'
+
+if platform.uname()[4] == 'aarch64':
+    mirrorCfg = '/etc/sisyphus/sisyphus-mirrors-arm64.conf'
