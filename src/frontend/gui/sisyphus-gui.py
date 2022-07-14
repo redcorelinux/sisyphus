@@ -100,9 +100,11 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.exitButton.clicked.connect(self.sisyphusExit)
 
     def centerOnScreen(self):
-        resolution = QtWidgets.QDesktopWidget().screenGeometry()
-        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
-                  (resolution.height() / 2) - (self.frameSize().height() / 2))
+        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
+        windowGeometry = self.geometry()
+        horizontalPosition = int(( screenGeometry.width() - windowGeometry.width() ) / 2)
+        verticalPosition = int(( screenGeometry.height() - windowGeometry.height() ) / 2)
+        self.move(horizontalPosition, verticalPosition)
 
     def rowClicked(self):
         Sisyphus.pkgSelect = len(self.databaseTable.selectionModel().selectedRows())
@@ -309,9 +311,11 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         self.mirrorCombo.activated.connect(self.setMirrorList)
 
     def centerOnScreen(self):
-        resolution = QtWidgets.QDesktopWidget().screenGeometry()
-        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
-                  (resolution.height() / 2) - (self.frameSize().height() / 2))
+        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
+        windowGeometry = self.geometry()
+        horizontalPosition = int(( screenGeometry.width() - windowGeometry.width() ) / 2)
+        verticalPosition = int(( screenGeometry.height() - windowGeometry.height() ) / 2)
+        self.move(horizontalPosition, verticalPosition)
 
     def updateMirrorList(self):
         model = QtGui.QStandardItemModel()
@@ -345,9 +349,11 @@ class LicenseInformation(QtWidgets.QMainWindow):
         self.centerOnScreen()
 
     def centerOnScreen(self):
-        resolution = QtWidgets.QDesktopWidget().screenGeometry()
-        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
-                  (resolution.height() / 2) - (self.frameSize().height() / 2))
+        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
+        windowGeometry = self.geometry()
+        horizontalPosition = int(( screenGeometry.width() - windowGeometry.width() ) / 2)
+        verticalPosition = int(( screenGeometry.height() - windowGeometry.height() ) / 2)
+        self.move(horizontalPosition, verticalPosition)
 
 
 # worker/multithreading class
