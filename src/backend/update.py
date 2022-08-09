@@ -18,29 +18,31 @@ def syncAll():
 
 @animation.wait('fetching updates')
 def start():
+    activeBranch = sisyphus.check.branch()
     isBinhost = sisyphus.binhost.start()
-    needsMatch,localBranch = sisyphus.check.branch()
+    isSane = sisyphus.check.sanity()
 
-    if needsMatch == 0:
+    if isSane == 1:
         syncAll()
     else:
         if "packages-next" in isBinhost:
-            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
+            print("\nCurrent branch: '" + activeBranch + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
         else:
-            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (testing)" + "\nCurrent binhost: '" + isBinhost + "' (stable)")
+            print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + isBinhost + "' (stable)")
         sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
 
 def startqt():
+    activeBranch = sisyphus.check.branch()
     isBinhost = sisyphus.binhost.start()
-    needsMatch,localBranch = sisyphus.check.branch()
+    isSane = sisyphus.check.sanity()
 
-    if needsMatch == 0:
+    if isSane == 1:
         syncAll()
     else:
         if "packages-next" in isBinhost:
-            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
+            print("\nCurrent branch: '" + activeBranch + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
         else:
-            print("\nCurrent branch: '" + localBranch.decode().strip()  + "' (testing)" + "\nCurrent binhost: '" + isBinhost + "' (stable)")
+            print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + isBinhost + "' (stable)")
         print("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting in 10 seconds.\n")
         t = int(10)
         while t:

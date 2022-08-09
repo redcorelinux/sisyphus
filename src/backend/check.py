@@ -9,22 +9,34 @@ def root():
     return True if os.getuid() == 0 else False
 
 def branch():
+    activeBranch = None
+
     if os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):
         os.chdir(sisyphus.filesystem.portageRepoDir)
-        needsMatch = int()
-
-        isBinhost = sisyphus.binhost.start()
         localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
-        if "packages-next" in isBinhost:
-            if localBranch.decode().strip() == "next":
-                needsMatch = int(0)
-            else:
-                needsMatch = int(1)
-        else:
-            if localBranch.decode().strip() == "master":
-                needsMatch = int(0)
-            else:
-                needsMatch = int(1)
+        if localBranch.decode().strip() == 'master':
+            activeBranch = str('master')
 
-        return needsMatch,localBranch
+        if localBranch.decode().strip() == 'next':
+           activeBranch = str('next')
+
+        return activeBranch
+
+def sanity():
+    activeBranch = branch()
+    isBinhost = sisyphus.binhost.start()
+    isSane = int()
+
+    if "packages-next" in isBinhost:
+        if activeBranch == "next":
+            isSane = int(1)
+        else:
+            isSane = int(0)
+    else:
+        if activeBranch == "master":
+            isSane = int(1)
+        else:
+            isSane = int(0)
+
+    return isSane
