@@ -40,14 +40,14 @@ def start(pkgname):
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
 
-                        portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
+                        portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        stdout, stderr = portageExec.communicate()
 
                         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                             if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        portageExec.wait()
                         sisyphus.database.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -73,33 +73,34 @@ def start(pkgname):
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
 
-                        portageExec = subprocess.Popen(['emerge', '--usepkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
+                        portageExec = subprocess.Popen(['emerge', '--usepkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        stdout, stderr = portageExec.communicate()
 
                         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                             if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        portageExec.wait()
                         sisyphus.database.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
                 else:
                     print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + "  ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                        portageExec = subprocess.Popen(['emerge', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
+                        portageExec = subprocess.Popen(['emerge', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        stdout, stderr = portageExec.communicate()
 
                         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                             if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        portageExec.wait()
                         sisyphus.database.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
-            portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE)
+            portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = portageExec.communicate()
 
             for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                 if not "Local copy of remote index is up-to-date and will be used." in portageOutput.rstrip():
@@ -107,7 +108,6 @@ def start(pkgname):
                         if not "binary" in portageOutput.rstrip():
                             print(portageOutput.rstrip())
 
-            portageExec.wait()
             sys.exit("\n" + "Cannot proceed; Apply the above changes to your portage configuration files and try again; Quitting." + "\n")
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
