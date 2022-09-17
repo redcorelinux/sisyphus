@@ -41,13 +41,13 @@ def start():
                                 os.remove(binary.rstrip().split("/")[1])
 
                         portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        stdout, stderr = portageExec.communicate()
 
                         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                             if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
+                        stdout, stderr = portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -74,7 +74,6 @@ def start():
                                 os.remove(binary.rstrip().split("/")[1])
 
                         portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        stdout, stderr = portageExec.communicate()
 
                         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                             if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
@@ -95,12 +94,12 @@ def start():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
+                        stdout, stderr = portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
             portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = portageExec.communicate()
 
             for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                 if not "Local copy of remote index is up-to-date and will be used." in portageOutput.rstrip():
@@ -108,6 +107,7 @@ def start():
                         if not "binary" in portageOutput.rstrip():
                             print(portageOutput.rstrip())
 
+            stdout, stderr = portageExec.communicate()
             sys.exit("\n" + "Cannot proceed; Apply the above changes to your portage configuration files and try again; Quitting." + "\n")
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")

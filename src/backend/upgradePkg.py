@@ -43,13 +43,13 @@ def start():
                                 os.remove(binary.rstrip().split("/")[1])
 
                         portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        stdout, stderr = portageExec.communicate()
 
                         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                             if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
+                        stdout, stderr = portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -88,7 +88,6 @@ def startqt():
                     os.remove(binary.rstrip().split("/")[1])
 
             portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = portageExec.communicate()
             # kill portage if the program dies or it's terminated by the user
             atexit.register(sisyphus.killPortage.start, portageExec)
 
@@ -97,6 +96,7 @@ def startqt():
                     if not "Calculating dependencies" in portageOutput.rstrip():
                         print(portageOutput.rstrip())
 
+            stdout, stderr = portageExec.communicate()
             sisyphus.syncDatabase.syncLocal()
         else:
             print("\n" + "No package upgrades found; Quitting." + "\n")

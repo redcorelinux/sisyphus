@@ -10,7 +10,6 @@ def package(pkgname):
     areSources = []
     needsConfig = int()
     portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = portageExec.communicate()
 
     for portageOutput in io.TextIOWrapper(portageExec.stderr, encoding="utf-8"):
         if "The following keyword changes are necessary to proceed:" in portageOutput.rstrip():
@@ -34,6 +33,7 @@ def package(pkgname):
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
 
+    stdout, stderr = portageExec.communicate()
     return areBinaries,areSources,needsConfig
 
 @animation.wait('resolving dependencies')
@@ -42,7 +42,6 @@ def world():
     areSources = []
     needsConfig = int()
     portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = portageExec.communicate()
 
     for portageOutput in io.TextIOWrapper(portageExec.stderr, encoding="utf-8"):
         if "The following keyword changes are necessary to proceed:" in portageOutput.rstrip():
@@ -66,4 +65,5 @@ def world():
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
 
+    stdout, stderr = portageExec.communicate()
     return areBinaries,areSources,needsConfig

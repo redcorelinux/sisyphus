@@ -18,11 +18,11 @@ def start():
 
 def startqt():
     portageExec = subprocess.Popen(['emerge', '--depclean'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = portageExec.communicate()
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killPortage.start, portageExec)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         print(portageOutput.rstrip())
 
+    stdout, stderr = portageExec.communicate()
     sisyphus.syncDatabase.syncLocal()
