@@ -3,10 +3,10 @@
 import animation
 import sys
 import time
-import sisyphus.getBinhost
 import sisyphus.checkEnvironment
-import sisyphus.syncDatabase
+import sisyphus.getBinhost
 import sisyphus.purgeEnvironment
+import sisyphus.syncDatabase
 import sisyphus.syncEnvironment
 
 def syncAll():

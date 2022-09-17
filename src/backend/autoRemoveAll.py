@@ -5,8 +5,8 @@ import io
 import subprocess
 import sys
 import sisyphus.checkEnvironment
-import sisyphus.syncDatabase
 import sisyphus.killPortage
+import sisyphus.syncDatabase
 
 def start():
     if sisyphus.checkEnvironment.root():

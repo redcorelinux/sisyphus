@@ -6,11 +6,11 @@ import shutil
 import subprocess
 import sys
 import wget
-import sisyphus.getBinhost
 import sisyphus.checkEnvironment
-import sisyphus.syncDatabase
+import sisyphus.getBinhost
 import sisyphus.getFilesystem
 import sisyphus.resolveDeps
+import sisyphus.syncDatabase
 import sisyphus.updateAll
 
 def start(pkgname):

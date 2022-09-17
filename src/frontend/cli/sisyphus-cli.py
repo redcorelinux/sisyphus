@@ -163,7 +163,7 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
     if not force:
         sisyphus.uninstallAll.start(pkgname)
     else:
-        sisyphus.uninstallForceAll.start(pkgname)
+        sisyphus.uninstallAllForce.start(pkgname)
 
 @app.command("autoremove")
 def autoremove():

@@ -2,8 +2,8 @@
 
 import animation
 import os
-import sisyphus.syncDatabase
 import sisyphus.getFilesystem
+import sisyphus.syncDatabase
 
 @animation.wait('recovering databases')
 def start():

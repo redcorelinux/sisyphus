@@ -19,8 +19,8 @@ from .syncDatabase import *
 from .syncEnvironment import *
 from .syncSPM import *
 from .sysInfo import *
+from .uninstallAllForce import *
 from .uninstallAll import *
-from .uninstallForceAll import *
 from .updateAll import *
 from .upgradePkg import *
 from .upgradeSrc import *
