@@ -7,7 +7,7 @@ import sisyphus.syncDatabase
 
 def start(pkgname):
     if sisyphus.checkEnvironment.root():
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--unmerge', '--ask'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--unmerge', '--ask'] + list(pkgname))
         portageExec.wait()
         sisyphus.syncDatabase.syncLocal()
     else:

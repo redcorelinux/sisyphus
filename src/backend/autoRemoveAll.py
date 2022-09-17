@@ -9,7 +9,7 @@ import sisyphus.syncDatabase
 
 def start():
     if sisyphus.checkEnvironment.root():
-        portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'])
         portageExec.wait()
         sisyphus.syncDatabase.syncLocal()
     else:
