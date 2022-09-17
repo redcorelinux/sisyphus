@@ -6,24 +6,24 @@ import shutil
 import subprocess
 import sys
 import wget
-import sisyphus.binhost
-import sisyphus.check
-import sisyphus.database
-import sisyphus.filesystem
-import sisyphus.solvedeps
-import sisyphus.update
+import sisyphus.getBinhost
+import sisyphus.checkEnvironment
+import sisyphus.syncDatabase
+import sisyphus.getFilesystem
+import sisyphus.resolveDeps
+import sisyphus.updateAll
 
 def start():
-    if sisyphus.check.root():
-        sisyphus.update.start()
+    if sisyphus.checkEnvironment.root():
+        sisyphus.updateAll.start()
 
-        binhostURL = sisyphus.binhost.start()
-        areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()
+        binhostURL = sisyphus.getBinhost.start()
+        areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world()
 
         if needsConfig == 0:
             if len(areSources) == 0:
                 if not len(areBinaries) == 0:
-                    os.chdir(sisyphus.filesystem.portageCacheDir)
+                    os.chdir(sisyphus.getFilesystem.portageCacheDir)
                     print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
@@ -31,11 +31,11 @@ def start():
                             wget.download(binhostURL + binary)
                             print("\n")
 
-                            if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0])):
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
+                            if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0])):
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
                             else:
-                                os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]))
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
+                                os.makedirs(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]))
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
 
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
@@ -48,14 +48,14 @@ def start():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        sisyphus.database.syncLocal()
+                        sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
                 else:
                     sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
             else:
                 if not len(areBinaries) == 0:
-                    os.chdir(sisyphus.filesystem.portageCacheDir)
+                    os.chdir(sisyphus.getFilesystem.portageCacheDir)
                     print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + "  ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
@@ -64,11 +64,11 @@ def start():
                             wget.download(binhostURL + binary)
                             print("\n")
 
-                            if os.path.isdir(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0])):
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
+                            if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0])):
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
                             else:
-                                os.makedirs(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]))
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.filesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
+                                os.makedirs(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]))
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
 
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
@@ -81,7 +81,7 @@ def start():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        sisyphus.database.syncLocal()
+                        sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
                 else:
@@ -95,7 +95,7 @@ def start():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        sisyphus.database.syncLocal()
+                        sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
         else:

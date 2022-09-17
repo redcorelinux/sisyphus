@@ -4,11 +4,11 @@ import animation
 import git
 import os
 import sys
-import sisyphus.check
-import sisyphus.filesystem
-import sisyphus.purge
-import sisyphus.setjobs
-import sisyphus.setprofile
+import sisyphus.checkEnvironment
+import sisyphus.getFilesystem
+import sisyphus.purgeEnvironment
+import sisyphus.setJobs
+import sisyphus.setProfile
 
 def getBranchRemote(branch,remote):
     portageRemote = []
@@ -16,9 +16,9 @@ def getBranchRemote(branch,remote):
     portageConfigRemote = []
     if "master" in branch:
         if "gitlab" in remote:
-            remote = sisyphus.filesystem.remoteGitlab
+            remote = sisyphus.getFilesystem.remoteGitlab
         elif "pagure" in remote:
-            remote = sisyphus.filesystem.remotePagure
+            remote = sisyphus.getFilesystem.remotePagure
         else:
             sys.exit("Usage: sisyphus-cli.py branch [OPTIONS] BRANCH" + "\n" +
                     "Try 'sisyphus-cli.py branch --help' for help." + "\n\n" +
@@ -26,9 +26,9 @@ def getBranchRemote(branch,remote):
                     )
     elif "next" in branch:
         if "gitlab" in remote:
-            remote = sisyphus.filesystem.remoteGitlab
+            remote = sisyphus.getFilesystem.remoteGitlab
         elif "pagure" in remote:
-            remote = sisyphus.filesystem.remotePagure
+            remote = sisyphus.getFilesystem.remotePagure
         else:
             sys.exit("Usage: sisyphus-cli.py branch [OPTIONS] BRANCH" + "\n" +
                     "Try 'sisyphus-cli.py branch --help' for help." + "\n\n" +
@@ -40,34 +40,34 @@ def getBranchRemote(branch,remote):
                 "Error: Invalid branch" + " " + "'" + str(branch) + "'" +" " +  "(options : master, next)"
                 )
 
-    portageRemote = [remote, sisyphus.filesystem.portageRepo]
-    redcoreRemote = [remote, sisyphus.filesystem.redcoreRepo]
-    portageConfigRemote = [remote, sisyphus.filesystem.portageConfigRepo]
+    portageRemote = [remote, sisyphus.getFilesystem.portageRepo]
+    redcoreRemote = [remote, sisyphus.getFilesystem.redcoreRepo]
+    portageConfigRemote = [remote, sisyphus.getFilesystem.portageConfigRepo]
 
     return portageRemote,redcoreRemote,portageConfigRemote
 
 @animation.wait('injecting Gentoo Linux portage tree')
-def injectGentooPortageTree(branch,remote):
+def injectStage1(branch,remote):
     portageRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):
-        git.Repo.clone_from("/".join(portageRemote), sisyphus.filesystem.portageRepoDir, depth=1, branch=branch)
+    if not os.path.isdir(os.path.join(sisyphus.getFilesystem.portageRepoDir, '.git')):
+        git.Repo.clone_from("/".join(portageRemote), sisyphus.getFilesystem.portageRepoDir, depth=1, branch=branch)
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
-def injectRedcoreEbuildOverlay(branch,remote):
+def injectStage2(branch,remote):
     portageRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.filesystem.redcoreRepoDir, '.git')):
-        git.Repo.clone_from("/".join(redcoreRemote), sisyphus.filesystem.redcoreRepoDir, depth=1, branch=branch)
+    if not os.path.isdir(os.path.join(sisyphus.getFilesystem.redcoreRepoDir, '.git')):
+        git.Repo.clone_from("/".join(redcoreRemote), sisyphus.getFilesystem.redcoreRepoDir, depth=1, branch=branch)
 
 @animation.wait('injecting Redcore Linux portage config')
-def injectRedcorePortageConfig(branch,remote):
+def injectStage3(branch,remote):
     portageRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.filesystem.portageConfigDir, '.git')):
-        git.Repo.clone_from("/".join(portageConfigRemote), sisyphus.filesystem.portageConfigDir, depth=1, branch=branch)
+    if not os.path.isdir(os.path.join(sisyphus.getFilesystem.portageConfigDir, '.git')):
+        git.Repo.clone_from("/".join(portageConfigRemote), sisyphus.getFilesystem.portageConfigDir, depth=1, branch=branch)
 
-def warnAboutBinaryRepository(branch,remote):
+def giveWarning(branch,remote):
     if "master" in branch:
         print("\nThe switch to branch" + " " + "'" + branch + "'" +  " " + "from remote" + " " + "'" + remote + "'" + " " + "is now complete")
         print("You must pair this branch with the stable binhost (binary repository)")
@@ -81,14 +81,14 @@ def warnAboutBinaryRepository(branch,remote):
 
 
 def start(branch,remote):
-    if sisyphus.check.root():
-        sisyphus.purge.branch()
-        sisyphus.purge.metadata()
-        injectGentooPortageTree(branch,remote)
-        injectRedcoreEbuildOverlay(branch,remote)
-        injectRedcorePortageConfig(branch,remote)
-        sisyphus.setjobs.start()
-        sisyphus.setprofile.start()
-        warnAboutBinaryRepository(branch,remote)
+    if sisyphus.checkEnvironment.root():
+        sisyphus.purgeEnvironment.branch()
+        sisyphus.purgeEnvironment.metadata()
+        injectStage1(branch,remote)
+        injectStage2(branch,remote)
+        injectStage3(branch,remote)
+        sisyphus.setJobs.start()
+        sisyphus.setProfile.start()
+        giveWarning(branch,remote)
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")

@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
-import sisyphus.binhost
+import sisyphus.getBinhost
 
 def start():
     isPackageCsv = []
     isDescriptionCsv = []
-    isBinhost = sisyphus.binhost.start()
+    isBinhost = sisyphus.getBinhost.start()
 
     if "packages-next" in isBinhost:
         isPackageCsv = isBinhost.replace('packages-next', 'csv-next') + 'remotePackagesPre.csv'

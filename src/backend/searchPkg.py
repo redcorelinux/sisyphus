@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 import sqlite3
-import sisyphus.check
-import sisyphus.filesystem
-import sisyphus.update
+import sisyphus.checkEnvironment
+import sisyphus.getFilesystem
+import sisyphus.updateAll
 
 def searchDB(filter, cat = '', pn = '', desc = ''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
@@ -90,7 +90,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
                     AND iv <> av'''
     }
 
-    with sqlite3.connect(sisyphus.filesystem.localDatabase) as db:
+    with sqlite3.connect(sisyphus.getFilesystem.localDatabase) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         cursor.execute(SELECTS[filter])
@@ -125,8 +125,8 @@ def showSearch(filter, cat, pn, desc, single):
         print(f"\nFound {len(pkglist)} matching package(s) ...")
 
 def start(filter, cat, pn, desc, single):
-    if sisyphus.check.root():
-        sisyphus.update.start()
+    if sisyphus.checkEnvironment.root():
+        sisyphus.updateAll.start()
     else:
         print("\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n")
 

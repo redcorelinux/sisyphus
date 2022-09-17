@@ -3,24 +3,24 @@
 import animation
 import sys
 import time
-import sisyphus.binhost
-import sisyphus.check
-import sisyphus.database
-import sisyphus.purge
-import sisyphus.sync
+import sisyphus.getBinhost
+import sisyphus.checkEnvironment
+import sisyphus.syncDatabase
+import sisyphus.purgeEnvironment
+import sisyphus.syncEnvironment
 
 def syncAll():
-    sisyphus.purge.cache()
-    sisyphus.sync.portage()
-    sisyphus.sync.overlay()
-    sisyphus.sync.portageCfg()
-    sisyphus.database.syncRemote()
+    sisyphus.purgeEnvironment.cache()
+    sisyphus.syncEnvironment.syncStage1()
+    sisyphus.syncEnvironment.syncStage2()
+    sisyphus.syncEnvironment.syncStage3()
+    sisyphus.syncDatabase.syncRemote()
 
 @animation.wait('fetching updates')
 def start():
-    activeBranch = sisyphus.check.branch()
-    isBinhost = sisyphus.binhost.start()
-    isSane = sisyphus.check.sanity()
+    activeBranch = sisyphus.checkEnvironment.branch()
+    isBinhost = sisyphus.getBinhost.start()
+    isSane = sisyphus.checkEnvironment.sanity()
 
     if isSane == 1:
         syncAll()
@@ -32,9 +32,9 @@ def start():
         sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
 
 def startqt():
-    activeBranch = sisyphus.check.branch()
-    isBinhost = sisyphus.binhost.start()
-    isSane = sisyphus.check.sanity()
+    activeBranch = sisyphus.checkEnvironment.branch()
+    isBinhost = sisyphus.getBinhost.start()
+    isSane = sisyphus.checkEnvironment.sanity()
 
     if isSane == 1:
         syncAll()

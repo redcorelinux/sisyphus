@@ -196,7 +196,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND iv <> av
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
         ])
-        with sqlite3.connect(sisyphus.filesystem.localDatabase) as db:
+        with sqlite3.connect(sisyphus.getFilesystem.localDatabase) as db:
             cursor = db.cursor()
             cursor.execute('%s' % (self.SELECTS[Sisyphus.databaseView]))
             rows = cursor.fetchall()
@@ -304,7 +304,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         super(MirrorConfiguration, self).__init__()
         uic.loadUi('/usr/share/sisyphus/ui/mirrorcfg.ui', self)
         self.centerOnScreen()
-        self.MIRRORLIST = sisyphus.mirror.getList()
+        self.MIRRORLIST = sisyphus.setMirror.getList()
         self.updateMirrorList()
         self.applyButton.pressed.connect(self.mirrorCfgApply)
         self.applyButton.released.connect(self.mirrorCfgExit)
@@ -335,7 +335,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = True
 
     def mirrorCfgApply(self):
-        sisyphus.mirror.writeList(self.MIRRORLIST)
+        sisyphus.setMirror.writeList(self.MIRRORLIST)
 
     def mirrorCfgExit(self):
         self.close()
@@ -374,34 +374,34 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpdate(self):
         self.started.emit()
-        sisyphus.setjobs.start()
-        sisyphus.update.startqt()
+        sisyphus.setJobs.start()
+        sisyphus.updateAll.startqt()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startInstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.install.startqt(pkgname)
+        sisyphus.installPkg.startqt(pkgname)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.uninstall.startqt(pkgname)
+        sisyphus.uninstallAll.startqt(pkgname)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        sisyphus.upgrade.startqt()
+        sisyphus.upgradePkg.startqt()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        sisyphus.autoremove.startqt()
+        sisyphus.autoRemoveAll.startqt()
         self.finished.emit()
 
 

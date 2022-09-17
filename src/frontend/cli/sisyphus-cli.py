@@ -97,12 +97,12 @@ def search(package: List[str] = typer.Argument(...),
             cat, pn = package[0].split('/')
         else:
             cat, pn = '', package[0]
-        sisyphus.search.start(filter.value, cat, pn, desc, quiet)
+        sisyphus.searchPkg.start(filter.value, cat, pn, desc, quiet)
     else:
         if not package:
             raise typer.Exit('No search term provided, try: sisyphus search --help')
         else:
-            sisyphus.ebuildsearch.start(package)
+            sisyphus.searchSrc.start(package)
 
 @app.command("install")
 def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "-e")):
@@ -124,9 +124,9 @@ def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "
     You can use the --ebuild option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.install.start(pkgname)
+        sisyphus.installPkg.start(pkgname)
     else:
-        sisyphus.ebuildinstall.start(pkgname)
+        sisyphus.installSrc.start(pkgname)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
@@ -161,9 +161,9 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
     will succeed, but the system will be broken
     """
     if not force:
-        sisyphus.uninstall.start(pkgname)
+        sisyphus.uninstallAll.start(pkgname)
     else:
-        sisyphus.forceuninstall.start(pkgname)
+        sisyphus.uninstallForceAll.start(pkgname)
 
 @app.command("autoremove")
 def autoremove():
@@ -172,13 +172,13 @@ def autoremove():
     In addition, a package may no longer depend on another one, so that other package becomes orphan as well if nothing else requires it.
     Use this option to check the whole dependency chain for such packages, and uninstall them.
     """
-    sisyphus.autoremove.start()
+    sisyphus.autoRemoveAll.start()
 
 @app.command("update")
 def update():
     """Update the Portage tree, the Redcore Overlay(s), Portage configs and Sisyphus's package database."""
-    if sisyphus.check.root():
-        sisyphus.update.start()
+    if sisyphus.checkEnvironment.root():
+        sisyphus.updateAll.start()
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
@@ -203,9 +203,9 @@ def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     You can use the --ebuild option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.upgrade.start()
+        sisyphus.upgradePkg.start()
     else:
-        sisyphus.ebuildupgrade.start()
+        sisyphus.upgradeSrc.start()
 
 @app.command("spmsync")
 def spmsync():
@@ -213,7 +213,7 @@ def spmsync():
     When you install something with Portage directly (emerge), Sisyphus is not aware of that package, and it doesn't track it in it's database.
     Use this command to synchronize Sisyphus's package database with Portage's package database.
     """
-    sisyphus.spmsync.start()
+    sisyphus.syncSPM.start()
 
 @app.command("rescue")
 def rescue():
@@ -222,7 +222,7 @@ def rescue():
     If Portage's package database is corrupted (in this case you're screwed anyway :D), only a partial resurrection will be possible.
     If Portage's package database is intact, full resurrection will be possible.
     """
-    sisyphus.rescue.start()
+    sisyphus.recoverDatabase.start()
 
 class Branch(str, Enum):
     master = 'master'
@@ -267,24 +267,24 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
 
         sisyphus mirror set 8
     """
-    sisyphus.branchsetup.start(branch.value, remote.value)
+    sisyphus.setBranch.start(branch.value, remote.value)
 
 @app.command("sysinfo")
 def sysinfo():
     """Display information about installed core packages and portage configuration."""
-    sisyphus.sysinfo.show()
+    sisyphus.sysInfo.show()
 
 @mirrorSetup.command("list")
 def mirrorlist():
     """List available binary package repository mirrors (the active one is marked with *)."""
-    sisyphus.mirror.printList()
+    sisyphus.setMirror.printList()
 
 @mirrorSetup.command("set")
 def mirrorset(index: int):
     """Change the binary package repository to the selected mirror."""
-    sisyphus.mirror.setActive(index)
+    sisyphus.setMirror.setActive(index)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and not '--help' in sys.argv:
-        sisyphus.setjobs.start()
+        sisyphus.setJobs.start()
     app()

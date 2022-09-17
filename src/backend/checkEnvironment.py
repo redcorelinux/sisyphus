@@ -2,8 +2,8 @@
 
 import os
 import subprocess
-import sisyphus.binhost
-import sisyphus.filesystem
+import sisyphus.getBinhost
+import sisyphus.getFilesystem
 
 def root():
     return True if os.getuid() == 0 else False
@@ -11,8 +11,8 @@ def root():
 def branch():
     activeBranch = None
 
-    if os.path.isdir(os.path.join(sisyphus.filesystem.portageRepoDir, '.git')):
-        os.chdir(sisyphus.filesystem.portageRepoDir)
+    if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageRepoDir, '.git')):
+        os.chdir(sisyphus.getFilesystem.portageRepoDir)
         localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
         if localBranch.decode().strip() == 'master':
@@ -25,7 +25,7 @@ def branch():
 
 def sanity():
     activeBranch = branch()
-    isBinhost = sisyphus.binhost.start()
+    isBinhost = sisyphus.getBinhost.start()
     isSane = int()
 
     if "packages-next" in isBinhost:
