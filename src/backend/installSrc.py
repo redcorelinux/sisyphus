@@ -47,7 +47,7 @@ def start(pkgname):
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        stdout, stderr = portageExec.communicate()
+                        portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -80,7 +80,7 @@ def start(pkgname):
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        stdout, stderr = portageExec.communicate()
+                        portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -94,7 +94,7 @@ def start(pkgname):
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        stdout, stderr = portageExec.communicate()
+                        portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -107,7 +107,7 @@ def start(pkgname):
                         if not "binary" in portageOutput.rstrip():
                             print(portageOutput.rstrip())
 
-            stdout, stderr = portageExec.communicate()
+            portageExec.communicate()
             sys.exit("\n" + "Cannot proceed; Apply the above changes to your portage configuration files and try again; Quitting." + "\n")
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")

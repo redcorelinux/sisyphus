@@ -49,7 +49,7 @@ def start():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        stdout, stderr = portageExec.communicate()
+                        portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -96,7 +96,7 @@ def startqt():
                     if not "Calculating dependencies" in portageOutput.rstrip():
                         print(portageOutput.rstrip())
 
-            stdout, stderr = portageExec.communicate()
+            portageExec.communicate()
             sisyphus.syncDatabase.syncLocal()
         else:
             print("\n" + "No package upgrades found; Quitting." + "\n")

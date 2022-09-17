@@ -33,7 +33,7 @@ def package(pkgname):
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
 
-    stdout, stderr = portageExec.communicate()
+    portageExec.communicate()
     return areBinaries,areSources,needsConfig
 
 @animation.wait('resolving dependencies')
@@ -65,5 +65,5 @@ def world():
             isSource = str(portageOutput.rstrip().split("]")[1].split("[")[0].strip("\ "))
             areSources.append(isSource)
 
-    stdout, stderr = portageExec.communicate()
+    portageExec.communicate()
     return areBinaries,areSources,needsConfig

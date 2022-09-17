@@ -11,5 +11,5 @@ def start():
         if "PORTAGE_BINHOST" in portageOutput.rstrip():
             isBinhost = str(portageOutput.rstrip().split("=")[1].strip('\"'))
 
-    stdout, stderr = portageExec.communicate()
+    portageExec.communicate()
     return isBinhost

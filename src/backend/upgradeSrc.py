@@ -47,7 +47,7 @@ def start():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        stdout, stderr = portageExec.communicate()
+                        portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -80,6 +80,7 @@ def start():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
+                        portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -87,14 +88,13 @@ def start():
                     print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + "  ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        stdout, stderr = portageExec.communicate()
 
                         for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                             if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        stdout, stderr = portageExec.communicate()
+                        portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -107,7 +107,7 @@ def start():
                         if not "binary" in portageOutput.rstrip():
                             print(portageOutput.rstrip())
 
-            stdout, stderr = portageExec.communicate()
+            portageExec.communicate()
             sys.exit("\n" + "Cannot proceed; Apply the above changes to your portage configuration files and try again; Quitting." + "\n")
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")

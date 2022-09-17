@@ -49,7 +49,7 @@ def start(pkgname):
                                 if not "Calculating dependencies" in portageOutput.rstrip():
                                     print(portageOutput.rstrip())
 
-                        stdout, stderr = portageExec.communicate()
+                        portageExec.communicate()
                         sisyphus.syncDatabase.syncLocal()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
@@ -92,5 +92,5 @@ def startqt(pkgname):
             if not "Calculating dependencies" in portageOutput.rstrip():
                 print(portageOutput.rstrip())
 
-    stdout, stderr = portageExec.communicate()
+    portageExec.communicate()
     sisyphus.syncDatabase.syncLocal()
