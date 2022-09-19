@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import atexit
+import io
 import subprocess
 import sys
 import sisyphus.checkEnvironment
