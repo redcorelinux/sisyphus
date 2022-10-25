@@ -4,7 +4,7 @@ import os
 import subprocess
 import sisyphus.getFilesystem
 
-def syncGentooRepo():
+def gentooRepo():
     os.chdir(sisyphus.getFilesystem.gentooRepoDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
@@ -15,7 +15,7 @@ def syncGentooRepo():
     gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
     gitExecStage2.wait()
 
-def syncRedcoreRepo():
+def redcoreRepo():
     os.chdir(sisyphus.getFilesystem.redcoreRepoDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
@@ -26,7 +26,7 @@ def syncRedcoreRepo():
     gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode().strip().replace('refs/remotes/','').split() + ['--quiet'], stdout=subprocess.PIPE)
     gitExecStage2.wait()
 
-def syncPortageConfigRepo():
+def portageConfigRepo():
     os.chdir(sisyphus.getFilesystem.portageConfigDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])

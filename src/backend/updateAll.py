@@ -11,9 +11,9 @@ import sisyphus.syncEnvironment
 
 def syncAll():
     sisyphus.purgeEnvironment.cache()
-    sisyphus.syncEnvironment.syncGentooRepo()
-    sisyphus.syncEnvironment.syncRedcoreRepo()
-    sisyphus.syncEnvironment.syncPortageConfigRepo()
+    sisyphus.syncEnvironment.gentooRepo()
+    sisyphus.syncEnvironment.redcoreRepo()
+    sisyphus.syncEnvironment.portageConfigRepo()
     sisyphus.syncDatabase.syncRemote()
 
 @animation.wait('fetching updates')
