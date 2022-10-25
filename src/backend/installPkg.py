@@ -49,7 +49,7 @@ def start(pkgname):
                                     print(portageOutput.rstrip())
 
                         portageExec.wait()
-                        sisyphus.syncDatabase.syncLocal()
+                        sisyphus.syncDatabase.localTable()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
                 else:
@@ -92,4 +92,4 @@ def startqt(pkgname):
                 print(portageOutput.rstrip())
 
     portageExec.wait()
-    sisyphus.syncDatabase.syncLocal()
+    sisyphus.syncDatabase.localTable()

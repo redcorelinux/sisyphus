@@ -12,7 +12,7 @@ def start(pkgname):
     if sisyphus.checkEnvironment.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + list(pkgname))
         portageExec.wait()
-        sisyphus.syncDatabase.syncLocal()
+        sisyphus.syncDatabase.localTable()
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
@@ -25,4 +25,4 @@ def startqt(pkgname):
         print(portageOutput.rstrip())
 
     portageExec.wait()
-    sisyphus.syncDatabase.syncLocal()
+    sisyphus.syncDatabase.localTable()

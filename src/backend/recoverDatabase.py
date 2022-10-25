@@ -16,5 +16,5 @@ def start():
     if os.path.exists(sisyphus.getFilesystem.localDatabase):
         os.remove(sisyphus.getFilesystem.localDatabase)
 
-    sisyphus.syncDatabase.syncRemote()
-    sisyphus.syncDatabase.syncLocal()
+    sisyphus.syncDatabase.remoteTable()
+    sisyphus.syncDatabase.localTable()

@@ -5,11 +5,11 @@ import shutil
 import urllib3
 import sqlite3
 import subprocess
-import sisyphus.getCSV
+import sisyphus.getEnvironment
 import sisyphus.getFilesystem
 
-def getRemote():
-    isPackageCsv,isDescriptionCsv = sisyphus.getCSV.start()
+def remoteCSV():
+    packagesCsvURL,descriptionCsvURL = sisyphus.getEnvironment.csvURL()
     http = urllib3.PoolManager()
 
     with http.request('GET', isPackageCsv, preload_content=False) as tmp_buffer, open(sisyphus.getFilesystem.remotePackagesCsv, 'wb') as output_file:
@@ -18,11 +18,11 @@ def getRemote():
     with http.request('GET', isDescriptionCsv, preload_content=False) as tmp_buffer, open(sisyphus.getFilesystem.remoteDescriptionsCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-def makeLocal():
+def localCSV():
     subprocess.call(['/usr/share/sisyphus/helpers/make_local_csv'])
 
-def syncRemote():
-    getRemote()
+def remoteTable():
+    remoteCSV()
 
     sisyphusdb = sqlite3.connect(sisyphus.getFilesystem.localDatabase)
     sisyphusdb.cursor().execute('''drop table if exists remote_packages''')
@@ -41,8 +41,8 @@ def syncRemote():
     sisyphusdb.commit()
     sisyphusdb.close()
 
-def syncLocal():
-    makeLocal()
+def localTable():
+    localCSV()
 
     sisyphusdb = sqlite3.connect(sisyphus.getFilesystem.localDatabase)
     sisyphusdb.cursor().execute('''drop table if exists local_packages''')

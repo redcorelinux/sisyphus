@@ -14,7 +14,7 @@ def syncAll():
     sisyphus.syncEnvironment.gentooRepo()
     sisyphus.syncEnvironment.redcoreRepo()
     sisyphus.syncEnvironment.portageConfigRepo()
-    sisyphus.syncDatabase.syncRemote()
+    sisyphus.syncDatabase.remoteTable()
 
 @animation.wait('fetching updates')
 def start():

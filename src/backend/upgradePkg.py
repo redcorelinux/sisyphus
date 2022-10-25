@@ -50,7 +50,7 @@ def start():
                                     print(portageOutput.rstrip())
 
                         portageExec.wait()
-                        sisyphus.syncDatabase.syncLocal()
+                        sisyphus.syncDatabase.localTable()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
                 else:
@@ -97,6 +97,6 @@ def startqt():
                         print(portageOutput.rstrip())
 
             portageExec.wait()
-            sisyphus.syncDatabase.syncLocal()
+            sisyphus.syncDatabase.localTable()
         else:
             print("\n" + "No package upgrades found; Quitting." + "\n")
