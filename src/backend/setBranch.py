@@ -11,7 +11,7 @@ import sisyphus.setJobs
 import sisyphus.setProfile
 
 def getBranchRemote(branch,remote):
-    portageRemote = []
+    gentooRemote = []
     redcoreRemote = []
     portageConfigRemote = []
     if "master" in branch:
@@ -40,29 +40,29 @@ def getBranchRemote(branch,remote):
                 "Error: Invalid branch" + " " + "'" + str(branch) + "'" +" " +  "(options : master, next)"
                 )
 
-    portageRemote = [remote, sisyphus.getFilesystem.gentooRepo]
+    gentooRemote = [remote, sisyphus.getFilesystem.gentooRepo]
     redcoreRemote = [remote, sisyphus.getFilesystem.redcoreRepo]
     portageConfigRemote = [remote, sisyphus.getFilesystem.portageConfigRepo]
 
-    return portageRemote,redcoreRemote,portageConfigRemote
+    return gentooRemote,redcoreRemote,portageConfigRemote
 
 @animation.wait('injecting Gentoo Linux portage tree')
-def injectStage1(branch,remote):
-    portageRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
+def injectGentooRepo(branch,remote):
+    gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getFilesystem.gentooRepoDir, '.git')):
-        git.Repo.clone_from("/".join(portageRemote), sisyphus.getFilesystem.gentooRepoDir, depth=1, branch=branch)
+        git.Repo.clone_from("/".join(gentooRemote), sisyphus.getFilesystem.gentooRepoDir, depth=1, branch=branch)
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
-def injectStage2(branch,remote):
-    portageRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
+def injectRedcoreRepo(branch,remote):
+    gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getFilesystem.redcoreRepoDir, '.git')):
         git.Repo.clone_from("/".join(redcoreRemote), sisyphus.getFilesystem.redcoreRepoDir, depth=1, branch=branch)
 
 @animation.wait('injecting Redcore Linux portage config')
-def injectStage3(branch,remote):
-    portageRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
+def injectPortageConfigRepo(branch,remote):
+    gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getFilesystem.portageConfigDir, '.git')):
         git.Repo.clone_from("/".join(portageConfigRemote), sisyphus.getFilesystem.portageConfigDir, depth=1, branch=branch)
@@ -84,9 +84,9 @@ def start(branch,remote):
     if sisyphus.checkEnvironment.root():
         sisyphus.purgeEnvironment.branch()
         sisyphus.purgeEnvironment.metadata()
-        injectStage1(branch,remote)
-        injectStage2(branch,remote)
-        injectStage3(branch,remote)
+        injectGentooRepo(branch,remote)
+        injectRedcoreRepo(branch,remote)
+        injectPortageConfigRepo(branch,remote)
         sisyphus.setJobs.start()
         sisyphus.setProfile.start()
         giveWarning(branch,remote)
