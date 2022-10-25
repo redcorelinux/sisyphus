@@ -7,7 +7,7 @@ import subprocess
 import sys
 import wget
 import sisyphus.checkEnvironment
-import sisyphus.getBinhost
+import sisyphus.getEnvironment
 import sisyphus.getFilesystem
 import sisyphus.resolveDeps
 import sisyphus.syncDatabase
@@ -17,7 +17,7 @@ def start():
     if sisyphus.checkEnvironment.root():
         sisyphus.updateAll.start()
 
-        binhostURL = sisyphus.getBinhost.start()
+        binhostURL = sisyphus.getEnvironment.binhostURL()
         areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world()
 
         if needsConfig == 0:

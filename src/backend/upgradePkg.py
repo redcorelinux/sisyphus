@@ -8,7 +8,7 @@ import subprocess
 import sys
 import wget
 import sisyphus.checkEnvironment
-import sisyphus.getBinhost
+import sisyphus.getEnvironment
 import sisyphus.getFilesystem
 import sisyphus.killPortage
 import sisyphus.resolveDeps
@@ -19,7 +19,7 @@ def start():
     if sisyphus.checkEnvironment.root():
         sisyphus.updateAll.start()
 
-        isBinhost = sisyphus.getBinhost.start()
+        binhostURL = sisyphus.getEnvironment.binhostURL()
         areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world()
 
         if needsConfig == 0:
@@ -30,7 +30,7 @@ def start():
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(isBinhost + binary)
+                            wget.download(binhostURL + binary)
                             print("\n")
 
                             if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0])):
@@ -64,7 +64,7 @@ def start():
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
 def startqt():
-    isBinhost = sisyphus.getBinhost.start()
+    binhostURL = sisyphus.getEnvironment.binhostURL()
     areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world.__wrapped__() #undecorate
 
     if not len(areSources) == 0:
@@ -75,7 +75,7 @@ def startqt():
             print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
             for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                 print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                wget.download(isBinhost + binary)
+                wget.download(binhostURL + binary)
                 print("\n")
 
                 if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0])):

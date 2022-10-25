@@ -1,6 +1,5 @@
 from .autoRemoveAll import *
 from .checkEnvironment import *
-from .getBinhost import *
 from .getEnvironment import *
 from .getFilesystem import *
 from .installPkg import *

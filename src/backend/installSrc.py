@@ -7,7 +7,7 @@ import subprocess
 import sys
 import wget
 import sisyphus.checkEnvironment
-import sisyphus.getBinhost
+import sisyphus.getEnvironment
 import sisyphus.getFilesystem
 import sisyphus.resolveDeps
 import sisyphus.syncDatabase
@@ -17,7 +17,7 @@ def start(pkgname):
     if sisyphus.checkEnvironment.root():
         sisyphus.updateAll.start()
 
-        isBinhost = sisyphus.getBinhost.start()
+        binhostURL = sisyphus.getEnvironment.binhostURL()
         areBinaries,areSources,needsConfig = sisyphus.resolveDeps.package(pkgname)
 
         if needsConfig == 0:
@@ -28,7 +28,7 @@ def start(pkgname):
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(isBinhost + binary)
+                            wget.download(binhostURL + binary)
                             print("\n")
 
                             if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0])):
@@ -61,7 +61,7 @@ def start(pkgname):
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(isBinhost + binary)
+                            wget.download(binhostURL + binary)
                             print("\n")
 
                             if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0])):

@@ -4,7 +4,7 @@ import animation
 import sys
 import time
 import sisyphus.checkEnvironment
-import sisyphus.getBinhost
+import sisyphus.getEnvironment
 import sisyphus.purgeEnvironment
 import sisyphus.syncDatabase
 import sisyphus.syncEnvironment
@@ -19,30 +19,30 @@ def syncAll():
 @animation.wait('fetching updates')
 def start():
     activeBranch = sisyphus.checkEnvironment.branch()
-    isBinhost = sisyphus.getBinhost.start()
+    binhostURL = sisyphus.getEnvironment.binhostURL()
     isSane = sisyphus.checkEnvironment.sanity()
 
     if isSane == 1:
         syncAll()
     else:
-        if "packages-next" in isBinhost:
-            print("\nCurrent branch: '" + activeBranch + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
+        if "packages-next" in binhostURL:
+            print("\nCurrent branch: '" + activeBranch + "' (stable)" + "\nCurrent binhost: '" + binhostURL + "' (testing)")
         else:
-            print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + isBinhost + "' (stable)")
+            print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + binhostURL + "' (stable)")
         sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
 
 def startqt():
     activeBranch = sisyphus.checkEnvironment.branch()
-    isBinhost = sisyphus.getBinhost.start()
+    binhostURL = sisyphus.getEnvironment.binhostURL()
     isSane = sisyphus.checkEnvironment.sanity()
 
     if isSane == 1:
         syncAll()
     else:
-        if "packages-next" in isBinhost:
-            print("\nCurrent branch: '" + activeBranch + "' (stable)" + "\nCurrent binhost: '" + isBinhost + "' (testing)")
+        if "packages-next" in binhostURL:
+            print("\nCurrent branch: '" + activeBranch + "' (stable)" + "\nCurrent binhost: '" + binhostURL + "' (testing)")
         else:
-            print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + isBinhost + "' (stable)")
+            print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + binhostURL + "' (stable)")
         print("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting in 10 seconds.\n")
         t = int(10)
         while t:

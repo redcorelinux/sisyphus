@@ -2,7 +2,7 @@
 
 import os
 import subprocess
-import sisyphus.getBinhost
+import sisyphus.getEnvironment
 import sisyphus.getFilesystem
 
 def root():
@@ -25,10 +25,10 @@ def branch():
 
 def sanity():
     activeBranch = branch()
-    isBinhost = sisyphus.getBinhost.start()
+    binhostURL = sisyphus.getEnvironment.binhostURL()
     isSane = int()
 
-    if "packages-next" in isBinhost:
+    if "packages-next" in binhostURL:
         if activeBranch == "next":
             isSane = int(1)
         else:
