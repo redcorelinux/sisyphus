@@ -40,7 +40,7 @@ def getBranchRemote(branch,remote):
                 "Error: Invalid branch" + " " + "'" + str(branch) + "'" +" " +  "(options : master, next)"
                 )
 
-    portageRemote = [remote, sisyphus.getFilesystem.portageRepo]
+    portageRemote = [remote, sisyphus.getFilesystem.gentooRepo]
     redcoreRemote = [remote, sisyphus.getFilesystem.redcoreRepo]
     portageConfigRemote = [remote, sisyphus.getFilesystem.portageConfigRepo]
 
@@ -50,8 +50,8 @@ def getBranchRemote(branch,remote):
 def injectStage1(branch,remote):
     portageRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.getFilesystem.portageRepoDir, '.git')):
-        git.Repo.clone_from("/".join(portageRemote), sisyphus.getFilesystem.portageRepoDir, depth=1, branch=branch)
+    if not os.path.isdir(os.path.join(sisyphus.getFilesystem.gentooRepoDir, '.git')):
+        git.Repo.clone_from("/".join(portageRemote), sisyphus.getFilesystem.gentooRepoDir, depth=1, branch=branch)
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
 def injectStage2(branch,remote):

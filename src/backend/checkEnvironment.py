@@ -11,8 +11,8 @@ def root():
 def branch():
     activeBranch = None
 
-    if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageRepoDir, '.git')):
-        os.chdir(sisyphus.getFilesystem.portageRepoDir)
+    if os.path.isdir(os.path.join(sisyphus.getFilesystem.gentooRepoDir, '.git')):
+        os.chdir(sisyphus.getFilesystem.gentooRepoDir)
         localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
         if localBranch.decode().strip() == 'master':

@@ -7,14 +7,14 @@ import sisyphus.getFilesystem
 
 @animation.wait('purging branch configuration')
 def branch():
-    if os.path.isdir(sisyphus.getFilesystem.portageRepoDir):
-        for files in os.listdir(sisyphus.getFilesystem.portageRepoDir):
-            if os.path.isfile(os.path.join(sisyphus.getFilesystem.portageRepoDir, files)):
-                os.remove(os.path.join(sisyphus.getFilesystem.portageRepoDir, files))
+    if os.path.isdir(sisyphus.getFilesystem.gentooRepoDir):
+        for files in os.listdir(sisyphus.getFilesystem.gentooRepoDir):
+            if os.path.isfile(os.path.join(sisyphus.getFilesystem.gentooRepoDir, files)):
+                os.remove(os.path.join(sisyphus.getFilesystem.gentooRepoDir, files))
             else:
-                shutil.rmtree(os.path.join(sisyphus.getFilesystem.portageRepoDir, files))
+                shutil.rmtree(os.path.join(sisyphus.getFilesystem.gentooRepoDir, files))
     else:
-        os.makedirs(sisyphus.getFilesystem.portageRepoDir)
+        os.makedirs(sisyphus.getFilesystem.gentooRepoDir)
 
     if os.path.isdir(sisyphus.getFilesystem.redcoreRepoDir):
         for files in os.listdir(sisyphus.getFilesystem.redcoreRepoDir):

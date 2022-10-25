@@ -5,11 +5,11 @@ import platform
 remoteGitlab = 'https://gitlab.com/redcore'
 remotePagure = 'https://pagure.io/redcore'
 
-portageRepo = 'portage.git'
+gentooRepo = 'portage.git'
 redcoreRepo = 'redcore-desktop.git'
 portageConfigRepo = 'redcore-build.git'
 
-portageRepoDir = '/usr/ports/gentoo'
+gentooRepoDir = '/usr/ports/gentoo'
 redcoreRepoDir = '/usr/ports/redcore'
 portageConfigDir = '/opt/redcore-build'
 portageCacheDir = '/var/cache/packages'

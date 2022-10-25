@@ -5,7 +5,7 @@ import subprocess
 import sisyphus.getFilesystem
 
 def syncStage1():
-    os.chdir(sisyphus.getFilesystem.portageRepoDir)
+    os.chdir(sisyphus.getFilesystem.gentooRepoDir)
     localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     remoteBranch = subprocess.check_output(['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
