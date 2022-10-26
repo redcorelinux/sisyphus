@@ -27,7 +27,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.filterDatabases = OrderedDict([
             ('all packages', 'all'),
             ('installed packages', 'installed'),
-            ('available packages', 'installable'),
+            ('alien packages', 'alien'),
+            ('available packages', 'available'),
             ('upgradable packages', 'upgradable')
         ])
         self.databaseFilter.addItems(self.filterDatabases.keys())
@@ -129,7 +130,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 i.category AS cat,
                 i.name as pn,
                 i.version as iv,
-                IFNULL(a.version, 'None') AS av,
+                IFNULL(a.version, 'alien') AS av,
                 d.description AS descr
                 FROM local_packages AS i LEFT OUTER JOIN remote_packages as a
                 ON i.category = a.category
@@ -165,7 +166,22 @@ class Sisyphus(QtWidgets.QMainWindow):
 				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                 WHERE %s LIKE %s %s
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
-            ('installable', '''SELECT
+            ('alien', '''SELECT
+                i.category AS cat,
+                i.name AS pn,
+                i.version as iv,
+                IFNULL(a.version, 'alien') AS av,
+                d.description AS desc
+                FROM local_packages AS i
+                LEFT JOIN remote_packages AS a
+                ON a.category = i.category
+                AND a.name = i.name
+                AND a.slot = i.slot
+                LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
+                WHERE %s LIKE %s %s
+                AND av IS 'alien'
+            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
+            ('available', '''SELECT
                 a.category AS cat,
                 a.name AS pn,
                 i.version as iv,
