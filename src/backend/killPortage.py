@@ -1,4 +1,4 @@
 #!/usr/bin/python3
 
-def start(portageCmd):
+def cliExec(portageCmd):
     portageCmd.terminate()

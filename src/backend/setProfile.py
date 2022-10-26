@@ -5,7 +5,7 @@ import platform
 import subprocess
 
 @animation.wait('setting up profile')
-def start():
+def cliExec():
     if platform.uname()[4] == 'x86_64':
         eselectExec = subprocess.Popen(['eselect', 'profile', 'set', 'default/linux/amd64/17.1/hardened'])
         eselectExec.wait()

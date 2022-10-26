@@ -13,9 +13,9 @@ import sisyphus.resolveDeps
 import sisyphus.syncDatabase
 import sisyphus.updateAll
 
-def start(pkgname):
+def cliExec(pkgname):
     if sisyphus.checkEnvironment.root():
-        sisyphus.updateAll.start()
+        sisyphus.updateAll.cliExec()
 
         binhostURL = sisyphus.getEnvironment.binhostURL()
         areBinaries,areSources,needsConfig = sisyphus.resolveDeps.package(pkgname)

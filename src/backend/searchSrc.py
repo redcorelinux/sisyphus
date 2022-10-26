@@ -2,5 +2,5 @@
 
 import subprocess
 
-def start(pkgname):
+def cliExec(pkgname):
     subprocess.call(['emerge', '--search', '--getbinpkg'] + list(pkgname))

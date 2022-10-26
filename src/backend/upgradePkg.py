@@ -15,9 +15,9 @@ import sisyphus.resolveDeps
 import sisyphus.syncDatabase
 import sisyphus.updateAll
 
-def start():
+def cliExec():
     if sisyphus.checkEnvironment.root():
-        sisyphus.updateAll.start()
+        sisyphus.updateAll.cliExec()
 
         binhostURL = sisyphus.getEnvironment.binhostURL()
         areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world()
@@ -63,7 +63,7 @@ def start():
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
-def startqt():
+def guiExec():
     binhostURL = sisyphus.getEnvironment.binhostURL()
     areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world.__wrapped__() #undecorate
 
@@ -89,7 +89,7 @@ def startqt():
 
             portageExec = subprocess.Popen(['emerge', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # kill portage if the program dies or it's terminated by the user
-            atexit.register(sisyphus.killPortage.start, portageExec)
+            atexit.register(sisyphus.killPortage.cliExec, portageExec)
 
             for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                 if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():

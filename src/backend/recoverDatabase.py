@@ -6,7 +6,7 @@ import sisyphus.getFilesystem
 import sisyphus.syncDatabase
 
 @animation.wait('recovering databases')
-def start():
+def cliExec():
     if os.path.exists(sisyphus.getFilesystem.remotePackagesCsv):
         os.remove(sisyphus.getFilesystem.remotePackagesCsv)
     if os.path.exists(sisyphus.getFilesystem.remoteDescriptionsCsv):

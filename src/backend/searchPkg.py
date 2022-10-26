@@ -124,9 +124,9 @@ def showSearch(filter, cat, pn, desc, single):
                 print(f"{cpn:45} {str(pkg['iv']):20} {str(pkg['av'])}")
         print(f"\nFound {len(pkglist)} matching package(s) ...")
 
-def start(filter, cat, pn, desc, single):
+def cliExec(filter, cat, pn, desc, single):
     if sisyphus.checkEnvironment.root():
-        sisyphus.updateAll.start()
+        sisyphus.updateAll.cliExec()
     else:
         print("\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n")
 

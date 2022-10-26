@@ -79,16 +79,15 @@ def giveWarning(branch,remote):
         print("Hint : Use the even numbers (2,4,6,8) from 'sisyphus mirror list'")
         print("Examples : 'sisyphus mirror set 4' or 'sisyphus mirror set 8'\n")
 
-
-def start(branch,remote):
+def cliExec(branch,remote):
     if sisyphus.checkEnvironment.root():
         sisyphus.purgeEnvironment.branch()
         sisyphus.purgeEnvironment.metadata()
         injectGentooRepo(branch,remote)
         injectRedcoreRepo(branch,remote)
         injectPortageConfigRepo(branch,remote)
-        sisyphus.setJobs.start()
-        sisyphus.setProfile.start()
+        sisyphus.setJobs.cliExec()
+        sisyphus.setProfile.cliExec()
         giveWarning(branch,remote)
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")

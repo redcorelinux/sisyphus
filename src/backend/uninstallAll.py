@@ -27,7 +27,7 @@ def cliExecForce(pkgname):
 def guiExec(pkgname):
     portageExec = subprocess.Popen(['emerge', '--depclean'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
-    atexit.register(sisyphus.killPortage.start, portageExec)
+    atexit.register(sisyphus.killPortage.cliExec, portageExec)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         print(portageOutput.rstrip())

@@ -8,7 +8,7 @@ import sisyphus.checkEnvironment
 import sisyphus.killPortage
 import sisyphus.syncDatabase
 
-def start():
+def cliExec():
     if sisyphus.checkEnvironment.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'])
         portageExec.wait()
@@ -16,10 +16,10 @@ def start():
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
-def startqt():
+def guiExec():
     portageExec = subprocess.Popen(['emerge', '--depclean'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
-    atexit.register(sisyphus.killPortage.start, portageExec)
+    atexit.register(sisyphus.killPortage.cliExec, portageExec)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         print(portageOutput.rstrip())

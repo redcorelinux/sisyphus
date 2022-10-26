@@ -374,15 +374,15 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpdate(self):
         self.started.emit()
-        sisyphus.setJobs.start()
-        sisyphus.updateAll.startqt()
+        sisyphus.setJobs.cliExec()
+        sisyphus.updateAll.guiExec()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startInstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.installPkg.startqt(pkgname)
+        sisyphus.installPkg.guiExec(pkgname)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -395,13 +395,13 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        sisyphus.upgradePkg.startqt()
+        sisyphus.upgradePkg.guiExec()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        sisyphus.autoRemoveAll.startqt()
+        sisyphus.autoRemoveAll.guiExec()
         self.finished.emit()
 
 
