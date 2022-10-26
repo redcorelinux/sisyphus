@@ -238,7 +238,7 @@ Use the -f (--filter) option to select only packages of interest. Possible value
 
     available - search for available packages but not installed
 
-    upgradeable - search for installed packages where installed version is different from available version
+    upgradable - search for installed packages where installed version is different from available version
 
 !!! NOTE !!!:
 
@@ -251,7 +251,7 @@ To search for all matching '--filter' packages escape it, or surround it with qu
 
     sisyphus search '*' -f available        # OK
 
-    sisyphus search '' -f upgradeable       # OK
+    sisyphus search '' -f upgradable       # OK
 
 
 To search for all (including source) packages, use the --ebuild option.
@@ -268,7 +268,7 @@ $ sisyphus search [OPTIONS] PACKAGE...
 **Options**:
 
 * `-d, --description TEXT`: Match description.
-* `-f, --filter [all|alien|installed|available|upgradeable]`: [default: all]
+* `-f, --filter [all|alien|installed|available|upgradable]`: [default: all]
 * `-q`: Short (one line) output.
 * `-e, --ebuild`: Search in ebuilds (slower).
 * `--help`: Show this message and exit.

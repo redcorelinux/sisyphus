@@ -74,7 +74,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
     				LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
                     WHERE cat LIKE '%{cat}%' AND pn LIKE '%{pn}%' AND desc LIKE '%{desc}%' {NOVIRT}
                     AND iv IS NULL''',
-        'upgradeable': f'''SELECT
+        'upgradable': f'''SELECT
                     i.category AS cat,
                     i.name AS pn,
                     i.version as iv,

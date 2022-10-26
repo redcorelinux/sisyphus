@@ -25,7 +25,7 @@ class Filter(str, Enum):
     alien = 'alien'
     installed = 'installed'
     available = 'available'
-    upgradeable = 'upgradeable'
+    upgradable = 'upgradable'
 
 @app.command("search")
 def search(package: List[str] = typer.Argument(...),
@@ -71,7 +71,7 @@ def search(package: List[str] = typer.Argument(...),
 
         available - search for available packages but not installed
 
-        upgradeable - search for installed packages where installed version is different from available version
+        upgradable - search for installed packages where installed version is different from available version
 
     !!! NOTE !!!:
 
@@ -84,7 +84,7 @@ def search(package: List[str] = typer.Argument(...),
 
         sisyphus search '*' -f available        # OK
 
-        sisyphus search '' -f upgradeable       # OK
+        sisyphus search '' -f upgradable       # OK
 
 
     To search for all (including source) packages, use the --ebuild option.
