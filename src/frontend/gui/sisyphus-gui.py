@@ -15,26 +15,26 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.show()
 
         self.filterApplications = OrderedDict([
-            ('name', 'pn'),
-            ('category', 'cat'),
-            ('description', 'descr')
+            ('Package Name', 'pn'),
+            ('Package Category', 'cat'),
+            ('Package Description', 'descr')
         ])
         self.applicationFilter.addItems(self.filterApplications.keys())
-        self.applicationFilter.setCurrentText('name')
+        self.applicationFilter.setCurrentText('Package Name')
         self.applicationFilter.currentIndexChanged.connect(self.setApplicationFilter)
-        Sisyphus.applicationView = self.filterApplications['name']
+        Sisyphus.applicationView = self.filterApplications['Package Name']
 
         self.filterDatabases = OrderedDict([
-            ('all packages', 'all'),
-            ('installed packages', 'installed'),
-            ('alien packages', 'alien'),
-            ('available packages', 'available'),
-            ('upgradable packages', 'upgradable')
+            ('All Packages', 'all'),
+            ('Installed Packages', 'installed'),
+            ('Alien Packages', 'alien'),
+            ('Available Packages', 'available'),
+            ('Upgradable Packages', 'upgradable')
         ])
         self.databaseFilter.addItems(self.filterDatabases.keys())
-        self.databaseFilter.setCurrentText('all packages')
+        self.databaseFilter.setCurrentText('All packages')
         self.databaseFilter.currentIndexChanged.connect(self.setDatabaseFilter)
-        Sisyphus.databaseView = self.filterDatabases['all packages']
+        Sisyphus.databaseView = self.filterDatabases['All packages']
 
         Sisyphus.searchTerm = "'%%'"
 
