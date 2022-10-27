@@ -42,11 +42,7 @@ def cliExec(pkgname):
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
 
-                        portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-                            if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
-                                if not "Calculating dependencies" in portageOutput.rstrip():
-                                    print(portageOutput.rstrip())
+                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                         portageExec.wait()
                         sisyphus.syncDatabase.localTable()
@@ -82,14 +78,12 @@ def guiExec(pkgname):
         if os.path.exists(binary.rstrip().split("/")[1]):
             os.remove(binary.rstrip().split("/")[1])
 
-    portageExec = subprocess.Popen(['emerge', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killPortage.cliExec, portageExec)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-        if not "These are the packages that would be merged, in order:" in portageOutput.rstrip():
-            if not "Calculating dependencies" in portageOutput.rstrip():
-                print(portageOutput.rstrip())
+        print(portageOutput.rstrip())
 
     portageExec.wait()
     sisyphus.syncDatabase.localTable()
