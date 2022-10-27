@@ -11,7 +11,7 @@ def package(pkgname):
     portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = portageExec.communicate()
 
-    for portageOutput in stderr.decode('ascii').splitlines():
+    for portageOutput in stderr.decode('utf-8').splitlines():
         if "The following keyword changes are necessary to proceed:" in portageOutput:
             needsConfig = int(1)
 
@@ -24,7 +24,7 @@ def package(pkgname):
         if "The following REQUIRED_USE flag constraints are unsatisfied:" in portageOutput:
             needsConfig = int(1)
 
-    for portageOutput in stdout.decode('ascii').splitlines():
+    for portageOutput in stdout.decode('utf-8').splitlines():
         if "[binary" in portageOutput:
             isBinary = portageOutput.split("]")[1].split("[")[0].strip(" ")
             areBinaries.append(isBinary)
@@ -43,7 +43,7 @@ def world():
     portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = portageExec.communicate()
 
-    for portageOutput in stderr.decode('ascii').splitlines():
+    for portageOutput in stderr.decode('utf-8').splitlines():
         if "The following keyword changes are necessary to proceed:" in portageOutput:
             needsConfig = int(1)
 
@@ -56,7 +56,7 @@ def world():
         if "The following REQUIRED_USE flag constraints are unsatisfied:" in portageOutput:
             needsConfig = int(1)
 
-    for portageOutput in stdout.decode('ascii').splitlines():
+    for portageOutput in stdout.decode('utf-8').splitlines():
         if "[binary" in portageOutput:
             isBinary = portageOutput.split("]")[1].split("[")[0].strip(" ")
             areBinaries.append(isBinary)

@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 
+import io
 import subprocess
 
 def binhostURL():
     binhostURL = []
     portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = portageExec.communicate()
 
-    for portageOutput in stdout.decode('ascii').splitlines():
+    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput:
             binhostURL = portageOutput.rstrip().split("=")[1].strip('\"')
 
+    portageExec.wait()
     return binhostURL
 
 def csvURL():
