@@ -126,7 +126,7 @@ def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "
     if not ebuild:
         sisyphus.installpkg.cliExec(pkgname)
     else:
-        sisyphus.installSrc.cliExec(pkgname)
+        sisyphus.installsrc.cliExec(pkgname)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
