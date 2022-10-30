@@ -6,7 +6,7 @@ import time
 import sisyphus.checkenv
 import sisyphus.getenv
 import sisyphus.purgeenv
-import sisyphus.syncDatabase
+import sisyphus.syncdb
 import sisyphus.syncEnvironment
 
 def syncAll():
@@ -14,7 +14,7 @@ def syncAll():
     sisyphus.syncEnvironment.gentooRepo()
     sisyphus.syncEnvironment.redcoreRepo()
     sisyphus.syncEnvironment.portageConfigRepo()
-    sisyphus.syncDatabase.remoteTable()
+    sisyphus.syncdb.remoteTable()
 
 @animation.wait('fetching updates')
 def cliExec():

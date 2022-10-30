@@ -8,7 +8,7 @@ import sisyphus.checkenv
 import sisyphus.getfs
 import sisyphus.purgeenv
 import sisyphus.setjobs
-import sisyphus.setProfile
+import sisyphus.setprofile
 
 def getBranchRemote(branch,remote):
     gentooRemote = []
@@ -87,7 +87,7 @@ def cliExec(branch,remote):
         injectRedcoreRepo(branch,remote)
         injectPortageConfigRepo(branch,remote)
         sisyphus.setjobs.cliExec()
-        sisyphus.setProfile.cliExec()
+        sisyphus.setprofile.cliExec()
         giveWarning(branch,remote)
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")

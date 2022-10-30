@@ -10,7 +10,7 @@ import sisyphus.checkenv
 import sisyphus.getenv
 import sisyphus.getfs
 import sisyphus.solvedeps
-import sisyphus.syncDatabase
+import sisyphus.syncdb
 import sisyphus.updateAll
 
 def cliExec(pkgname):
@@ -43,7 +43,7 @@ def cliExec(pkgname):
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                         portageExec.wait()
-                        sisyphus.syncDatabase.localTable()
+                        sisyphus.syncdb.localTable()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
                 else:
@@ -71,7 +71,7 @@ def cliExec(pkgname):
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                         portageExec.wait()
-                        sisyphus.syncDatabase.localTable()
+                        sisyphus.syncdb.localTable()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
                 else:
@@ -80,7 +80,7 @@ def cliExec(pkgname):
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                         portageExec.wait()
-                        sisyphus.syncDatabase.localTable()
+                        sisyphus.syncdb.localTable()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
         else:

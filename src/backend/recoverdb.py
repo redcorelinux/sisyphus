@@ -3,7 +3,7 @@
 import animation
 import os
 import sisyphus.getfs
-import sisyphus.syncDatabase
+import sisyphus.syncdb
 
 @animation.wait('recovering databases')
 def cliExec():
@@ -16,5 +16,5 @@ def cliExec():
     if os.path.exists(sisyphus.getfs.localDatabase):
         os.remove(sisyphus.getfs.localDatabase)
 
-    sisyphus.syncDatabase.remoteTable()
-    sisyphus.syncDatabase.localTable()
+    sisyphus.syncdb.remoteTable()
+    sisyphus.syncdb.localTable()

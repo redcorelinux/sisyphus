@@ -13,8 +13,8 @@ from .searchsrc import *
 from .setbranch import *
 from .setjobs import *
 from .setMirror import *
-from .setProfile import *
-from .syncDatabase import *
+from .setprofile import *
+from .syncdb import *
 from .syncEnvironment import *
 from .syncSPM import *
 from .sysInfo import *
