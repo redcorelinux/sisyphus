@@ -5,8 +5,10 @@ import subprocess
 import sisyphus.getenv
 import sisyphus.getfs
 
+
 def root():
     return True if os.getuid() == 0 else False
+
 
 def branch():
     activeBranch = None
@@ -21,7 +23,8 @@ def branch():
         if localBranch.decode().strip() == 'next':
            activeBranch = str('next')
 
-        return activeBranch
+    return activeBranch
+
 
 def sanity():
     activeBranch = branch()

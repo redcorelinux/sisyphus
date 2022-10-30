@@ -15,6 +15,7 @@ import sisyphus.solvedeps
 import sisyphus.syncdb
 import sisyphus.update
 
+
 def start():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
@@ -31,7 +32,7 @@ def start():
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
                             wget.download(binhostURL + binary)
-                            print("\n")
+                            print("")
 
                             if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
                                 shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
@@ -57,6 +58,7 @@ def start():
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
+
 def estart():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
@@ -73,7 +75,7 @@ def estart():
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
                             wget.download(binhostURL + binary)
-                            print("\n")
+                            print("")
 
                             if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
                                 shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
@@ -100,7 +102,7 @@ def estart():
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                             print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
                             wget.download(binhostURL + binary)
-                            print("\n")
+                            print("")
 
                             if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
                                 shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
@@ -131,6 +133,7 @@ def estart():
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
+
 def startx():
     binhostURL = sisyphus.getenv.binhostURL()
     areBinaries,areSources,needsConfig = sisyphus.solvedeps.world.__wrapped__() #undecorate
@@ -144,7 +147,7 @@ def startx():
             for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
                 print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
                 wget.download(binhostURL + binary)
-                print("\n")
+                print("")
 
                 if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
                     shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))

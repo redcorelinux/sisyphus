@@ -9,12 +9,14 @@ import sisyphus.purgeenv
 import sisyphus.syncdb
 import sisyphus.syncenv
 
+
 def syncAll():
     sisyphus.purgeenv.cache()
     sisyphus.syncenv.gentooRepo()
     sisyphus.syncenv.redcoreRepo()
     sisyphus.syncenv.portageConfigRepo()
     sisyphus.syncdb.remoteTable()
+
 
 @animation.wait('fetching updates')
 def start():
@@ -30,6 +32,7 @@ def start():
         else:
             print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + binhostURL + "' (stable)")
         sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
+
 
 def startx():
     activeBranch = sisyphus.checkenv.branch()

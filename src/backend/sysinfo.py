@@ -2,6 +2,7 @@
 
 import subprocess
 
+
 def show():
     subprocess.call(['emerge', '--info'])
 

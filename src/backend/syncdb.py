@@ -8,6 +8,7 @@ import subprocess
 import sisyphus.getenv
 import sisyphus.getfs
 
+
 def remoteCSV():
     packagesCsvURL,descriptionsCsvURL = sisyphus.getenv.csvURL()
     http = urllib3.PoolManager()
@@ -18,8 +19,10 @@ def remoteCSV():
     with http.request('GET', descriptionsCsvURL, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remoteDescriptionsCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
+
 def localCSV():
     subprocess.call(['/usr/share/sisyphus/helpers/make_local_csv'])
+
 
 def remoteTable():
     remoteCSV()
@@ -40,6 +43,7 @@ def remoteTable():
 
     sisyphusdb.commit()
     sisyphusdb.close()
+
 
 def localTable():
     localCSV()

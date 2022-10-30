@@ -5,6 +5,7 @@ import os
 import shutil
 import sisyphus.getfs
 
+
 @animation.wait('purging branch configuration')
 def branch():
     if os.path.isdir(sisyphus.getfs.gentooRepoDir):
@@ -34,6 +35,7 @@ def branch():
     else:
         os.makedirs(sisyphus.getfs.portageConfigDir)
 
+
 def cache():
     if os.path.isdir(sisyphus.getfs.portageCacheDir):
         for files in os.listdir(sisyphus.getfs.portageCacheDir):
@@ -41,6 +43,7 @@ def cache():
                 os.remove(os.path.join(sisyphus.getfs.portageCacheDir, files))
             else:
                 shutil.rmtree(os.path.join(sisyphus.getfs.portageCacheDir, files))
+
 
 def metadata():
     if os.path.isdir(sisyphus.getfs.portageMetadataDir):

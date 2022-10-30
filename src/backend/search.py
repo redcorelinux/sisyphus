@@ -6,6 +6,7 @@ import sisyphus.checkenv
 import sisyphus.getfs
 import sisyphus.update
 
+
 def searchDB(filter, cat = '', pn = '', desc = ''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
     SELECTS = {
@@ -99,8 +100,10 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
 
     return rows
 
+
 def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
+
 
 def showSearch(filter, cat, pn, desc, single):
     print(f"Searching {filter} packages ... \n")
@@ -125,6 +128,7 @@ def showSearch(filter, cat, pn, desc, single):
                 print(f"{cpn:45} {str(pkg['iv']):20} {str(pkg['av'])}")
         print(f"\nFound {len(pkglist)} matching package(s) ...")
 
+
 def start(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
@@ -132,6 +136,7 @@ def start(filter, cat, pn, desc, single):
         print("\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n")
 
     showSearch(filter, cat, pn, desc, single)
+
 
 def estart(pkgname):
     subprocess.call(['emerge', '--search', '--getbinpkg'] + list(pkgname))

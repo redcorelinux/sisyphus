@@ -8,6 +8,7 @@ import sisyphus.checkenv
 import sisyphus.killemerge
 import sisyphus.syncdb
 
+
 def start():
     if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'])
@@ -15,6 +16,7 @@ def start():
         sisyphus.syncdb.localTable()
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
+
 
 def startx():
     portageExec = subprocess.Popen(['emerge', '--depclean'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)

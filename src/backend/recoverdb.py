@@ -5,6 +5,7 @@ import os
 import sisyphus.getfs
 import sisyphus.syncdb
 
+
 @animation.wait('recovering databases')
 def start():
     if os.path.exists(sisyphus.getfs.remotePackagesCsv):

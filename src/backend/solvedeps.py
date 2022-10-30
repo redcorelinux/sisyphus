@@ -3,6 +3,7 @@
 import animation
 import subprocess
 
+
 @animation.wait('resolving dependencies')
 def package(pkgname):
     areBinaries = []
@@ -34,6 +35,7 @@ def package(pkgname):
             areSources.append(isSource)
 
     return areBinaries,areSources,needsConfig
+
 
 @animation.wait('resolving dependencies')
 def world():

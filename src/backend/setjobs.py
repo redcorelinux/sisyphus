@@ -2,5 +2,6 @@
 
 import subprocess
 
+
 def start():
     subprocess.call(['/usr/share/sisyphus/helpers/set_jobs'])

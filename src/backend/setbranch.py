@@ -10,6 +10,7 @@ import sisyphus.purgeenv
 import sisyphus.setjobs
 import sisyphus.setprofile
 
+
 def getBranchRemote(branch,remote):
     gentooRemote = []
     redcoreRemote = []
@@ -46,12 +47,14 @@ def getBranchRemote(branch,remote):
 
     return gentooRemote,redcoreRemote,portageConfigRemote
 
+
 @animation.wait('injecting Gentoo Linux portage tree')
 def injectGentooRepo(branch,remote):
     gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
         git.Repo.clone_from("/".join(gentooRemote), sisyphus.getfs.gentooRepoDir, depth=1, branch=branch)
+
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
 def injectRedcoreRepo(branch,remote):
@@ -60,12 +63,14 @@ def injectRedcoreRepo(branch,remote):
     if not os.path.isdir(os.path.join(sisyphus.getfs.redcoreRepoDir, '.git')):
         git.Repo.clone_from("/".join(redcoreRemote), sisyphus.getfs.redcoreRepoDir, depth=1, branch=branch)
 
+
 @animation.wait('injecting Redcore Linux portage config')
 def injectPortageConfigRepo(branch,remote):
     gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.portageConfigDir, '.git')):
         git.Repo.clone_from("/".join(portageConfigRemote), sisyphus.getfs.portageConfigDir, depth=1, branch=branch)
+
 
 def giveWarning(branch,remote):
     if "master" in branch:
@@ -78,6 +83,7 @@ def giveWarning(branch,remote):
         print("You must pair this branch with the testing binhost (binary repository)")
         print("Hint : Use the even numbers (2,4,6,8) from 'sisyphus mirror list'")
         print("Examples : 'sisyphus mirror set 4' or 'sisyphus mirror set 8'\n")
+
 
 def start(branch,remote):
     if sisyphus.checkenv.root():

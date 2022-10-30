@@ -4,6 +4,7 @@ import animation
 import platform
 import subprocess
 
+
 @animation.wait('setting up profile')
 def start():
     if platform.uname()[4] == 'x86_64':

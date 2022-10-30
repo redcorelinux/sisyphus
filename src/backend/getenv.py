@@ -3,6 +3,7 @@
 import io
 import subprocess
 
+
 def binhostURL():
     binhostURL = []
     portageExec = subprocess.Popen(['emerge', '--info', '--verbose'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -13,6 +14,7 @@ def binhostURL():
 
     portageExec.wait()
     return binhostURL
+
 
 def csvURL():
     csvURL = binhostURL()
