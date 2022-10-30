@@ -2,8 +2,7 @@ from .autoremove import *
 from .checkenv import *
 from .getenv import *
 from .getfs import *
-from .installpkg import *
-from .installsrc import *
+from .install import *
 from .killemerge import *
 from .purgeenv import *
 from .recoverdb import *

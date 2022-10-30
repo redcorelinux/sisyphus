@@ -124,9 +124,9 @@ def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "
     You can use the --ebuild option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.installpkg.start(pkgname)
+        sisyphus.install.start(pkgname)
     else:
-        sisyphus.installsrc.start(pkgname)
+        sisyphus.install.estart(pkgname)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):

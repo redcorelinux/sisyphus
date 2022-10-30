@@ -398,7 +398,7 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.installpkg.startx(pkgname)
+        sisyphus.install.startx(pkgname)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
