@@ -11,7 +11,7 @@ import sisyphus.checkenv
 import sisyphus.getenv
 import sisyphus.getfs
 import sisyphus.killemerge
-import sisyphus.resolveDeps
+import sisyphus.solvedeps
 import sisyphus.syncDatabase
 import sisyphus.updateAll
 
@@ -20,7 +20,7 @@ def cliExec(pkgname):
         sisyphus.updateAll.cliExec()
 
         binhostURL = sisyphus.getenv.binhostURL()
-        areBinaries,areSources,needsConfig = sisyphus.resolveDeps.package(pkgname)
+        areBinaries,areSources,needsConfig = sisyphus.solvedeps.package(pkgname)
 
         if needsConfig == 0:
             if len(areSources) == 0:
@@ -60,7 +60,7 @@ def cliExec(pkgname):
 
 def guiExec(pkgname):
     binhostURL = sisyphus.getenv.binhostURL()
-    areBinaries,areSources,needsConfig = sisyphus.resolveDeps.package.__wrapped__(pkgname) #undecorate
+    areBinaries,areSources,needsConfig = sisyphus.solvedeps.package.__wrapped__(pkgname) #undecorate
 
     os.chdir(sisyphus.getfs.portageCacheDir)
     print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")

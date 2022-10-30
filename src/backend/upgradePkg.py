@@ -11,7 +11,7 @@ import sisyphus.checkenv
 import sisyphus.getenv
 import sisyphus.getfs
 import sisyphus.killemerge
-import sisyphus.resolveDeps
+import sisyphus.solvedeps
 import sisyphus.syncDatabase
 import sisyphus.updateAll
 
@@ -20,7 +20,7 @@ def cliExec():
         sisyphus.updateAll.cliExec()
 
         binhostURL = sisyphus.getenv.binhostURL()
-        areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world()
+        areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()
 
         if needsConfig == 0:
             if len(areSources) == 0:
@@ -60,7 +60,7 @@ def cliExec():
 
 def guiExec():
     binhostURL = sisyphus.getenv.binhostURL()
-    areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world.__wrapped__() #undecorate
+    areBinaries,areSources,needsConfig = sisyphus.solvedeps.world.__wrapped__() #undecorate
 
     if not len(areSources) == 0:
         print("\n" + "Source package(s) found in the mix;" + " " + "Use sisyphus CLI:" +  " " + "'" + "sisyphus upgrade --ebuild" + "'" + " " + "to perform the upgrade;" + " " + "Aborting." + "\n")

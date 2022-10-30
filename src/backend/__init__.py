@@ -7,7 +7,7 @@ from .installSrc import *
 from .killemerge import *
 from .purgeenv import *
 from .recoverdb import *
-from .resolveDeps import *
+from .solvedeps import *
 from .searchPkg import *
 from .searchSrc import *
 from .setBranch import *

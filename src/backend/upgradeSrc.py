@@ -9,7 +9,7 @@ import wget
 import sisyphus.checkenv
 import sisyphus.getenv
 import sisyphus.getfs
-import sisyphus.resolveDeps
+import sisyphus.solvedeps
 import sisyphus.syncDatabase
 import sisyphus.updateAll
 
@@ -18,7 +18,7 @@ def cliExec():
         sisyphus.updateAll.cliExec()
 
         binhostURL = sisyphus.getenv.binhostURL()
-        areBinaries,areSources,needsConfig = sisyphus.resolveDeps.world()
+        areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()
 
         if needsConfig == 0:
             if len(areSources) == 0:
