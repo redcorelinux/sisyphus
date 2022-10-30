@@ -405,7 +405,7 @@ class MainWorker(QtCore.QObject):
     def startUninstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.uninstallAll.guiExec(pkgname)
+        sisyphus.uninstall.guiExec(pkgname)
         self.finished.emit()
 
     @QtCore.pyqtSlot()

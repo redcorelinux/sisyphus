@@ -161,9 +161,9 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
     will succeed, but the system will be broken
     """
     if not force:
-        sisyphus.uninstallAll.cliExec(pkgname)
+        sisyphus.uninstall.cliExec(pkgname)
     else:
-        sisyphus.uninstallAll.cliExecForce(pkgname)
+        sisyphus.uninstall.cliExecForce(pkgname)
 
 @app.command("autoremove")
 def autoremove():
@@ -213,7 +213,7 @@ def spmsync():
     When you install something with Portage directly (emerge), Sisyphus is not aware of that package, and it doesn't track it in it's database.
     Use this command to synchronize Sisyphus's package database with Portage's package database.
     """
-    sisyphus.syncSPM.cliExec()
+    sisyphus.syncspm.cliExec()
 
 @app.command("rescue")
 def rescue():
@@ -272,7 +272,7 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
 @app.command("sysinfo")
 def sysinfo():
     """Display information about installed core packages and portage configuration."""
-    sisyphus.sysInfo.show()
+    sisyphus.sysinfo.show()
 
 @mirrorSetup.command("list")
 def mirrorlist():
