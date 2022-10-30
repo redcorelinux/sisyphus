@@ -6,7 +6,7 @@ from .installPkg import *
 from .installSrc import *
 from .killemerge import *
 from .purgeenv import *
-from .recoverDatabase import *
+from .recoverdb import *
 from .resolveDeps import *
 from .searchPkg import *
 from .searchSrc import *

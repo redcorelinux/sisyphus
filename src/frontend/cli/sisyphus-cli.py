@@ -222,7 +222,7 @@ def rescue():
     If Portage's package database is corrupted (in this case you're screwed anyway :D), only a partial resurrection will be possible.
     If Portage's package database is intact, full resurrection will be possible.
     """
-    sisyphus.recoverDatabase.cliExec()
+    sisyphus.recoverdb.cliExec()
 
 class Branch(str, Enum):
     master = 'master'
