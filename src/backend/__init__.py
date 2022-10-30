@@ -11,7 +11,7 @@ from .solvedeps import *
 from .searchpkg import *
 from .searchsrc import *
 from .setbranch import *
-from .setJobs import *
+from .setjobs import *
 from .setMirror import *
 from .setProfile import *
 from .syncDatabase import *

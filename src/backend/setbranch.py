@@ -7,7 +7,7 @@ import sys
 import sisyphus.checkenv
 import sisyphus.getfs
 import sisyphus.purgeenv
-import sisyphus.setJobs
+import sisyphus.setjobs
 import sisyphus.setProfile
 
 def getBranchRemote(branch,remote):
@@ -86,7 +86,7 @@ def cliExec(branch,remote):
         injectGentooRepo(branch,remote)
         injectRedcoreRepo(branch,remote)
         injectPortageConfigRepo(branch,remote)
-        sisyphus.setJobs.cliExec()
+        sisyphus.setjobs.cliExec()
         sisyphus.setProfile.cliExec()
         giveWarning(branch,remote)
     else:

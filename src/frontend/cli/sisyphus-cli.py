@@ -286,5 +286,5 @@ def mirrorset(index: int):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and not '--help' in sys.argv:
-        sisyphus.setJobs.cliExec()
+        sisyphus.setjobs.cliExec()
     app()
