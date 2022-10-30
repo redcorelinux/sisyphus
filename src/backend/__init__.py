@@ -8,8 +8,8 @@ from .killemerge import *
 from .purgeenv import *
 from .recoverdb import *
 from .solvedeps import *
-from .searchPkg import *
-from .searchSrc import *
+from .searchpkg import *
+from .searchsrc import *
 from .setBranch import *
 from .setJobs import *
 from .setMirror import *

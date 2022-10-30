@@ -97,12 +97,12 @@ def search(package: List[str] = typer.Argument(...),
             cat, pn = package[0].split('/')
         else:
             cat, pn = '', package[0]
-        sisyphus.searchPkg.cliExec(filter.value, cat, pn, desc, quiet)
+        sisyphus.searchpkg.cliExec(filter.value, cat, pn, desc, quiet)
     else:
         if not package:
             raise typer.Exit('No search term provided, try: sisyphus search --help')
         else:
-            sisyphus.searchSrc.cliExec(package)
+            sisyphus.searchsrc.cliExec(package)
 
 @app.command("install")
 def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "-e")):
