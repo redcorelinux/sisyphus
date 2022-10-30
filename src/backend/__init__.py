@@ -1,6 +1,6 @@
 from .autoremove import *
 from .checkenv import *
-from .getEnvironment import *
+from .getenv import *
 from .getFilesystem import *
 from .installPkg import *
 from .installSrc import *

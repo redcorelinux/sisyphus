@@ -4,7 +4,7 @@ import animation
 import sys
 import time
 import sisyphus.checkenv
-import sisyphus.getEnvironment
+import sisyphus.getenv
 import sisyphus.purgeEnvironment
 import sisyphus.syncDatabase
 import sisyphus.syncEnvironment
@@ -19,7 +19,7 @@ def syncAll():
 @animation.wait('fetching updates')
 def cliExec():
     activeBranch = sisyphus.checkenv.branch()
-    binhostURL = sisyphus.getEnvironment.binhostURL()
+    binhostURL = sisyphus.getenv.binhostURL()
     isSane = sisyphus.checkenv.sanity()
 
     if isSane == 1:
@@ -33,7 +33,7 @@ def cliExec():
 
 def guiExec():
     activeBranch = sisyphus.checkenv.branch()
-    binhostURL = sisyphus.getEnvironment.binhostURL()
+    binhostURL = sisyphus.getenv.binhostURL()
     isSane = sisyphus.checkenv.sanity()
 
     if isSane == 1:

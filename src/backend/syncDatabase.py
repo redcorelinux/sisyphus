@@ -5,11 +5,11 @@ import shutil
 import urllib3
 import sqlite3
 import subprocess
-import sisyphus.getEnvironment
+import sisyphus.getenv
 import sisyphus.getFilesystem
 
 def remoteCSV():
-    packagesCsvURL,descriptionsCsvURL = sisyphus.getEnvironment.csvURL()
+    packagesCsvURL,descriptionsCsvURL = sisyphus.getenv.csvURL()
     http = urllib3.PoolManager()
 
     with http.request('GET', packagesCsvURL, preload_content=False) as tmp_buffer, open(sisyphus.getFilesystem.remotePackagesCsv, 'wb') as output_file:
