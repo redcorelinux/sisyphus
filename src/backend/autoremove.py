@@ -19,7 +19,7 @@ def start():
 def startx():
     portageExec = subprocess.Popen(['emerge', '--depclean'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
-    atexit.register(sisyphus.killemerge.cliExec, portageExec)
+    atexit.register(sisyphus.killemerge.start, portageExec)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         print(portageOutput.rstrip())

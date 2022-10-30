@@ -8,7 +8,7 @@ import sisyphus.checkenv
 import sisyphus.killemerge
 import sisyphus.syncdb
 
-def cliExec(pkgname):
+def start(pkgname):
     if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + list(pkgname))
         portageExec.wait()
@@ -16,7 +16,7 @@ def cliExec(pkgname):
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
-def cliExecForce(pkgname):
+def fstart(pkgname):
     if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--unmerge', '--ask'] + list(pkgname))
         portageExec.wait()
@@ -24,10 +24,10 @@ def cliExecForce(pkgname):
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
-def guiExec(pkgname):
+def startx(pkgname):
     portageExec = subprocess.Popen(['emerge', '--depclean'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
-    atexit.register(sisyphus.killemerge.cliExec, portageExec)
+    atexit.register(sisyphus.killemerge.start, portageExec)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         print(portageOutput.rstrip())

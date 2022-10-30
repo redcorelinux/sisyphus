@@ -15,9 +15,9 @@ import sisyphus.solvedeps
 import sisyphus.syncdb
 import sisyphus.update
 
-def cliExec(pkgname):
+def start(pkgname):
     if sisyphus.checkenv.root():
-        sisyphus.update.cliExec()
+        sisyphus.update.start()
 
         binhostURL = sisyphus.getenv.binhostURL()
         areBinaries,areSources,needsConfig = sisyphus.solvedeps.package(pkgname)
@@ -58,7 +58,7 @@ def cliExec(pkgname):
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
-def guiExec(pkgname):
+def startx(pkgname):
     binhostURL = sisyphus.getenv.binhostURL()
     areBinaries,areSources,needsConfig = sisyphus.solvedeps.package.__wrapped__(pkgname) #undecorate
 
@@ -80,7 +80,7 @@ def guiExec(pkgname):
 
     portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
-    atexit.register(sisyphus.killemerge.cliExec, portageExec)
+    atexit.register(sisyphus.killemerge.start, portageExec)
 
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         print(portageOutput.rstrip())

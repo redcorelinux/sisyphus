@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sqlite3
+import subprocess
 import sisyphus.checkenv
 import sisyphus.getfs
 import sisyphus.update
@@ -124,10 +125,13 @@ def showSearch(filter, cat, pn, desc, single):
                 print(f"{cpn:45} {str(pkg['iv']):20} {str(pkg['av'])}")
         print(f"\nFound {len(pkglist)} matching package(s) ...")
 
-def cliExec(filter, cat, pn, desc, single):
+def start(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
-        sisyphus.update.cliExec()
+        sisyphus.update.start()
     else:
         print("\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n")
 
     showSearch(filter, cat, pn, desc, single)
+
+def estart(pkgname):
+    subprocess.call(['emerge', '--search', '--getbinpkg'] + list(pkgname))

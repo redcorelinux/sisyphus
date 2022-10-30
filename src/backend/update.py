@@ -17,7 +17,7 @@ def syncAll():
     sisyphus.syncdb.remoteTable()
 
 @animation.wait('fetching updates')
-def cliExec():
+def start():
     activeBranch = sisyphus.checkenv.branch()
     binhostURL = sisyphus.getenv.binhostURL()
     isSane = sisyphus.checkenv.sanity()
@@ -31,7 +31,7 @@ def cliExec():
             print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + binhostURL + "' (stable)")
         sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
 
-def guiExec():
+def startx():
     activeBranch = sisyphus.checkenv.branch()
     binhostURL = sisyphus.getenv.binhostURL()
     isSane = sisyphus.checkenv.sanity()

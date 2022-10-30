@@ -6,7 +6,7 @@ import sisyphus.getfs
 import sisyphus.syncdb
 
 @animation.wait('recovering databases')
-def cliExec():
+def start():
     if os.path.exists(sisyphus.getfs.remotePackagesCsv):
         os.remove(sisyphus.getfs.remotePackagesCsv)
     if os.path.exists(sisyphus.getfs.remoteDescriptionsCsv):

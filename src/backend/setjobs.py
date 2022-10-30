@@ -2,5 +2,5 @@
 
 import subprocess
 
-def cliExec():
+def start():
     subprocess.call(['/usr/share/sisyphus/helpers/set_jobs'])

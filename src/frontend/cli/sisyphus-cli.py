@@ -97,12 +97,12 @@ def search(package: List[str] = typer.Argument(...),
             cat, pn = package[0].split('/')
         else:
             cat, pn = '', package[0]
-        sisyphus.searchpkg.cliExec(filter.value, cat, pn, desc, quiet)
+        sisyphus.search.start(filter.value, cat, pn, desc, quiet)
     else:
         if not package:
             raise typer.Exit('No search term provided, try: sisyphus search --help')
         else:
-            sisyphus.searchsrc.cliExec(package)
+            sisyphus.search.estart(package)
 
 @app.command("install")
 def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "-e")):
@@ -124,9 +124,9 @@ def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "
     You can use the --ebuild option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.installpkg.cliExec(pkgname)
+        sisyphus.installpkg.start(pkgname)
     else:
-        sisyphus.installsrc.cliExec(pkgname)
+        sisyphus.installsrc.start(pkgname)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
@@ -161,9 +161,9 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
     will succeed, but the system will be broken
     """
     if not force:
-        sisyphus.uninstall.cliExec(pkgname)
+        sisyphus.uninstall.start(pkgname)
     else:
-        sisyphus.uninstall.cliExecForce(pkgname)
+        sisyphus.uninstall.fstart(pkgname)
 
 @app.command("autoremove")
 def autoremove():
@@ -178,7 +178,7 @@ def autoremove():
 def update():
     """Update the Portage tree, the Redcore Overlay(s), Portage configs and Sisyphus's package database."""
     if sisyphus.checkenv.root():
-        sisyphus.update.cliExec()
+        sisyphus.update.start()
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
@@ -203,9 +203,9 @@ def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     You can use the --ebuild option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.upgradepkg.cliExec()
+        sisyphus.upgradepkg.start()
     else:
-        sisyphus.upgradesrc.cliExec()
+        sisyphus.upgradesrc.start()
 
 @app.command("spmsync")
 def spmsync():
@@ -213,7 +213,7 @@ def spmsync():
     When you install something with Portage directly (emerge), Sisyphus is not aware of that package, and it doesn't track it in it's database.
     Use this command to synchronize Sisyphus's package database with Portage's package database.
     """
-    sisyphus.syncspm.cliExec()
+    sisyphus.syncspm.start()
 
 @app.command("rescue")
 def rescue():
@@ -222,7 +222,7 @@ def rescue():
     If Portage's package database is corrupted (in this case you're screwed anyway :D), only a partial resurrection will be possible.
     If Portage's package database is intact, full resurrection will be possible.
     """
-    sisyphus.recoverdb.cliExec()
+    sisyphus.recoverdb.start()
 
 class Branch(str, Enum):
     master = 'master'
@@ -267,7 +267,7 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
 
         sisyphus mirror set 8
     """
-    sisyphus.setbranch.cliExec(branch.value, remote.value)
+    sisyphus.setbranch.start(branch.value, remote.value)
 
 @app.command("sysinfo")
 def sysinfo():
@@ -286,5 +286,5 @@ def mirrorset(index: int):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and not '--help' in sys.argv:
-        sisyphus.setjobs.cliExec()
+        sisyphus.setjobs.start()
     app()

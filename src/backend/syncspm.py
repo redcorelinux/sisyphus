@@ -4,5 +4,5 @@ import animation
 import sisyphus.syncdb
 
 @animation.wait('syncing spm changes')
-def cliExec():
+def start():
     sisyphus.syncdb.localTable()
