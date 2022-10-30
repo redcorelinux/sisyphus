@@ -277,12 +277,12 @@ def sysinfo():
 @mirrorSetup.command("list")
 def mirrorlist():
     """List available binary package repository mirrors (the active one is marked with *)."""
-    sisyphus.setMirror.printList()
+    sisyphus.mirrors.printList()
 
 @mirrorSetup.command("set")
 def mirrorset(index: int):
     """Change the binary package repository to the selected mirror."""
-    sisyphus.setMirror.setActive(index)
+    sisyphus.mirrors.setActive(index)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and not '--help' in sys.argv:

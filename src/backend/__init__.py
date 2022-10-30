@@ -4,13 +4,13 @@ from .getenv import *
 from .getfs import *
 from .install import *
 from .killemerge import *
+from .mirrors import *
 from .purgeenv import *
 from .recoverdb import *
 from .solvedeps import *
 from .search import *
 from .setbranch import *
 from .setjobs import *
-from .setMirror import *
 from .setprofile import *
 from .syncdb import *
 from .syncenv import *

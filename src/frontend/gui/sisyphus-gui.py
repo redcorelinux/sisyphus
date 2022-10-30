@@ -320,7 +320,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         super(MirrorConfiguration, self).__init__()
         uic.loadUi('/usr/share/sisyphus/ui/mirrorcfg.ui', self)
         self.centerOnScreen()
-        self.MIRRORLIST = sisyphus.setMirror.getList()
+        self.MIRRORLIST = sisyphus.mirrors.getList()
         self.updateMirrorList()
         self.applyButton.pressed.connect(self.mirrorCfgApply)
         self.applyButton.released.connect(self.mirrorCfgExit)
@@ -351,7 +351,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = True
 
     def mirrorCfgApply(self):
-        sisyphus.setMirror.writeList(self.MIRRORLIST)
+        sisyphus.mirrors.writeList(self.MIRRORLIST)
 
     def mirrorCfgExit(self):
         self.close()
