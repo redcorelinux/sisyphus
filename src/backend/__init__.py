@@ -4,7 +4,7 @@ from .getenv import *
 from .getfs import *
 from .installPkg import *
 from .installSrc import *
-from .killPortage import *
+from .killemerge import *
 from .purgeenv import *
 from .recoverDatabase import *
 from .resolveDeps import *

@@ -10,7 +10,7 @@ import wget
 import sisyphus.checkenv
 import sisyphus.getenv
 import sisyphus.getfs
-import sisyphus.killPortage
+import sisyphus.killemerge
 import sisyphus.resolveDeps
 import sisyphus.syncDatabase
 import sisyphus.updateAll
@@ -84,7 +84,7 @@ def guiExec():
 
             portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # kill portage if the program dies or it's terminated by the user
-            atexit.register(sisyphus.killPortage.cliExec, portageExec)
+            atexit.register(sisyphus.killemerge.cliExec, portageExec)
 
             for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
                 print(portageOutput.rstrip())
