@@ -267,7 +267,7 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
 
         sisyphus mirror set 8
     """
-    sisyphus.setBranch.cliExec(branch.value, remote.value)
+    sisyphus.setbranch.cliExec(branch.value, remote.value)
 
 @app.command("sysinfo")
 def sysinfo():

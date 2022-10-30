@@ -10,7 +10,7 @@ from .recoverdb import *
 from .solvedeps import *
 from .searchpkg import *
 from .searchsrc import *
-from .setBranch import *
+from .setbranch import *
 from .setJobs import *
 from .setMirror import *
 from .setProfile import *
