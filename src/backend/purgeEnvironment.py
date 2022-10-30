@@ -3,49 +3,49 @@
 import animation
 import os
 import shutil
-import sisyphus.getFilesystem
+import sisyphus.getfs
 
 @animation.wait('purging branch configuration')
 def branch():
-    if os.path.isdir(sisyphus.getFilesystem.gentooRepoDir):
-        for files in os.listdir(sisyphus.getFilesystem.gentooRepoDir):
-            if os.path.isfile(os.path.join(sisyphus.getFilesystem.gentooRepoDir, files)):
-                os.remove(os.path.join(sisyphus.getFilesystem.gentooRepoDir, files))
+    if os.path.isdir(sisyphus.getfs.gentooRepoDir):
+        for files in os.listdir(sisyphus.getfs.gentooRepoDir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.gentooRepoDir, files)):
+                os.remove(os.path.join(sisyphus.getfs.gentooRepoDir, files))
             else:
-                shutil.rmtree(os.path.join(sisyphus.getFilesystem.gentooRepoDir, files))
+                shutil.rmtree(os.path.join(sisyphus.getfs.gentooRepoDir, files))
     else:
-        os.makedirs(sisyphus.getFilesystem.gentooRepoDir)
+        os.makedirs(sisyphus.getfs.gentooRepoDir)
 
-    if os.path.isdir(sisyphus.getFilesystem.redcoreRepoDir):
-        for files in os.listdir(sisyphus.getFilesystem.redcoreRepoDir):
-            if os.path.isfile(os.path.join(sisyphus.getFilesystem.redcoreRepoDir, files)):
-                os.remove(os.path.join(sisyphus.getFilesystem.redcoreRepoDir, files))
+    if os.path.isdir(sisyphus.getfs.redcoreRepoDir):
+        for files in os.listdir(sisyphus.getfs.redcoreRepoDir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.redcoreRepoDir, files)):
+                os.remove(os.path.join(sisyphus.getfs.redcoreRepoDir, files))
             else:
-                shutil.rmtree(os.path.join(sisyphus.getFilesystem.redcoreRepoDir, files))
+                shutil.rmtree(os.path.join(sisyphus.getfs.redcoreRepoDir, files))
     else:
-        os.makedirs(sisyphus.getFilesystem.redcoreRepoDir)
+        os.makedirs(sisyphus.getfs.redcoreRepoDir)
 
-    if os.path.isdir(sisyphus.getFilesystem.portageConfigDir):
-        for files in os.listdir(sisyphus.getFilesystem.portageConfigDir):
-            if os.path.isfile(os.path.join(sisyphus.getFilesystem.portageConfigDir, files)):
-                os.remove(os.path.join(sisyphus.getFilesystem.portageConfigDir, files))
+    if os.path.isdir(sisyphus.getfs.portageConfigDir):
+        for files in os.listdir(sisyphus.getfs.portageConfigDir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.portageConfigDir, files)):
+                os.remove(os.path.join(sisyphus.getfs.portageConfigDir, files))
             else:
-                shutil.rmtree(os.path.join(sisyphus.getFilesystem.portageConfigDir, files))
+                shutil.rmtree(os.path.join(sisyphus.getfs.portageConfigDir, files))
     else:
-        os.makedirs(sisyphus.getFilesystem.portageConfigDir)
+        os.makedirs(sisyphus.getfs.portageConfigDir)
 
 def cache():
-    if os.path.isdir(sisyphus.getFilesystem.portageCacheDir):
-        for files in os.listdir(sisyphus.getFilesystem.portageCacheDir):
-            if os.path.isfile(os.path.join(sisyphus.getFilesystem.portageCacheDir, files)):
-                os.remove(os.path.join(sisyphus.getFilesystem.portageCacheDir, files))
+    if os.path.isdir(sisyphus.getfs.portageCacheDir):
+        for files in os.listdir(sisyphus.getfs.portageCacheDir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.portageCacheDir, files)):
+                os.remove(os.path.join(sisyphus.getfs.portageCacheDir, files))
             else:
-                shutil.rmtree(os.path.join(sisyphus.getFilesystem.portageCacheDir, files))
+                shutil.rmtree(os.path.join(sisyphus.getfs.portageCacheDir, files))
 
 def metadata():
-    if os.path.isdir(sisyphus.getFilesystem.portageMetadataDir):
-        for files in os.listdir(sisyphus.getFilesystem.portageMetadataDir):
-            if os.path.isfile(os.path.join(sisyphus.getFilesystem.portageMetadataDir, files)):
-                os.remove(os.path.join(sisyphus.getFilesystem.portageMetadataDir, files))
+    if os.path.isdir(sisyphus.getfs.portageMetadataDir):
+        for files in os.listdir(sisyphus.getfs.portageMetadataDir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.portageMetadataDir, files)):
+                os.remove(os.path.join(sisyphus.getfs.portageMetadataDir, files))
             else:
-                shutil.rmtree(os.path.join(sisyphus.getFilesystem.portageMetadataDir, files))
+                shutil.rmtree(os.path.join(sisyphus.getfs.portageMetadataDir, files))

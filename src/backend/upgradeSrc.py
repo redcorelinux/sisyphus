@@ -8,7 +8,7 @@ import sys
 import wget
 import sisyphus.checkenv
 import sisyphus.getenv
-import sisyphus.getFilesystem
+import sisyphus.getfs
 import sisyphus.resolveDeps
 import sisyphus.syncDatabase
 import sisyphus.updateAll
@@ -23,7 +23,7 @@ def cliExec():
         if needsConfig == 0:
             if len(areSources) == 0:
                 if not len(areBinaries) == 0:
-                    os.chdir(sisyphus.getFilesystem.portageCacheDir)
+                    os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
@@ -31,11 +31,11 @@ def cliExec():
                             wget.download(binhostURL + binary)
                             print("\n")
 
-                            if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0])):
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
+                            if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
                             else:
-                                os.makedirs(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]))
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
+                                os.makedirs(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]))
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
 
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
@@ -50,7 +50,7 @@ def cliExec():
                     sys.exit("\n" + "No package upgrades found; Quitting." + "\n")
             else:
                 if not len(areBinaries) == 0:
-                    os.chdir(sisyphus.getFilesystem.portageCacheDir)
+                    os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + "  ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
@@ -59,11 +59,11 @@ def cliExec():
                             wget.download(binhostURL + binary)
                             print("\n")
 
-                            if os.path.isdir(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0])):
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
+                            if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
                             else:
-                                os.makedirs(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]))
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getFilesystem.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
+                                os.makedirs(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]))
+                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
 
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])

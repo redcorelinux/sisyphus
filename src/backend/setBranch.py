@@ -5,7 +5,7 @@ import git
 import os
 import sys
 import sisyphus.checkenv
-import sisyphus.getFilesystem
+import sisyphus.getfs
 import sisyphus.purgeEnvironment
 import sisyphus.setJobs
 import sisyphus.setProfile
@@ -16,9 +16,9 @@ def getBranchRemote(branch,remote):
     portageConfigRemote = []
     if "master" in branch:
         if "gitlab" in remote:
-            remote = sisyphus.getFilesystem.remoteGitlab
+            remote = sisyphus.getfs.remoteGitlab
         elif "pagure" in remote:
-            remote = sisyphus.getFilesystem.remotePagure
+            remote = sisyphus.getfs.remotePagure
         else:
             sys.exit("Usage: sisyphus-cli.py branch [OPTIONS] BRANCH" + "\n" +
                     "Try 'sisyphus-cli.py branch --help' for help." + "\n\n" +
@@ -26,9 +26,9 @@ def getBranchRemote(branch,remote):
                     )
     elif "next" in branch:
         if "gitlab" in remote:
-            remote = sisyphus.getFilesystem.remoteGitlab
+            remote = sisyphus.getfs.remoteGitlab
         elif "pagure" in remote:
-            remote = sisyphus.getFilesystem.remotePagure
+            remote = sisyphus.getfs.remotePagure
         else:
             sys.exit("Usage: sisyphus-cli.py branch [OPTIONS] BRANCH" + "\n" +
                     "Try 'sisyphus-cli.py branch --help' for help." + "\n\n" +
@@ -40,9 +40,9 @@ def getBranchRemote(branch,remote):
                 "Error: Invalid branch" + " " + "'" + str(branch) + "'" +" " +  "(options : master, next)"
                 )
 
-    gentooRemote = [remote, sisyphus.getFilesystem.gentooRepo]
-    redcoreRemote = [remote, sisyphus.getFilesystem.redcoreRepo]
-    portageConfigRemote = [remote, sisyphus.getFilesystem.portageConfigRepo]
+    gentooRemote = [remote, sisyphus.getfs.gentooRepo]
+    redcoreRemote = [remote, sisyphus.getfs.redcoreRepo]
+    portageConfigRemote = [remote, sisyphus.getfs.portageConfigRepo]
 
     return gentooRemote,redcoreRemote,portageConfigRemote
 
@@ -50,22 +50,22 @@ def getBranchRemote(branch,remote):
 def injectGentooRepo(branch,remote):
     gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.getFilesystem.gentooRepoDir, '.git')):
-        git.Repo.clone_from("/".join(gentooRemote), sisyphus.getFilesystem.gentooRepoDir, depth=1, branch=branch)
+    if not os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
+        git.Repo.clone_from("/".join(gentooRemote), sisyphus.getfs.gentooRepoDir, depth=1, branch=branch)
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
 def injectRedcoreRepo(branch,remote):
     gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.getFilesystem.redcoreRepoDir, '.git')):
-        git.Repo.clone_from("/".join(redcoreRemote), sisyphus.getFilesystem.redcoreRepoDir, depth=1, branch=branch)
+    if not os.path.isdir(os.path.join(sisyphus.getfs.redcoreRepoDir, '.git')):
+        git.Repo.clone_from("/".join(redcoreRemote), sisyphus.getfs.redcoreRepoDir, depth=1, branch=branch)
 
 @animation.wait('injecting Redcore Linux portage config')
 def injectPortageConfigRepo(branch,remote):
     gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.getFilesystem.portageConfigDir, '.git')):
-        git.Repo.clone_from("/".join(portageConfigRemote), sisyphus.getFilesystem.portageConfigDir, depth=1, branch=branch)
+    if not os.path.isdir(os.path.join(sisyphus.getfs.portageConfigDir, '.git')):
+        git.Repo.clone_from("/".join(portageConfigRemote), sisyphus.getfs.portageConfigDir, depth=1, branch=branch)
 
 def giveWarning(branch,remote):
     if "master" in branch:

@@ -2,7 +2,7 @@
 
 import sqlite3
 import sisyphus.checkenv
-import sisyphus.getFilesystem
+import sisyphus.getfs
 import sisyphus.updateAll
 
 def searchDB(filter, cat = '', pn = '', desc = ''):
@@ -90,7 +90,7 @@ def searchDB(filter, cat = '', pn = '', desc = ''):
                     AND iv <> av'''
     }
 
-    with sqlite3.connect(sisyphus.getFilesystem.localDatabase) as db:
+    with sqlite3.connect(sisyphus.getfs.localDatabase) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         cursor.execute(SELECTS[filter])
