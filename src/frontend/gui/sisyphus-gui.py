@@ -411,7 +411,7 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        sisyphus.upgradePkg.guiExec()
+        sisyphus.upgradepkg.guiExec()
         self.finished.emit()
 
     @QtCore.pyqtSlot()
