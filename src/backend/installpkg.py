@@ -13,11 +13,11 @@ import sisyphus.getfs
 import sisyphus.killemerge
 import sisyphus.solvedeps
 import sisyphus.syncdb
-import sisyphus.updateAll
+import sisyphus.update
 
 def cliExec(pkgname):
     if sisyphus.checkenv.root():
-        sisyphus.updateAll.cliExec()
+        sisyphus.update.cliExec()
 
         binhostURL = sisyphus.getenv.binhostURL()
         areBinaries,areSources,needsConfig = sisyphus.solvedeps.package(pkgname)

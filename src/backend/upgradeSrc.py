@@ -11,11 +11,11 @@ import sisyphus.getenv
 import sisyphus.getfs
 import sisyphus.solvedeps
 import sisyphus.syncdb
-import sisyphus.updateAll
+import sisyphus.update
 
 def cliExec():
     if sisyphus.checkenv.root():
-        sisyphus.updateAll.cliExec()
+        sisyphus.update.cliExec()
 
         binhostURL = sisyphus.getenv.binhostURL()
         areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()

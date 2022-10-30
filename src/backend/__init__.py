@@ -19,6 +19,6 @@ from .syncenv import *
 from .syncspm import *
 from .sysinfo import *
 from .uninstall import *
-from .updateAll import *
+from .update import *
 from .upgradePkg import *
 from .upgradeSrc import *

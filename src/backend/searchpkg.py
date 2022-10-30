@@ -3,7 +3,7 @@
 import sqlite3
 import sisyphus.checkenv
 import sisyphus.getfs
-import sisyphus.updateAll
+import sisyphus.update
 
 def searchDB(filter, cat = '', pn = '', desc = ''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
@@ -126,7 +126,7 @@ def showSearch(filter, cat, pn, desc, single):
 
 def cliExec(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
-        sisyphus.updateAll.cliExec()
+        sisyphus.update.cliExec()
     else:
         print("\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n")
 
