@@ -4,7 +4,7 @@ import animation
 import git
 import os
 import sys
-import sisyphus.checkEnvironment
+import sisyphus.checkenv
 import sisyphus.getFilesystem
 import sisyphus.purgeEnvironment
 import sisyphus.setJobs
@@ -80,7 +80,7 @@ def giveWarning(branch,remote):
         print("Examples : 'sisyphus mirror set 4' or 'sisyphus mirror set 8'\n")
 
 def cliExec(branch,remote):
-    if sisyphus.checkEnvironment.root():
+    if sisyphus.checkenv.root():
         sisyphus.purgeEnvironment.branch()
         sisyphus.purgeEnvironment.metadata()
         injectGentooRepo(branch,remote)

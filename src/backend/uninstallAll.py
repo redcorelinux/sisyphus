@@ -4,12 +4,12 @@ import atexit
 import io
 import subprocess
 import sys
-import sisyphus.checkEnvironment
+import sisyphus.checkenv
 import sisyphus.killPortage
 import sisyphus.syncDatabase
 
 def cliExec(pkgname):
-    if sisyphus.checkEnvironment.root():
+    if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'] + list(pkgname))
         portageExec.wait()
         sisyphus.syncDatabase.localTable()
@@ -17,7 +17,7 @@ def cliExec(pkgname):
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
 def cliExecForce(pkgname):
-    if sisyphus.checkEnvironment.root():
+    if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--unmerge', '--ask'] + list(pkgname))
         portageExec.wait()
         sisyphus.syncDatabase.localTable()

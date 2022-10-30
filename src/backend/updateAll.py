@@ -3,7 +3,7 @@
 import animation
 import sys
 import time
-import sisyphus.checkEnvironment
+import sisyphus.checkenv
 import sisyphus.getEnvironment
 import sisyphus.purgeEnvironment
 import sisyphus.syncDatabase
@@ -18,9 +18,9 @@ def syncAll():
 
 @animation.wait('fetching updates')
 def cliExec():
-    activeBranch = sisyphus.checkEnvironment.branch()
+    activeBranch = sisyphus.checkenv.branch()
     binhostURL = sisyphus.getEnvironment.binhostURL()
-    isSane = sisyphus.checkEnvironment.sanity()
+    isSane = sisyphus.checkenv.sanity()
 
     if isSane == 1:
         syncAll()
@@ -32,9 +32,9 @@ def cliExec():
         sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
 
 def guiExec():
-    activeBranch = sisyphus.checkEnvironment.branch()
+    activeBranch = sisyphus.checkenv.branch()
     binhostURL = sisyphus.getEnvironment.binhostURL()
-    isSane = sisyphus.checkEnvironment.sanity()
+    isSane = sisyphus.checkenv.sanity()
 
     if isSane == 1:
         syncAll()

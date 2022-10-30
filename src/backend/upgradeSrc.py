@@ -6,7 +6,7 @@ import shutil
 import subprocess
 import sys
 import wget
-import sisyphus.checkEnvironment
+import sisyphus.checkenv
 import sisyphus.getEnvironment
 import sisyphus.getFilesystem
 import sisyphus.resolveDeps
@@ -14,7 +14,7 @@ import sisyphus.syncDatabase
 import sisyphus.updateAll
 
 def cliExec():
-    if sisyphus.checkEnvironment.root():
+    if sisyphus.checkenv.root():
         sisyphus.updateAll.cliExec()
 
         binhostURL = sisyphus.getEnvironment.binhostURL()

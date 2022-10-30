@@ -177,7 +177,7 @@ def autoremove():
 @app.command("update")
 def update():
     """Update the Portage tree, the Redcore Overlay(s), Portage configs and Sisyphus's package database."""
-    if sisyphus.checkEnvironment.root():
+    if sisyphus.checkenv.root():
         sisyphus.updateAll.cliExec()
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")

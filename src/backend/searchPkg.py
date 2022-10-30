@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sqlite3
-import sisyphus.checkEnvironment
+import sisyphus.checkenv
 import sisyphus.getFilesystem
 import sisyphus.updateAll
 
@@ -125,7 +125,7 @@ def showSearch(filter, cat, pn, desc, single):
         print(f"\nFound {len(pkglist)} matching package(s) ...")
 
 def cliExec(filter, cat, pn, desc, single):
-    if sisyphus.checkEnvironment.root():
+    if sisyphus.checkenv.root():
         sisyphus.updateAll.cliExec()
     else:
         print("\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n")

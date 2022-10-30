@@ -1,5 +1,5 @@
 from .autoremove import *
-from .checkEnvironment import *
+from .checkenv import *
 from .getEnvironment import *
 from .getFilesystem import *
 from .installPkg import *

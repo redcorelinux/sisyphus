@@ -4,12 +4,12 @@ import atexit
 import io
 import subprocess
 import sys
-import sisyphus.checkEnvironment
+import sisyphus.checkenv
 import sisyphus.killPortage
 import sisyphus.syncDatabase
 
 def start():
-    if sisyphus.checkEnvironment.root():
+    if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'])
         portageExec.wait()
         sisyphus.syncDatabase.localTable()
