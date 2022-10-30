@@ -15,7 +15,7 @@ from .setjobs import *
 from .setMirror import *
 from .setprofile import *
 from .syncdb import *
-from .syncEnvironment import *
+from .syncenv import *
 from .syncSPM import *
 from .sysInfo import *
 from .uninstallAll import *

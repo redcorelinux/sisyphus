@@ -7,13 +7,13 @@ import sisyphus.checkenv
 import sisyphus.getenv
 import sisyphus.purgeenv
 import sisyphus.syncdb
-import sisyphus.syncEnvironment
+import sisyphus.syncenv
 
 def syncAll():
     sisyphus.purgeenv.cache()
-    sisyphus.syncEnvironment.gentooRepo()
-    sisyphus.syncEnvironment.redcoreRepo()
-    sisyphus.syncEnvironment.portageConfigRepo()
+    sisyphus.syncenv.gentooRepo()
+    sisyphus.syncenv.redcoreRepo()
+    sisyphus.syncenv.portageConfigRepo()
     sisyphus.syncdb.remoteTable()
 
 @animation.wait('fetching updates')
