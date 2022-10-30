@@ -32,9 +32,9 @@ class Sisyphus(QtWidgets.QMainWindow):
             ('Upgradable Packages', 'upgradable')
         ])
         self.databaseFilter.addItems(self.filterDatabases.keys())
-        self.databaseFilter.setCurrentText('All packages')
+        self.databaseFilter.setCurrentText('All Packages')
         self.databaseFilter.currentIndexChanged.connect(self.setDatabaseFilter)
-        Sisyphus.databaseView = self.filterDatabases['All packages']
+        Sisyphus.databaseView = self.filterDatabases['All Packages']
 
         Sisyphus.searchTerm = "'%%'"
 
