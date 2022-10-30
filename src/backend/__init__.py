@@ -18,5 +18,4 @@ from .syncspm import *
 from .sysinfo import *
 from .uninstall import *
 from .update import *
-from .upgradepkg import *
-from .upgradesrc import *
+from .upgrade import *

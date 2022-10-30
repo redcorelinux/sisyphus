@@ -203,9 +203,9 @@ def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     You can use the --ebuild option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
     """
     if not ebuild:
-        sisyphus.upgradepkg.start()
+        sisyphus.upgrade.start()
     else:
-        sisyphus.upgradesrc.start()
+        sisyphus.upgrade.estart()
 
 @app.command("spmsync")
 def spmsync():
