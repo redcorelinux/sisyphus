@@ -5,12 +5,12 @@ import sys
 import time
 import sisyphus.checkenv
 import sisyphus.getenv
-import sisyphus.purgeEnvironment
+import sisyphus.purgeenv
 import sisyphus.syncDatabase
 import sisyphus.syncEnvironment
 
 def syncAll():
-    sisyphus.purgeEnvironment.cache()
+    sisyphus.purgeenv.cache()
     sisyphus.syncEnvironment.gentooRepo()
     sisyphus.syncEnvironment.redcoreRepo()
     sisyphus.syncEnvironment.portageConfigRepo()

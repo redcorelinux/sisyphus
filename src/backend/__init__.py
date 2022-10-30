@@ -5,7 +5,7 @@ from .getfs import *
 from .installPkg import *
 from .installSrc import *
 from .killPortage import *
-from .purgeEnvironment import *
+from .purgeenv import *
 from .recoverDatabase import *
 from .resolveDeps import *
 from .searchPkg import *

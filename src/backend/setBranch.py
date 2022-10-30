@@ -6,7 +6,7 @@ import os
 import sys
 import sisyphus.checkenv
 import sisyphus.getfs
-import sisyphus.purgeEnvironment
+import sisyphus.purgeenv
 import sisyphus.setJobs
 import sisyphus.setProfile
 
@@ -81,8 +81,8 @@ def giveWarning(branch,remote):
 
 def cliExec(branch,remote):
     if sisyphus.checkenv.root():
-        sisyphus.purgeEnvironment.branch()
-        sisyphus.purgeEnvironment.metadata()
+        sisyphus.purgeenv.branch()
+        sisyphus.purgeenv.metadata()
         injectGentooRepo(branch,remote)
         injectRedcoreRepo(branch,remote)
         injectPortageConfigRepo(branch,remote)
