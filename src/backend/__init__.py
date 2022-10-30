@@ -2,7 +2,7 @@ from .autoremove import *
 from .checkenv import *
 from .getenv import *
 from .getfs import *
-from .installPkg import *
+from .installpkg import *
 from .installSrc import *
 from .killemerge import *
 from .purgeenv import *
