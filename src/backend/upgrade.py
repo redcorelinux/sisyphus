@@ -42,8 +42,7 @@ def start():
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
 
-                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                         portageExec.wait()
                         sisyphus.syncdb.localTable()
                     else:
@@ -85,8 +84,7 @@ def estart():
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
 
-                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                         portageExec.wait()
                         sisyphus.syncdb.localTable()
                     else:
@@ -113,8 +111,7 @@ def estart():
                             if os.path.exists(binary.rstrip().split("/")[1]):
                                 os.remove(binary.rstrip().split("/")[1])
 
-                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                         portageExec.wait()
                         sisyphus.syncdb.localTable()
                     else:
@@ -123,20 +120,12 @@ def estart():
                     print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + "  ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
                         portageExec.wait()
                         sisyphus.syncdb.localTable()
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
         else:
-            portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-            for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
-                if not "Local copy of remote index is up-to-date and will be used." in portageOutput.rstrip():
-                    if not "ebuild" in portageOutput.rstrip():
-                        if not "binary" in portageOutput.rstrip():
-                            print(portageOutput.rstrip())
-
+            portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
             portageExec.wait()
             sys.exit("\n" + "Cannot proceed; Apply the above changes to your portage configuration files and try again; Quitting." + "\n")
     else:
