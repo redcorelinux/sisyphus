@@ -1,4 +1,4 @@
-from .autoRemoveAll import *
+from .autoremove import *
 from .checkEnvironment import *
 from .getEnvironment import *
 from .getFilesystem import *

@@ -172,7 +172,7 @@ def autoremove():
     In addition, a package may no longer depend on another one, so that other package becomes orphan as well if nothing else requires it.
     Use this option to check the whole dependency chain for such packages, and uninstall them.
     """
-    sisyphus.autoRemoveAll.cliExec()
+    sisyphus.autoremove.start()
 
 @app.command("update")
 def update():

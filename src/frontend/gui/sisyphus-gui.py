@@ -417,7 +417,7 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        sisyphus.autoRemoveAll.guiExec()
+        sisyphus.autoremove.startx()
         self.finished.emit()
 
 
