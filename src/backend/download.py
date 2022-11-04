@@ -7,7 +7,7 @@ import wget
 import sisyphus.getenv
 import sisyphus.getfs
 
-def package(pkgname):
+def pkg(pkgname):
     binhostURL = sisyphus.getenv.binhostURL()
     areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_pkg.pickle"), "rb"))
 
