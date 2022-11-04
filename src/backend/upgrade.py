@@ -3,12 +3,11 @@
 import atexit
 import io
 import os
-import shutil
+import pickle
 import subprocess
 import sys
-import wget
 import sisyphus.checkenv
-import sisyphus.getenv
+import sisyphus.download
 import sisyphus.getfs
 import sisyphus.killemerge
 import sisyphus.solvedeps
@@ -19,9 +18,8 @@ import sisyphus.update
 def start():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
-
-        binhostURL = sisyphus.getenv.binhostURL()
-        areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()
+        sisyphus.solvedeps.world()
+        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_world.pickle"), "rb"))
 
         if needsConfig == 0:
             if len(areSources) == 0:
@@ -29,20 +27,7 @@ def start():
                     os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                        for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
-                            print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(binhostURL + binary)
-                            print("")
-
-                            if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
-                            else:
-                                os.makedirs(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]))
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
-
-                            if os.path.exists(binary.rstrip().split("/")[1]):
-                                os.remove(binary.rstrip().split("/")[1])
-
+                        sisyphus.download.world()
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                         portageExec.wait()
                         sisyphus.syncdb.localTable()
@@ -62,9 +47,8 @@ def start():
 def estart():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
-
-        binhostURL = sisyphus.getenv.binhostURL()
-        areBinaries,areSources,needsConfig = sisyphus.solvedeps.world()
+        sisyphus.solvedeps.world()
+        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_world.pickle"), "rb"))
 
         if needsConfig == 0:
             if len(areSources) == 0:
@@ -72,20 +56,7 @@ def estart():
                     os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                        for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
-                            print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(binhostURL + binary)
-                            print("")
-
-                            if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
-                            else:
-                                os.makedirs(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]))
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
-
-                            if os.path.exists(binary.rstrip().split("/")[1]):
-                                os.remove(binary.rstrip().split("/")[1])
-
+                        sisyphus.download.world()
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                         portageExec.wait()
                         sisyphus.syncdb.localTable()
@@ -99,20 +70,7 @@ def estart():
                     print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + "  ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
-                        for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
-                            print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                            wget.download(binhostURL + binary)
-                            print("")
-
-                            if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
-                            else:
-                                os.makedirs(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]))
-                                shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
-
-                            if os.path.exists(binary.rstrip().split("/")[1]):
-                                os.remove(binary.rstrip().split("/")[1])
-
+                        sisyphus.download.world()
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                         portageExec.wait()
                         sisyphus.syncdb.localTable()
@@ -135,8 +93,8 @@ def estart():
 
 
 def startx():
-    binhostURL = sisyphus.getenv.binhostURL()
-    areBinaries,areSources,needsConfig = sisyphus.solvedeps.world.__wrapped__() #undecorate
+    sisyphus.solvedeps.world.__wrapped__() #undecorate
+    areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_world.pickle"), "rb"))
 
     if not len(areSources) == 0:
         print("\n" + "Source package(s) found in the mix;" + " " + "Use sisyphus CLI:" +  " " + "'" + "sisyphus upgrade --ebuild" + "'" + " " + "to perform the upgrade;" + " " + "Aborting." + "\n")
@@ -144,20 +102,7 @@ def startx():
         if not len(areBinaries) == 0:
             os.chdir(sisyphus.getfs.portageCacheDir)
             print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
-            for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
-                print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
-                wget.download(binhostURL + binary)
-                print("")
-
-                if os.path.isdir(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0])):
-                    shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
-                else:
-                    os.makedirs(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]))
-                    shutil.move(binary.rstrip().split("/")[1], os.path.join(os.path.join(sisyphus.getfs.portageCacheDir, binary.rstrip().split("/")[0]), os.path.basename(binary.rstrip().split("/")[1])))
-
-                if os.path.exists(binary.rstrip().split("/")[1]):
-                    os.remove(binary.rstrip().split("/")[1])
-
+            sisyphus.download.world()
             portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # kill portage if the program dies or it's terminated by the user
             atexit.register(sisyphus.killemerge.start, portageExec)

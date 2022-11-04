@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 
 import animation
+import os
+import pickle
 import subprocess
+import sisyphus.getfs
 
 
 @animation.wait('resolving dependencies')
-def package(pkgname):
+def pkg(pkgname):
     areBinaries = []
     areSources = []
     needsConfig = int()
@@ -34,7 +37,7 @@ def package(pkgname):
             isSource = portageOutput.split("]")[1].split("[")[0].strip(" ")
             areSources.append(isSource)
 
-    return areBinaries,areSources,needsConfig
+    pickle.dump([areBinaries,areSources,needsConfig], open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_pkg.pickle"), "wb"))
 
 
 @animation.wait('resolving dependencies')
@@ -67,4 +70,4 @@ def world():
             isSource = portageOutput.split("]")[1].split("[")[0].strip(" ")
             areSources.append(isSource)
 
-    return areBinaries,areSources,needsConfig
+    pickle.dump([areBinaries,areSources,needsConfig], open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_world.pickle"), "wb"))
