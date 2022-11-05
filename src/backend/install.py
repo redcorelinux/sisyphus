@@ -92,7 +92,7 @@ def estart(pkgname):
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
 
-def startx(pkgname):
+def xstart(pkgname):
     sisyphus.solvedeps.pkg.__wrapped__(pkgname) #undecorate
     areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_pkg.pickle"), "rb"))
 

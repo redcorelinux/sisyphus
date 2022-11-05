@@ -34,7 +34,7 @@ def start():
         sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
 
 
-def startx():
+def xstart():
     activeBranch = sisyphus.checkenv.branch()
     binhostURL = sisyphus.getenv.binhostURL()
     isSane = sisyphus.checkenv.sanity()

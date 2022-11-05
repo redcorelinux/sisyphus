@@ -27,7 +27,7 @@ def fstart(pkgname):
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
 
-def startx(pkgname):
+def xstart(pkgname):
     portageExec = subprocess.Popen(['emerge', '--depclean'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killemerge.start, portageExec)
