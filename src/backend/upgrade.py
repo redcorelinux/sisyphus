@@ -25,7 +25,7 @@ def start():
             if len(areSources) == 0:
                 if not len(areBinaries) == 0:
                     os.chdir(sisyphus.getfs.portageCacheDir)
-                    print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
+                    print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + ", ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         sisyphus.download.world()
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
@@ -54,7 +54,7 @@ def estart():
             if len(areSources) == 0:
                 if not len(areBinaries) == 0:
                     os.chdir(sisyphus.getfs.portageCacheDir)
-                    print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
+                    print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n"  + ", ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         sisyphus.download.world()
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
@@ -67,8 +67,8 @@ def estart():
             else:
                 if not len(areBinaries) == 0:
                     os.chdir(sisyphus.getfs.portageCacheDir)
-                    print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
-                    print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + "  ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
+                    print("\n" + "These are the binary packages that would be merged, in order:" + "\n\n" + ", ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n")
+                    print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + ", ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         sisyphus.download.world()
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
@@ -77,7 +77,7 @@ def estart():
                     else:
                         sys.exit("\n" + "Ok; Quitting." + "\n")
                 else:
-                    print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + "  ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
+                    print("\n" + "These are the source packages that would be merged, in order:" + "\n\n"  + ", ".join(areSources) + "\n\n" + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + "\n")
                     if input("Would you like to proceed?" + " " + "[y/N]" + " ").lower().strip()[:1] == "y":
                         portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                         portageExec.wait()
@@ -101,7 +101,7 @@ def xstart():
     else:
         if not len(areBinaries) == 0:
             os.chdir(sisyphus.getfs.portageCacheDir)
-            print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + "  ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
+            print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + ", ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
             sisyphus.download.world()
             portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # kill portage if the program dies or it's terminated by the user

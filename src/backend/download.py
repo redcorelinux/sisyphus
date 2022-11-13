@@ -12,7 +12,7 @@ def pkg(pkgname):
     areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_pkg.pickle"), "rb"))
 
     for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
-        print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
+        print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary.replace('.tbz2', ' '))
         wget.download(binhostURL + binary)
         print("")
 
@@ -31,7 +31,7 @@ def world():
     areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_world.pickle"), "rb"))
 
     for index, binary in enumerate([package + '.tbz2' for package in areBinaries], start=1):
-        print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary)
+        print(">>> Downloading binary ({}".format(index) + " " + "of" + " " + str(len(areBinaries)) + ")" + " " + binary.replace('.tbz2', ' '))
         wget.download(binhostURL + binary)
         print("")
 
