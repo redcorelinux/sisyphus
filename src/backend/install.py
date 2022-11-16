@@ -19,7 +19,7 @@ def start(pkgname):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.pkg(pkgname)
-        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_pkg.pickle"), "rb"))
+        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
 
         if needsConfig == 0:
             if len(areSources) == 0:
@@ -48,7 +48,7 @@ def estart(pkgname):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.pkg(pkgname)
-        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_pkg.pickle"), "rb"))
+        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
 
         if needsConfig == 0:
             if len(areSources) == 0:
@@ -94,7 +94,7 @@ def estart(pkgname):
 
 def xstart(pkgname):
     sisyphus.solvedeps.pkg.__wrapped__(pkgname) #undecorate
-    areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_pkg.pickle"), "rb"))
+    areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
 
     os.chdir(sisyphus.getfs.portageCacheDir)
     print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + ", ".join(areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")

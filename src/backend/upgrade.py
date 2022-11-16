@@ -19,7 +19,7 @@ def start():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.world()
-        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_world.pickle"), "rb"))
+        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
         if needsConfig == 0:
             if len(areSources) == 0:
@@ -48,7 +48,7 @@ def estart():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.world()
-        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_world.pickle"), "rb"))
+        areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
         if needsConfig == 0:
             if len(areSources) == 0:
@@ -94,7 +94,7 @@ def estart():
 
 def xstart():
     sisyphus.solvedeps.world.__wrapped__() #undecorate
-    areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_solvedeps_world.pickle"), "rb"))
+    areBinaries,areSources,needsConfig = pickle.load(open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
     if not len(areSources) == 0:
         print("\n" + "Source package(s) found in the mix;" + " " + "Use sisyphus CLI:" +  " " + "'" + "sisyphus upgrade --ebuild" + "'" + " " + "to perform the upgrade;" + " " + "Aborting." + "\n")
