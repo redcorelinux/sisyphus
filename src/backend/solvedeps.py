@@ -12,7 +12,8 @@ def pkg(pkgname):
     areBinaries = []
     areSources = []
     needsConfig = int()
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y',
+                                   '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = portageExec.communicate()
 
     for portageOutput in stderr.decode('utf-8').splitlines():
@@ -28,6 +29,9 @@ def pkg(pkgname):
         if "The following REQUIRED_USE flag constraints are unsatisfied:" in portageOutput:
             needsConfig = int(1)
 
+        if "One of the following masked packages is required to complete your request:" in portageOutput:
+            needsConfig = int(1)
+
     for portageOutput in stdout.decode('utf-8').splitlines():
         if "[binary" in portageOutput:
             isBinary = portageOutput.split("]")[1].split("[")[0].strip(" ")
@@ -37,7 +41,8 @@ def pkg(pkgname):
             isSource = portageOutput.split("]")[1].split("[")[0].strip(" ")
             areSources.append(isSource)
 
-    pickle.dump([areBinaries,areSources,needsConfig], open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "wb"))
+    pickle.dump([areBinaries, areSources, needsConfig], open(os.path.join(
+        sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "wb"))
 
 
 @animation.wait('resolving dependencies')
@@ -45,7 +50,8 @@ def world():
     areBinaries = []
     areSources = []
     needsConfig = int()
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries',
+                                   '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = portageExec.communicate()
 
     for portageOutput in stderr.decode('utf-8').splitlines():
@@ -61,6 +67,9 @@ def world():
         if "The following REQUIRED_USE flag constraints are unsatisfied:" in portageOutput:
             needsConfig = int(1)
 
+        if "One of the following masked packages is required to complete your request:" in portageOutput:
+            needsConfig = int(1)
+
     for portageOutput in stdout.decode('utf-8').splitlines():
         if "[binary" in portageOutput:
             isBinary = portageOutput.split("]")[1].split("[")[0].strip(" ")
@@ -70,4 +79,5 @@ def world():
             isSource = portageOutput.split("]")[1].split("[")[0].strip(" ")
             areSources.append(isSource)
 
-    pickle.dump([areBinaries,areSources,needsConfig], open(os.path.join(sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "wb"))
+    pickle.dump([areBinaries, areSources, needsConfig], open(os.path.join(
+        sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "wb"))

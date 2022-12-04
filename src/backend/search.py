@@ -3,11 +3,12 @@
 import sqlite3
 import subprocess
 import sisyphus.checkenv
+import sisyphus.getcolor
 import sisyphus.getfs
 import sisyphus.update
 
 
-def searchDB(filter, cat = '', pn = '', desc = ''):
+def searchDB(filter, cat='', pn='', desc=''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
     SELECTS = {
         'all': f'''SELECT
@@ -106,34 +107,49 @@ def tosql(string):
 
 
 def showSearch(filter, cat, pn, desc, single):
-    print(f"Searching {filter} packages ... \n")
+    print("Searching" + sisyphus.getcolor.bright_yellow + " " +
+          f"{filter}" + " " + sisyphus.getcolor.reset + "packages ..." + "\n")
     pkglist = searchDB(filter, tosql(cat), tosql(pn), tosql(desc))
 
     if len(pkglist) == 0:
-        print("No package found!\nUse the '--ebuild' option to search for source packages!")
+        print(sisyphus.getcolor.bright_red +
+              "No binary package found!\n" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow + "Use the" + sisyphus.getcolor.reset + " " + "'" + "--ebuild" +
+              "'" + " " + sisyphus.getcolor.bright_yellow + "option to search source packages" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow +
+              "Use" + sisyphus.getcolor.reset + " " + "'" + "sisyphus search --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
     else:
         if single:
-            print(f"{'Package':45} {'Installed':20} Available")
+            print(sisyphus.getcolor.green +
+                  f"{'Package category/name':45} {'Installed version':20} {'Latest available version':30} {'Description'}" + sisyphus.getcolor.reset)
         for pkg in pkglist:
             if not single:
-                print(f"*  {pkg['cat']}/{pkg['pn']}")
-                print(f"\tInstalled version: {pkg['iv']}")
+                print(sisyphus.getcolor.bright_green + "*" + " " + sisyphus.getcolor.reset +
+                      sisyphus.getcolor.bright_white + f"{pkg['cat']}/{pkg['pn']}" + sisyphus.getcolor.reset)
+                print(sisyphus.getcolor.green + "\tInstalled version:" +
+                      " " + sisyphus.getcolor.reset + f"{pkg['iv']}")
                 if pkg['av'] != 'alien':
-                    print(f"\tLatest available version: {pkg['av']}")
+                    print(sisyphus.getcolor.green + "\tLatest available version:" +
+                          " " + sisyphus.getcolor.reset + f"{pkg['av']}")
                 else:
-                    print(f"\tAlien package: Use `sisyphus search --ebuild {pkg['pn']}` for available version!")
-                print(f"\tDescription: {pkg['desc']}\n")
+                    print(sisyphus.getcolor.green + "\tAlien package:" + " " + sisyphus.getcolor.reset +
+                          "Use `sisyphus search --ebuild" + " " + f"{pkg['pn']}`" + " " + "for available version!")
+                print(sisyphus.getcolor.green + "\tDescription:" + " " +
+                      sisyphus.getcolor.reset + f"{pkg['desc']}" + "\n")
             else:
                 cpn = f"{pkg['cat']}/{pkg['pn']}"
-                print(f"{cpn:45} {str(pkg['iv']):20} {str(pkg['av'])}")
-        print(f"\nFound {len(pkglist)} matching package(s) ...")
+                print(sisyphus.getcolor.bright_white + f"{cpn:45}" + " " + sisyphus.getcolor.reset +
+                      f"{str(pkg['iv']):20}" + " " + f"{str(pkg['av']):30}" + " " + f"{str(pkg['desc'])}")
+        print("\nFound" + " " + sisyphus.getcolor.bright_yellow +
+              f"{len(pkglist)}" + " " + sisyphus.getcolor.reset + "matching package(s) ...")
 
 
 def start(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
     else:
-        print("\nYou are not root, cannot fetch updates.\nSearch result may be inaccurate!\n")
+        print("\n" + sisyphus.getcolor.bright_red + "You don't have root permissions, cannot update the database!" +
+              sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nSearch results may be inaccurate" + sisyphus.getcolor.reset + "\n")
 
     showSearch(filter, cat, pn, desc, single)
 

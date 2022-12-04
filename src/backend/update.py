@@ -4,6 +4,7 @@ import animation
 import sys
 import time
 import sisyphus.checkenv
+import sisyphus.getcolor
 import sisyphus.getenv
 import sisyphus.purgeenv
 import sisyphus.syncdb
@@ -28,10 +29,13 @@ def start():
         syncAll()
     else:
         if "packages-next" in binhostURL:
-            print("\nCurrent branch: '" + activeBranch + "' (stable)" + "\nCurrent binhost: '" + binhostURL + "' (testing)")
+            print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + activeBranch + "'" + " " + "(stable)" +
+                  " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + binhostURL + "'" + " " + "(testing)")
         else:
-            print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + binhostURL + "' (stable)")
-        sys.exit("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting.")
+            print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + activeBranch + "'" + " " + "(testing)" +
+                  " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + binhostURL + "'" + " " + "(stable)")
+        sys.exit(sisyphus.getcolor.bright_red + "\n\nInvalid configuration!" + sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow +
+                 "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
 
 
 def xstart():
@@ -43,10 +47,13 @@ def xstart():
         syncAll()
     else:
         if "packages-next" in binhostURL:
-            print("\nCurrent branch: '" + activeBranch + "' (stable)" + "\nCurrent binhost: '" + binhostURL + "' (testing)")
+            print("\n\nActive branch:" + " " + "'" + activeBranch + "'" + " " + "(stable)" +
+                  "\nActive binhost:" + " " + "'" + binhostURL + "'" + " " + "(testing)")
         else:
-            print("\nCurrent branch: '" + activeBranch + "' (testing)" + "\nCurrent binhost: '" + binhostURL + "' (stable)")
-        print("\nInvalid branch - binhost pairing; Use 'sisyphus branch --help' for help; Quitting in 10 seconds.\n")
+            print("\n\nActive branch:" + " " + "'" + activeBranch + "'" + " " + "(testing)" +
+                  "\nActive binhost:" + " " + "'" + binhostURL + "'" + " " + "(stable)")
+        print("\n\nInvalid configuration!" +
+              "\nUse 'sisyphus branch --help' for help\n")
         t = int(10)
         while t:
             mins, secs = divmod(t, 60)
@@ -54,5 +61,4 @@ def xstart():
             print(timer, end="\r")
             time.sleep(1)
             t -= 1
-
         sys.exit()

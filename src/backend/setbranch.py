@@ -5,13 +5,14 @@ import git
 import os
 import sys
 import sisyphus.checkenv
+import sisyphus.getcolor
 import sisyphus.getfs
 import sisyphus.purgeenv
 import sisyphus.setjobs
 import sisyphus.setprofile
 
 
-def getBranchRemote(branch,remote):
+def getBranchRemote(branch, remote):
     gentooRemote = []
     redcoreRemote = []
     portageConfigRemote = []
@@ -20,80 +21,81 @@ def getBranchRemote(branch,remote):
             remote = sisyphus.getfs.remoteGitlab
         elif "pagure" in remote:
             remote = sisyphus.getfs.remotePagure
-        else:
-            sys.exit("Usage: sisyphus-cli.py branch [OPTIONS] BRANCH" + "\n" +
-                    "Try 'sisyphus-cli.py branch --help' for help." + "\n\n" +
-                    "Error: Invalid remote" + " " + "'" + str(remote) + "'" + " " +  "(options : gitlab, pagure)"
-                    )
     elif "next" in branch:
         if "gitlab" in remote:
             remote = sisyphus.getfs.remoteGitlab
         elif "pagure" in remote:
             remote = sisyphus.getfs.remotePagure
-        else:
-            sys.exit("Usage: sisyphus-cli.py branch [OPTIONS] BRANCH" + "\n" +
-                    "Try 'sisyphus-cli.py branch --help' for help." + "\n\n" +
-                    "Error: Invalid remote" + " " + "'" + str(remote) + "'" + " " +  "(options : gitlab, pagure)"
-                    )
-    else:
-        sys.exit("Usage: sisyphus-cli.py branch [OPTIONS] BRANCH" + "\n" +
-                "Try 'sisyphus-cli.py branch --help' for help." + "\n\n" +
-                "Error: Invalid branch" + " " + "'" + str(branch) + "'" +" " +  "(options : master, next)"
-                )
 
     gentooRemote = [remote, sisyphus.getfs.gentooRepo]
     redcoreRemote = [remote, sisyphus.getfs.redcoreRepo]
     portageConfigRemote = [remote, sisyphus.getfs.portageConfigRepo]
 
-    return gentooRemote,redcoreRemote,portageConfigRemote
+    return gentooRemote, redcoreRemote, portageConfigRemote
 
 
 @animation.wait('injecting Gentoo Linux portage tree')
-def injectGentooRepo(branch,remote):
-    gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
+def injectGentooRepo(branch, remote):
+    gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
+        branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
-        git.Repo.clone_from("/".join(gentooRemote), sisyphus.getfs.gentooRepoDir, depth=1, branch=branch)
+        git.Repo.clone_from("/".join(gentooRemote),
+                            sisyphus.getfs.gentooRepoDir, depth=1, branch=branch)
 
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
-def injectRedcoreRepo(branch,remote):
-    gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
+def injectRedcoreRepo(branch, remote):
+    gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
+        branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.redcoreRepoDir, '.git')):
-        git.Repo.clone_from("/".join(redcoreRemote), sisyphus.getfs.redcoreRepoDir, depth=1, branch=branch)
+        git.Repo.clone_from("/".join(redcoreRemote),
+                            sisyphus.getfs.redcoreRepoDir, depth=1, branch=branch)
 
 
 @animation.wait('injecting Redcore Linux portage config')
-def injectPortageConfigRepo(branch,remote):
-    gentooRemote,redcoreRemote,portageConfigRemote = getBranchRemote(branch,remote)
+def injectPortageConfigRepo(branch, remote):
+    gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
+        branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.portageConfigDir, '.git')):
-        git.Repo.clone_from("/".join(portageConfigRemote), sisyphus.getfs.portageConfigDir, depth=1, branch=branch)
+        git.Repo.clone_from("/".join(portageConfigRemote),
+                            sisyphus.getfs.portageConfigDir, depth=1, branch=branch)
 
 
-def giveWarning(branch,remote):
+def giveWarning(branch, remote):
     if "master" in branch:
-        print("\nThe switch to branch" + " " + "'" + branch + "'" +  " " + "from remote" + " " + "'" + remote + "'" + " " + "is now complete")
-        print("You must pair this branch with the stable binhost (binary repository)")
-        print("Hint : Use the odd numbers (1,3,5,7) from 'sisyphus mirror list'")
-        print("Examples : 'sisyphus mirror set 1' or 'sisyphus mirror set 5'\n")
+        print(sisyphus.getcolor.green + "\nActive branch switched:" +
+              " " + sisyphus.getcolor.reset + "'" + branch + "'")
+        print(sisyphus.getcolor.green + "Active remote switched:" +
+              " " + sisyphus.getcolor.reset + "'" + remote + "'")
+        print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 3" + "'" + " " + sisyphus.getcolor.bright_yellow + "or" +
+              sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 7" + "'" + " " + sisyphus.getcolor.bright_yellow + "to pair the binhost" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow +
+              "Use" + sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
     elif "next" in branch:
-        print("\nThe switch to branch" + " " + "'" + branch + "'" +  " " + "from remote" + " " + "'" + remote + "'" + " " + "is now complete")
-        print("You must pair this branch with the testing binhost (binary repository)")
-        print("Hint : Use the even numbers (2,4,6,8) from 'sisyphus mirror list'")
-        print("Examples : 'sisyphus mirror set 4' or 'sisyphus mirror set 8'\n")
+        print(sisyphus.getcolor.green + "\nActive branch switched:" +
+              " " + sisyphus.getcolor.reset + "'" + branch + "'")
+        print(sisyphus.getcolor.green + "Active remote switched:" +
+              " " + sisyphus.getcolor.reset + "'" + remote + "'")
+        print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 4" + "'" + " " + sisyphus.getcolor.bright_yellow + "or" +
+              sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 8" + "'" + " " + sisyphus.getcolor.bright_yellow + "to pair the binhost" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow +
+              "Use" + sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
 
 
-def start(branch,remote):
+def start(branch, remote):
     if sisyphus.checkenv.root():
         sisyphus.purgeenv.branch()
         sisyphus.purgeenv.metadata()
-        injectGentooRepo(branch,remote)
-        injectRedcoreRepo(branch,remote)
-        injectPortageConfigRepo(branch,remote)
+        injectGentooRepo(branch, remote)
+        injectRedcoreRepo(branch, remote)
+        injectPortageConfigRepo(branch, remote)
         sisyphus.setjobs.start()
         sisyphus.setprofile.start()
-        giveWarning(branch,remote)
+        giveWarning(branch, remote)
     else:
-        sys.exit("\nYou need root permissions to do this, exiting!\n")
+        print(sisyphus.getcolor.bright_red +
+              "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)
+        sys.exit()

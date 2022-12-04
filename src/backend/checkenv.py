@@ -15,13 +15,14 @@ def branch():
 
     if os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
         os.chdir(sisyphus.getfs.gentooRepoDir)
-        localBranch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+        localBranch = subprocess.check_output(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
         if localBranch.decode().strip() == 'master':
             activeBranch = str('master')
 
         if localBranch.decode().strip() == 'next':
-           activeBranch = str('next')
+            activeBranch = str('next')
 
     return activeBranch
 
