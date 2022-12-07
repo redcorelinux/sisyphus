@@ -29,16 +29,25 @@ def start(pkgname):
                     os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         areBinaries) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
-                    if input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " + "[" + sisyphus.getcolor.bright_green + "y" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "N" + sisyphus.getcolor.reset + "]" + " ").lower().strip()[:1] == "y":
-                        sisyphus.download.pkg(pkgname)
-                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
-                                                       '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
-                        portageExec.wait()
-                        sisyphus.syncdb.localTable()
-                    else:
-                        print(sisyphus.getcolor.bright_green +
-                              "\nOk!\n" + sisyphus.getcolor.reset)
-                        sys.exit()
+                    while True:
+                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        if user_input.lower() in ['yes', 'y', '']:
+                            sisyphus.download.pkg(pkgname)
+                            portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
+                                                           '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            portageExec.wait()
+                            sisyphus.syncdb.localTable()
+                            break
+                        elif user_input.lower() in ['no', 'n']:
+                            print(sisyphus.getcolor.bright_green +
+                                  "\nOk!\n" + sisyphus.getcolor.reset)
+                            break
+                            sys.exit()
+                        else:
+                            print("\nSorry, response" + " " + "'" +
+                                  user_input + "'" + " " + "not understood.\n")
+                            continue
                 else:
                     print(sisyphus.getcolor.bright_red +
                           "\nNo package found!\n" + sisyphus.getcolor.reset)
@@ -75,16 +84,25 @@ def estart(pkgname):
                     os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         areBinaries) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
-                    if input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " + "[" + sisyphus.getcolor.bright_green + "y" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "N" + sisyphus.getcolor.reset + "]" + " ").lower().strip()[:1] == "y":
-                        sisyphus.download.pkg(pkgname)
-                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
-                                                       '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
-                        portageExec.wait()
-                        sisyphus.syncdb.localTable()
-                    else:
-                        print(sisyphus.getcolor.bright_green +
-                              "\nOk!\n" + sisyphus.getcolor.reset)
-                        sys.exit()
+                    while True:
+                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        if user_input.lower() in ['yes', 'y', '']:
+                            sisyphus.download.pkg(pkgname)
+                            portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
+                                                            '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            portageExec.wait()
+                            sisyphus.syncdb.localTable()
+                            break
+                        elif user_input.lower() in ['no', 'n']:
+                            print(sisyphus.getcolor.bright_green +
+                                  "\nOk!\n" + sisyphus.getcolor.reset)
+                            break
+                            sys.exit()
+                        else:
+                            print("\nSorry, response" + " " + "'" +
+                                  user_input + "'" + " " + "not understood.\n")
+                            continue
                 else:
                     print(sisyphus.getcolor.bright_red +
                           "\nNo package found!\n" + sisyphus.getcolor.reset)
@@ -96,28 +114,46 @@ def estart(pkgname):
                         areBinaries) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         areSources) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
-                    if input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " + "[" + sisyphus.getcolor.bright_green + "y" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "N" + sisyphus.getcolor.reset + "]" + " ").lower().strip()[:1] == "y":
-                        sisyphus.download.pkg(pkgname)
-                        portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries',
-                                                       '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
-                        portageExec.wait()
-                        sisyphus.syncdb.localTable()
-                    else:
-                        print(sisyphus.getcolor.bright_green +
-                              "\nOk!\n" + sisyphus.getcolor.reset)
-                        sys.exit()
+                    while True:
+                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        if user_input.lower() in ['yes', 'y', '']:
+                            sisyphus.download.pkg(pkgname)
+                            portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries',
+                                                           '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            portageExec.wait()
+                            sisyphus.syncdb.localTable()
+                            break
+                        elif user_input.lower() in ['no', 'n']:
+                            print(sisyphus.getcolor.bright_green +
+                                  "\nOk!\n" + sisyphus.getcolor.reset)
+                            break
+                            sys.exit()
+                        else:
+                            print("\nSorry, response" + " " + "'" +
+                                  user_input + "'" + " " + "not understood.\n")
+                            continue
                 else:
                     print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         areSources) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
-                    if input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " + "[" + sisyphus.getcolor.bright_green + "y" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "N" + sisyphus.getcolor.reset + "]" + " ").lower().strip()[:1] == "y":
-                        portageExec = subprocess.Popen(
-                            ['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
-                        portageExec.wait()
-                        sisyphus.syncdb.localTable()
-                    else:
-                        print(sisyphus.getcolor.bright_green +
-                              "\nOk!\n" + sisyphus.getcolor.reset)
-                        sys.exit()
+                    while True:
+                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        if user_input.lower() in ['yes', 'y', '']:
+                            portageExec = subprocess.Popen(
+                                ['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            portageExec.wait()
+                            sisyphus.syncdb.localTable()
+                            break
+                        elif user_input.lower() in ['no', 'n']:
+                            print(sisyphus.getcolor.bright_green +
+                                  "\nOk!\n" + sisyphus.getcolor.reset)
+                            break
+                            sys.exit()
+                        else:
+                            print("\nSorry, response" + " " + "'" +
+                                  user_input + "'" + " " + "not understood!\n")
+                            continue
         else:
             portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
                                            '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
