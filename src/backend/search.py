@@ -148,8 +148,8 @@ def start(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
     else:
-        print("\n" + sisyphus.getcolor.bright_red + "You don't have root permissions, cannot update the database!" +
-              sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nSearch results may be inaccurate" + sisyphus.getcolor.reset + "\n")
+        print(sisyphus.getcolor.bright_red + "\nYou don't have root permissions, cannot update the database!\n" +
+              sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nSearch results may be inaccurate" + sisyphus.getcolor.reset)
 
     showSearch(filter, cat, pn, desc, single)
 
