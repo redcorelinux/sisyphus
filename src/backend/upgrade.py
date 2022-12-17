@@ -55,15 +55,15 @@ def start():
             else:
                 print(sisyphus.getcolor.bright_red +
                       "\nSource package(s) found in the mix!\n" + sisyphus.getcolor.reset)
-                print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " + "'" +
-                      "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'" + sisyphus.getcolor.reset)
+                print(sisyphus.getcolor.bright_yellow + "Use" +
+                      sisyphus.getcolor.reset + " " + "'" + "sisyphus upgrade --ebuild" + "'")
                 sys.exit()
         else:
             # don't silently fail if a source package requested without the --ebuild option needs a keyword, mask, REQUIRED_USE or USE change
             print(sisyphus.getcolor.bright_red +
                   "\nInvalid request!\n" + sisyphus.getcolor.reset)
-            print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " + "'" +
-                  "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'" + sisyphus.getcolor.reset)
+            print(sisyphus.getcolor.bright_yellow + "Use" +
+                  sisyphus.getcolor.reset + " " + "'" + "sisyphus upgrade --ebuild" + "'")
             sys.exit()
     else:
         print(sisyphus.getcolor.bright_red +
