@@ -17,12 +17,16 @@ def getBranchRemote(branch, remote):
     redcoreRemote = []
     portageConfigRemote = []
     if "master" in branch:
-        if "gitlab" in remote:
+        if "github" in remote:
+            remote = sisyphus.getfs.remoteGithub
+        elif "gitlab" in remote:
             remote = sisyphus.getfs.remoteGitlab
         elif "pagure" in remote:
             remote = sisyphus.getfs.remotePagure
     elif "next" in branch:
-        if "gitlab" in remote:
+        if github in remote:
+            remote = sisyphus.getfs.remoteGithub
+        elif "gitlab" in remote:
             remote = sisyphus.getfs.remoteGitlab
         elif "pagure" in remote:
             remote = sisyphus.getfs.remotePagure

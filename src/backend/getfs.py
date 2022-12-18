@@ -2,6 +2,7 @@
 
 import platform
 
+remoteGithub = 'https://github.com/redcorelinux'
 remoteGitlab = 'https://gitlab.com/redcore'
 remotePagure = 'https://pagure.io/redcore'
 

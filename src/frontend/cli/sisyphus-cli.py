@@ -229,19 +229,22 @@ class Branch(str, Enum):
     next = 'next'
 
 class Remote(str, Enum):
+    github = 'github'
     gitlab = 'gitlab'
     pagure = 'pagure'
 
 @app.command("branch")
-def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(Remote.pagure, "--remote", "-r")):
+def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(Remote.gitlab, "--remote", "-r")):
     """Pull the selected branch of the Portage tree, Redcore overlay and Portage configs.
     The remote can be selected by using the --remote option.
 
     'BRANCH' can be one of the following : master, next
 
-    'REMOTE' can be one of the following : gitlab, pagure (default is pagure)
+    'REMOTE' can be one of the following : github, gitlab, pagure (default is gitlab)
 
     * Examples:
+
+        branch next --remote=github     # pull the branch 'next' from github.com
 
         branch master --remote=gitlab   # pull the branch 'master' from gitlab.com
 
