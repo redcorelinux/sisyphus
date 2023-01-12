@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import io
+import os
 import subprocess
 import sisyphus.getfs
 
