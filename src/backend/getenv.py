@@ -2,6 +2,7 @@
 
 import io
 import subprocess
+import sisyphus.getfs
 
 
 def binhostURL():
@@ -12,8 +13,8 @@ def binhostURL():
     for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in portageOutput:
             binhostURL = portageOutput.rstrip().split("=")[1].strip('\"')
-
     portageExec.wait()
+
     return binhostURL
 
 
@@ -34,3 +35,20 @@ def csvURL():
             'packages', 'csv') + 'remoteDescriptionsPre.csv'
 
     return packagesCsvURL, descriptionsCsvURL
+
+
+def systemBranch():
+    activeBranch = None
+
+    if os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
+        os.chdir(sisyphus.getfs.gentooRepoDir)
+        localBranch = subprocess.check_output(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+
+        if localBranch.decode().strip() == 'master':
+            activeBranch = str('master')
+
+        if localBranch.decode().strip() == 'next':
+            activeBranch = str('next')
+
+    return activeBranch

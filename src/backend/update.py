@@ -21,7 +21,7 @@ def syncAll():
 
 @animation.wait('fetching updates')
 def start():
-    activeBranch = sisyphus.checkenv.branch()
+    activeBranch = sisyphus.getenv.systemBranch()
     binhostURL = sisyphus.getenv.binhostURL()
     isSane = sisyphus.checkenv.sanity()
 
@@ -39,7 +39,7 @@ def start():
 
 
 def xstart():
-    activeBranch = sisyphus.checkenv.branch()
+    activeBranch = sisyphus.getenv.systemBranch()
     binhostURL = sisyphus.getenv.binhostURL()
     isSane = sisyphus.checkenv.sanity()
 

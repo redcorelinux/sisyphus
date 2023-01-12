@@ -50,7 +50,7 @@ def start():
                             continue
                 else:
                     print(sisyphus.getcolor.bright_red +
-                          "\nNo package found!\n" + sisyphus.getcolor.reset)
+                          "\nNo package upgrades found!\n" + sisyphus.getcolor.reset)
                     sys.exit()
             else:
                 print(sisyphus.getcolor.bright_red +
@@ -105,7 +105,7 @@ def estart():
                             continue
                 else:
                     print(sisyphus.getcolor.bright_red +
-                          "\nNo package found!\n" + sisyphus.getcolor.reset)
+                          "\nNo package upgrades found!\n" + sisyphus.getcolor.reset)
                     sys.exit()
             else:
                 if not len(areBinaries) == 0:

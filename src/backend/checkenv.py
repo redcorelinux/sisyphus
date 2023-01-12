@@ -3,32 +3,14 @@
 import os
 import subprocess
 import sisyphus.getenv
-import sisyphus.getfs
 
 
 def root():
     return True if os.getuid() == 0 else False
 
 
-def branch():
-    activeBranch = None
-
-    if os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
-        os.chdir(sisyphus.getfs.gentooRepoDir)
-        localBranch = subprocess.check_output(
-            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-
-        if localBranch.decode().strip() == 'master':
-            activeBranch = str('master')
-
-        if localBranch.decode().strip() == 'next':
-            activeBranch = str('next')
-
-    return activeBranch
-
-
 def sanity():
-    activeBranch = branch()
+    activeBranch = sisyphus.getenv.systemBranch()
     binhostURL = sisyphus.getenv.binhostURL()
     isSane = int()
 
