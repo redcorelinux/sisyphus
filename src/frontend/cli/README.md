@@ -21,6 +21,7 @@ $ sisyphus [OPTIONS] COMMAND [ARGS]...
 **Commands**:
 
 * `autoremove`: Uninstall packages that are no longer needed.
+* `autoclean` : Clean the binary package cache...
 * `branch`: Pull the selected branch of the Portage tree,...
 * `install`: Install binary and/or ebuild(source)...
 * `mirror`: List/Set the active binhost (binary repository) mirror.
@@ -43,6 +44,21 @@ Use this option to check the whole dependency chain for such packages, and unins
 
 ```console
 $ sisyphus autoremove [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+
+## `sisyphus autoclean`
+
+Clean the binary package cache and the source tarball cache
+
+**Usage**:
+
+```console
+$ sisyphus autoclean [OPTIONS]
 ```
 
 **Options**:

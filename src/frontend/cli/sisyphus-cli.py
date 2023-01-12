@@ -174,6 +174,14 @@ def autoremove():
     """
     sisyphus.autoremove.start()
 
+@app.command("autoclean")
+def autoclean():
+    """Clean the binary package cache and the source tarball cache"""
+    if sisyphus.checkenv.root():
+        sisyphus.purgeenv.cache()
+    else:
+        sys.exit("\nYou need root permissions to do this, exiting!\n")
+
 @app.command("update")
 def update():
     """Update the Portage tree, the Redcore Overlay(s), Portage configs and Sisyphus's package database."""

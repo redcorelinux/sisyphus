@@ -12,7 +12,6 @@ import sisyphus.syncenv
 
 
 def syncAll():
-    sisyphus.purgeenv.cache()
     sisyphus.syncenv.gentooRepo()
     sisyphus.syncenv.redcoreRepo()
     sisyphus.syncenv.portageConfigRepo()

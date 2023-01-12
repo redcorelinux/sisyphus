@@ -1,6 +1,5 @@
 from .autoremove import *
 from .checkenv import *
-from .download import *
 from .getcolor import *
 from .getenv import *
 from .getfs import *

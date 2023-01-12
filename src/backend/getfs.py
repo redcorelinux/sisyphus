@@ -14,6 +14,7 @@ gentooRepoDir = '/usr/ports/gentoo'
 redcoreRepoDir = '/usr/ports/redcore'
 portageConfigDir = '/opt/redcore-build'
 portageCacheDir = '/var/cache/packages'
+portageDistDir = '/var/cache/distfiles'
 portageMetadataDir = '/var/cache/edb'
 
 remotePackagesCsv = '/var/lib/sisyphus/csv/remotePackagesPre.csv'

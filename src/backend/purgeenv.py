@@ -48,6 +48,14 @@ def cache():
                 shutil.rmtree(os.path.join(
                     sisyphus.getfs.portageCacheDir, files))
 
+    if os.path.isdir(sisyphus.getfs.portageDistDir):
+        for files in os.listdir(sisyphus.getfs.portageDistDir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.portageDistDir, files)):
+                os.remove(os.path.join(sisyphus.getfs.portageDistDir, files))
+            else:
+                shutil.rmtree(os.path.join(
+                    sisyphus.getfs.portageDistDir, files))
+
 
 def metadata():
     if os.path.isdir(sisyphus.getfs.portageMetadataDir):
