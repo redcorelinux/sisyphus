@@ -92,6 +92,7 @@ def giveWarning(branch, remote):
 def start(branch, remote):
     if sisyphus.checkenv.root():
         sisyphus.purgeenv.branch()
+        sisyphus.purgeenv.cache()
         sisyphus.purgeenv.metadata()
         injectGentooRepo(branch, remote)
         injectRedcoreRepo(branch, remote)

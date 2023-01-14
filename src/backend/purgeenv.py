@@ -39,6 +39,7 @@ def branch():
         os.makedirs(sisyphus.getfs.portageConfigDir)
 
 
+@animation.wait('purging cached files')
 def cache():
     if os.path.isdir(sisyphus.getfs.portageCacheDir):
         for files in os.listdir(sisyphus.getfs.portageCacheDir):
@@ -57,6 +58,7 @@ def cache():
                     sisyphus.getfs.portageDistDir, files))
 
 
+@animation.wait('purging metadata files')
 def metadata():
     if os.path.isdir(sisyphus.getfs.portageMetadataDir):
         for files in os.listdir(sisyphus.getfs.portageMetadataDir):
