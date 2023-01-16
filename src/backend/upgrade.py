@@ -123,7 +123,7 @@ def estart():
                         if user_input.lower() in ['yes', 'y', '']:
                             portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--getbinpkg', '--fetchonly',
                                                            '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
-                            poortageExec.wait()
+                            portageExec.wait()
                             portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg',
                                                            '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             portageExec.wait()
