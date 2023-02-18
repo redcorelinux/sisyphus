@@ -24,7 +24,7 @@ def getBranchRemote(branch, remote):
         elif "pagure" in remote:
             remote = sisyphus.getfs.remotePagure
     elif "next" in branch:
-        if github in remote:
+        if "github" in remote:
             remote = sisyphus.getfs.remoteGithub
         elif "gitlab" in remote:
             remote = sisyphus.getfs.remoteGitlab
