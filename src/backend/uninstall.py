@@ -13,7 +13,7 @@ import sisyphus.syncdb
 def start(pkgname):
     if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(
-            ['emerge', '--depclean', '--ask'] + list(pkgname))
+            ['emerge', '--quiet', '--depclean', '--ask'] + list(pkgname))
         portageExec.wait()
         sisyphus.syncdb.localTable()
     else:
@@ -25,7 +25,7 @@ def start(pkgname):
 def fstart(pkgname):
     if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(
-            ['emerge', '--unmerge', '--ask'] + list(pkgname))
+            ['emerge', '--quiet', '--unmerge', '--ask'] + list(pkgname))
         portageExec.wait()
         sisyphus.syncdb.localTable()
     else:

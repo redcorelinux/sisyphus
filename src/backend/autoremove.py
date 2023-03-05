@@ -13,7 +13,7 @@ import sisyphus.syncdb
 def start():
     if sisyphus.checkenv.root():
         portageExec = subprocess.Popen(
-            ['emerge', '--depclean', '--ask'])
+            ['emerge', '--quiet', '--depclean', '--ask'])
         portageExec.wait()
         sisyphus.syncdb.localTable()
     else:
