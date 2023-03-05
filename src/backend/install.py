@@ -34,8 +34,8 @@ def start(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.pkgbinpkgonly()
-                            portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
-                                                           '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            portageExec = subprocess.Popen(['emerge', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
+                                                           '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             portageExec.wait()
                             sisyphus.syncdb.localTable()
                             break
@@ -89,8 +89,8 @@ def estart(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.pkgbinpkgonly()
-                            portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
-                                                            '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            portageExec = subprocess.Popen(['emerge', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
+                                                           '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             portageExec.wait()
                             sisyphus.syncdb.localTable()
                             break
@@ -119,7 +119,7 @@ def estart(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.pkgbinpkg()
-                            portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries',
+                            portageExec = subprocess.Popen(['emerge', '--verbose', '--usepkg', '--rebuilt-binaries',
                                                            '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             portageExec.wait()
                             sisyphus.syncdb.localTable()
@@ -141,7 +141,7 @@ def estart(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             portageExec = subprocess.Popen(
-                                ['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                                ['emerge', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             portageExec.wait()
                             sisyphus.syncdb.localTable()
                             break
@@ -178,8 +178,8 @@ def xstart(pkgname):
     print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + ", ".join(
         areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
     sisyphus.download.xpkgbinpkgonly()
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                                   '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    portageExec = subprocess.Popen(['emerge', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y',
+                                   '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killemerge.start, portageExec)
 
