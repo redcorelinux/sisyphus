@@ -11,10 +11,10 @@ def root():
 
 def sanity():
     activeBranch = sisyphus.getenv.systemBranch()
-    binhostURL = sisyphus.getenv.binhostURL()
+    bhaddr = sisyphus.getenv.bhaddr()
     isSane = int()
 
-    if "packages-next" in binhostURL:
+    if "packages-next" in bhaddr:
         if activeBranch == "next":
             isSane = int(1)
         else:

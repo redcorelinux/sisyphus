@@ -6,21 +6,21 @@ import subprocess
 import sisyphus.getfs
 
 
-def binhostURL():
-    binhostURL = []
+def bhaddr():
+    bhaddr = []
     p_exe = subprocess.Popen(
         ['emerge', '--info', '--verbose'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in p_out:
-            binhostURL = p_out.rstrip().split("=")[1].strip('\"')
+            bhaddr = p_out.rstrip().split("=")[1].strip('\"')
     p_exe.wait()
 
-    return binhostURL
+    return bhaddr
 
 
 def csvURL():
-    csvURL = binhostURL()
+    csvURL = bhaddr()
     packagesCsvURL = []
     descriptionsCsvURL = []
 
