@@ -12,9 +12,9 @@ def pkg(pkgname):
     areBinaries = []
     areSources = []
     needsConfig = int()
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y',
-                                   '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = portageExec.communicate()
+    p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--with-bdeps=y',
+                              '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p_exe.communicate()
 
     for portageOutput in stderr.decode('utf-8').splitlines():
         if "The following keyword changes are necessary to proceed:" in portageOutput:
@@ -50,9 +50,9 @@ def world():
     areBinaries = []
     areSources = []
     needsConfig = int()
-    portageExec = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries',
-                                   '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = portageExec.communicate()
+    p_exe = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries',
+                              '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p_exe.communicate()
 
     for portageOutput in stderr.decode('utf-8').splitlines():
         if "The following keyword changes are necessary to proceed:" in portageOutput:

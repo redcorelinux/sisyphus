@@ -16,10 +16,10 @@ def pkgbinpkgonly():
 
     for index, binary in enumerate(['=' + package for package in areBinaries]):
         fetchList.append(binary)
-    
-    portageExec = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
-                                   '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList))
-    portageExec.wait()
+
+    p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
+                              '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList))
+    p_exe.wait()
 
 
 def pkgbinpkg():
@@ -30,9 +30,9 @@ def pkgbinpkg():
     for index, binary in enumerate(['=' + package for package in areBinaries]):
         fetchList.append(binary)
 
-    portageExec = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
-                                   '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList))
-    portageExec.wait()
+    p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
+                              '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList))
+    p_exe.wait()
 
 
 def xpkgbinpkgonly():
@@ -43,15 +43,15 @@ def xpkgbinpkgonly():
     for index, binary in enumerate(['=' + package for package in areBinaries]):
         fetchList.append(binary)
 
-    portageExec = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
-                                   '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
+                              '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
-    atexit.register(sisyphus.killemerge.start, portageExec)
+    atexit.register(sisyphus.killemerge.start, p_exe)
 
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+    for portageOutput in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
         print(portageOutput.rstrip())
 
-    portageExec.wait()
+    p_exe.wait()
 
 
 def worldbinpkgonly():
@@ -62,9 +62,9 @@ def worldbinpkgonly():
     for index, binary in enumerate(['=' + package for package in areBinaries]):
         fetchList.append(binary)
 
-    portageExec = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
-                                   '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList))
-    portageExec.wait()
+    p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
+                              '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList))
+    p_exe.wait()
 
 
 def worldbinpkg():
@@ -75,9 +75,9 @@ def worldbinpkg():
     for index, binary in enumerate(['=' + package for package in areBinaries]):
         fetchList.append(binary)
 
-    portageExec = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
-                                   '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList))
-    portageExec.wait()
+    p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
+                              '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList))
+    p_exe.wait()
 
 
 def xworldbinpkgonly():
@@ -88,12 +88,12 @@ def xworldbinpkgonly():
     for index, binary in enumerate(['=' + package for package in areBinaries]):
         fetchList.append(binary)
 
-    portageExec = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
-                                   '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
+                              '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(fetchList), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
-    atexit.register(sisyphus.killemerge.start, portageExec)
+    atexit.register(sisyphus.killemerge.start, p_exe)
 
-    for portageOutput in io.TextIOWrapper(portageExec.stdout, encoding="utf-8"):
+    for portageOutput in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
         print(portageOutput.rstrip())
 
-    portageExec.wait()
+    p_exe.wait()
