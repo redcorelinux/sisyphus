@@ -18,18 +18,18 @@ def getBranchRemote(branch, remote):
     portageConfigRemote = []
     if "master" in branch:
         if "github" in remote:
-            remote = sisyphus.getfs.remoteGithub
+            remote = sisyphus.getfs.rmt_gh_addr
         elif "gitlab" in remote:
-            remote = sisyphus.getfs.remoteGitlab
+            remote = sisyphus.getfs.rmt_gl_addr
         elif "pagure" in remote:
-            remote = sisyphus.getfs.remotePagure
+            remote = sisyphus.getfs.rmt_pg_addr
     elif "next" in branch:
         if "github" in remote:
-            remote = sisyphus.getfs.remoteGithub
+            remote = sisyphus.getfs.rmt_gh_addr
         elif "gitlab" in remote:
-            remote = sisyphus.getfs.remoteGitlab
+            remote = sisyphus.getfs.rmt_gl_addr
         elif "pagure" in remote:
-            remote = sisyphus.getfs.remotePagure
+            remote = sisyphus.getfs.rmt_pg_addr
 
     gentooRemote = [remote, sisyphus.getfs.g_repo]
     redcoreRemote = [remote, sisyphus.getfs.r_repo]

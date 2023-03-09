@@ -2,9 +2,9 @@
 
 import platform
 
-remoteGithub = 'https://github.com/redcorelinux'
-remoteGitlab = 'https://gitlab.com/redcore'
-remotePagure = 'https://pagure.io/redcore'
+rmt_gh_addr = 'https://github.com/redcorelinux'
+rmt_gl_addr = 'https://gitlab.com/redcore'
+rmt_pg_addr = 'https://pagure.io/redcore'
 
 g_repo = 'portage.git'
 r_repo = 'redcore-desktop.git'
