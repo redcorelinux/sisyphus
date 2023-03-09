@@ -183,8 +183,8 @@ def xstart(pkgname):
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killemerge.start, p_exe)
 
-    for portageOutput in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
-        print(portageOutput.rstrip())
+    for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
+        print(p_out.rstrip())
 
     p_exe.wait()
     sisyphus.syncdb.localTable()

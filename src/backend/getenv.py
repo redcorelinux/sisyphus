@@ -11,9 +11,9 @@ def binhostURL():
     p_exe = subprocess.Popen(
         ['emerge', '--info', '--verbose'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    for portageOutput in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
-        if "PORTAGE_BINHOST" in portageOutput:
-            binhostURL = portageOutput.rstrip().split("=")[1].strip('\"')
+    for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
+        if "PORTAGE_BINHOST" in p_out:
+            binhostURL = p_out.rstrip().split("=")[1].strip('\"')
     p_exe.wait()
 
     return binhostURL
