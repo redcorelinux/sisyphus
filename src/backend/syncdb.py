@@ -10,13 +10,13 @@ import sisyphus.getfs
 
 
 def remoteCSV():
-    packagesCsvURL, descriptionsCsvURL = sisyphus.getenv.csvURL()
+    pcsvaddr, dcsvaddr = sisyphus.getenv.csvaddr()
     http = urllib3.PoolManager()
 
-    with http.request('GET', packagesCsvURL, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remotePackagesCsv, 'wb') as output_file:
+    with http.request('GET', pcsvaddr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remotePackagesCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-    with http.request('GET', descriptionsCsvURL, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remoteDescriptionsCsv, 'wb') as output_file:
+    with http.request('GET', dcsvaddr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remoteDescriptionsCsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
 

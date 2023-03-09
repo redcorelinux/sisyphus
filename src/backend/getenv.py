@@ -19,23 +19,23 @@ def bhaddr():
     return bhaddr
 
 
-def csvURL():
-    csvURL = bhaddr()
-    packagesCsvURL = []
-    descriptionsCsvURL = []
+def csvaddr():
+    csvaddr = bhaddr()
+    pcsvaddr = []
+    dcsvaddr = []
 
-    if "packages-next" in csvURL:
-        packagesCsvURL = csvURL.replace(
+    if "packages-next" in csvaddr:
+        pcsvaddr = csvaddr.replace(
             'packages-next', 'csv-next') + 'remotePackagesPre.csv'
-        descriptionsCsvURL = csvURL.replace(
+        dcsvaddr = csvaddr.replace(
             'packages-next', 'csv-next') + 'remoteDescriptionsPre.csv'
     else:
-        packagesCsvURL = csvURL.replace(
+        pcsvaddr = csvaddr.replace(
             'packages', 'csv') + 'remotePackagesPre.csv'
-        descriptionsCsvURL = csvURL.replace(
+        dcsvaddr = csvaddr.replace(
             'packages', 'csv') + 'remoteDescriptionsPre.csv'
 
-    return packagesCsvURL, descriptionsCsvURL
+    return pcsvaddr, dcsvaddr
 
 
 def systemBranch():
