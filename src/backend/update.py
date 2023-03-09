@@ -20,7 +20,7 @@ def syncAll():
 
 @animation.wait('fetching updates')
 def start():
-    activeBranch = sisyphus.getenv.systemBranch()
+    act_brch = sisyphus.getenv.sys_brch()
     bh_addr = sisyphus.getenv.bh_addr()
     isSane = sisyphus.checkenv.sanity()
 
@@ -28,17 +28,17 @@ def start():
         syncAll()
     else:
         if "packages-next" in bh_addr:
-            print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + activeBranch + "'" + " " + "(stable)" +
+            print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + act_brch + "'" + " " + "(stable)" +
                   " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + bh_addr + "'" + " " + "(testing)")
         else:
-            print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + activeBranch + "'" + " " + "(testing)" +
+            print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + act_brch + "'" + " " + "(testing)" +
                   " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + bh_addr + "'" + " " + "(stable)")
         sys.exit(sisyphus.getcolor.bright_red + "\n\nInvalid configuration!" + sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow +
                  "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
 
 
 def xstart():
-    activeBranch = sisyphus.getenv.systemBranch()
+    act_brch = sisyphus.getenv.sys_brch()
     bh_addr = sisyphus.getenv.bh_addr()
     isSane = sisyphus.checkenv.sanity()
 
@@ -46,10 +46,10 @@ def xstart():
         syncAll()
     else:
         if "packages-next" in bh_addr:
-            print("\n\nActive branch:" + " " + "'" + activeBranch + "'" + " " + "(stable)" +
+            print("\n\nActive branch:" + " " + "'" + act_brch + "'" + " " + "(stable)" +
                   "\nActive binhost:" + " " + "'" + bh_addr + "'" + " " + "(testing)")
         else:
-            print("\n\nActive branch:" + " " + "'" + activeBranch + "'" + " " + "(testing)" +
+            print("\n\nActive branch:" + " " + "'" + act_brch + "'" + " " + "(testing)" +
                   "\nActive binhost:" + " " + "'" + bh_addr + "'" + " " + "(stable)")
         print("\n\nInvalid configuration!" +
               "\nUse 'sisyphus branch --help' for help\n")

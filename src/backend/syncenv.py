@@ -7,49 +7,49 @@ import sisyphus.getfs
 
 def gentooRepo():
     os.chdir(sisyphus.getfs.gentooRepoDir)
-    localBranch = subprocess.check_output(
+    lcl_brch = subprocess.check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    remoteBranch = subprocess.check_output(
+    rmt_brch = subprocess.check_output(
         ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
     g_exe1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                              localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+                              lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe1.wait()
 
-    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
+    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode(
     ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe2.wait()
 
 
 def redcoreRepo():
     os.chdir(sisyphus.getfs.redcoreRepoDir)
-    localBranch = subprocess.check_output(
+    lcl_brch = subprocess.check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    remoteBranch = subprocess.check_output(
+    rmt_brch = subprocess.check_output(
         ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
     g_exe1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                              localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+                              lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe1.wait()
 
-    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
+    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode(
     ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe2.wait()
 
 
 def portageConfigRepo():
     os.chdir(sisyphus.getfs.portageConfigDir)
-    localBranch = subprocess.check_output(
+    lcl_brch = subprocess.check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    remoteBranch = subprocess.check_output(
+    rmt_brch = subprocess.check_output(
         ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
     g_exe1 = subprocess.Popen(['git', 'stash'], stdout=subprocess.PIPE)
     g_exe1.wait()
     g_exe2 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                              localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+                              lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe2.wait()
-    g_exe3 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
+    g_exe3 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode(
     ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe3.wait()
     g_exe4 = subprocess.Popen(

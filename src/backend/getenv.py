@@ -38,18 +38,18 @@ def csv_addr():
     return pcsv_addr, dcsv_addr
 
 
-def systemBranch():
-    activeBranch = None
+def sys_brch():
+    act_brch = None
 
     if os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
         os.chdir(sisyphus.getfs.gentooRepoDir)
-        localBranch = subprocess.check_output(
+        lcl_brch = subprocess.check_output(
             ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
-        if localBranch.decode().strip() == 'master':
-            activeBranch = str('master')
+        if lcl_brch.decode().strip() == 'master':
+            act_brch = str('master')
 
-        if localBranch.decode().strip() == 'next':
-            activeBranch = str('next')
+        if lcl_brch.decode().strip() == 'next':
+            act_brch = str('next')
 
-    return activeBranch
+    return act_brch

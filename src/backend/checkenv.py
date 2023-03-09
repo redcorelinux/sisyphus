@@ -10,17 +10,17 @@ def root():
 
 
 def sanity():
-    activeBranch = sisyphus.getenv.systemBranch()
+    act_brch = sisyphus.getenv.sys_brch()
     bh_addr = sisyphus.getenv.bh_addr()
     isSane = int()
 
     if "packages-next" in bh_addr:
-        if activeBranch == "next":
+        if act_brch == "next":
             isSane = int(1)
         else:
             isSane = int(0)
     else:
-        if activeBranch == "master":
+        if act_brch == "master":
             isSane = int(1)
         else:
             isSane = int(0)
