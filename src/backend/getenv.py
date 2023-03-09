@@ -6,36 +6,36 @@ import subprocess
 import sisyphus.getfs
 
 
-def bhaddr():
-    bhaddr = []
+def bh_addr():
+    bh_addr = []
     p_exe = subprocess.Popen(
         ['emerge', '--info', '--verbose'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in p_out:
-            bhaddr = p_out.rstrip().split("=")[1].strip('\"')
+            bh_addr = p_out.rstrip().split("=")[1].strip('\"')
     p_exe.wait()
 
-    return bhaddr
+    return bh_addr
 
 
-def csvaddr():
-    csvaddr = bhaddr()
-    pcsvaddr = []
-    dcsvaddr = []
+def csv_addr():
+    csv_addr = bh_addr()
+    pcsv_addr = []
+    dcsv_addr = []
 
-    if "packages-next" in csvaddr:
-        pcsvaddr = csvaddr.replace(
+    if "packages-next" in csv_addr:
+        pcsv_addr = csv_addr.replace(
             'packages-next', 'csv-next') + 'remotePackagesPre.csv'
-        dcsvaddr = csvaddr.replace(
+        dcsv_addr = csv_addr.replace(
             'packages-next', 'csv-next') + 'remoteDescriptionsPre.csv'
     else:
-        pcsvaddr = csvaddr.replace(
+        pcsv_addr = csv_addr.replace(
             'packages', 'csv') + 'remotePackagesPre.csv'
-        dcsvaddr = csvaddr.replace(
+        dcsv_addr = csv_addr.replace(
             'packages', 'csv') + 'remoteDescriptionsPre.csv'
 
-    return pcsvaddr, dcsvaddr
+    return pcsv_addr, dcsv_addr
 
 
 def systemBranch():

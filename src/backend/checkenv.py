@@ -11,10 +11,10 @@ def root():
 
 def sanity():
     activeBranch = sisyphus.getenv.systemBranch()
-    bhaddr = sisyphus.getenv.bhaddr()
+    bh_addr = sisyphus.getenv.bh_addr()
     isSane = int()
 
-    if "packages-next" in bhaddr:
+    if "packages-next" in bh_addr:
         if activeBranch == "next":
             isSane = int(1)
         else:
