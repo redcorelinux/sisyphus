@@ -43,9 +43,9 @@ def injectGentooRepo(branch, remote):
     gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
         branch, remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
+    if not os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
         git.Repo.clone_from("/".join(gentooRemote),
-                            sisyphus.getfs.gentooRepoDir, depth=1, branch=branch)
+                            sisyphus.getfs.g_src_dir, depth=1, branch=branch)
 
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
@@ -53,9 +53,9 @@ def injectRedcoreRepo(branch, remote):
     gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
         branch, remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.getfs.redcoreRepoDir, '.git')):
+    if not os.path.isdir(os.path.join(sisyphus.getfs.r_src_dir, '.git')):
         git.Repo.clone_from("/".join(redcoreRemote),
-                            sisyphus.getfs.redcoreRepoDir, depth=1, branch=branch)
+                            sisyphus.getfs.r_src_dir, depth=1, branch=branch)
 
 
 @animation.wait('injecting Redcore Linux portage config')
@@ -63,9 +63,9 @@ def injectPortageConfigRepo(branch, remote):
     gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
         branch, remote)
 
-    if not os.path.isdir(os.path.join(sisyphus.getfs.portageConfigDir, '.git')):
+    if not os.path.isdir(os.path.join(sisyphus.getfs.p_cfg_dir, '.git')):
         git.Repo.clone_from("/".join(portageConfigRemote),
-                            sisyphus.getfs.portageConfigDir, depth=1, branch=branch)
+                            sisyphus.getfs.p_cfg_dir, depth=1, branch=branch)
 
 
 def giveWarning(branch, remote):

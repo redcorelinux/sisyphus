@@ -42,7 +42,7 @@ def pkg(pkgname):
             src_list.append(is_src)
 
     pickle.dump([bin_list, src_list, need_cfg], open(os.path.join(
-        sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "wb"))
+        sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "wb"))
 
 
 @animation.wait('resolving dependencies')
@@ -80,4 +80,4 @@ def world():
             src_list.append(is_src)
 
     pickle.dump([bin_list, src_list, need_cfg], open(os.path.join(
-        sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "wb"))
+        sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "wb"))

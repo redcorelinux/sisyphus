@@ -41,8 +41,8 @@ def csv_addr():
 def sys_brch():
     act_brch = None
 
-    if os.path.isdir(os.path.join(sisyphus.getfs.gentooRepoDir, '.git')):
-        os.chdir(sisyphus.getfs.gentooRepoDir)
+    if os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
+        os.chdir(sisyphus.getfs.g_src_dir)
         lcl_brch = subprocess.check_output(
             ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 

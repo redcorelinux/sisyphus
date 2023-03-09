@@ -21,12 +21,12 @@ def start(pkgname):
         sisyphus.update.start()
         sisyphus.solvedeps.pkg(pkgname)
         bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-            sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
+            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
         if need_cfg == 0:
             if len(src_list) == 0:
                 if not len(bin_list) == 0:
-                    os.chdir(sisyphus.getfs.portageCacheDir)
+                    os.chdir(sisyphus.getfs.p_cch_dir)
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
@@ -76,12 +76,12 @@ def estart(pkgname):
         sisyphus.update.start()
         sisyphus.solvedeps.pkg(pkgname)
         bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-            sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
+            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
         if need_cfg == 0:
             if len(src_list) == 0:
                 if not len(bin_list) == 0:
-                    os.chdir(sisyphus.getfs.portageCacheDir)
+                    os.chdir(sisyphus.getfs.p_cch_dir)
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
@@ -109,7 +109,7 @@ def estart(pkgname):
                     sys.exit()
             else:
                 if not len(bin_list) == 0:
-                    os.chdir(sisyphus.getfs.portageCacheDir)
+                    os.chdir(sisyphus.getfs.p_cch_dir)
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
@@ -172,9 +172,9 @@ def estart(pkgname):
 def xstart(pkgname):
     sisyphus.solvedeps.pkg.__wrapped__(pkgname)  # undecorate
     bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
+        sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    os.chdir(sisyphus.getfs.portageCacheDir)
+    os.chdir(sisyphus.getfs.p_cch_dir)
     print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + ", ".join(
         bin_list) + "\n\n" + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
     sisyphus.download.xpkgbinpkgonly()

@@ -6,7 +6,7 @@ import sisyphus.getfs
 
 
 def gentooRepo():
-    os.chdir(sisyphus.getfs.gentooRepoDir)
+    os.chdir(sisyphus.getfs.g_src_dir)
     lcl_brch = subprocess.check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     rmt_brch = subprocess.check_output(
@@ -22,7 +22,7 @@ def gentooRepo():
 
 
 def redcoreRepo():
-    os.chdir(sisyphus.getfs.redcoreRepoDir)
+    os.chdir(sisyphus.getfs.r_src_dir)
     lcl_brch = subprocess.check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     rmt_brch = subprocess.check_output(
@@ -38,7 +38,7 @@ def redcoreRepo():
 
 
 def portageConfigRepo():
-    os.chdir(sisyphus.getfs.portageConfigDir)
+    os.chdir(sisyphus.getfs.p_cfg_dir)
     lcl_brch = subprocess.check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     rmt_brch = subprocess.check_output(
