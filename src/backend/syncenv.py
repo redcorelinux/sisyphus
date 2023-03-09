@@ -12,13 +12,13 @@ def gentooRepo():
     remoteBranch = subprocess.check_output(
         ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                                     localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
-    gitExecStage1.wait()
+    g_exe1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
+                              localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+    g_exe1.wait()
 
-    gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
+    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
     ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
-    gitExecStage2.wait()
+    g_exe2.wait()
 
 
 def redcoreRepo():
@@ -28,13 +28,13 @@ def redcoreRepo():
     remoteBranch = subprocess.check_output(
         ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    gitExecStage1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                                     localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
-    gitExecStage1.wait()
+    g_exe1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
+                              localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+    g_exe1.wait()
 
-    gitExecStage2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
+    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
     ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
-    gitExecStage2.wait()
+    g_exe2.wait()
 
 
 def portageConfigRepo():
@@ -44,20 +44,20 @@ def portageConfigRepo():
     remoteBranch = subprocess.check_output(
         ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
 
-    gitExecStage1 = subprocess.Popen(['git', 'stash'], stdout=subprocess.PIPE)
-    gitExecStage1.wait()
-    gitExecStage2 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                                     localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
-    gitExecStage2.wait()
-    gitExecStage3 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
+    g_exe1 = subprocess.Popen(['git', 'stash'], stdout=subprocess.PIPE)
+    g_exe1.wait()
+    g_exe2 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
+                              localBranch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
+    g_exe2.wait()
+    g_exe3 = subprocess.Popen(['git', 'reset', '--hard'] + remoteBranch.decode(
     ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
-    gitExecStage3.wait()
-    gitExecStage4 = subprocess.Popen(
+    g_exe3.wait()
+    g_exe4 = subprocess.Popen(
         ['git', 'stash', 'apply'], stdout=subprocess.PIPE)
-    gitExecStage4.wait()
-    gitExecStage5 = subprocess.Popen(
+    g_exe4.wait()
+    g_exe5 = subprocess.Popen(
         ['git', 'stash', 'clear'], stdout=subprocess.PIPE)
-    gitExecStage5.wait()
-    gitExecStage6 = subprocess.Popen(
+    g_exe5.wait()
+    g_exe6 = subprocess.Popen(
         ['git', 'gc', '--prune=now', '--quiet'], stdout=subprocess.PIPE)
-    gitExecStage6.wait()
+    g_exe6.wait()
