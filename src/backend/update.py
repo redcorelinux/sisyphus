@@ -12,9 +12,9 @@ import sisyphus.syncenv
 
 
 def syncAll():
-    sisyphus.syncenv.gentooRepo()
-    sisyphus.syncenv.redcoreRepo()
-    sisyphus.syncenv.portageConfigRepo()
+    sisyphus.syncenv.g_repo()
+    sisyphus.syncenv.r_repo()
+    sisyphus.syncenv.p_cfg_repo()
     sisyphus.syncdb.rmt_tbl()
 
 

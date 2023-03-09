@@ -31,9 +31,9 @@ def getBranchRemote(branch, remote):
         elif "pagure" in remote:
             remote = sisyphus.getfs.remotePagure
 
-    gentooRemote = [remote, sisyphus.getfs.gentooRepo]
-    redcoreRemote = [remote, sisyphus.getfs.redcoreRepo]
-    portageConfigRemote = [remote, sisyphus.getfs.portageConfigRepo]
+    gentooRemote = [remote, sisyphus.getfs.g_repo]
+    redcoreRemote = [remote, sisyphus.getfs.r_repo]
+    portageConfigRemote = [remote, sisyphus.getfs.p_cfg_repo]
 
     return gentooRemote, redcoreRemote, portageConfigRemote
 

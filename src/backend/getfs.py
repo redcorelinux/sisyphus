@@ -6,9 +6,9 @@ remoteGithub = 'https://github.com/redcorelinux'
 remoteGitlab = 'https://gitlab.com/redcore'
 remotePagure = 'https://pagure.io/redcore'
 
-gentooRepo = 'portage.git'
-redcoreRepo = 'redcore-desktop.git'
-portageConfigRepo = 'redcore-build.git'
+g_repo = 'portage.git'
+r_repo = 'redcore-desktop.git'
+p_cfg_repo = 'redcore-build.git'
 
 g_src_dir = '/usr/ports/gentoo'
 r_src_dir = '/usr/ports/redcore'
