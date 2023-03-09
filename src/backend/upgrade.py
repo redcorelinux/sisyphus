@@ -20,15 +20,15 @@ def start():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.world()
-        areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+        bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
             sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
-        if needsConfig == 0:
-            if len(areSources) == 0:
-                if not len(areBinaries) == 0:
+        if need_cfg == 0:
+            if len(src_list) == 0:
+                if not len(bin_list) == 0:
                     os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
-                        areBinaries) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+                        bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
                         user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No " + sisyphus.getcolor.reset + "]" + " ")
@@ -75,15 +75,15 @@ def estart():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.world()
-        areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+        bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
             sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
-        if needsConfig == 0:
-            if len(areSources) == 0:
-                if not len(areBinaries) == 0:
+        if need_cfg == 0:
+            if len(src_list) == 0:
+                if not len(bin_list) == 0:
                     os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
-                        areBinaries) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+                        bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
                         user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
@@ -108,12 +108,12 @@ def estart():
                           "\nNo package upgrades found!\n" + sisyphus.getcolor.reset)
                     sys.exit()
             else:
-                if not len(areBinaries) == 0:
+                if not len(bin_list) == 0:
                     os.chdir(sisyphus.getfs.portageCacheDir)
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
-                        areBinaries) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+                        bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
-                        areSources) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
+                        src_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
                         user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
@@ -135,7 +135,7 @@ def estart():
                             continue
                 else:
                     print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
-                        areSources) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(areSources)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
+                        src_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
                         user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
@@ -171,17 +171,17 @@ def estart():
 
 def xstart():
     sisyphus.solvedeps.world.__wrapped__()  # undecorate
-    areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
-    if not len(areSources) == 0:
+    if not len(src_list) == 0:
         print("\n" + "Source package(s) found in the mix;" + " " + "Use sisyphus CLI:" + " " + "'" +
               "sisyphus upgrade --ebuild" + "'" + " " + "to perform the upgrade;" + " " + "Aborting." + "\n")
     else:
-        if not len(areBinaries) == 0:
+        if not len(bin_list) == 0:
             os.chdir(sisyphus.getfs.portageCacheDir)
             print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + ", ".join(
-                areBinaries) + "\n\n" + "Total:" + " " + str(len(areBinaries)) + " " + "binary package(s)" + "\n\n")
+                bin_list) + "\n\n" + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
             sisyphus.download.xworldbinpkgonly()
             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
                                       '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)

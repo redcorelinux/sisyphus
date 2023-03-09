@@ -11,10 +11,10 @@ import sisyphus.killemerge
 
 def pkgbinpkgonly():
     fetchList = []
-    areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in areBinaries]):
+    for index, binary in enumerate(['=' + package for package in bin_list]):
         fetchList.append(binary)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
@@ -24,10 +24,10 @@ def pkgbinpkgonly():
 
 def pkgbinpkg():
     fetchList = []
-    areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in areBinaries]):
+    for index, binary in enumerate(['=' + package for package in bin_list]):
         fetchList.append(binary)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
@@ -37,10 +37,10 @@ def pkgbinpkg():
 
 def xpkgbinpkgonly():
     fetchList = []
-    areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.portageMetadataDir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in areBinaries]):
+    for index, binary in enumerate(['=' + package for package in bin_list]):
         fetchList.append(binary)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
@@ -56,10 +56,10 @@ def xpkgbinpkgonly():
 
 def worldbinpkgonly():
     fetchList = []
-    areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in areBinaries]):
+    for index, binary in enumerate(['=' + package for package in bin_list]):
         fetchList.append(binary)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
@@ -69,10 +69,10 @@ def worldbinpkgonly():
 
 def worldbinpkg():
     fetchList = []
-    areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in areBinaries]):
+    for index, binary in enumerate(['=' + package for package in bin_list]):
         fetchList.append(binary)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
@@ -82,10 +82,10 @@ def worldbinpkg():
 
 def xworldbinpkgonly():
     fetchList = []
-    areBinaries, areSources, needsConfig = pickle.load(open(os.path.join(
+    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.portageMetadataDir, "sisyphus_worlddeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in areBinaries]):
+    for index, binary in enumerate(['=' + package for package in bin_list]):
         fetchList.append(binary)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',

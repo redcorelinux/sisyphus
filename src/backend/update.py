@@ -22,9 +22,9 @@ def syncAll():
 def start():
     act_brch = sisyphus.getenv.sys_brch()
     bh_addr = sisyphus.getenv.bh_addr()
-    isSane = sisyphus.checkenv.sanity()
+    is_sane = sisyphus.checkenv.sanity()
 
-    if isSane == 1:
+    if is_sane == 1:
         syncAll()
     else:
         if "packages-next" in bh_addr:
@@ -40,9 +40,9 @@ def start():
 def xstart():
     act_brch = sisyphus.getenv.sys_brch()
     bh_addr = sisyphus.getenv.bh_addr()
-    isSane = sisyphus.checkenv.sanity()
+    is_sane = sisyphus.checkenv.sanity()
 
-    if isSane == 1:
+    if is_sane == 1:
         syncAll()
     else:
         if "packages-next" in bh_addr:
