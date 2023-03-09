@@ -13,10 +13,10 @@ def remoteCSV():
     pcsv_addr, dcsv_addr = sisyphus.getenv.csv_addr()
     http = urllib3.PoolManager()
 
-    with http.request('GET', pcsv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remotePackagesCsv, 'wb') as output_file:
+    with http.request('GET', pcsv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.rmt_pcsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-    with http.request('GET', dcsv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remoteDescriptionsCsv, 'wb') as output_file:
+    with http.request('GET', dcsv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.rmt_dcsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
 
@@ -27,7 +27,7 @@ def localCSV():
 def remoteTable():
     remoteCSV()
 
-    sisyphusdb = sqlite3.connect(sisyphus.getfs.localDatabase)
+    sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
     sisyphusdb.cursor().execute('''drop table if exists remote_packages''')
     sisyphusdb.cursor().execute('''drop table if exists remote_descriptions''')
     sisyphusdb.cursor().execute(
@@ -35,12 +35,12 @@ def remoteTable():
     sisyphusdb.cursor().execute(
         '''create table remote_descriptions (category TEXT,name TEXT,description TEXT)''')
 
-    with open(sisyphus.getfs.remotePackagesCsv) as input_file:
+    with open(sisyphus.getfs.rmt_pcsv) as input_file:
         for row in csv.reader(input_file):
             sisyphusdb.cursor().execute(
                 "insert into remote_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
 
-    with open(sisyphus.getfs.remoteDescriptionsCsv) as input_file:
+    with open(sisyphus.getfs.rmt_dcsv) as input_file:
         for row in csv.reader(input_file):
             sisyphusdb.cursor().execute(
                 "insert into remote_descriptions (category, name, description) values (?, ?, ?);", row)
@@ -52,12 +52,12 @@ def remoteTable():
 def localTable():
     localCSV()
 
-    sisyphusdb = sqlite3.connect(sisyphus.getfs.localDatabase)
+    sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
     sisyphusdb.cursor().execute('''drop table if exists local_packages''')
     sisyphusdb.cursor().execute(
         '''create table local_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
 
-    with open(sisyphus.getfs.localPackagesCsv) as input_file:
+    with open(sisyphus.getfs.lcl_pcsv) as input_file:
         for row in csv.reader(input_file):
             sisyphusdb.cursor().execute(
                 "insert into local_packages (category, name, version, slot) values (?, ?, ?, ?);", row)

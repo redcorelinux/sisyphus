@@ -17,11 +17,11 @@ portageCacheDir = '/var/cache/packages'
 portageDistDir = '/var/cache/distfiles'
 portageMetadataDir = '/var/cache/edb'
 
-remotePackagesCsv = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
-remoteDescriptionsCsv = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
-localPackagesCsv = '/var/lib/sisyphus/csv/localPackagesPre.csv'
+rmt_pcsv = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
+rmt_dcsv = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
+lcl_pcsv = '/var/lib/sisyphus/csv/localPackagesPre.csv'
 
-localDatabase = '/var/lib/sisyphus/db/sisyphus.db'
+lcl_db = '/var/lib/sisyphus/db/sisyphus.db'
 
 if platform.uname()[4] == 'x86_64':
     mirrorCfg = '/etc/sisyphus/sisyphus-mirrors-amd64.conf'

@@ -93,7 +93,7 @@ def searchDB(filter, cat='', pn='', desc=''):
                     AND iv <> av'''
     }
 
-    with sqlite3.connect(sisyphus.getfs.localDatabase) as db:
+    with sqlite3.connect(sisyphus.getfs.lcl_db) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         cursor.execute(SELECTS[filter])

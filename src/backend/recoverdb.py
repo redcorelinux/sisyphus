@@ -8,14 +8,14 @@ import sisyphus.syncdb
 
 @animation.wait('recovering databases')
 def start():
-    if os.path.exists(sisyphus.getfs.remotePackagesCsv):
-        os.remove(sisyphus.getfs.remotePackagesCsv)
-    if os.path.exists(sisyphus.getfs.remoteDescriptionsCsv):
-        os.remove(sisyphus.getfs.remoteDescriptionsCsv)
-    if os.path.exists(sisyphus.getfs.localPackagesCsv):
-        os.remove(sisyphus.getfs.localPackagesCsv)
-    if os.path.exists(sisyphus.getfs.localDatabase):
-        os.remove(sisyphus.getfs.localDatabase)
+    if os.path.exists(sisyphus.getfs.rmt_pcsv):
+        os.remove(sisyphus.getfs.rmt_pcsv)
+    if os.path.exists(sisyphus.getfs.rmt_dcsv):
+        os.remove(sisyphus.getfs.rmt_dcsv)
+    if os.path.exists(sisyphus.getfs.lcl_pcsv):
+        os.remove(sisyphus.getfs.lcl_pcsv)
+    if os.path.exists(sisyphus.getfs.lcl_db):
+        os.remove(sisyphus.getfs.lcl_db)
 
     sisyphus.syncdb.remoteTable()
     sisyphus.syncdb.localTable()
