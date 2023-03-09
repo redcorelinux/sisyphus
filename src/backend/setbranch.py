@@ -13,9 +13,9 @@ import sisyphus.setprofile
 
 
 def getBranchRemote(branch, remote):
-    gentooRemote = []
-    redcoreRemote = []
-    portageConfigRemote = []
+    g_rmt = []
+    r_rmt = []
+    p_cfg_rmt = []
     if "master" in branch:
         if "github" in remote:
             remote = sisyphus.getfs.rmt_gh_addr
@@ -31,40 +31,40 @@ def getBranchRemote(branch, remote):
         elif "pagure" in remote:
             remote = sisyphus.getfs.rmt_pg_addr
 
-    gentooRemote = [remote, sisyphus.getfs.g_repo]
-    redcoreRemote = [remote, sisyphus.getfs.r_repo]
-    portageConfigRemote = [remote, sisyphus.getfs.p_cfg_repo]
+    g_rmt = [remote, sisyphus.getfs.g_repo]
+    r_rmt = [remote, sisyphus.getfs.r_repo]
+    p_cfg_rmt = [remote, sisyphus.getfs.p_cfg_repo]
 
-    return gentooRemote, redcoreRemote, portageConfigRemote
+    return g_rmt, r_rmt, p_cfg_rmt
 
 
 @animation.wait('injecting Gentoo Linux portage tree')
 def injectGentooRepo(branch, remote):
-    gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
+    g_rmt, r_rmt, p_cfg_rmt = getBranchRemote(
         branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
-        git.Repo.clone_from("/".join(gentooRemote),
+        git.Repo.clone_from("/".join(g_rmt),
                             sisyphus.getfs.g_src_dir, depth=1, branch=branch)
 
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
 def injectRedcoreRepo(branch, remote):
-    gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
+    g_rmt, r_rmt, p_cfg_rmt = getBranchRemote(
         branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.r_src_dir, '.git')):
-        git.Repo.clone_from("/".join(redcoreRemote),
+        git.Repo.clone_from("/".join(r_rmt),
                             sisyphus.getfs.r_src_dir, depth=1, branch=branch)
 
 
 @animation.wait('injecting Redcore Linux portage config')
 def injectPortageConfigRepo(branch, remote):
-    gentooRemote, redcoreRemote, portageConfigRemote = getBranchRemote(
+    g_rmt, r_rmt, p_cfg_rmt = getBranchRemote(
         branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.p_cfg_dir, '.git')):
-        git.Repo.clone_from("/".join(portageConfigRemote),
+        git.Repo.clone_from("/".join(p_cfg_rmt),
                             sisyphus.getfs.p_cfg_dir, depth=1, branch=branch)
 
 
