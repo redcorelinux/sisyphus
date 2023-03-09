@@ -15,7 +15,7 @@ def syncAll():
     sisyphus.syncenv.gentooRepo()
     sisyphus.syncenv.redcoreRepo()
     sisyphus.syncenv.portageConfigRepo()
-    sisyphus.syncdb.remoteTable()
+    sisyphus.syncdb.rmt_tbl()
 
 
 @animation.wait('fetching updates')

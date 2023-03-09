@@ -6,4 +6,4 @@ import sisyphus.syncdb
 
 @animation.wait('syncing spm changes')
 def start():
-    sisyphus.syncdb.localTable()
+    sisyphus.syncdb.lcl_tbl()

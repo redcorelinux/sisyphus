@@ -9,7 +9,7 @@ import sisyphus.getenv
 import sisyphus.getfs
 
 
-def remoteCSV():
+def rmt_csv():
     pcsv_addr, dcsv_addr = sisyphus.getenv.csv_addr()
     http = urllib3.PoolManager()
 
@@ -20,12 +20,12 @@ def remoteCSV():
         shutil.copyfileobj(tmp_buffer, output_file)
 
 
-def localCSV():
+def lcl_csv():
     subprocess.call(['/usr/share/sisyphus/helpers/make_local_csv'])
 
 
-def remoteTable():
-    remoteCSV()
+def rmt_tbl():
+    rmt_csv()
 
     sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
     sisyphusdb.cursor().execute('''drop table if exists remote_packages''')
@@ -49,8 +49,8 @@ def remoteTable():
     sisyphusdb.close()
 
 
-def localTable():
-    localCSV()
+def lcl_tbl():
+    lcl_csv()
 
     sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
     sisyphusdb.cursor().execute('''drop table if exists local_packages''')

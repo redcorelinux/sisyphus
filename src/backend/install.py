@@ -37,7 +37,7 @@ def start(pkgname):
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
                                                       '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
-                            sisyphus.syncdb.localTable()
+                            sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             print(sisyphus.getcolor.bright_green +
@@ -92,7 +92,7 @@ def estart(pkgname):
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
                                                       '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
-                            sisyphus.syncdb.localTable()
+                            sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             print(sisyphus.getcolor.bright_green +
@@ -122,7 +122,7 @@ def estart(pkgname):
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries',
                                                       '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
-                            sisyphus.syncdb.localTable()
+                            sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             print(sisyphus.getcolor.bright_green +
@@ -143,7 +143,7 @@ def estart(pkgname):
                             p_exe = subprocess.Popen(
                                 ['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
-                            sisyphus.syncdb.localTable()
+                            sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             print(sisyphus.getcolor.bright_green +
@@ -187,4 +187,4 @@ def xstart(pkgname):
         print(p_out.rstrip())
 
     p_exe.wait()
-    sisyphus.syncdb.localTable()
+    sisyphus.syncdb.lcl_tbl()

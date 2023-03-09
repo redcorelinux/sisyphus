@@ -15,7 +15,7 @@ def start():
         p_exe = subprocess.Popen(
             ['emerge', '--quiet', '--depclean', '--ask'])
         p_exe.wait()
-        sisyphus.syncdb.localTable()
+        sisyphus.syncdb.lcl_tbl()
     else:
         print(sisyphus.getcolor.bright_red +
               "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)
@@ -32,4 +32,4 @@ def xstart():
         print(p_out.rstrip())
 
     p_exe.wait()
-    sisyphus.syncdb.localTable()
+    sisyphus.syncdb.lcl_tbl()

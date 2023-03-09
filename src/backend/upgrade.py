@@ -37,7 +37,7 @@ def start():
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
                                                       '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
-                            sisyphus.syncdb.localTable()
+                            sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             print(sisyphus.getcolor.bright_green +
@@ -92,7 +92,7 @@ def estart():
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
                                                       '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
-                            sisyphus.syncdb.localTable()
+                            sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             print(sisyphus.getcolor.bright_green +
@@ -122,7 +122,7 @@ def estart():
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg',
                                                       '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
-                            sisyphus.syncdb.localTable()
+                            sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             print(sisyphus.getcolor.bright_green +
@@ -143,7 +143,7 @@ def estart():
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--backtrack=100',
                                                       '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             p_exe.wait()
-                            sisyphus.syncdb.localTable()
+                            sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             print(sisyphus.getcolor.bright_green +
@@ -192,6 +192,6 @@ def xstart():
                 print(p_out.rstrip())
 
             p_exe.wait()
-            sisyphus.syncdb.localTable()
+            sisyphus.syncdb.lcl_tbl()
         else:
             print("\nNo package upgrades found!\n")
