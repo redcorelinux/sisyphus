@@ -9,39 +9,39 @@ import sisyphus.getfs
 import sisyphus.killemerge
 
 
-def pkgbinpkgonly():
+def dl_pbin_only():
     dl_list = []
     bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in bin_list]):
-        dl_list.append(binary)
+    for index, pbin in enumerate(['=' + package for package in bin_list]):
+        dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
                               '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
     p_exe.wait()
 
 
-def pkgbinpkg():
+def dl_pbin():
     dl_list = []
     bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in bin_list]):
-        dl_list.append(binary)
+    for index, pbin in enumerate(['=' + package for package in bin_list]):
+        dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
                               '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
     p_exe.wait()
 
 
-def xpkgbinpkgonly():
+def xdl_pbin_only():
     dl_list = []
     bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in bin_list]):
-        dl_list.append(binary)
+    for index, pbin in enumerate(['=' + package for package in bin_list]):
+        dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
                               '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -54,39 +54,39 @@ def xpkgbinpkgonly():
     p_exe.wait()
 
 
-def worldbinpkgonly():
+def dl_wpbin_only():
     dl_list = []
     bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in bin_list]):
-        dl_list.append(binary)
+    for index, pbin in enumerate(['=' + package for package in bin_list]):
+        dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
                               '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
     p_exe.wait()
 
 
-def worldbinpkg():
+def dl_wpbin():
     dl_list = []
     bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in bin_list]):
-        dl_list.append(binary)
+    for index, pbin in enumerate(['=' + package for package in bin_list]):
+        dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
                               '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
     p_exe.wait()
 
 
-def xworldbinpkgonly():
+def xdl_wpbin_only():
     dl_list = []
     bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
         sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
-    for index, binary in enumerate(['=' + package for package in bin_list]):
-        dl_list.append(binary)
+    for index, pbin in enumerate(['=' + package for package in bin_list]):
+        dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
                               '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
