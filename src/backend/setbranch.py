@@ -12,7 +12,7 @@ import sisyphus.setjobs
 import sisyphus.setprofile
 
 
-def getBranchRemote(branch, remote):
+def get_brch_rmt(branch, remote):
     g_rmt = []
     r_rmt = []
     p_cfg_rmt = []
@@ -39,8 +39,8 @@ def getBranchRemote(branch, remote):
 
 
 @animation.wait('injecting Gentoo Linux portage tree')
-def injectGentooRepo(branch, remote):
-    g_rmt, r_rmt, p_cfg_rmt = getBranchRemote(
+def ins_g_repo(branch, remote):
+    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(
         branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
@@ -49,8 +49,8 @@ def injectGentooRepo(branch, remote):
 
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
-def injectRedcoreRepo(branch, remote):
-    g_rmt, r_rmt, p_cfg_rmt = getBranchRemote(
+def ins_r_repo(branch, remote):
+    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(
         branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.r_src_dir, '.git')):
@@ -59,8 +59,8 @@ def injectRedcoreRepo(branch, remote):
 
 
 @animation.wait('injecting Redcore Linux portage config')
-def injectPortageConfigRepo(branch, remote):
-    g_rmt, r_rmt, p_cfg_rmt = getBranchRemote(
+def ins_p_cfg_repo(branch, remote):
+    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(
         branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.p_cfg_dir, '.git')):
@@ -68,7 +68,7 @@ def injectPortageConfigRepo(branch, remote):
                             sisyphus.getfs.p_cfg_dir, depth=1, branch=branch)
 
 
-def giveWarning(branch, remote):
+def brch_s_warn(branch, remote):
     if "master" in branch:
         print(sisyphus.getcolor.green + "\nActive branch switched:" +
               " " + sisyphus.getcolor.reset + "'" + branch + "'")
@@ -93,12 +93,12 @@ def start(branch, remote):
     if sisyphus.checkenv.root():
         sisyphus.purgeenv.branch()
         sisyphus.purgeenv.metadata()
-        injectGentooRepo(branch, remote)
-        injectRedcoreRepo(branch, remote)
-        injectPortageConfigRepo(branch, remote)
+        ins_g_repo(branch, remote)
+        ins_r_repo(branch, remote)
+        ins_p_cfg_repo(branch, remote)
         sisyphus.setjobs.start()
         sisyphus.setprofile.start()
-        giveWarning(branch, remote)
+        brch_s_warn(branch, remote)
     else:
         print(sisyphus.getcolor.bright_red +
               "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)
