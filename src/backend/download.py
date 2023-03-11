@@ -11,40 +11,40 @@ import sisyphus.killemerge
 
 def dl_pbin_only():
     dl_list = []
-    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
+    bin_list, src_list, need_cfg = pickle.load(
+        open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
     for index, pbin in enumerate(['=' + package for package in bin_list]):
         dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
-                              '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
+                             '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
     p_exe.wait()
 
 
 def dl_pbin():
     dl_list = []
-    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
+    bin_list, src_list, need_cfg = pickle.load(
+        open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
     for index, pbin in enumerate(['=' + package for package in bin_list]):
         dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
-                              '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
+                             '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
     p_exe.wait()
 
 
 def xdl_pbin_only():
     dl_list = []
-    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
+    bin_list, src_list, need_cfg = pickle.load(
+        open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
     for index, pbin in enumerate(['=' + package for package in bin_list]):
         dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
-                              '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                             '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killemerge.start, p_exe)
 
@@ -56,40 +56,40 @@ def xdl_pbin_only():
 
 def dl_wpbin_only():
     dl_list = []
-    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
+    bin_list, src_list, need_cfg = pickle.load(
+        open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
     for index, pbin in enumerate(['=' + package for package in bin_list]):
         dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly',
-                              '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
+                             '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
     p_exe.wait()
 
 
 def dl_wpbin():
     dl_list = []
-    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
+    bin_list, src_list, need_cfg = pickle.load(
+        open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
     for index, pbin in enumerate(['=' + package for package in bin_list]):
         dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
-                              '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
+                             '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
     p_exe.wait()
 
 
 def xdl_wpbin_only():
     dl_list = []
-    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
+    bin_list, src_list, need_cfg = pickle.load(
+        open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
     for index, pbin in enumerate(['=' + package for package in bin_list]):
         dl_list.append(pbin)
 
     p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--getbinpkgonly', '--fetchonly', '--rebuilt-binaries',
-                              '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                             '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killemerge.start, p_exe)
 

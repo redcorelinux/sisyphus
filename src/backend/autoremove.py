@@ -12,8 +12,7 @@ import sisyphus.syncdb
 
 def start():
     if sisyphus.checkenv.root():
-        p_exe = subprocess.Popen(
-            ['emerge', '--quiet', '--depclean', '--ask'])
+        p_exe = subprocess.Popen(['emerge', '--quiet', '--depclean', '--ask'])
         p_exe.wait()
         sisyphus.syncdb.lcl_tbl()
     else:
@@ -23,8 +22,8 @@ def start():
 
 
 def xstart():
-    p_exe = subprocess.Popen(
-        ['emerge', '--depclean'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p_exe = subprocess.Popen(['emerge', '--depclean'],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killemerge.start, p_exe)
 

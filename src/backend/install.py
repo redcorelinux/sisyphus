@@ -20,8 +20,8 @@ def start(pkgname):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.pkg(pkgname)
-        bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
+        bin_list, src_list, need_cfg = pickle.load(
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
         if need_cfg == 0:
             if len(src_list) == 0:
@@ -34,14 +34,12 @@ def start(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.dl_pbin_only()
-                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
-                                                      '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
+                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
-                            print(sisyphus.getcolor.bright_green +
-                                  "\nOk!\n" + sisyphus.getcolor.reset)
                             break
                             sys.exit()
                         else:
@@ -75,8 +73,8 @@ def estart(pkgname):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.pkg(pkgname)
-        bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
+        bin_list, src_list, need_cfg = pickle.load(
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
         if need_cfg == 0:
             if len(src_list) == 0:
@@ -89,14 +87,12 @@ def estart(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.dl_pbin_only()
-                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly',
-                                                      '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
+                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
-                            print(sisyphus.getcolor.bright_green +
-                                  "\nOk!\n" + sisyphus.getcolor.reset)
                             break
                             sys.exit()
                         else:
@@ -120,13 +116,11 @@ def estart(pkgname):
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.dl_pbin()
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries',
-                                                      '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
-                            print(sisyphus.getcolor.bright_green +
-                                  "\nOk!\n" + sisyphus.getcolor.reset)
                             break
                             sys.exit()
                         else:
@@ -146,8 +140,6 @@ def estart(pkgname):
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
-                            print(sisyphus.getcolor.bright_green +
-                                  "\nOk!\n" + sisyphus.getcolor.reset)
                             break
                             sys.exit()
                         else:
@@ -156,7 +148,7 @@ def estart(pkgname):
                             continue
         else:
             p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
-                                      '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
             p_exe.wait()
             print(sisyphus.getcolor.bright_red +
                   "\nCannot proceed!\n" + sisyphus.getcolor.reset)
@@ -171,15 +163,15 @@ def estart(pkgname):
 
 def xstart(pkgname):
     sisyphus.solvedeps.pkg.__wrapped__(pkgname)  # undecorate
-    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
+    bin_list, src_list, need_cfg = pickle.load(
+        open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
     os.chdir(sisyphus.getfs.p_cch_dir)
-    print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + ", ".join(
-        bin_list) + "\n\n" + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
+    print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" +
+          ", ".join(bin_list) + "\n\n" + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
     sisyphus.download.xdl_pbin_only()
-    p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                              '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y',
+                             '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killemerge.start, p_exe)
 

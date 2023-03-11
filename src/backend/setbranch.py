@@ -40,28 +40,25 @@ def get_brch_rmt(branch, remote):
 
 @animation.wait('injecting Gentoo Linux portage tree')
 def ins_g_repo(branch, remote):
-    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(
-        branch, remote)
+    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
-        git.Repo.clone_from("/".join(g_rmt),
-                            sisyphus.getfs.g_src_dir, depth=1, branch=branch)
+        git.Repo.clone_from(
+            "/".join(g_rmt), sisyphus.getfs.g_src_dir, depth=1, branch=branch)
 
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
 def ins_r_repo(branch, remote):
-    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(
-        branch, remote)
+    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.r_src_dir, '.git')):
-        git.Repo.clone_from("/".join(r_rmt),
-                            sisyphus.getfs.r_src_dir, depth=1, branch=branch)
+        git.Repo.clone_from(
+            "/".join(r_rmt), sisyphus.getfs.r_src_dir, depth=1, branch=branch)
 
 
 @animation.wait('injecting Redcore Linux portage config')
 def ins_p_cfg_repo(branch, remote):
-    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(
-        branch, remote)
+    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.p_cfg_dir, '.git')):
         git.Repo.clone_from("/".join(p_cfg_rmt),
@@ -74,19 +71,19 @@ def brch_s_warn(branch, remote):
               " " + sisyphus.getcolor.reset + "'" + branch + "'")
         print(sisyphus.getcolor.green + "Active remote switched:" +
               " " + sisyphus.getcolor.reset + "'" + remote + "'")
-        print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 3" + "'" + " " + sisyphus.getcolor.bright_yellow + "or" +
-              sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 7" + "'" + " " + sisyphus.getcolor.bright_yellow + "to pair the binhost" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow +
-              "Use" + sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 3" + "'" + " " + sisyphus.getcolor.bright_yellow +
+              "or" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 7" + "'" + " " + sisyphus.getcolor.bright_yellow + "to pair the binhost" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " + "'" +
+              "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
     elif "next" in branch:
         print(sisyphus.getcolor.green + "\nActive branch switched:" +
               " " + sisyphus.getcolor.reset + "'" + branch + "'")
         print(sisyphus.getcolor.green + "Active remote switched:" +
               " " + sisyphus.getcolor.reset + "'" + remote + "'")
-        print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 4" + "'" + " " + sisyphus.getcolor.bright_yellow + "or" +
-              sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 8" + "'" + " " + sisyphus.getcolor.bright_yellow + "to pair the binhost" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow +
-              "Use" + sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 4" + "'" + " " + sisyphus.getcolor.bright_yellow +
+              "or" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 8" + "'" + " " + sisyphus.getcolor.bright_yellow + "to pair the binhost" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " + "'" +
+              "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
 
 
 def start(branch, remote):

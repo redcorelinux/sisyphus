@@ -20,8 +20,8 @@ def start():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.world()
-        bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
+        bin_list, src_list, need_cfg = pickle.load(
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
         if need_cfg == 0:
             if len(src_list) == 0:
@@ -35,13 +35,11 @@ def start():
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.dl_wpbin_only()
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
-                                                      '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                                                     '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
-                            print(sisyphus.getcolor.bright_green +
-                                  "\nOk!\n" + sisyphus.getcolor.reset)
                             break
                             sys.exit()
                         else:
@@ -75,8 +73,8 @@ def estart():
     if sisyphus.checkenv.root():
         sisyphus.update.start()
         sisyphus.solvedeps.world()
-        bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
+        bin_list, src_list, need_cfg = pickle.load(
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
         if need_cfg == 0:
             if len(src_list) == 0:
@@ -90,13 +88,11 @@ def estart():
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.dl_wpbin_only()
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
-                                                      '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                                                     '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
-                            print(sisyphus.getcolor.bright_green +
-                                  "\nOk!\n" + sisyphus.getcolor.reset)
                             break
                             sys.exit()
                         else:
@@ -120,13 +116,11 @@ def estart():
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.dl_wpbin()
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg',
-                                                      '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                                                     '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
-                            print(sisyphus.getcolor.bright_green +
-                                  "\nOk!\n" + sisyphus.getcolor.reset)
                             break
                             sys.exit()
                         else:
@@ -140,14 +134,12 @@ def estart():
                         user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
-                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--backtrack=100',
-                                                      '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--backtrack=100', '--with-bdeps=y',
+                                                     '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
-                            print(sisyphus.getcolor.bright_green +
-                                  "\nOk!\n" + sisyphus.getcolor.reset)
                             break
                             sys.exit()
                         else:
@@ -156,7 +148,7 @@ def estart():
                             continue
         else:
             p_exe = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg',
-                                      '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                                     '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
             p_exe.wait()
             print(sisyphus.getcolor.bright_red +
                   "\nCannot proceed!\n" + sisyphus.getcolor.reset)
@@ -171,8 +163,8 @@ def estart():
 
 def xstart():
     sisyphus.solvedeps.world.__wrapped__()  # undecorate
-    bin_list, src_list, need_cfg = pickle.load(open(os.path.join(
-        sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
+    bin_list, src_list, need_cfg = pickle.load(
+        open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
     if not len(src_list) == 0:
         print("\n" + "Source package(s) found in the mix;" + " " + "Use sisyphus CLI:" + " " + "'" +
@@ -184,7 +176,7 @@ def xstart():
                 bin_list) + "\n\n" + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
             sisyphus.download.xdl_wpbin_only()
             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                                      '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                     '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # kill portage if the program dies or it's terminated by the user
             atexit.register(sisyphus.killemerge.start, p_exe)
 

@@ -212,7 +212,7 @@ class Sisyphus(QtWidgets.QMainWindow):
                 AND iv <> av
             ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
         ])
-        with sqlite3.connect(sisyphus.getfs.localDatabase) as db:
+        with sqlite3.connect(sisyphus.getfs.lcl_db) as db:
             cursor = db.cursor()
             cursor.execute('%s' % (self.SELECTS[Sisyphus.databaseView]))
             rows = cursor.fetchall()

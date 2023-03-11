@@ -8,7 +8,7 @@ import sisyphus.getfs
 import sisyphus.update
 
 
-def searchDB(filter, cat='', pn='', desc=''):
+def srch_db(filter, cat='', pn='', desc=''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
     SELECTS = {
         'all': f'''SELECT
@@ -106,18 +106,18 @@ def tosql(string):
     return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
 
 
-def showSearch(filter, cat, pn, desc, single):
+def srch_rslt(filter, cat, pn, desc, single):
     print("Searching" + sisyphus.getcolor.bright_yellow + " " +
           f"{filter}" + " " + sisyphus.getcolor.reset + "packages ..." + "\n")
-    pkglist = searchDB(filter, tosql(cat), tosql(pn), tosql(desc))
+    pkglist = srch_db(filter, tosql(cat), tosql(pn), tosql(desc))
 
     if len(pkglist) == 0:
         print(sisyphus.getcolor.bright_red +
               "No binary package found!\n" + sisyphus.getcolor.reset)
         print(sisyphus.getcolor.bright_yellow + "Use the" + sisyphus.getcolor.reset + " " + "'" + "--ebuild" +
               "'" + " " + sisyphus.getcolor.bright_yellow + "option to search source packages" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow +
-              "Use" + sisyphus.getcolor.reset + " " + "'" + "sisyphus search --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " + "'" +
+              "sisyphus search --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
     else:
         if single:
             print(sisyphus.getcolor.green +
@@ -151,7 +151,7 @@ def start(filter, cat, pn, desc, single):
         print(sisyphus.getcolor.bright_red + "\nYou don't have root permissions, cannot update the database!\n" +
               sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nSearch results may be inaccurate" + sisyphus.getcolor.reset)
 
-    showSearch(filter, cat, pn, desc, single)
+    srch_rslt(filter, cat, pn, desc, single)
 
 
 def estart(pkgname):

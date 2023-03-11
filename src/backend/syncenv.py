@@ -16,8 +16,8 @@ def g_repo():
                               lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe1.wait()
 
-    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode(
-    ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
+    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode().strip(
+    ).replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe2.wait()
 
 
@@ -32,8 +32,8 @@ def r_repo():
                               lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe1.wait()
 
-    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode(
-    ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
+    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode().strip(
+    ).replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe2.wait()
 
 
@@ -49,8 +49,8 @@ def p_cfg_repo():
     g_exe2 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
                               lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe2.wait()
-    g_exe3 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode(
-    ).strip().replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
+    g_exe3 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode().strip(
+    ).replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
     g_exe3.wait()
     g_exe4 = subprocess.Popen(
         ['git', 'stash', 'apply'], stdout=subprocess.PIPE)

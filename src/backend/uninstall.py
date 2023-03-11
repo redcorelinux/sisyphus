@@ -35,8 +35,8 @@ def fstart(pkgname):
 
 
 def xstart(pkgname):
-    p_exe = subprocess.Popen(
-        ['emerge', '--depclean'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p_exe = subprocess.Popen(['emerge', '--depclean'] + pkgname,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user
     atexit.register(sisyphus.killemerge.start, p_exe)
 
