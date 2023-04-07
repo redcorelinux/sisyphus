@@ -30,7 +30,7 @@ def start(redir_out=False, dl_world=False):
 
     if redir_out:
         p_exe = subprocess.Popen(
-            ['emerge'], + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # kill portage if the program dies or it's terminated by the user
         atexit.register(sisyphus.killemerge.start, p_exe)
 
