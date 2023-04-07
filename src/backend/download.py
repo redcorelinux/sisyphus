@@ -25,9 +25,12 @@ def start(redir_out=False, dl_world=False):
 
     dl_list = [f'={package}' for package in bin_list]
 
+    args = ['--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly', '--rebuilt-binaries',
+            '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list)
+
     if redir_out:
-        p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly', '--rebuilt-binaries',
-                                 '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p_exe = subprocess.Popen(
+            ['emerge'], + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # kill portage if the program dies or it's terminated by the user
         atexit.register(sisyphus.killemerge.start, p_exe)
 
@@ -36,8 +39,7 @@ def start(redir_out=False, dl_world=False):
 
         p_exe.wait()
     else:
-        p_exe = subprocess.Popen(['emerge', '--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly',
-                                 '--rebuilt-binaries', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list))
+        p_exe = subprocess.Popen(['emerge'] + args)
         try:
             p_exe.wait()
         except KeyboardInterrupt:
