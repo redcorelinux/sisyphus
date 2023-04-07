@@ -34,7 +34,7 @@ def start(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
-                                redir_out=False, dl_world=False)
+                                dl_world=False, gfx_ui=False)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
                                                      '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
@@ -88,7 +88,7 @@ def estart(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
-                                redir_out=False, dl_world=False)
+                                dl_world=False, gfx_ui=False)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
                                                      '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
@@ -117,7 +117,7 @@ def estart(pkgname):
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
-                                redir_out=False, dl_world=False)
+                                dl_world=False, gfx_ui=False)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries',
                                                      '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
                             p_exe.wait()
@@ -172,7 +172,7 @@ def xstart(pkgname):
     os.chdir(sisyphus.getfs.p_cch_dir)
     print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" +
           ", ".join(bin_list) + "\n\n" + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
-    sisyphus.download.start(redir_out=True, dl_world=False)
+    sisyphus.download.start(dl_world=False, gfx_ui=True)
     p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y',
                              '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # kill portage if the program dies or it's terminated by the user

@@ -34,7 +34,7 @@ def start():
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No " + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
-                                redir_out=False, dl_world=True)
+                                dl_world=True, gfx_ui=False)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
                                                      '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
@@ -88,7 +88,7 @@ def estart():
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
-                                redir_out=False, dl_world=True)
+                                dl_world=True, gfx_ui=False)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
                                                      '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
@@ -117,7 +117,7 @@ def estart():
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
-                                redir_out=False, dl_world=True)
+                                dl_world=True, gfx_ui=False)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg',
                                                      '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
                             p_exe.wait()
@@ -177,7 +177,7 @@ def xstart():
             os.chdir(sisyphus.getfs.p_cch_dir)
             print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + ", ".join(
                 bin_list) + "\n\n" + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
-            sisyphus.download.start(redir_out=True, dl_world=True)
+            sisyphus.download.start(dl_world=True, gfx_ui=True)
             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
                                      '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # kill portage if the program dies or it's terminated by the user

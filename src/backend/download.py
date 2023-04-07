@@ -10,7 +10,7 @@ import sisyphus.getfs
 import sisyphus.killemerge
 
 
-def start(redir_out=False, dl_world=False):
+def start(dl_world=False, gfx_ui=False):
     dl_list = []
 
     if dl_world:
@@ -28,7 +28,7 @@ def start(redir_out=False, dl_world=False):
     args = ['--nodeps', '--quiet', '--verbose', '--getbinpkg', '--fetchonly', '--rebuilt-binaries',
             '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(dl_list)
 
-    if redir_out:
+    if gfx_ui:
         p_exe = subprocess.Popen(
             ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # kill portage if the program dies or it's terminated by the user
