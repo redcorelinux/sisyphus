@@ -146,7 +146,7 @@ def srch_rslt(filter, cat, pn, desc, single):
 
 def start(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
-        sisyphus.update.start()
+        sisyphus.update.start(gfx_ui=False)
     else:
         print(sisyphus.getcolor.bright_red + "\nYou don't have root permissions, cannot update the database!\n" +
               sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nSearch results may be inaccurate" + sisyphus.getcolor.reset)

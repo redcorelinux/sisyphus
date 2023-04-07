@@ -391,7 +391,7 @@ class MainWorker(QtCore.QObject):
     def startUpdate(self):
         self.started.emit()
         sisyphus.setjobs.start()
-        sisyphus.update.xstart()
+        sisyphus.update.start(gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()

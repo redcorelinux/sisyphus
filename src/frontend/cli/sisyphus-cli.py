@@ -186,7 +186,7 @@ def autoclean():
 def update():
     """Update the Portage tree, the Redcore Overlay(s), Portage configs and Sisyphus's package database."""
     if sisyphus.checkenv.root():
-        sisyphus.update.start()
+        sisyphus.update.start(gfx_ui=False)
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
