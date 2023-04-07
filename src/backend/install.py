@@ -19,7 +19,7 @@ import sisyphus.update
 def start(pkgname):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
-        sisyphus.solvedeps.pkg(pkgname)
+        sisyphus.solvedeps.start(pkgname)
         bin_list, src_list, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
@@ -73,7 +73,7 @@ def start(pkgname):
 def estart(pkgname):
     if sisyphus.checkenv.root():
         sisyphus.update.start()
-        sisyphus.solvedeps.pkg(pkgname)
+        sisyphus.solvedeps.start(pkgname)
         bin_list, src_list, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
@@ -165,7 +165,7 @@ def estart(pkgname):
 
 
 def xstart(pkgname):
-    sisyphus.solvedeps.pkg.__wrapped__(pkgname)  # undecorate
+    sisyphus.solvedeps.start.__wrapped__(pkgname)  # undecorate
     bin_list, src_list, need_cfg = pickle.load(
         open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
