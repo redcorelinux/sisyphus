@@ -18,15 +18,15 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(pkgname, force=False, gfx_ui=False, normal=False):
+def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
     args = ['--quiet', '--depclean']
 
-    if not sisyphus.checkenv.root() and (force or normal):
+    if not sisyphus.checkenv.root() and (unmerge or depclean):
         print(sisyphus.getcolor.bright_red +
               "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)
         sys.exit()
 
-    if force:
+    if unmerge:
         p_exe = subprocess.Popen(
             ['emerge', '--quiet', '--unmerge', '--ask'] + list(pkgname))
         try:
@@ -50,7 +50,7 @@ def start(pkgname, force=False, gfx_ui=False, normal=False):
 
         p_exe.wait()
         sisyphus.syncdb.lcl_tbl()
-    elif normal:
+    elif depclean:
         p_exe = subprocess.Popen(['emerge'] + args + ['--ask'] + list(pkgname))
         try:
             p_exe.wait()
