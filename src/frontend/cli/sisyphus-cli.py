@@ -105,7 +105,9 @@ def search(package: List[str] = typer.Argument(...),
             sisyphus.search.estart(package)
 
 @app.command("install")
-def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "-e")):
+def install(pkgname: List[str],
+            ebuild: bool = typer.Option(False, "--ebuild", "-e", help = 'Search in ebuilds (slower)'),
+            oneshot: bool = typer.Option(False, "--oneshot", "-1", help= 'Do not add package to world set')):
     """Install binary and/or ebuild(source) packages.
     By default, only binary packages will be installed.
     Use the --ebuild option to install ebuild(source) packages.
@@ -122,11 +124,22 @@ def install(pkgname: List[str], ebuild: bool = typer.Option(False, "--ebuild", "
 
     The --ebuild option will preffer to reuse binary packages(if available) to satisfy the dependencies for the ebuild(source) package, speeding up the installation.
     You can use the --ebuild option even if you don't want to install any ebuild(source) packages; It will fall back to binary packages only.
+
+    The --oneshot option will install the packages as described above, however it will not add them to the 'world' set, which means they will not be marked as
+    explicitly installed. As a result, they will be treated as orphans and they will be uninstalled with 'sisyphus autoremove' if no other package needs them as
+    a depencency, unless they are explicitly added to the 'world' set using 'emerge --noreplace pkgname'. The --oneshot option does not require any confirmation,
+    and packages will be installed straight away.
     """
-    if not ebuild:
-        sisyphus.install.start(pkgname)
+    if not oneshot:
+        if not ebuild:
+            sisyphus.install.start(pkgname, oneshot=False)
+        else:
+            sisyphus.install.estart(pkgname, oneshot=False)
     else:
-        sisyphus.install.estart(pkgname)
+        if not ebuild:
+            sisyphus.install.start(pkgname, oneshot=True)
+        else:
+            sisyphus.install.estart(pkgname, oneshot=True)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):

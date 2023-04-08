@@ -16,7 +16,7 @@ import sisyphus.syncdb
 import sisyphus.update
 
 
-def start(pkgname):
+def start(pkgname, oneshot=False):
     if sisyphus.checkenv.root():
         sisyphus.update.start(gfx_ui=False)
         sisyphus.solvedeps.start(pkgname)
@@ -30,13 +30,16 @@ def start(pkgname):
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
-                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        if oneshot:
+                            user_input = 'yes'
+                        else:
+                            user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                                               "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
                                 dl_world=False, gfx_ui=False)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
@@ -70,7 +73,7 @@ def start(pkgname):
         sys.exit()
 
 
-def estart(pkgname):
+def estart(pkgname, oneshot=False):
     if sisyphus.checkenv.root():
         sisyphus.update.start(gfx_ui=False)
         sisyphus.solvedeps.start(pkgname)
@@ -84,13 +87,16 @@ def estart(pkgname):
                     print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                         bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
-                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        if oneshot:
+                            user_input = 'yes'
+                        else:
+                            user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                                               "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
                                 dl_world=False, gfx_ui=False)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
@@ -113,13 +119,16 @@ def estart(pkgname):
                     print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
                         src_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
-                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        if oneshot:
+                            user_input = 'yes'
+                        else:
+                            user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                                               "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.download.start(
                                 dl_world=False, gfx_ui=False)
-                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries',
-                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries', '--with-bdeps=y',
+                                                     '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
@@ -134,11 +143,14 @@ def estart(pkgname):
                     print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
                         src_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
-                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        if oneshot:
+                            user_input = 'yes'
+                        else:
+                            user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                                               "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             p_exe = subprocess.Popen(
-                                ['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                                ['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                             p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
