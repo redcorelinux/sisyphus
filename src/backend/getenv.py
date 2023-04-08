@@ -2,8 +2,16 @@
 
 import io
 import os
+import signal
 import subprocess
 import sisyphus.getfs
+
+
+def sigint_handler(signal, frame):
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 
 def bhst_addr():
@@ -14,7 +22,15 @@ def bhst_addr():
     for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
         if "PORTAGE_BINHOST" in p_out:
             bhst_addr = p_out.rstrip().split("=")[1].strip('\"')
-    p_exe.wait()
+    try:
+        p_exe.wait()
+    except KeyboardInterrupt:
+        p_exe.terminate()
+        try:
+            p_exe.wait(1)
+        except subprocess.TimeoutExpired:
+            p_exe.kill()
+        sys.exit()
 
     return bhst_addr
 
