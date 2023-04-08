@@ -3,11 +3,19 @@
 import atexit
 import io
 import os
+import signal
 import subprocess
 import sys
 import pickle
 import sisyphus.getfs
 import sisyphus.killemerge
+
+
+def sigint_handler(signal, frame):
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 
 def start(dl_world=False, gfx_ui=False):
