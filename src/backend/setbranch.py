@@ -12,24 +12,30 @@ import sisyphus.setjobs
 import sisyphus.setprofile
 
 
+brch_rmt_map = {
+    "master": {
+        "github": sisyphus.getfs.rmt_gh_addr,
+        "gitlab": sisyphus.getfs.rmt_gl_addr,
+        "pagure": sisyphus.getfs.rmt_pg_addr
+    },
+    "next": {
+        "github": sisyphus.getfs.rmt_gh_addr,
+        "gitlab": sisyphus.getfs.rmt_gl_addr,
+        "pagure": sisyphus.getfs.rmt_pg_addr
+    }
+}
+
+
 def get_brch_rmt(branch, remote):
     g_rmt = []
     r_rmt = []
     p_cfg_rmt = []
-    if "master" in branch:
-        if "github" in remote:
-            remote = sisyphus.getfs.rmt_gh_addr
-        elif "gitlab" in remote:
-            remote = sisyphus.getfs.rmt_gl_addr
-        elif "pagure" in remote:
-            remote = sisyphus.getfs.rmt_pg_addr
-    elif "next" in branch:
-        if "github" in remote:
-            remote = sisyphus.getfs.rmt_gh_addr
-        elif "gitlab" in remote:
-            remote = sisyphus.getfs.rmt_gl_addr
-        elif "pagure" in remote:
-            remote = sisyphus.getfs.rmt_pg_addr
+
+    if branch in brch_rmt_map and remote in brch_rmt_map[branch]:
+        remote = brch_rmt_map[branch][remote]
+    else:
+        # set a default remote here if needed
+        pass
 
     g_rmt = [remote, sisyphus.getfs.g_repo]
     r_rmt = [remote, sisyphus.getfs.r_repo]
