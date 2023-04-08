@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import animation
+import signal
 import sys
 import time
 import sisyphus.checkenv
@@ -9,6 +10,13 @@ import sisyphus.getenv
 import sisyphus.purgeenv
 import sisyphus.syncdb
 import sisyphus.syncenv
+
+
+def sigint_handler(signal, frame):
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 
 def sync_evrth():
