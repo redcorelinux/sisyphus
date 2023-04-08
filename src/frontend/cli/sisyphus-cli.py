@@ -130,16 +130,10 @@ def install(pkgname: List[str],
     a depencency, unless they are explicitly added to the 'world' set using 'emerge --noreplace pkgname'. The --oneshot option does not require any confirmation,
     and packages will be installed straight away.
     """
-    if not oneshot:
-        if not ebuild:
-            sisyphus.install.start(pkgname, oneshot=False)
-        else:
-            sisyphus.install.estart(pkgname, oneshot=False)
+    if ebuild:
+        sisyphus.install.estart(pkgname, oneshot=oneshot)
     else:
-        if not ebuild:
-            sisyphus.install.start(pkgname, oneshot=True)
-        else:
-            sisyphus.install.estart(pkgname, oneshot=True)
+        sisyphus.install.start(pkgname, oneshot=oneshot)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
