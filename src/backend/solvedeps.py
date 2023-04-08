@@ -3,8 +3,17 @@
 import animation
 import os
 import pickle
+import signal
 import subprocess
+import sys
 import sisyphus.getfs
+
+
+def sigint_handler(signal, frame):
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 
 @animation.wait('resolving dependencies')
@@ -22,28 +31,36 @@ def start(pkgname=None):
 
     p_exe = subprocess.Popen(
         ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = p_exe.communicate()
+    try:
+        stdout, stderr = p_exe.communicate()
 
-    for p_out in stderr.decode('utf-8').splitlines():
-        if any(key in p_out for key in ["The following keyword changes are necessary to proceed:",
-                                        "The following mask changes are necessary to proceed:",
-                                        "The following USE changes are necessary to proceed:",
-                                        "The following REQUIRED_USE flag constraints are unsatisfied:",
-                                        "One of the following masked packages is required to complete your request:"]):
-            need_cfg = int(1)
+        for p_out in stderr.decode('utf-8').splitlines():
+            if any(key in p_out for key in ["The following keyword changes are necessary to proceed:",
+                                            "The following mask changes are necessary to proceed:",
+                                            "The following USE changes are necessary to proceed:",
+                                            "The following REQUIRED_USE flag constraints are unsatisfied:",
+                                            "One of the following masked packages is required to complete your request:"]):
+                need_cfg = int(1)
 
-    for p_out in stdout.decode('utf-8').splitlines():
-        if "[binary" in p_out:
-            is_bin = p_out.split("]")[1].split("[")[0].strip(" ")
-            bin_list.append(is_bin)
+        for p_out in stdout.decode('utf-8').splitlines():
+            if "[binary" in p_out:
+                is_bin = p_out.split("]")[1].split("[")[0].strip(" ")
+                bin_list.append(is_bin)
 
-        if "[ebuild" in p_out:
-            is_src = p_out.split("]")[1].split("[")[0].strip(" ")
-            src_list.append(is_src)
+            if "[ebuild" in p_out:
+                is_src = p_out.split("]")[1].split("[")[0].strip(" ")
+                src_list.append(is_src)
 
-    if pkgname:
-        pickle.dump([bin_list, src_list, need_cfg], open(os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "wb"))
-    else:
-        pickle.dump([bin_list, src_list, need_cfg], open(os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "wb"))
+        if pkgname:
+            pickle.dump([bin_list, src_list, need_cfg], open(os.path.join(
+                sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "wb"))
+        else:
+            pickle.dump([bin_list, src_list, need_cfg], open(os.path.join(
+                sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "wb"))
+    except KeyboardInterrupt:
+        p_exe.terminate()
+        try:
+            p_exe.wait(1)
+        except subprocess.TimeoutExpired:
+            p_exe.kill()
+        sys.exit()
