@@ -3,6 +3,7 @@
 import animation
 import git
 import os
+import signal
 import sys
 import sisyphus.checkenv
 import sisyphus.getcolor
@@ -24,6 +25,13 @@ brch_rmt_map = {
         "pagure": sisyphus.getfs.rmt_pg_addr
     }
 }
+
+
+def sigint_handler(signal, frame):
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 
 def get_brch_rmt(branch, remote):
