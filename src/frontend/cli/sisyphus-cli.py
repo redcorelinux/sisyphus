@@ -131,9 +131,9 @@ def install(pkgname: List[str],
     and packages will be installed straight away.
     """
     if ebuild:
-        sisyphus.install.estart(pkgname, oneshot=oneshot)
+        sisyphus.install.start(pkgname, ebuild=True, gfx_ui=False, oneshot=oneshot)
     else:
-        sisyphus.install.start(pkgname, oneshot=oneshot)
+        sisyphus.install.start(pkgname, ebuild=False, gfx_ui=False, oneshot=oneshot)
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
