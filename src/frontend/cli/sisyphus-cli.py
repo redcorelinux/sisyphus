@@ -217,10 +217,10 @@ def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     The --ebuild option will preffer to reuse binary packages(if available) to satisfy the dependencies for the ebuild(source) packages, speeding up the upgrade.
     You can use the --ebuild option even if you don't have any ebuild(source) packages installed; It will fall back to binary packages only.
     """
-    if not ebuild:
-        sisyphus.upgrade.start()
+    if ebuild:
+        sisyphus.upgrade.start(ebuild=True, gfx_ui=False)
     else:
-        sisyphus.upgrade.estart()
+        sisyphus.upgrade.start(ebuild=False, gfx_ui=False)
 
 @app.command("spmsync")
 def spmsync():

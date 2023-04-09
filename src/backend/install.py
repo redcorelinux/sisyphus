@@ -4,8 +4,8 @@ import atexit
 import io
 import os
 import pickle
-import subprocess
 import signal
+import subprocess
 import sys
 import sisyphus.checkenv
 import sisyphus.download
