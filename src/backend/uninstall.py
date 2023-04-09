@@ -18,7 +18,7 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
+def start(pkgname, gfx_ui=False, unmerge=False):
     args = ['--quiet', '--depclean']
 
     if not sisyphus.checkenv.root() and (unmerge or depclean):
@@ -39,26 +39,28 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
             except subprocess.TimeoutExpired:
                 p_exe.kill()
             sys.exit()
-    elif gfx_ui:
-        p_exe = subprocess.Popen(
-            ['emerge'] + args + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # kill portage if the program dies or it's terminated by the user
-        atexit.register(sisyphus.killemerge.start, p_exe)
+    else:
+        if gfx_ui:
+            p_exe = subprocess.Popen(
+                ['emerge'] + args + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # kill portage if the program dies or it's terminated by the user
+            atexit.register(sisyphus.killemerge.start, p_exe)
 
-        for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
-            print(p_out.rstrip())
+            for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
+                print(p_out.rstrip())
 
-        p_exe.wait()
-        sisyphus.syncdb.lcl_tbl()
-    elif depclean:
-        p_exe = subprocess.Popen(['emerge'] + args + ['--ask'] + list(pkgname))
-        try:
             p_exe.wait()
             sisyphus.syncdb.lcl_tbl()
-        except KeyboardInterrupt:
-            p_exe.terminate()
+        else:
+            p_exe = subprocess.Popen(
+                ['emerge'] + args + ['--ask'] + list(pkgname))
             try:
-                p_exe.wait(1)
-            except subprocess.TimeoutExpired:
-                p_exe.kill()
-            sys.exit()
+                p_exe.wait()
+                sisyphus.syncdb.lcl_tbl()
+            except KeyboardInterrupt:
+                p_exe.terminate()
+                try:
+                    p_exe.wait(1)
+                except subprocess.TimeoutExpired:
+                    p_exe.kill()
+                sys.exit()
