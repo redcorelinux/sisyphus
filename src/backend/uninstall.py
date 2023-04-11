@@ -18,7 +18,7 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(pkgname, gfx_ui=False, unmerge=False):
+def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
     args = ['--quiet', '--depclean']
 
     if not sisyphus.checkenv.root() and (unmerge or depclean):
@@ -39,7 +39,7 @@ def start(pkgname, gfx_ui=False, unmerge=False):
             except subprocess.TimeoutExpired:
                 p_exe.kill()
             sys.exit()
-    else:
+    elif depclean:
         if gfx_ui:
             p_exe = subprocess.Popen(
                 ['emerge'] + args + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
