@@ -1,11 +1,19 @@
 #!/usr/bin/python3
 
+import signal
 import sqlite3
 import subprocess
 import sisyphus.checkenv
 import sisyphus.getcolor
 import sisyphus.getfs
 import sisyphus.update
+
+
+def sigint_handler(signal, frame):
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 
 def srch_db(filter, cat='', pn='', desc=''):
@@ -50,19 +58,19 @@ def srch_db(filter, cat='', pn='', desc=''):
     				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                     WHERE cat LIKE '%{cat}%' AND pn LIKE '%{pn}%' AND desc LIKE '%{desc}%' {NOVIRT}''',
         'alien': f'''SELECT
-                        i.category AS cat,
-                        i.name AS pn,
-                        i.version as iv,
-                        IFNULL(a.version, 'alien') AS av,
-                        d.description AS desc
-                        FROM local_packages AS i
-                        LEFT JOIN remote_packages AS a
-                        ON a.category = i.category
-                        AND a.name = i.name
-                        AND a.slot = i.slot
-        				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                        WHERE cat LIKE '%{cat}%' AND pn LIKE '%{pn}%' AND desc LIKE '%{desc}%' {NOVIRT}
-                        AND av IS 'alien' ''',
+                    i.category AS cat,
+                    i.name AS pn,
+                    i.version as iv,
+                    IFNULL(a.version, 'alien') AS av,
+                    d.description AS desc
+                    FROM local_packages AS i
+                    LEFT JOIN remote_packages AS a
+                    ON a.category = i.category
+                    AND a.name = i.name
+                    AND a.slot = i.slot
+                    LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
+                    WHERE cat LIKE '%{cat}%' AND pn LIKE '%{pn}%' AND desc LIKE '%{desc}%' {NOVIRT}
+                    AND av IS 'alien' ''',
         'available': f'''SELECT
                     a.category AS cat,
                     a.name AS pn,
@@ -107,7 +115,7 @@ def tosql(string):
 
 
 def srch_rslt(filter, cat, pn, desc, single):
-    print("Searching" + sisyphus.getcolor.bright_yellow + " " +
+    print("\nSearching" + sisyphus.getcolor.bright_yellow + " " +
           f"{filter}" + " " + sisyphus.getcolor.reset + "packages ..." + "\n")
     pkglist = srch_db(filter, tosql(cat), tosql(pn), tosql(desc))
 
@@ -146,10 +154,29 @@ def srch_rslt(filter, cat, pn, desc, single):
 
 def start(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
-        sisyphus.update.start(gfx_ui=False)
+        print(sisyphus.getcolor.bright_red +
+              "\nSearching as root, database could be updated!\n" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow +
+              "Search results would be accurate\n" + sisyphus.getcolor.reset)
+        while True:
+            user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
+                               "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+            if user_input.lower() in ['yes', 'y', '']:
+                sisyphus.update.start(gfx_ui=False)
+                break
+            elif user_input.lower() in ['no', 'n']:
+                print(sisyphus.getcolor.bright_red +
+                      "\nSkipping database update, displaying search results!\n" + sisyphus.getcolor.reset)
+                print(sisyphus.getcolor.bright_yellow +
+                      "Search results could be inaccurate" + sisyphus.getcolor.reset)
+                break
+            else:
+                continue
     else:
-        print(sisyphus.getcolor.bright_red + "\nYou don't have root permissions, cannot update the database!\n" +
-              sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nSearch results may be inaccurate" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_red +
+              "\nSearching as user, database couldn't be updated!\n" + sisyphus.getcolor.reset)
+        print(sisyphus.getcolor.bright_yellow +
+              "Search results could be inaccurate" + sisyphus.getcolor.reset)
 
     srch_rslt(filter, cat, pn, desc, single)
 
