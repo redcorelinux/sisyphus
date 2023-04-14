@@ -39,7 +39,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
         bin_list, src_list, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    if need_cfg != 0:
+    if need_cfg != 0: # catch aliens
         p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
                                  '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
         try:
@@ -51,11 +51,16 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
             except subprocess.TimeoutExpired:
                 p_exe.kill()
             sys.exit()
-        print(sisyphus.getcolor.bright_red +
-              "\nCannot proceed!\n" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow +
-              "Apply the above changes to your portage configuration files and try again" + sisyphus.getcolor.reset)
-        sys.exit()
+        if gfx_ui:
+            print("\nCannot proceed!\n")
+            print(
+                "Apply the above changes to your portage configuration files and try again")
+        else:
+            print(sisyphus.getcolor.bright_red +
+                  "\nCannot proceed!\n" + sisyphus.getcolor.reset)
+            print(sisyphus.getcolor.bright_yellow +
+                  "Apply the above changes to your portage configuration files and try again" + sisyphus.getcolor.reset)
+            sys.exit()
     else:
         if len(bin_list) == 0 and len(src_list) == 0:
             print(sisyphus.getcolor.bright_red +
@@ -63,7 +68,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
             sys.exit()
 
         if ebuild:  # ebuild mode
-            if len(bin_list) == 0 and len(src_list) != 0:  # source only
+            if len(bin_list) == 0 and len(src_list) != 0:  # source only, ignore aliens
                 print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
                     src_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
                 while True:
@@ -89,7 +94,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                         print("\nSorry, response" + " " + "'" +
                               user_input + "'" + " " + "not understood.\n")
                         continue
-            elif len(bin_list) != 0 and len(src_list) != 0:  # binary and source
+            elif len(bin_list) != 0 and len(src_list) != 0:  # binary and source, ignore aliens
                 print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                     bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                 print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
@@ -119,7 +124,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                         print("\nSorry, response" + " " + "'" +
                               user_input + "'" + " " + "not understood.\n")
                         continue
-            elif len(bin_list) != 0 and len(src_list) == 0:  # binary only (fallback)
+            elif len(bin_list) != 0 and len(src_list) == 0:  # binary only, fallback
                 print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
                     bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                 while True:
@@ -148,17 +153,27 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                               user_input + "'" + " " + "not understood.\n")
                         continue
         else:  # non-ebuild mode
-            if len(bin_list) == 0 and len(src_list) != 0:  # source only (noop)
-                print(sisyphus.getcolor.bright_red +
-                      "\nSource package(s) found in the mix!\n" + sisyphus.getcolor.reset)
-                print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " +
-                      "'" + "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'")
-                sys.exit()
-            elif len(bin_list) != 0 and len(src_list) != 0:  # binary and source (noop)
-                print(sisyphus.getcolor.bright_red +
-                      "\nSource package(s) found in the mix!\n" + sisyphus.getcolor.reset)
-                print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " +
-                      "'" + "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'")
+            if len(bin_list) == 0 and len(src_list) != 0:  # source only (noop), catch aliens
+                if gfx_ui:
+                    print("\nSource package(s) found in the mix!\n")
+                    print("Use sisyphus CLI:" + " " + "'" + "sisyphus install" +
+                          " " + " ".join(pkgname) + "--ebuild" + "'")
+                else:
+                    print(sisyphus.getcolor.bright_red +
+                          "\nSource package(s) found in the mix!\n" + sisyphus.getcolor.reset)
+                    print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " +
+                          "'" + "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'")
+                    sys.exit()
+            elif len(bin_list) != 0 and len(src_list) != 0:  # binary and source (noop), catch aliens
+                if gfx_ui:
+                    print("\nSource package(s) found in the mix!\n")
+                    print("Use sisyphus CLI:" + " " + "'" + "sisyphus install" +
+                          " " + " ".join(pkgname) + "--ebuild" + "'")
+                else:
+                    print(sisyphus.getcolor.bright_red +
+                          "\nSource package(s) found in the mix!\n" + sisyphus.getcolor.reset)
+                    print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " +
+                          "'" + "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'")
                 sys.exit()
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary only
                 if gfx_ui:
