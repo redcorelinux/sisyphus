@@ -47,7 +47,7 @@ def start(gfx_ui=False):
             print("Time is up!")
             sys.exit()
         else:
-            print(sisyphus.getcolor.brigt_red +
+            print(sisyphus.getcolor.bright_red +
                   "\nNo internet connection; Aborting!\n" + sisyphus.getcolor.reset)
             sys.exit()
     else:
