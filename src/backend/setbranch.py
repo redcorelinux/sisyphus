@@ -101,15 +101,22 @@ def brch_s_warn(branch, remote):
 
 
 def start(branch, remote):
+    is_online = sisyphus.checkenv.connectivity()
+
     if sisyphus.checkenv.root():
-        sisyphus.purgeenv.branch()
-        sisyphus.purgeenv.metadata()
-        ins_g_repo(branch, remote)
-        ins_r_repo(branch, remote)
-        ins_p_cfg_repo(branch, remote)
-        sisyphus.setjobs.start()
-        sisyphus.setprofile.start()
-        brch_s_warn(branch, remote)
+        if is_online == 1:
+            sisyphus.purgeenv.branch()
+            sisyphus.purgeenv.metadata()
+            ins_g_repo(branch, remote)
+            ins_r_repo(branch, remote)
+            ins_p_cfg_repo(branch, remote)
+            sisyphus.setjobs.start()
+            sisyphus.setprofile.start()
+            brch_s_warn(branch, remote)
+        else:
+            print(sisyphus.getcolor.brigt_red +
+                  "\nNo internet connection; Aborting!\n" + sisyphus.getcolor.reset)
+            sys.exit()
     else:
         print(sisyphus.getcolor.bright_red +
               "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)

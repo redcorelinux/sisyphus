@@ -3,6 +3,19 @@
 import os
 import subprocess
 import sisyphus.getenv
+import urllib.request
+
+
+def connectivity():
+    is_online = int()
+
+    try:
+        urllib.request.urlopen("http://www.google.com", timeout=5)
+        is_online = int(1)
+    except urllib.error.URLError:
+        is_online = int(0)
+
+    return is_online
 
 
 def root():

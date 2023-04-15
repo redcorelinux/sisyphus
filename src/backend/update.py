@@ -31,20 +31,11 @@ def start(gfx_ui=False):
     actv_brch = sisyphus.getenv.sys_brch()
     bhst_addr = sisyphus.getenv.bhst_addr()
     is_sane = sisyphus.checkenv.sanity()
+    is_online = sisyphus.checkenv.connectivity()
 
-    if is_sane == 1:
-        sync_evrth()
-    else:
-        if "packages-next" in bhst_addr:
-            print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(stable)" +
-                  " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(testing)")
-        else:
-            print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(testing)" +
-                  " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(stable)")
-
+    if is_online != 1:
         if gfx_ui:
-            print("\n\nInvalid configuration!")
-            print("Use 'sisyphus branch --help' for help\n")
+            print("\nNo internet connection; Aborting!\n")
             t = 10
             while t > 0:
                 mins, secs = divmod(t, 60)
@@ -53,10 +44,38 @@ def start(gfx_ui=False):
                 time.sleep(1)
                 t -= 1
 
-            print('Time is up!')
+            print("Time is up!")
             sys.exit()
-
         else:
-            print(sisyphus.getcolor.bright_red + "\n\nInvalid configuration!" + sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nUse" +
-                  sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+            print(sisyphus.getcolor.brigt_red +
+                  "\nNo internet connection; Aborting!\n" + sisyphus.getcolor.reset)
             sys.exit()
+    else:
+        if is_sane == 1:
+            sync_evrth()
+        else:
+            if "packages-next" in bhst_addr:
+                print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(stable)" +
+                      " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(testing)")
+            else:
+                print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(testing)" +
+                      " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(stable)")
+
+            if gfx_ui:
+                print("\n\nInvalid configuration!")
+                print("Use 'sisyphus branch --help' for help\n")
+                t = 10
+                while t > 0:
+                    mins, secs = divmod(t, 60)
+                    timer = '{:02d}:{:02d}'.format(mins, secs)
+                    print(timer, end='\r')
+                    time.sleep(1)
+                    t -= 1
+
+                print("Time is up!")
+                sys.exit()
+
+            else:
+                print(sisyphus.getcolor.bright_red + "\n\nInvalid configuration!" + sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nUse" +
+                      sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+                sys.exit()
