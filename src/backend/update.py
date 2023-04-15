@@ -50,11 +50,15 @@ def start(gfx_ui=False):
             sync_evrth()
         else:
             if "packages-next" in bhst_addr:
-                print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(stable)" +
-                      " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(testing)")
+                print(sisyphus.getcolor.green + "\n\nActive branch:" + " " +
+                      sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(stable)")
+                print(sisyphus.getcolor.green + "\nActive binhost:" + " " +
+                      sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(testing)")
             else:
-                print(sisyphus.getcolor.green + "\n\nActive branch:" + " " + sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(testing)" +
-                      " " + sisyphus.getcolor.green + "\nActive binhost:" + " " + sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(stable)")
+                print(sisyphus.getcolor.green + "\n\nActive branch:" + " " +
+                      sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(testing)")
+                print(sisyphus.getcolor.green + "\nActive binhost:" + " " +
+                      sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(stable)")
 
             if gfx_ui:
                 print("\n\nInvalid configuration!")
@@ -65,6 +69,8 @@ def start(gfx_ui=False):
 
                 sys.exit(app.exec_())  # kill GUI window
             else:
-                print(sisyphus.getcolor.bright_red + "\n\nInvalid configuration!" + sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nUse" +
-                      sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+                print(sisyphus.getcolor.bright_red +
+                      "\n\nInvalid configuration!" + sisyphus.getcolor.reset)
+                print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" +
+                      "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
                 sys.exit()

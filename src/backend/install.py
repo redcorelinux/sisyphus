@@ -75,8 +75,12 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
 
         if ebuild:  # ebuild mode
             if len(bin_list) == 0 and len(src_list) != 0:  # source mode, ignore aliens
-                print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
-                    src_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.green +
+                      "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.green +
+                      ", ".join(src_list) + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
+                    len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
                 while True:
                     user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                        "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
@@ -101,10 +105,19 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                               user_input + "'" + " " + "not understood.\n")
                         continue
             elif len(bin_list) != 0 and len(src_list) != 0:  # hybrid mode, ignore aliens
-                print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
-                    bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.green + "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.green + ", ".join(
-                    src_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.green +
+                      "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.magenta +
+                      ", ".join(bin_list) + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
+                    len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+
+                print("\n" + sisyphus.getcolor.green +
+                      "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.green +
+                      ", ".join(src_list) + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
+                    len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
                 while True:
                     user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                        "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
@@ -131,8 +144,12 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                               user_input + "'" + " " + "not understood.\n")
                         continue
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode, fallback
-                print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
-                    bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.green +
+                      "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.magenta +
+                      ", ".join(bin_list) + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
+                    len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                 while True:
                     user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                        "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
@@ -195,8 +212,10 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                 sys.exit()
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
-                    print("\n" + "These are the binary packages that will be merged, in order:" + "\n\n" + ", ".join(
-                        bin_list) + "\n\n" + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
+                    print(
+                        "\n" + "These are the binary packages that will be merged, in order:" + "\n")
+                    print("\n" + ", ".join(bin_list) + "\n\n" + "Total:" + " " +
+                          str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
                     sisyphus.download.start(dl_world=False, gfx_ui=True)
                     os.chdir(sisyphus.getfs.p_cch_dir)
                     p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y',
@@ -210,8 +229,12 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                     p_exe.wait()
                     sisyphus.syncdb.lcl_tbl()
                 else:
-                    print("\n" + sisyphus.getcolor.green + "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.magenta + ", ".join(
-                        bin_list) + sisyphus.getcolor.reset + "\n\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+                    print("\n" + sisyphus.getcolor.green +
+                          "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
+                    print("\n" + sisyphus.getcolor.magenta +
+                          ", ".join(bin_list) + sisyphus.getcolor.reset + "\n")
+                    print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
+                        len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
                     while True:
                         user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
