@@ -35,20 +35,15 @@ def start(gfx_ui=False):
 
     if is_online != 1:
         if gfx_ui:
-            print("\nNo internet connection; Aborting!\n")
-            t = 10
-            while t > 0:
-                mins, secs = divmod(t, 60)
-                timer = '{:02d}:{:02d}'.format(mins, secs)
-                print(timer, end='\r')
+            print("\n\nNo internet connection; Aborting!\n")
+            for i in range(9, 0, -1):
+                print(f"Killing application in : {i} seconds!")
                 time.sleep(1)
-                t -= 1
 
-            print("Time is up!")
-            sys.exit()
+            sys.exit(app.exec_())  # kill GUI window
         else:
             print(sisyphus.getcolor.bright_red +
-                  "\nNo internet connection; Aborting!\n" + sisyphus.getcolor.reset)
+                  "\n\nNo internet connection; Aborting!\n" + sisyphus.getcolor.reset)
             sys.exit()
     else:
         if is_sane == 1:
@@ -64,17 +59,11 @@ def start(gfx_ui=False):
             if gfx_ui:
                 print("\n\nInvalid configuration!")
                 print("Use 'sisyphus branch --help' for help\n")
-                t = 10
-                while t > 0:
-                    mins, secs = divmod(t, 60)
-                    timer = '{:02d}:{:02d}'.format(mins, secs)
-                    print(timer, end='\r')
+                for i in range(9, 0, -1):
+                    print(f"Killing application in : {i} seconds!")
                     time.sleep(1)
-                    t -= 1
 
-                print("Time is up!")
-                sys.exit()
-
+                sys.exit(app.exec_())  # kill GUI window
             else:
                 print(sisyphus.getcolor.bright_red + "\n\nInvalid configuration!" + sisyphus.getcolor.reset + sisyphus.getcolor.bright_yellow + "\nUse" +
                       sisyphus.getcolor.reset + " " + "'" + "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
