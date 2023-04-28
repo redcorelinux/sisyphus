@@ -8,7 +8,9 @@ import sys
 
 app = typer.Typer()
 mirrorSetup = typer.Typer()
-app.add_typer(mirrorSetup, name="mirror", help='List/Set the active binhost (binary repository) mirror.')
+app.add_typer(mirrorSetup, name="mirror",
+              help='List/Set the active binhost (binary repository) mirror.')
+
 
 @app.callback()
 def app_callback(ctx: typer.Context):
@@ -20,6 +22,7 @@ def app_callback(ctx: typer.Context):
     """
     ctx.info_name = 'sisyphus'
 
+
 class Filter(str, Enum):
     all = 'all'
     alien = 'alien'
@@ -27,12 +30,16 @@ class Filter(str, Enum):
     available = 'available'
     upgradable = 'upgradable'
 
+
 @app.command("search")
 def search(package: List[str] = typer.Argument(...),
-           desc: str = typer.Option('', '--description', '-d', help = 'Match description.'),
-           filter: Filter = typer.Option(Filter.all, '--filter', '-f', show_default=True),
-           quiet: bool = typer.Option(False, '-q', help='Short (one line) output.'),
-           ebuild: bool = typer.Option(False, "--ebuild", "-e", help = 'Search in ebuilds (slower).')):
+           desc: str = typer.Option(
+               '', '--description', '-d', help='Match description.'),
+           filter: Filter = typer.Option(
+               Filter.all, '--filter', '-f', show_default=True),
+           quiet: bool = typer.Option(
+               False, '-q', help='Short (one line) output.'),
+           ebuild: bool = typer.Option(False, "--ebuild", "-e", help='Search in ebuilds (slower).')):
     """Search for binary and/or ebuild (source) packages.
 
     By default will search for binary packages, using internal database.
@@ -100,14 +107,17 @@ def search(package: List[str] = typer.Argument(...),
         sisyphus.search.start(filter.value, cat, pn, desc, quiet)
     else:
         if not package:
-            raise typer.Exit('No search term provided, try: sisyphus search --help')
+            raise typer.Exit(
+                'No search term provided, try: sisyphus search --help')
         else:
             sisyphus.search.estart(package)
 
+
 @app.command("install")
 def install(pkgname: List[str],
-            ebuild: bool = typer.Option(False, "--ebuild", "-e", help = 'Search in ebuilds (slower)'),
-            oneshot: bool = typer.Option(False, "--oneshot", "-1", help= 'Do not add package to world set')):
+            ebuild: bool = typer.Option(
+                False, "--ebuild", "-e", help='Install ebuild (source) package if binary package is not found (slower)'),
+            oneshot: bool = typer.Option(False, "--oneshot", "-1", help='Do not mark the package as explicitly installed, and do not add it to world set')):
     """Install binary and/or ebuild(source) packages.
     By default, only binary packages will be installed.
     Use the --ebuild option to install ebuild(source) packages.
@@ -127,13 +137,15 @@ def install(pkgname: List[str],
 
     The --oneshot option will install the packages as described above, however it will not add them to the 'world' set, which means they will not be marked as
     explicitly installed. As a result, they will be treated as orphans and they will be uninstalled with 'sisyphus autoremove' if no other package needs them as
-    a depencency, unless they are explicitly added to the 'world' set using 'emerge --noreplace pkgname'. The --oneshot option does not require any confirmation,
-    and packages will be installed straight away.
+    a depencency, unless they are explicitly added to the 'world' set using 'emerge --noreplace pkgname'.
     """
     if ebuild:
-        sisyphus.install.start(pkgname, ebuild=True, gfx_ui=False, oneshot=oneshot)
+        sisyphus.install.start(pkgname, ebuild=True,
+                               gfx_ui=False, oneshot=oneshot)
     else:
-        sisyphus.install.start(pkgname, ebuild=False, gfx_ui=False, oneshot=oneshot)
+        sisyphus.install.start(pkgname, ebuild=False,
+                               gfx_ui=False, oneshot=oneshot)
+
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f")):
@@ -168,9 +180,12 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
     will succeed, but the system will be broken
     """
     if force:
-        sisyphus.uninstall.start(pkgname, depclean=False, gfx_ui=False, unmerge=True)
+        sisyphus.uninstall.start(
+            pkgname, depclean=False, gfx_ui=False, unmerge=True)
     else:
-        sisyphus.uninstall.start(pkgname, depclean=True, gfx_ui=False, unmerge=False)
+        sisyphus.uninstall.start(
+            pkgname, depclean=True, gfx_ui=False, unmerge=False)
+
 
 @app.command("autoremove")
 def autoremove():
@@ -181,6 +196,7 @@ def autoremove():
     """
     sisyphus.autoremove.start(gfx_ui=False)
 
+
 @app.command("autoclean")
 def autoclean():
     """Clean the binary package cache and the source tarball cache"""
@@ -188,6 +204,7 @@ def autoclean():
         sisyphus.purgeenv.cache()
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
+
 
 @app.command("update")
 def update():
@@ -197,8 +214,10 @@ def update():
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
+
 @app.command("upgrade")
-def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
+def upgrade(
+        ebuild: bool = typer.Option(False, "--ebuild", "-e", help='Upgrade all packages, including ebuild (source) packages previously installed (slower)')):
     """Upgrade the system using binary and/or ebuild (source) packages.
     By default, only binary packages will be upgraded.
     However, if you installed any ebuild(source) packages with the '--ebuild' option, it would make sense to upgrade them too.
@@ -222,6 +241,7 @@ def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
     else:
         sisyphus.upgrade.start(ebuild=False, gfx_ui=False)
 
+
 @app.command("spmsync")
 def spmsync():
     """Sync Sisyphus's package database with Portage's package database.
@@ -229,6 +249,7 @@ def spmsync():
     Use this command to synchronize Sisyphus's package database with Portage's package database.
     """
     sisyphus.syncspm.start()
+
 
 @app.command("rescue")
 def rescue():
@@ -239,14 +260,17 @@ def rescue():
     """
     sisyphus.recoverdb.start()
 
+
 class Branch(str, Enum):
     master = 'master'
     next = 'next'
+
 
 class Remote(str, Enum):
     github = 'github'
     gitlab = 'gitlab'
     pagure = 'pagure'
+
 
 @app.command("branch")
 def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(Remote.gitlab, "--remote", "-r")):
@@ -287,20 +311,24 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
     """
     sisyphus.setbranch.start(branch.value, remote.value)
 
+
 @app.command("sysinfo")
 def sysinfo():
     """Display information about installed core packages and portage configuration."""
     sisyphus.sysinfo.show()
+
 
 @mirrorSetup.command("list")
 def mirrorlist():
     """List available binary package repository mirrors (the active one is marked with *)."""
     sisyphus.mirrors.printList()
 
+
 @mirrorSetup.command("set")
 def mirrorset(index: int):
     """Change the binary package repository to the selected mirror."""
     sisyphus.mirrors.setActive(index)
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and not '--help' in sys.argv:

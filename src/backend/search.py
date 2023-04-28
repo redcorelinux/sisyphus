@@ -155,9 +155,9 @@ def srch_rslt(filter, cat, pn, desc, single):
 def start(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
         print(sisyphus.getcolor.bright_red +
-              "\nSearching as root, database could be updated!\n" + sisyphus.getcolor.reset)
+              "\nSearching as root, database can be updated!\n" + sisyphus.getcolor.reset)
         print(sisyphus.getcolor.bright_yellow +
-              "Search results would be accurate\n" + sisyphus.getcolor.reset)
+              "Search results will be accurate\n" + sisyphus.getcolor.reset)
         while True:
             user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
@@ -168,15 +168,15 @@ def start(filter, cat, pn, desc, single):
                 print(sisyphus.getcolor.bright_red +
                       "\nSkipping database update, displaying search results!\n" + sisyphus.getcolor.reset)
                 print(sisyphus.getcolor.bright_yellow +
-                      "Search results could be inaccurate" + sisyphus.getcolor.reset)
+                      "Search results may be inaccurate" + sisyphus.getcolor.reset)
                 break
             else:
                 continue
     else:
         print(sisyphus.getcolor.bright_red +
-              "\nSearching as user, database couldn't be updated!\n" + sisyphus.getcolor.reset)
+              "\nSearching as user, database cannot be updated!\n" + sisyphus.getcolor.reset)
         print(sisyphus.getcolor.bright_yellow +
-              "Search results could be inaccurate" + sisyphus.getcolor.reset)
+              "Search results may be inaccurate" + sisyphus.getcolor.reset)
 
     srch_rslt(filter, cat, pn, desc, single)
 
