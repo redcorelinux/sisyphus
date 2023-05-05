@@ -20,6 +20,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 def start(pkgname=None):
     bin_list = []
     src_list = []
+    is_vague = int()
     need_cfg = int()
 
     if pkgname:
@@ -35,6 +36,10 @@ def start(pkgname=None):
         stdout, stderr = p_exe.communicate()
 
         for p_out in stderr.decode('utf-8').splitlines():
+            if pkgname:
+                if "The short ebuild name" + " " + ', '.join(f'"{package}"' for package in pkgname) + " " + "is ambiguous." in p_out:
+                    is_vague = int(1)
+
             if any(key in p_out for key in ["The following keyword changes are necessary to proceed:",
                                             "The following mask changes are necessary to proceed:",
                                             "The following USE changes are necessary to proceed:",
@@ -52,11 +57,11 @@ def start(pkgname=None):
                 src_list.append(is_src)
 
         if pkgname:
-            pickle.dump([bin_list, src_list, need_cfg], open(os.path.join(
-                sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "wb"))
+            pickle.dump([bin_list, src_list, is_vague, need_cfg], open(
+                os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "wb"))
         else:
-            pickle.dump([bin_list, src_list, need_cfg], open(os.path.join(
-                sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "wb"))
+            pickle.dump([bin_list, src_list, is_vague, need_cfg], open(
+                os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "wb"))
     except KeyboardInterrupt:
         p_exe.terminate()
         try:

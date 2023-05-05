@@ -36,10 +36,29 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
             sisyphus.update.start(gfx_ui=False)
             sisyphus.solvedeps.start(pkgname)
 
-        bin_list, src_list, need_cfg = pickle.load(
+        bin_list, src_list, is_vague, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    if need_cfg != 0:  # catch aliens
+    if is_vague != 0:  # catch ambiguous packages
+        p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
+                                 '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+        try:
+            p_exe.wait()
+        except KeyboardInterrupt:
+            p_exe.terminate()
+            try:
+                p_exe.wait(1)
+            except subprocess.TimeoutExpired:
+                p_exe.kill()
+            sys.exit()
+        if gfx_ui:
+            pass  # GUI always calls <category>/<pkgname>, no ambiguity
+        else:
+            print(sisyphus.getcolor.bright_red +
+                  "\nCannot proceed!\n" + sisyphus.getcolor.reset)
+            sys.exit()
+
+    elif need_cfg != 0:  # catch aliens
         p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
                                  '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
         try:
@@ -54,7 +73,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
         if gfx_ui:
             print("\nCannot proceed!\n")
             print(
-                "Apply the above changes to your portage configuration files and try again")
+                "Apply the above changes to your portage configuration files and try again!")
 
             for i in range(9, 0, -1):
                 print(f"Killing application in : {i} seconds!")
@@ -65,7 +84,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
             print(sisyphus.getcolor.bright_red +
                   "\nCannot proceed!\n" + sisyphus.getcolor.reset)
             print(sisyphus.getcolor.bright_yellow +
-                  "Apply the above changes to your portage configuration files and try again" + sisyphus.getcolor.reset)
+                  "Apply the above changes to your portage configuration files and try again!" + sisyphus.getcolor.reset)
             sys.exit()
     else:
         if len(bin_list) == 0 and len(src_list) == 0:
