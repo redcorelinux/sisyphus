@@ -37,14 +37,16 @@ def start(pkgname=None):
 
         for p_out in stderr.decode('utf-8').splitlines():
             if pkgname:
-                if "The short ebuild name" + " " + ', '.join(f'"{package}"' for package in pkgname) + " " + "is ambiguous." in p_out:
+                if any(key in p_out for key in ["short ebuild name",
+                                                "is ambiguous",
+                                                "there are no ebuilds to satisfy"]):  # likely very fragile
                     is_vague = int(1)
 
             if any(key in p_out for key in ["The following keyword changes are necessary to proceed:",
                                             "The following mask changes are necessary to proceed:",
                                             "The following USE changes are necessary to proceed:",
                                             "The following REQUIRED_USE flag constraints are unsatisfied:",
-                                            "One of the following masked packages is required to complete your request:"]):
+                                            "One of the following masked packages is required to complete your request:"]):  # likely very fragile
                 need_cfg = int(1)
 
         for p_out in stdout.decode('utf-8').splitlines():

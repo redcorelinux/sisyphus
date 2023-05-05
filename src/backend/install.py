@@ -41,7 +41,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
 
     if is_vague != 0:  # catch ambiguous packages
         p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
-                                 '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+                                 '--with-bdeps=y', '--misspell-suggestion=y', '--fuzzy-search=y'] + list(pkgname))
         try:
             p_exe.wait()
         except KeyboardInterrupt:
@@ -54,8 +54,6 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
         if gfx_ui:
             pass  # GUI always calls <category>/<pkgname>, no ambiguity
         else:
-            print(sisyphus.getcolor.bright_red +
-                  "\nCannot proceed!\n" + sisyphus.getcolor.reset)
             sys.exit()
 
     elif need_cfg != 0:  # catch aliens
