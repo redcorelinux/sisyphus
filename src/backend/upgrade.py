@@ -7,6 +7,7 @@ import pickle
 import signal
 import subprocess
 import sys
+import time
 import sisyphus.checkenv
 import sisyphus.download
 import sisyphus.getcolor
