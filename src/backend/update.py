@@ -84,4 +84,5 @@ def start(gfx_ui=False):
                       "\n\nInvalid configuration!" + sisyphus.getcolor.reset)
                 print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" +
                       "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+                time.sleep(1)
                 sys.exit()
