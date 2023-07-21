@@ -45,58 +45,59 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.settingsButton.clicked.connect(self.showMirrorWindow)
         self.licenseButton.clicked.connect(self.showLicenseWindow)
 
-        sys.stdout = MainWorker(workerOutput=self.updateProgressBox) # capture stdout
+        sys.stdout = MainWorker(workerOutput=self.updateProgress) # capture stdout
 
         self.updateWorker = MainWorker()
         self.updateThread = QtCore.QThread()
         self.updateWorker.moveToThread(self.updateThread)
-        self.updateWorker.started.connect(self.showProgressBar)
+        self.updateWorker.started.connect(self.showProgress)
         self.updateThread.started.connect(self.updateWorker.startUpdate)
-        self.updateThread.finished.connect(self.hideProgressBar)
+        self.updateThread.finished.connect(self.hideProgress)
         self.updateWorker.finished.connect(self.updateThread.quit)
 
         self.installButton.clicked.connect(self.packageInstall)
         self.installWorker = MainWorker()
         self.installThread = QtCore.QThread()
         self.installWorker.moveToThread(self.installThread)
-        self.installWorker.started.connect(self.showProgressBar)
+        self.installWorker.started.connect(self.showProgress)
         self.installThread.started.connect(self.installWorker.startInstall)
-        self.installWorker.workerOutput.connect(self.updateProgressBox)
-        self.installThread.finished.connect(self.hideProgressBar)
+        self.installWorker.workerOutput.connect(self.updateProgress)
+        self.installThread.finished.connect(self.hideProgress)
         self.installWorker.finished.connect(self.installThread.quit)
 
         self.uninstallButton.clicked.connect(self.packageUninstall)
         self.uninstallWorker = MainWorker()
         self.uninstallThread = QtCore.QThread()
         self.uninstallWorker.moveToThread(self.uninstallThread)
-        self.uninstallWorker.started.connect(self.showProgressBar)
+        self.uninstallWorker.started.connect(self.showProgress)
         self.uninstallThread.started.connect(self.uninstallWorker.startUninstall)
-        self.uninstallWorker.workerOutput.connect(self.updateProgressBox)
-        self.uninstallThread.finished.connect(self.hideProgressBar)
+        self.uninstallWorker.workerOutput.connect(self.updateProgress)
+        self.uninstallThread.finished.connect(self.hideProgress)
         self.uninstallWorker.finished.connect(self.uninstallThread.quit)
 
         self.upgradeButton.clicked.connect(self.systemUpgrade)
         self.upgradeWorker = MainWorker()
         self.upgradeThread = QtCore.QThread()
         self.upgradeWorker.moveToThread(self.upgradeThread)
-        self.upgradeWorker.started.connect(self.showProgressBar)
+        self.upgradeWorker.started.connect(self.showProgress)
         self.upgradeThread.started.connect(self.upgradeWorker.startUpgrade)
-        self.upgradeWorker.workerOutput.connect(self.updateProgressBox)
-        self.upgradeThread.finished.connect(self.hideProgressBar)
+        self.upgradeWorker.workerOutput.connect(self.updateProgress)
+        self.upgradeThread.finished.connect(self.hideProgress)
         self.upgradeWorker.finished.connect(self.upgradeThread.quit)
 
         self.autoremoveButton.clicked.connect(self.autoRemove)
         self.autoremoveWorker = MainWorker()
         self.autoremoveThread = QtCore.QThread()
         self.autoremoveWorker.moveToThread(self.autoremoveThread)
-        self.autoremoveWorker.started.connect(self.showProgressBar)
+        self.autoremoveWorker.started.connect(self.showProgress)
         self.autoremoveThread.started.connect(self.autoremoveWorker.startAutoremove)
-        self.autoremoveWorker.workerOutput.connect(self.updateProgressBox)
-        self.autoremoveThread.finished.connect(self.hideProgressBar)
+        self.autoremoveWorker.workerOutput.connect(self.updateProgress)
+        self.autoremoveThread.finished.connect(self.hideProgress)
         self.autoremoveWorker.finished.connect(self.autoremoveThread.quit)
 
         self.updateSystem()
         self.progressBar.hide()
+        self.progressBox.hide()
 
         self.exitButton.clicked.connect(self.sisyphusExit)
 
@@ -273,30 +274,72 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.statusBar().showMessage("I am busy with some cleaning, please don't rush me ...")
         self.autoremoveThread.start()
 
+    def enableUiInput(self):
+        self.databaseTable.show()
+        self.installButton.setEnabled(True)
+        self.uninstallButton.setEnabled(True)
+        self.autoremoveButton.setEnabled(True)
+        self.upgradeButton.setEnabled(True)
+        self.exitButton.setEnabled(True)
+        self.licenseButton.setEnabled(True)
+        self.settingsButton.setEnabled(True)
+        self.applicationFilter.setEnabled(True)
+        self.databaseFilter.setEnabled(True)
+        self.inputBox.setEnabled(True)
+        self.label1.setEnabled(True)
+        self.label2.setEnabled(True)
+
+    def disableUiInput(self):
+        self.databaseTable.hide()
+        self.installButton.setEnabled(False)
+        self.uninstallButton.setEnabled(False)
+        self.autoremoveButton.setEnabled(False)
+        self.upgradeButton.setEnabled(False)
+        self.exitButton.setEnabled(False)
+        self.licenseButton.setEnabled(False)
+        self.settingsButton.setEnabled(False)
+        self.applicationFilter.setEnabled(False)
+        self.databaseFilter.setEnabled(False)
+        self.inputBox.setEnabled(False)
+        self.label1.setEnabled(False)
+        self.label2.setEnabled(False)
+
     def showProgressBar(self):
-        self.installButton.hide()
-        self.uninstallButton.hide()
-        self.autoremoveButton.hide()
-        self.upgradeButton.hide()
-        self.exitButton.hide()
         self.progressBar.setRange(0, 0)
         self.progressBar.show()
-        self.inputBox.setFocus()
-        self.progressBox.clear()
 
     def hideProgressBar(self):
-        self.installButton.show()
-        self.uninstallButton.show()
-        self.autoremoveButton.show()
-        self.upgradeButton.show()
-        self.exitButton.show()
         self.progressBar.setRange(0, 1)
         self.progressBar.setValue(1)
         self.progressBar.hide()
-        self.inputBox.setFocus()
-        self.loadDatabase()
 
-    def updateProgressBox(self, workerMessage):
+    def clearProgressBox(self):
+        self.progressBox.clear()
+
+    def showProgressBox(self):
+        self.progressBox.show()
+
+    def hideProgressBox(self):
+        self.progressBox.hide()
+
+    def setInputFocus(self):
+        self.inputBox.setFocus()
+
+    def showProgress(self):
+        self.disableUiInput()
+        self.showProgressBar()
+        self.showProgressBox()
+        self.clearProgressBox()
+        self.setInputFocus()
+
+    def hideProgress(self):
+        self.enableUiInput()
+        self.hideProgressBar()
+        self.hideProgressBox()
+        self.loadDatabase()
+        self.setInputFocus()
+
+    def updateProgress(self, workerMessage):
         self.progressBox.insertPlainText(workerMessage)
         self.progressBox.ensureCursorVisible()
 
