@@ -3,11 +3,13 @@
 import animation
 import git
 import os
+import random
 import signal
 import sys
 import sisyphus.checkenv
 import sisyphus.getcolor
 import sisyphus.getfs
+import sisyphus.mirrors
 import sisyphus.purgeenv
 import sisyphus.setjobs
 import sisyphus.setprofile
@@ -79,25 +81,33 @@ def ins_p_cfg_repo(branch, remote):
                             sisyphus.getfs.p_cfg_dir, depth=1, branch=branch)
 
 
-def brch_s_warn(branch, remote):
+def set_brch_master_index():
+    mirrorList = sisyphus.mirrors.getList()
+    odd_indices = [i + 1 for i in range(len(mirrorList)) if (i + 1) % 2 == 1]
+    chosen_index = random.choice(odd_indices)
+    sisyphus.mirrors.setActive(chosen_index)
+
+
+def set_brch_next_index():
+    mirrorList = sisyphus.mirrors.getList()
+    even_indices = [i + 1 for i in range(len(mirrorList)) if (i + 1) % 2 == 0]
+    chosen_index = random.choice(even_indices)
+    sisyphus.mirrors.setActive(chosen_index)
+
+
+def set_bhst_index(branch, remote):
     if "master" in branch:
         print(sisyphus.getcolor.green + "\nActive branch switched:" +
               " " + sisyphus.getcolor.reset + "'" + branch + "'")
         print(sisyphus.getcolor.green + "Active remote switched:" +
               " " + sisyphus.getcolor.reset + "'" + remote + "'")
-        print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 3" + "'" + " " + sisyphus.getcolor.bright_yellow +
-              "or" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 7" + "'" + " " + sisyphus.getcolor.bright_yellow + "to pair the binhost" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " + "'" +
-              "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+        set_brch_master_index()  # Set binhost index for branch 'master' (random odd index)
     elif "next" in branch:
         print(sisyphus.getcolor.green + "\nActive branch switched:" +
               " " + sisyphus.getcolor.reset + "'" + branch + "'")
         print(sisyphus.getcolor.green + "Active remote switched:" +
               " " + sisyphus.getcolor.reset + "'" + remote + "'")
-        print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 4" + "'" + " " + sisyphus.getcolor.bright_yellow +
-              "or" + sisyphus.getcolor.reset + " " + "'" + "sisyphus mirror set 8" + "'" + " " + sisyphus.getcolor.bright_yellow + "to pair the binhost" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " + "'" +
-              "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+        set_brch_next_index()  # Set binhost index for branch 'next' (random even index)
 
 
 def start(branch, remote):
@@ -112,7 +122,7 @@ def start(branch, remote):
             ins_p_cfg_repo(branch, remote)
             sisyphus.setjobs.start()
             sisyphus.setprofile.start()
-            brch_s_warn(branch, remote)
+            set_bhst_index(branch, remote)
         else:
             print(sisyphus.getcolor.bright_red +
                   "\nNo internet connection; Aborting!\n" + sisyphus.getcolor.reset)
