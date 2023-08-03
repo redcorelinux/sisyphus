@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-portageConfigDir="/opt/redcore-build/conf/intel/portage"
+sisyphusConfigDir="/etc/sisyphus"
 
 setjobs () {
 	# default MAKEOPTS value is -j64, but that's overkill for lower spec machines
@@ -8,11 +8,9 @@ setjobs () {
 	# however since compilation is largely pointer-following, SMT won't help much
 	# and can lead to memory starvation and stalls; DO NOT use logical cores
 	if [[ $(cat /sys/devices/system/cpu/smt/active) -eq 1 ]]; then
-		sed -i "s/\-j\([0-9]\+\)/\-j$(expr $(getconf _NPROCESSORS_ONLN) / 2)/g" "$portageConfigDir"/make.conf/00-makeopts.conf >/dev/null 2>&1 # global makeopts (exclude kernel)
-		sed -i "s/\-j\([0-9]\+\)/\-j$(expr $(getconf _NPROCESSORS_ONLN) / 2)/g" "$portageConfigDir"/env/makenoise.conf >/dev/null 2>&1 # kernel makeopts
+		sed -i "s/\-j\([0-9]\+\)/\-j$(expr $(getconf _NPROCESSORS_ONLN) / 2)/g" "$sisyphusConfigDir"/sisyphus.make-opts.conf >/dev/null 2>&1 # global makeopts
 	elif [[ $(cat /sys/devices/system/cpu/smt/active) -eq 0 ]]; then
-		sed -i "s/\-j\([0-9]\+\)/\-j$(getconf _NPROCESSORS_ONLN)/g" "$portageConfigDir"/make.conf/00-makeopts.conf >/dev/null 2>&1 # global makeopts (exclude kernel)
-		sed -i "s/\-j\([0-9]\+\)/\-j$(getconf _NPROCESSORS_ONLN)/g" "$portageConfigDir"/env/makenoise.conf >/dev/null 2>&1 # kernel makeopts
+		sed -i "s/\-j\([0-9]\+\)/\-j$(getconf _NPROCESSORS_ONLN)/g" "$sisyphusConfigDir"/sisyphus.make-opts.conf >/dev/null 2>&1 # global makeopts
 	fi
 }
 
