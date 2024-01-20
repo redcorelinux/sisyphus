@@ -89,13 +89,13 @@ def search(package: List[str] = typer.Argument(...),
             cat, pn = package[0].split('/')
         else:
             cat, pn = '', package[0]
-        sisyphus.search.start(filter.value, cat, pn, desc, quiet)
+        sisyphus.searchdb.start(filter.value, cat, pn, desc, quiet)
     else:
         if not package:
             raise typer.Exit(
                 'No search term provided, try: sisyphus search --help')
         else:
-            sisyphus.search.estart(package)
+            sisyphus.searchdb.estart(package)
 
 
 @app.command("install")

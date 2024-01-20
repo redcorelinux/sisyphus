@@ -10,7 +10,8 @@ from .mirrors import *
 from .purgeenv import *
 from .recoverdb import *
 from .solvedeps import *
-from .search import *
+from .solverdeps import *
+from .searchdb import *
 from .setbranch import *
 from .setjobs import *
 from .setprofile import *
