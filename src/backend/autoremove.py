@@ -6,7 +6,7 @@ import signal
 import subprocess
 import sys
 import sisyphus.checkenv
-import sisyphus.getcolor
+import sisyphus.getclr
 import sisyphus.killemerge
 import sisyphus.syncdb
 
@@ -45,6 +45,6 @@ def start(gfx_ui=False):
         p_exe.wait()
         sisyphus.syncdb.lcl_tbl()
     else:
-        print(sisyphus.getcolor.bright_red +
-              "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)
+        print(sisyphus.getclr.bright_red +
+              "\nYou need root permissions to do this!\n" + sisyphus.getclr.reset)
         sys.exit()

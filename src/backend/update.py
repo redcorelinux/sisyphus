@@ -5,7 +5,7 @@ import signal
 import sys
 import time
 import sisyphus.checkenv
-import sisyphus.getcolor
+import sisyphus.getclr
 import sisyphus.getenv
 import sisyphus.purgeenv
 import sisyphus.syncdb
@@ -42,8 +42,8 @@ def start(gfx_ui=False):
 
             sys.exit(app.exec_())  # kill GUI window
         else:
-            print(sisyphus.getcolor.bright_red +
-                  "\n\nNo internet connection; Aborting!\n" + sisyphus.getcolor.reset)
+            print(sisyphus.getclr.bright_red +
+                  "\n\nNo internet connection; Aborting!\n" + sisyphus.getclr.reset)
             sys.exit()
     else:
         if is_sane == 1:
@@ -70,19 +70,19 @@ def start(gfx_ui=False):
                 sys.exit(app.exec_())  # kill GUI window
             else:
                 if "packages-next" in bhst_addr:
-                    print(sisyphus.getcolor.green + "\n\nActive branch:" + " " +
-                          sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(stable)")
-                    print(sisyphus.getcolor.green + "\nActive binhost:" + " " +
-                          sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(testing)")
+                    print(sisyphus.getclr.green + "\n\nActive branch:" + " " +
+                          sisyphus.getclr.reset + "'" + actv_brch + "'" + " " + "(stable)")
+                    print(sisyphus.getclr.green + "\nActive binhost:" + " " +
+                          sisyphus.getclr.reset + "'" + bhst_addr + "'" + " " + "(testing)")
                 else:
-                    print(sisyphus.getcolor.green + "\n\nActive branch:" + " " +
-                          sisyphus.getcolor.reset + "'" + actv_brch + "'" + " " + "(testing)")
-                    print(sisyphus.getcolor.green + "\nActive binhost:" + " " +
-                          sisyphus.getcolor.reset + "'" + bhst_addr + "'" + " " + "(stable)")
+                    print(sisyphus.getclr.green + "\n\nActive branch:" + " " +
+                          sisyphus.getclr.reset + "'" + actv_brch + "'" + " " + "(testing)")
+                    print(sisyphus.getclr.green + "\nActive binhost:" + " " +
+                          sisyphus.getclr.reset + "'" + bhst_addr + "'" + " " + "(stable)")
 
-                print(sisyphus.getcolor.bright_red +
-                      "\n\nInvalid configuration!" + sisyphus.getcolor.reset)
-                print(sisyphus.getcolor.bright_yellow + "\nUse" + sisyphus.getcolor.reset + " " + "'" +
-                      "sisyphus branch --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+                print(sisyphus.getclr.bright_red +
+                      "\n\nInvalid configuration!" + sisyphus.getclr.reset)
+                print(sisyphus.getclr.bright_yellow + "\nUse" + sisyphus.getclr.reset + " " + "'" +
+                      "sisyphus branch --help" + "'" + " " + sisyphus.getclr.bright_yellow + "for help" + sisyphus.getclr.reset)
                 time.sleep(1)
                 sys.exit()

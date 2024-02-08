@@ -7,7 +7,7 @@ import random
 import signal
 import sys
 import sisyphus.checkenv
-import sisyphus.getcolor
+import sisyphus.getclr
 import sisyphus.getfs
 import sisyphus.mirrors
 import sisyphus.purgeenv
@@ -97,16 +97,16 @@ def set_brch_next_index():
 
 def set_bhst_index(branch, remote):
     if "master" in branch:
-        print(sisyphus.getcolor.green + "\nActive branch switched:" +
-              " " + sisyphus.getcolor.reset + "'" + branch + "'")
-        print(sisyphus.getcolor.green + "Active remote switched:" +
-              " " + sisyphus.getcolor.reset + "'" + remote + "'")
+        print(sisyphus.getclr.green + "\nActive branch switched:" +
+              " " + sisyphus.getclr.reset + "'" + branch + "'")
+        print(sisyphus.getclr.green + "Active remote switched:" +
+              " " + sisyphus.getclr.reset + "'" + remote + "'")
         set_brch_master_index()  # Set binhost index for branch 'master' (random odd index)
     elif "next" in branch:
-        print(sisyphus.getcolor.green + "\nActive branch switched:" +
-              " " + sisyphus.getcolor.reset + "'" + branch + "'")
-        print(sisyphus.getcolor.green + "Active remote switched:" +
-              " " + sisyphus.getcolor.reset + "'" + remote + "'")
+        print(sisyphus.getclr.green + "\nActive branch switched:" +
+              " " + sisyphus.getclr.reset + "'" + branch + "'")
+        print(sisyphus.getclr.green + "Active remote switched:" +
+              " " + sisyphus.getclr.reset + "'" + remote + "'")
         set_brch_next_index()  # Set binhost index for branch 'next' (random even index)
 
 
@@ -124,10 +124,10 @@ def start(branch, remote):
             sisyphus.setprofile.start()
             set_bhst_index(branch, remote)
         else:
-            print(sisyphus.getcolor.bright_red +
-                  "\nNo internet connection; Aborting!\n" + sisyphus.getcolor.reset)
+            print(sisyphus.getclr.bright_red +
+                  "\nNo internet connection; Aborting!\n" + sisyphus.getclr.reset)
             sys.exit()
     else:
-        print(sisyphus.getcolor.bright_red +
-              "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)
+        print(sisyphus.getclr.bright_red +
+              "\nYou need root permissions to do this!\n" + sisyphus.getclr.reset)
         sys.exit()

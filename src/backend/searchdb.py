@@ -4,7 +4,7 @@ import signal
 import sqlite3
 import subprocess
 import sisyphus.checkenv
-import sisyphus.getcolor
+import sisyphus.getclr
 import sisyphus.getfs
 import sisyphus.update
 
@@ -115,68 +115,68 @@ def tosql(string):
 
 
 def srch_rslt(filter, cat, pn, desc, single):
-    print("\nSearching" + sisyphus.getcolor.bright_yellow + " " +
-          f"{filter}" + " " + sisyphus.getcolor.reset + "packages ..." + "\n")
+    print("\nSearching" + sisyphus.getclr.bright_yellow + " " +
+          f"{filter}" + " " + sisyphus.getclr.reset + "packages ..." + "\n")
     pkglist = srch_db(filter, tosql(cat), tosql(pn), tosql(desc))
 
     if len(pkglist) == 0:
-        print(sisyphus.getcolor.bright_red +
-              "No binary package found!\n" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow + "Use the" + sisyphus.getcolor.reset + " " + "'" + "--ebuild" +
-              "'" + " " + sisyphus.getcolor.bright_yellow + "option to search source packages" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow + "Use" + sisyphus.getcolor.reset + " " + "'" +
-              "sisyphus search --help" + "'" + " " + sisyphus.getcolor.bright_yellow + "for help" + sisyphus.getcolor.reset)
+        print(sisyphus.getclr.bright_red +
+              "No binary package found!\n" + sisyphus.getclr.reset)
+        print(sisyphus.getclr.bright_yellow + "Use the" + sisyphus.getclr.reset + " " + "'" + "--ebuild" +
+              "'" + " " + sisyphus.getclr.bright_yellow + "option to search source packages" + sisyphus.getclr.reset)
+        print(sisyphus.getclr.bright_yellow + "Use" + sisyphus.getclr.reset + " " + "'" +
+              "sisyphus search --help" + "'" + " " + sisyphus.getclr.bright_yellow + "for help" + sisyphus.getclr.reset)
     else:
         if single:
-            print(sisyphus.getcolor.green +
-                  f"{'Package category/name':45} {'Installed version':20} {'Latest available version':30} {'Description'}" + sisyphus.getcolor.reset)
+            print(sisyphus.getclr.green +
+                  f"{'Package category/name':45} {'Installed version':20} {'Latest available version':30} {'Description'}" + sisyphus.getclr.reset)
         for pkg in pkglist:
             if not single:
-                print(sisyphus.getcolor.bright_green + "*" + " " + sisyphus.getcolor.reset +
-                      sisyphus.getcolor.bright_white + f"{pkg['cat']}/{pkg['pn']}" + sisyphus.getcolor.reset)
-                print(sisyphus.getcolor.green + "\tInstalled version:" +
-                      " " + sisyphus.getcolor.reset + f"{pkg['iv']}")
+                print(sisyphus.getclr.bright_green + "*" + " " + sisyphus.getclr.reset +
+                      sisyphus.getclr.bright_white + f"{pkg['cat']}/{pkg['pn']}" + sisyphus.getclr.reset)
+                print(sisyphus.getclr.green + "\tInstalled version:" +
+                      " " + sisyphus.getclr.reset + f"{pkg['iv']}")
                 if pkg['av'] != 'alien':
-                    print(sisyphus.getcolor.green + "\tLatest available version:" +
-                          " " + sisyphus.getcolor.reset + f"{pkg['av']}")
+                    print(sisyphus.getclr.green + "\tLatest available version:" +
+                          " " + sisyphus.getclr.reset + f"{pkg['av']}")
                 else:
-                    print(sisyphus.getcolor.green + "\tAlien package:" + " " + sisyphus.getcolor.reset +
+                    print(sisyphus.getclr.green + "\tAlien package:" + " " + sisyphus.getclr.reset +
                           "Use `sisyphus search --ebuild" + " " + f"{pkg['pn']}`" + " " + "for available version!")
-                print(sisyphus.getcolor.green + "\tDescription:" + " " +
-                      sisyphus.getcolor.reset + f"{pkg['desc']}" + "\n")
+                print(sisyphus.getclr.green + "\tDescription:" + " " +
+                      sisyphus.getclr.reset + f"{pkg['desc']}" + "\n")
             else:
                 cpn = f"{pkg['cat']}/{pkg['pn']}"
-                print(sisyphus.getcolor.bright_white + f"{cpn:45}" + " " + sisyphus.getcolor.reset +
+                print(sisyphus.getclr.bright_white + f"{cpn:45}" + " " + sisyphus.getclr.reset +
                       f"{str(pkg['iv']):20}" + " " + f"{str(pkg['av']):30}" + " " + f"{str(pkg['desc'])}")
-        print("\nFound" + " " + sisyphus.getcolor.bright_yellow +
-              f"{len(pkglist)}" + " " + sisyphus.getcolor.reset + "matching package(s) ...")
+        print("\nFound" + " " + sisyphus.getclr.bright_yellow +
+              f"{len(pkglist)}" + " " + sisyphus.getclr.reset + "matching package(s) ...")
 
 
 def start(filter, cat, pn, desc, single):
     if sisyphus.checkenv.root():
-        print(sisyphus.getcolor.bright_red +
-              "\nSearching as root, database can be updated!\n" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow +
-              "Search results will be accurate\n" + sisyphus.getcolor.reset)
+        print(sisyphus.getclr.bright_red +
+              "\nSearching as root, database can be updated!\n" + sisyphus.getclr.reset)
+        print(sisyphus.getclr.bright_yellow +
+              "Search results will be accurate\n" + sisyphus.getclr.reset)
         while True:
-            user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                               "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+            user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
+                               "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
             if user_input.lower() in ['yes', 'y', '']:
                 sisyphus.update.start(gfx_ui=False)
                 break
             elif user_input.lower() in ['no', 'n']:
-                print(sisyphus.getcolor.bright_red +
-                      "\nSkipping database update, displaying search results!\n" + sisyphus.getcolor.reset)
-                print(sisyphus.getcolor.bright_yellow +
-                      "Search results may be inaccurate" + sisyphus.getcolor.reset)
+                print(sisyphus.getclr.bright_red +
+                      "\nSkipping database update, displaying search results!\n" + sisyphus.getclr.reset)
+                print(sisyphus.getclr.bright_yellow +
+                      "Search results may be inaccurate" + sisyphus.getclr.reset)
                 break
             else:
                 continue
     else:
-        print(sisyphus.getcolor.bright_red +
-              "\nSearching as user, database cannot be updated!\n" + sisyphus.getcolor.reset)
-        print(sisyphus.getcolor.bright_yellow +
-              "Search results may be inaccurate" + sisyphus.getcolor.reset)
+        print(sisyphus.getclr.bright_red +
+              "\nSearching as user, database cannot be updated!\n" + sisyphus.getclr.reset)
+        print(sisyphus.getclr.bright_yellow +
+              "Search results may be inaccurate" + sisyphus.getclr.reset)
 
     srch_rslt(filter, cat, pn, desc, single)
 

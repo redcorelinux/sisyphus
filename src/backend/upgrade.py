@@ -10,7 +10,7 @@ import sys
 import time
 import sisyphus.checkenv
 import sisyphus.dlpkg
-import sisyphus.getcolor
+import sisyphus.getclr
 import sisyphus.getfs
 import sisyphus.killemerge
 import sisyphus.solvedeps
@@ -27,8 +27,8 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 def start(ebuild=False, gfx_ui=False):
     if not sisyphus.checkenv.root():
-        print(sisyphus.getcolor.bright_red +
-              "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)
+        print(sisyphus.getclr.bright_red +
+              "\nYou need root permissions to do this!\n" + sisyphus.getclr.reset)
         sys.exit()
     else:
         if gfx_ui:
@@ -63,31 +63,31 @@ def start(ebuild=False, gfx_ui=False):
 
             sys.exit(app.exec_())  # kill GUI window
         else:
-            print(sisyphus.getcolor.bright_red +
-                  "\nCannot proceed!\n" + sisyphus.getcolor.reset)
-            print(sisyphus.getcolor.bright_yellow +
-                  "Apply the above changes to your portage configuration files and try again" + sisyphus.getcolor.reset)
+            print(sisyphus.getclr.bright_red +
+                  "\nCannot proceed!\n" + sisyphus.getclr.reset)
+            print(sisyphus.getclr.bright_yellow +
+                  "Apply the above changes to your portage configuration files and try again" + sisyphus.getclr.reset)
             sys.exit()
     else:
         if len(bin_list) == 0 and len(src_list) == 0:
             if gfx_ui:
                 print("\nNo package upgrades found!\n")
             else:
-                print(sisyphus.getcolor.bright_red +
-                      "\nNo package upgrades found!\n" + sisyphus.getcolor.reset)
+                print(sisyphus.getclr.bright_red +
+                      "\nNo package upgrades found!\n" + sisyphus.getclr.reset)
                 sys.exit()
 
         if ebuild:  # ebuild mode
             if len(bin_list) == 0 and len(src_list) != 0:  # source mode, ignore aliens
-                print("\n" + sisyphus.getcolor.green +
-                      "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.green +
-                      ", ".join(src_list) + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
-                    len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getclr.green +
+                      "These are the source packages that would be merged, in order:" + sisyphus.getclr.reset + "\n")
+                print("\n" + sisyphus.getclr.green +
+                      ", ".join(src_list) + sisyphus.getclr.reset + "\n")
+                print("\n" + sisyphus.getclr.bright_white + "Total:" + " " + str(
+                    len(src_list)) + " " + "source package(s)" + sisyphus.getclr.reset + "\n")
                 while True:
-                    user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                                       "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                    user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
+                                       "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
                     if user_input.lower() in ['yes', 'y', '']:
                         p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse',
                                                  '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
@@ -109,22 +109,22 @@ def start(ebuild=False, gfx_ui=False):
                               user_input + "'" + " " + "not understood.\n")
                         continue
             elif len(bin_list) != 0 and len(src_list) != 0:  # hybrid mode, ignore aliens
-                print("\n" + sisyphus.getcolor.green +
-                      "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.magenta +
-                      ", ".join(bin_list) + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
-                    len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getclr.green +
+                      "These are the binary packages that would be merged, in order:" + sisyphus.getclr.reset + "\n")
+                print("\n" + sisyphus.getclr.magenta +
+                      ", ".join(bin_list) + sisyphus.getclr.reset + "\n")
+                print("\n" + sisyphus.getclr.bright_white + "Total:" + " " + str(
+                    len(bin_list)) + " " + "binary package(s)" + sisyphus.getclr.reset + "\n")
 
-                print("\n" + sisyphus.getcolor.green +
-                      "These are the source packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.green +
-                      ", ".join(src_list) + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
-                    len(src_list)) + " " + "source package(s)" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getclr.green +
+                      "These are the source packages that would be merged, in order:" + sisyphus.getclr.reset + "\n")
+                print("\n" + sisyphus.getclr.green +
+                      ", ".join(src_list) + sisyphus.getclr.reset + "\n")
+                print("\n" + sisyphus.getclr.bright_white + "Total:" + " " + str(
+                    len(src_list)) + " " + "source package(s)" + sisyphus.getclr.reset + "\n")
                 while True:
-                    user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                                       "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                    user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
+                                       "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlpkg.start(dl_world=True, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
@@ -148,15 +148,15 @@ def start(ebuild=False, gfx_ui=False):
                               user_input + "'" + " " + "not understood.\n")
                         continue
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode, fallback
-                print("\n" + sisyphus.getcolor.green +
-                      "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.magenta +
-                      ", ".join(bin_list) + sisyphus.getcolor.reset + "\n")
-                print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
-                    len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+                print("\n" + sisyphus.getclr.green +
+                      "These are the binary packages that would be merged, in order:" + sisyphus.getclr.reset + "\n")
+                print("\n" + sisyphus.getclr.magenta +
+                      ", ".join(bin_list) + sisyphus.getclr.reset + "\n")
+                print("\n" + sisyphus.getclr.bright_white + "Total:" + " " + str(
+                    len(bin_list)) + " " + "binary package(s)" + sisyphus.getclr.reset + "\n")
                 while True:
-                    user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                                       "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                    user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
+                                       "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlpkg.start(dl_world=True, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
@@ -192,10 +192,10 @@ def start(ebuild=False, gfx_ui=False):
 
                     sys.exit(app.exec_())  # kill GUI window
                 else:
-                    print(sisyphus.getcolor.bright_red +
-                          "\nSource package(s) found in the mix!\n" + sisyphus.getcolor.reset)
-                    print(sisyphus.getcolor.bright_yellow + "Use" +
-                          sisyphus.getcolor.reset + " " + "'" + "sisyphus upgrade --ebuild" + "'")
+                    print(sisyphus.getclr.bright_red +
+                          "\nSource package(s) found in the mix!\n" + sisyphus.getclr.reset)
+                    print(sisyphus.getclr.bright_yellow + "Use" +
+                          sisyphus.getclr.reset + " " + "'" + "sisyphus upgrade --ebuild" + "'")
                     sys.exit()
             elif len(bin_list) != 0 and len(src_list) != 0:  # hybrid mode (noop), catch aliens
                 if gfx_ui:
@@ -209,10 +209,10 @@ def start(ebuild=False, gfx_ui=False):
 
                     sys.exit(app.exec_())  # kill GUI window
                 else:
-                    print(sisyphus.getcolor.bright_red +
-                          "\nSource package(s) found in the mix!\n" + sisyphus.getcolor.reset)
-                    print(sisyphus.getcolor.bright_yellow + "Use" +
-                          sisyphus.getcolor.reset + " " + "'" + "sisyphus upgrade --ebuild" + "'")
+                    print(sisyphus.getclr.bright_red +
+                          "\nSource package(s) found in the mix!\n" + sisyphus.getclr.reset)
+                    print(sisyphus.getclr.bright_yellow + "Use" +
+                          sisyphus.getclr.reset + " " + "'" + "sisyphus upgrade --ebuild" + "'")
                     sys.exit()
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
@@ -233,15 +233,15 @@ def start(ebuild=False, gfx_ui=False):
                     p_exe.wait()
                     sisyphus.syncdb.lcl_tbl()
                 else:
-                    print("\n" + sisyphus.getcolor.green +
-                          "These are the binary packages that would be merged, in order:" + sisyphus.getcolor.reset + "\n")
-                    print("\n" + sisyphus.getcolor.magenta +
-                          ", ".join(bin_list) + sisyphus.getcolor.reset + "\n")
-                    print("\n" + sisyphus.getcolor.bright_white + "Total:" + " " + str(
-                        len(bin_list)) + " " + "binary package(s)" + sisyphus.getcolor.reset + "\n")
+                    print("\n" + sisyphus.getclr.green +
+                          "These are the binary packages that would be merged, in order:" + sisyphus.getclr.reset + "\n")
+                    print("\n" + sisyphus.getclr.magenta +
+                          ", ".join(bin_list) + sisyphus.getclr.reset + "\n")
+                    print("\n" + sisyphus.getclr.bright_white + "Total:" + " " + str(
+                        len(bin_list)) + " " + "binary package(s)" + sisyphus.getclr.reset + "\n")
                     while True:
-                        user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
-                                           "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
+                        user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
+                                           "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.dlpkg.start(
                                 dl_world=True, gfx_ui=False)

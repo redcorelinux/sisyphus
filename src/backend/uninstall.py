@@ -8,7 +8,7 @@ import signal
 import subprocess
 import sys
 import sisyphus.checkenv
-import sisyphus.getcolor
+import sisyphus.getclr
 import sisyphus.getfs
 import sisyphus.killemerge
 import sisyphus.solverdeps
@@ -26,8 +26,8 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
     args = ['--quiet', '--depclean']
 
     if not sisyphus.checkenv.root() and (unmerge or depclean):
-        print(sisyphus.getcolor.bright_red +
-              "\nYou need root permissions to do this!\n" + sisyphus.getcolor.reset)
+        print(sisyphus.getclr.bright_red +
+              "\nYou need root permissions to do this!\n" + sisyphus.getclr.reset)
         sys.exit()
     else:
         if gfx_ui:
@@ -62,10 +62,10 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 except subprocess.TimeoutExpired:
                     p_exe.kill()
                 sys.exit()
-            print(sisyphus.getcolor.bright_red +
-                  "\nWon't uninstall! Other packages depend on " + sisyphus.getcolor.reset + str(pkgname))
-            print(sisyphus.getcolor.bright_red + "Use the " + sisyphus.getcolor.reset + sisyphus.getcolor.green + "'--force'" +
-                  sisyphus.getcolor.reset + sisyphus.getcolor.bright_red + " option to override at your own risk!\n" + sisyphus.getcolor.reset)
+            print(sisyphus.getclr.bright_red +
+                  "\nWon't uninstall! Other packages depend on " + sisyphus.getclr.reset + str(pkgname))
+            print(sisyphus.getclr.bright_red + "Use the " + sisyphus.getclr.reset + sisyphus.getclr.green + "'--force'" +
+                  sisyphus.getclr.reset + sisyphus.getclr.bright_red + " option to override at your own risk!\n" + sisyphus.getclr.reset)
     else:
         if unmerge:
             p_exe = subprocess.Popen(
