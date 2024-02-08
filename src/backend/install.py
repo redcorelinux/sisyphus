@@ -9,7 +9,7 @@ import subprocess
 import sys
 import time
 import sisyphus.checkenv
-import sisyphus.download
+import sisyphus.dlpkg
 import sisyphus.getcolor
 import sisyphus.getfs
 import sisyphus.killemerge
@@ -140,7 +140,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                     user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                        "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                     if user_input.lower() in ['yes', 'y', '']:
-                        sisyphus.download.start(dl_world=False, gfx_ui=False)
+                        sisyphus.dlpkg.start(dl_world=False, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
                         p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries', '--with-bdeps=y',
                                                  '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
@@ -172,7 +172,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                     user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                        "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                     if user_input.lower() in ['yes', 'y', '']:
-                        sisyphus.download.start(dl_world=False, gfx_ui=False)
+                        sisyphus.dlpkg.start(dl_world=False, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
                         p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
                                                  '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
@@ -234,7 +234,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                         "\n" + "These are the binary packages that will be merged, in order:" + "\n")
                     print("\n" + ", ".join(bin_list) + "\n\n" + "Total:" + " " +
                           str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
-                    sisyphus.download.start(dl_world=False, gfx_ui=True)
+                    sisyphus.dlpkg.start(dl_world=False, gfx_ui=True)
                     os.chdir(sisyphus.getfs.p_cch_dir)
                     p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y',
                                              '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -257,7 +257,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                         user_input = input(sisyphus.getcolor.bright_white + "Would you like to proceed?" + sisyphus.getcolor.reset + " " +
                                            "[" + sisyphus.getcolor.bright_green + "Yes" + sisyphus.getcolor.reset + "/" + sisyphus.getcolor.bright_red + "No" + sisyphus.getcolor.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
-                            sisyphus.download.start(
+                            sisyphus.dlpkg.start(
                                 dl_world=False, gfx_ui=False)
                             os.chdir(sisyphus.getfs.p_cch_dir)
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
