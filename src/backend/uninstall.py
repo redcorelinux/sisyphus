@@ -2,11 +2,14 @@
 
 import atexit
 import io
+import os
+import pickle
 import signal
 import subprocess
 import sys
 import sisyphus.checkenv
 import sisyphus.getcolor
+import sisyphus.getfs
 import sisyphus.killemerge
 import sisyphus.solverdeps
 import sisyphus.syncdb
@@ -28,9 +31,12 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
         sys.exit()
     else:
         if gfx_ui:
-            is_needed = sisyphus.solverdeps.start.__wrapped__(pkgname)
+            sisyphus.solverdeps.start.__wrapped__(pkgname)
         else:
-            is_needed = sisyphus.solverdeps.start(pkgname)
+            sisyphus.solverdeps.start(pkgname)
+
+        is_needed = pickle.load(
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrdeps.pickle"), "rb"))
 
     if is_needed != 0:
         if gfx_ui:

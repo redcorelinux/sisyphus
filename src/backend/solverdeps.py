@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 
 import animation
+import os
+import pickle
 import signal
 import subprocess
 import sys
+import sisyphus.getfs
 
 
 def sigint_handler(signal, frame):
@@ -27,6 +30,8 @@ def start(pkgname=None):
             if any(key in p_out for key in ["pulled in by:", "required"]):
                 is_needed = int(1)
 
+        pickle.dump(is_needed, open(os.path.join(
+            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrdeps.pickle"), "wb"))
     except KeyboardInterrupt:
         p_exe.terminate()
         try:
@@ -34,4 +39,3 @@ def start(pkgname=None):
         except subprocess.TimeoutExpired:
             p_exe.kill()
         sys.exit()
-    return is_needed
