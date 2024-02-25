@@ -11,13 +11,13 @@ import subprocess
 import sys
 import time
 import sisyphus.checkenv
-import sisyphus.dlpkg
+import sisyphus.dlbinpkg
 import sisyphus.getclr
 import sisyphus.getfs
 import sisyphus.killemerge
 import sisyphus.solvedeps
 import sisyphus.syncdb
-import sisyphus.update
+import sisyphus.syncall
 
 
 def set_nonblocking(fd):
@@ -47,24 +47,41 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(ebuild=False, gfx_ui=False):
+def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
     if not sisyphus.checkenv.root():
         print(sisyphus.getclr.bright_red +
               "\nYou need root permissions to do this!\n" + sisyphus.getclr.reset)
         sys.exit()
     else:
         if gfx_ui:
-            sisyphus.solvedeps.start.__wrapped__()  # undecorate
+            sisyphus.solvedeps.start.__wrapped__(pkgname)  # undecorate
         else:
-            sisyphus.update.start(gfx_ui=False)
-            sisyphus.solvedeps.start()
+            sisyphus.syncall.start(gfx_ui=False)
+            sisyphus.solvedeps.start(pkgname)
 
         bin_list, src_list, is_vague, need_cfg = pickle.load(
-            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
-    if need_cfg != 0:  # catch aliens
-        p_exe = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg',
-                                 '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+    if is_vague != 0:  # catch ambiguous packages
+        p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
+                                 '--with-bdeps=y', '--misspell-suggestion=y', '--fuzzy-search=y'] + list(pkgname))
+        try:
+            p_exe.wait()
+        except KeyboardInterrupt:
+            p_exe.terminate()
+            try:
+                p_exe.wait(1)
+            except subprocess.TimeoutExpired:
+                p_exe.kill()
+            sys.exit()
+        if gfx_ui:
+            pass  # GUI always calls <category>/<pkgname>, no ambiguity
+        else:
+            sys.exit()
+
+    elif need_cfg != 0:  # catch aliens
+        p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
+                                 '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
         try:
             p_exe.wait()
         except KeyboardInterrupt:
@@ -77,7 +94,7 @@ def start(ebuild=False, gfx_ui=False):
         if gfx_ui:
             print("\nCannot proceed!\n")
             print(
-                "Apply the above changes to your portage configuration files and try again")
+                "Apply the above changes to your portage configuration files and try again!")
 
             for i in range(9, 0, -1):
                 print(f"Killing application in : {i} seconds!")
@@ -88,16 +105,13 @@ def start(ebuild=False, gfx_ui=False):
             print(sisyphus.getclr.bright_red +
                   "\nCannot proceed!\n" + sisyphus.getclr.reset)
             print(sisyphus.getclr.bright_yellow +
-                  "Apply the above changes to your portage configuration files and try again" + sisyphus.getclr.reset)
+                  "Apply the above changes to your portage configuration files and try again!" + sisyphus.getclr.reset)
             sys.exit()
     else:
         if len(bin_list) == 0 and len(src_list) == 0:
-            if gfx_ui:
-                print("\nNo package upgrades found!\n")
-            else:
-                print(sisyphus.getclr.bright_red +
-                      "\nNo package upgrades found!\n" + sisyphus.getclr.reset)
-                sys.exit()
+            print(sisyphus.getclr.bright_red +
+                  "\nNo package found!\n" + sisyphus.getclr.reset)
+            sys.exit()
 
         if ebuild:  # ebuild mode
             if len(bin_list) == 0 and len(src_list) != 0:  # source mode, ignore aliens
@@ -111,8 +125,8 @@ def start(ebuild=False, gfx_ui=False):
                     user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
                                        "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
                     if user_input.lower() in ['yes', 'y', '']:
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse',
-                                                 '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n',
+                                                 '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -164,10 +178,10 @@ def start(ebuild=False, gfx_ui=False):
                     user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
                                        "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
                     if user_input.lower() in ['yes', 'y', '']:
-                        sisyphus.dlpkg.start(dl_world=True, gfx_ui=False)
+                        sisyphus.dlbinpkg.start(dl_world=False, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg',
-                                                 '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries', '--with-bdeps=y',
+                                                 '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -212,10 +226,10 @@ def start(ebuild=False, gfx_ui=False):
                     user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
                                        "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
                     if user_input.lower() in ['yes', 'y', '']:
-                        sisyphus.dlpkg.start(dl_world=True, gfx_ui=False)
+                        sisyphus.dlbinpkg.start(dl_world=False, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
-                                                 '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
+                                                 '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -253,8 +267,8 @@ def start(ebuild=False, gfx_ui=False):
             if len(bin_list) == 0 and len(src_list) != 0:  # source mode (noop), catch aliens
                 if gfx_ui:
                     print("\nSource package(s) found in the mix!\n")
-                    print("Use sisyphus CLI:" + " " + "'" + "sisyphus upgrade --ebuild" +
-                          "'" + " " + "to perform the upgrade;" + " " + "Aborting.")
+                    print("Use sisyphus CLI:" + " " + "'" + "sisyphus install" +
+                          " " + " ".join(pkgname) + "--ebuild" + "'")
 
                     for i in range(9, 0, -1):
                         print(f"Killing application in : {i} seconds!")
@@ -264,14 +278,14 @@ def start(ebuild=False, gfx_ui=False):
                 else:
                     print(sisyphus.getclr.bright_red +
                           "\nSource package(s) found in the mix!\n" + sisyphus.getclr.reset)
-                    print(sisyphus.getclr.bright_yellow + "Use" +
-                          sisyphus.getclr.reset + " " + "'" + "sisyphus upgrade --ebuild" + "'")
+                    print(sisyphus.getclr.bright_yellow + "Use" + sisyphus.getclr.reset + " " +
+                          "'" + "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'")
                     sys.exit()
             elif len(bin_list) != 0 and len(src_list) != 0:  # hybrid mode (noop), catch aliens
                 if gfx_ui:
                     print("\nSource package(s) found in the mix!\n")
-                    print("Use sisyphus CLI:" + " " + "'" + "sisyphus upgrade --ebuild" +
-                          "'" + " " + "to perform the upgrade;" + " " + "Aborting.")
+                    print("Use sisyphus CLI:" + " " + "'" + "sisyphus install" +
+                          " " + " ".join(pkgname) + "--ebuild" + "'")
 
                     for i in range(9, 0, -1):
                         print(f"Killing application in : {i} seconds!")
@@ -281,19 +295,19 @@ def start(ebuild=False, gfx_ui=False):
                 else:
                     print(sisyphus.getclr.bright_red +
                           "\nSource package(s) found in the mix!\n" + sisyphus.getclr.reset)
-                    print(sisyphus.getclr.bright_yellow + "Use" +
-                          sisyphus.getclr.reset + " " + "'" + "sisyphus upgrade --ebuild" + "'")
-                    sys.exit()
+                    print(sisyphus.getclr.bright_yellow + "Use" + sisyphus.getclr.reset + " " +
+                          "'" + "sisyphus install" + " " + " ".join(pkgname) + " " + "--ebuild" + "'")
+                sys.exit()
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
                     print(
                         "\n" + "These are the binary packages that will be merged, in order:" + "\n")
                     print("\n" + ", ".join(bin_list) + "\n\n" + "Total:" + " " +
                           str(len(bin_list)) + " " + "binary package(s)" + "\n\n")
-                    sisyphus.dlpkg.start(dl_world=True, gfx_ui=True)
+                    sisyphus.dlbinpkg.start(dl_world=False, gfx_ui=True)
                     os.chdir(sisyphus.getfs.p_cch_dir)
-                    p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                                             '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y',
+                                             '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     # kill portage if the program dies or it's terminated by the user
                     atexit.register(sisyphus.killemerge.start, p_exe)
 
@@ -313,11 +327,11 @@ def start(ebuild=False, gfx_ui=False):
                         user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
                                            "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
                         if user_input.lower() in ['yes', 'y', '']:
-                            sisyphus.dlpkg.start(
-                                dl_world=True, gfx_ui=False)
+                            sisyphus.dlbinpkg.start(
+                                dl_world=False, gfx_ui=False)
                             os.chdir(sisyphus.getfs.p_cch_dir)
-                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
-                                                     '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
+                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                             try:
                                 set_nonblocking(sys.stdout.fileno())
                                 spinner_animation()

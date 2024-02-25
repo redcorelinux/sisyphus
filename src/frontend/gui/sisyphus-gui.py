@@ -363,7 +363,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         super(MirrorConfiguration, self).__init__()
         uic.loadUi('/usr/share/sisyphus/ui/mirrorcfg.ui', self)
         self.centerOnScreen()
-        self.MIRRORLIST = sisyphus.mirrors.getList()
+        self.MIRRORLIST = sisyphus.setmirror.getList()
         self.updateMirrorList()
         self.applyButton.pressed.connect(self.mirrorCfgApply)
         self.applyButton.released.connect(self.mirrorCfgExit)
@@ -394,7 +394,7 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = True
 
     def mirrorCfgApply(self):
-        sisyphus.mirrors.writeList(self.MIRRORLIST)
+        sisyphus.setmirror.writeList(self.MIRRORLIST)
 
     def mirrorCfgExit(self):
         self.close()
@@ -434,33 +434,33 @@ class MainWorker(QtCore.QObject):
     def startUpdate(self):
         self.started.emit()
         sisyphus.setjobs.start()
-        sisyphus.update.start.__wrapped__(gfx_ui=True) # undecorate
+        sisyphus.syncall.start.__wrapped__(gfx_ui=True) # undecorate
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startInstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.install.start(pkgname, ebuild=False, gfx_ui=True, oneshot=False)
+        sisyphus.instpkgsrc.start(pkgname, ebuild=False, gfx_ui=True, oneshot=False)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.uninstall.start(pkgname, depclean=True, gfx_ui=True, unmerge=False)
+        sisyphus.rmpkgsrc.start(pkgname, depclean=True, gfx_ui=True, unmerge=False)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        sisyphus.upgrade.start(ebuild=False, gfx_ui=True)
+        sisyphus.sysupgrade.start(ebuild=False, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        sisyphus.autoremove.start(gfx_ui=True)
+        sisyphus.autormpkgsrc.start(gfx_ui=True)
         self.finished.emit()
 
 

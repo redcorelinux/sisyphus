@@ -6,7 +6,7 @@ import subprocess
 import sisyphus.checkenv
 import sisyphus.getclr
 import sisyphus.getfs
-import sisyphus.update
+import sisyphus.syncall
 
 
 def sigint_handler(signal, frame):
@@ -162,7 +162,7 @@ def start(filter, cat, pn, desc, single):
             user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
                                "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
             if user_input.lower() in ['yes', 'y', '']:
-                sisyphus.update.start(gfx_ui=False)
+                sisyphus.syncall.start(gfx_ui=False)
                 break
             elif user_input.lower() in ['no', 'n']:
                 print(sisyphus.getclr.bright_red +

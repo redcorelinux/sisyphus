@@ -9,9 +9,9 @@ import sys
 import sisyphus.checkenv
 import sisyphus.getclr
 import sisyphus.getfs
-import sisyphus.mirrors
 import sisyphus.purgeenv
 import sisyphus.setjobs
+import sisyphus.setmirror
 import sisyphus.setprofile
 
 
@@ -82,17 +82,17 @@ def ins_p_cfg_repo(branch, remote):
 
 
 def set_brch_master_index():
-    mirrorList = sisyphus.mirrors.getList()
+    mirrorList = sisyphus.setmirror.getList()
     odd_indices = [i + 1 for i in range(len(mirrorList)) if (i + 1) % 2 == 1]
     chosen_index = random.choice(odd_indices)
-    sisyphus.mirrors.setActive(chosen_index)
+    sisyphus.setmirror.setActive(chosen_index)
 
 
 def set_brch_next_index():
-    mirrorList = sisyphus.mirrors.getList()
+    mirrorList = sisyphus.setmirror.getList()
     even_indices = [i + 1 for i in range(len(mirrorList)) if (i + 1) % 2 == 0]
     chosen_index = random.choice(even_indices)
-    sisyphus.mirrors.setActive(chosen_index)
+    sisyphus.setmirror.setActive(chosen_index)
 
 
 def set_bhst_index(branch, remote):

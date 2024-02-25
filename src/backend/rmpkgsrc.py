@@ -11,7 +11,7 @@ import sisyphus.checkenv
 import sisyphus.getclr
 import sisyphus.getfs
 import sisyphus.killemerge
-import sisyphus.solverdeps
+import sisyphus.solverevdeps
 import sisyphus.syncdb
 
 
@@ -31,12 +31,12 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
         sys.exit()
     else:
         if gfx_ui:
-            sisyphus.solverdeps.start.__wrapped__(pkgname)
+            sisyphus.solverevdeps.start.__wrapped__(pkgname)
         else:
-            sisyphus.solverdeps.start(pkgname)
+            sisyphus.solverevdeps.start(pkgname)
 
         is_needed = pickle.load(
-            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrdeps.pickle"), "rb"))
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
 
     if is_needed != 0:
         if gfx_ui:

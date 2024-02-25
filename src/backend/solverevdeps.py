@@ -31,7 +31,7 @@ def start(pkgname=None):
                 is_needed = int(1)
 
         pickle.dump(is_needed, open(os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrdeps.pickle"), "wb"))
+            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "wb"))
     except KeyboardInterrupt:
         p_exe.terminate()
         try:

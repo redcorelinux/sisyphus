@@ -123,10 +123,10 @@ def install(pkgname: List[str],
         sisyphus install vivaldi --oneshot --ebuild\n
     """
     if ebuild:
-        sisyphus.install.start(pkgname, ebuild=True,
+        sisyphus.instpkgsrc.start(pkgname, ebuild=True,
                                gfx_ui=False, oneshot=oneshot)
     else:
-        sisyphus.install.start(pkgname, ebuild=False,
+        sisyphus.instpkgsrc.start(pkgname, ebuild=False,
                                gfx_ui=False, oneshot=oneshot)
 
 
@@ -147,10 +147,10 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
         sisyphus uninstall openrc -f            # this will succeed, but the system will no longer boot\n
     """
     if force:
-        sisyphus.uninstall.start(
+        sisyphus.rmpkgsrc.start(
             pkgname, depclean=False, gfx_ui=False, unmerge=True)
     else:
-        sisyphus.uninstall.start(
+        sisyphus.rmpkgsrc.start(
             pkgname, depclean=True, gfx_ui=False, unmerge=False)
 
 
@@ -166,7 +166,7 @@ def autoremove():
     * Examples:\n
         sisyphus autoremove\n
     """
-    sisyphus.autoremove.start(gfx_ui=False)
+    sisyphus.autormpkgsrc.start(gfx_ui=False)
 
 
 @app.command("autoclean")
@@ -192,7 +192,7 @@ def update():
         sisyphus update\n
     """
     if sisyphus.checkenv.root():
-        sisyphus.update.start(gfx_ui=False)
+        sisyphus.syncall.start(gfx_ui=False)
     else:
         sys.exit("\nYou need root permissions to do this, exiting!\n")
 
@@ -213,9 +213,9 @@ def upgrade(
         sisyphus upgrade -e\n
     """
     if ebuild:
-        sisyphus.upgrade.start(ebuild=True, gfx_ui=False)
+        sisyphus.sysupgrade.start(ebuild=True, gfx_ui=False)
     else:
-        sisyphus.upgrade.start(ebuild=False, gfx_ui=False)
+        sisyphus.sysupgrade.start(ebuild=False, gfx_ui=False)
 
 
 @app.command("spmsync")
@@ -309,7 +309,7 @@ def mirrorlist():
     * Examples:\n
         sisyphus mirror list\n
     """
-    sisyphus.mirrors.printList()
+    sisyphus.setmirror.printList()
 
 
 @mirrorSetup.command("set")
@@ -321,7 +321,7 @@ def mirrorset(index: int):
         sisyphus mirror set 2\n
         sisyphus mirror set 5\n
     """
-    sisyphus.mirrors.setActive(index)
+    sisyphus.setmirror.setActive(index)
 
 
 if __name__ == "__main__":
