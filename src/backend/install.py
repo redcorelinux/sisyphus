@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
 import atexit
+import fcntl
 import io
 import os
 import pickle
+import selectors
 import signal
 import subprocess
 import sys
@@ -16,6 +18,26 @@ import sisyphus.killemerge
 import sisyphus.solvedeps
 import sisyphus.syncdb
 import sisyphus.update
+
+
+def set_nonblocking(fd):
+    flags = fcntl.fcntl(fd, fcntl.F_GETFL)
+    fcntl.fcntl(fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+
+
+def spinner_animation():
+    spinner = ['-', '\\', '|', '/']
+    sel = selectors.DefaultSelector()
+    sel.register(sys.stdin, selectors.EVENT_READ)
+
+    for _ in range(10):
+        for char in spinner:
+            sys.stdout.write('\b' + char)
+            sys.stdout.flush()
+            events = sel.select(timeout=0.1)
+            if events:
+                return
+    sys.stdout.write('\b')
 
 
 def sigint_handler(signal, frame):
@@ -106,7 +128,21 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                         p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n',
                                                  '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
-                            p_exe.wait()
+                            set_nonblocking(sys.stdout.fileno())
+                            spinner_animation()
+
+                            sel = selectors.DefaultSelector()
+                            sel.register(sys.stdin, selectors.EVENT_READ)
+
+                            while True:
+                                events = sel.select(timeout=0.1)
+                                for key, mask in events:
+                                    if key.fileobj == sys.stdin:
+                                        line = sys.stdin.readline().strip()
+                                        if line.lower() == 'q':
+                                            sys.exit()
+                                if p_exe.poll() is not None:
+                                    break
                         except KeyboardInterrupt:
                             p_exe.terminate()
                             try:
@@ -114,6 +150,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
                             sys.exit()
+                        finally:
+                            p_exe.wait()
                         sisyphus.syncdb.lcl_tbl()
                         break
                     elif user_input.lower() in ['no', 'n']:
@@ -145,7 +183,21 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                         p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries', '--with-bdeps=y',
                                                  '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
-                            p_exe.wait()
+                            set_nonblocking(sys.stdout.fileno())
+                            spinner_animation()
+
+                            sel = selectors.DefaultSelector()
+                            sel.register(sys.stdin, selectors.EVENT_READ)
+
+                            while True:
+                                events = sel.select(timeout=0.1)
+                                for key, mask in events:
+                                    if key.fileobj == sys.stdin:
+                                        line = sys.stdin.readline().strip()
+                                        if line.lower() == 'q':
+                                            sys.exit()
+                                if p_exe.poll() is not None:
+                                    break
                         except KeyboardInterrupt:
                             p_exe.terminate()
                             try:
@@ -153,6 +205,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
                             sys.exit()
+                        finally:
+                            p_exe.wait()
                         sisyphus.syncdb.lcl_tbl()
                         break
                     elif user_input.lower() in ['no', 'n']:
@@ -177,7 +231,21 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                         p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
                                                  '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
-                            p_exe.wait()
+                            set_nonblocking(sys.stdout.fileno())
+                            spinner_animation()
+
+                            sel = selectors.DefaultSelector()
+                            sel.register(sys.stdin, selectors.EVENT_READ)
+
+                            while True:
+                                events = sel.select(timeout=0.1)
+                                for key, mask in events:
+                                    if key.fileobj == sys.stdin:
+                                        line = sys.stdin.readline().strip()
+                                        if line.lower() == 'q':
+                                            sys.exit()
+                                if p_exe.poll() is not None:
+                                    break
                         except KeyboardInterrupt:
                             p_exe.terminate()
                             try:
@@ -185,6 +253,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
                             sys.exit()
+                        finally:
+                            p_exe.wait()
                         sisyphus.syncdb.lcl_tbl()
                         break
                     elif user_input.lower() in ['no', 'n']:
@@ -263,7 +333,21 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                             p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
                                                      '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
                             try:
-                                p_exe.wait()
+                                set_nonblocking(sys.stdout.fileno())
+                                spinner_animation()
+
+                                sel = selectors.DefaultSelector()
+                                sel.register(sys.stdin, selectors.EVENT_READ)
+
+                                while True:
+                                    events = sel.select(timeout=0.1)
+                                    for key, mask in events:
+                                        if key.fileobj == sys.stdin:
+                                            line = sys.stdin.readline().strip()
+                                            if line.lower() == 'q':
+                                                sys.exit()
+                                    if p_exe.poll() is not None:
+                                        break
                             except KeyboardInterrupt:
                                 p_exe.terminate()
                                 try:
@@ -271,6 +355,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                                 except subprocess.TimeoutExpired:
                                     p_exe.kill()
                                 sys.exit()
+                            finally:
+                                p_exe.wait()
                             sisyphus.syncdb.lcl_tbl()
                             break
                         elif user_input.lower() in ['no', 'n']:
