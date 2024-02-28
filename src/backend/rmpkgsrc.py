@@ -53,112 +53,118 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
         sys.exit()
     else:
         if gfx_ui:
-            sisyphus.solverevdeps.start.__wrapped__(pkgname)
+            sisyphus.solverevdeps.start.__wrapped__(
+                pkgname, depclean=True, unmerge=False)
         else:
-            sisyphus.solverevdeps.start(pkgname)
+            if unmerge:
+                sisyphus.solverevdeps.start.__wrapped__(
+                    pkgname, depclean=False, unmerge=True)
+            else:
+                sisyphus.solverevdeps.start(
+                    pkgname, depclean=True, unmerge=False)
 
         is_needed = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
 
-    if is_needed != 0:
-        if gfx_ui:
-            p_exe = subprocess.Popen(['emerge'] + args + ['--pretend', '--verbose'] + list(
-                pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # kill portage if the program dies or it's terminated by the user
-            atexit.register(sisyphus.killemerge.start, p_exe)
-
-            for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
-                print(p_out.rstrip())
-
-            p_exe.wait()
-            print("\nWon't uninstall! Other packages depend on " + str(pkgname))
-        else:
-            p_exe = subprocess.Popen(
-                ['emerge'] + args + ['--pretend', '--verbose'] + list(pkgname))
-            try:
-                set_nonblocking(sys.stdout.fileno())
-                spinner_animation()
-
-                sel = selectors.DefaultSelector()
-                sel.register(sys.stdin, selectors.EVENT_READ)
-
+    if unmerge:
+        print("\n" + sisyphus.getclr.bright_white + "Selected packages are slated for" + sisyphus.getclr.reset + " " + sisyphus.getclr.green +
+              "'forced'" + sisyphus.getclr.reset + " " + sisyphus.getclr.bright_white + "removal." + sisyphus.getclr.reset + "\n")
+        while True:
+            user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
+                               "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
+            if user_input.lower() in ['yes', 'y', '']:
                 while True:
-                    events = sel.select(timeout=0.1)
-                    for key, mask in events:
-                        if key.fileobj == sys.stdin:
-                            line = sys.stdin.readline().strip()
-                            if line.lower() == 'q':
-                                sys.exit()
-                    if p_exe.poll() is not None:
-                        break
-            except KeyboardInterrupt:
-                p_exe.terminate()
-                try:
-                    p_exe.wait(1)
-                except subprocess.TimeoutExpired:
-                    p_exe.kill()
-                sys.exit()
-            finally:
-                p_exe.wait()
-            print(sisyphus.getclr.bright_red +
-                  "\nWon't uninstall! Other packages depend on " + sisyphus.getclr.reset + str(pkgname))
-            print(sisyphus.getclr.bright_white + "Use the " + sisyphus.getclr.reset + sisyphus.getclr.green + "'--force'" +
-                  sisyphus.getclr.reset + sisyphus.getclr.bright_white + " option to override at your own risk!\n" + sisyphus.getclr.reset)
-    else:
-        if unmerge:
-            print("\n" + sisyphus.getclr.bright_white + "Selected packages are slated for" + sisyphus.getclr.reset + " " + sisyphus.getclr.green +
-                  "'forced'" + sisyphus.getclr.reset + " " + sisyphus.getclr.bright_white + "removal." + sisyphus.getclr.reset + "\n")
-            while True:
-                user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
-                                   "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
-                if user_input.lower() in ['yes', 'y', '']:
-                    while True:
-                        confirmation_input = input(sisyphus.getclr.bright_white + "Are you sure you would like to proceed?" + sisyphus.getclr.reset + " " +
-                                                   "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
-                        if confirmation_input.lower() in ['yes', 'y', '']:
-                            p_exe = subprocess.Popen(
-                                ['emerge', '--quiet', '--unmerge'] + list(pkgname))
+                    confirmation_input = input(sisyphus.getclr.bright_white + "Are you sure you would like to proceed?" + sisyphus.getclr.reset + " " +
+                                               "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
+                    if confirmation_input.lower() in ['yes', 'y', '']:
+                        p_exe = subprocess.Popen(
+                            ['emerge', '--quiet', '--unmerge'] + list(pkgname))
+                        try:
+                            set_nonblocking(sys.stdout.fileno())
+                            spinner_animation()
+
+                            sel = selectors.DefaultSelector()
+                            sel.register(sys.stdin, selectors.EVENT_READ)
+
+                            while True:
+                                events = sel.select(timeout=0.1)
+                                for key, mask in events:
+                                    if key.fileobj == sys.stdin:
+                                        line = sys.stdin.readline().strip()
+                                        if line.lower() == 'q':
+                                            sys.exit()
+                                if p_exe.poll() is not None:
+                                    break
+                        except KeyboardInterrupt:
+                            p_exe.terminate()
                             try:
-                                set_nonblocking(sys.stdout.fileno())
-                                spinner_animation()
+                                p_exe.wait(1)
+                            except subprocess.TimeoutExpired:
+                                p_exe.kill()
+                            sys.exit()
+                        finally:
+                            p_exe.wait()
+                        sisyphus.syncdb.lcl_tbl()
+                        break
+                    elif confirmation_input.lower() in ['no', 'n']:
+                        break
+                    else:
+                        print("\nSorry, response" + " " + "'" +
+                              confirmation_input + "'" + " " + "not understood.\n")
+                        continue
+                break
+            elif user_input.lower() in ['no', 'n']:
+                break
+            else:
+                print("\nSorry, response" + " " + "'" +
+                      user_input + "'" + " " + "not understood.\n")
+                continue
+    else:
+        if is_needed != 0:
+            if gfx_ui:
+                p_exe = subprocess.Popen(['emerge'] + args + ['--pretend', '--verbose'] + list(
+                    pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                # kill portage if the program dies or it's terminated by the user
+                atexit.register(sisyphus.killemerge.start, p_exe)
 
-                                sel = selectors.DefaultSelector()
-                                sel.register(sys.stdin, selectors.EVENT_READ)
+                for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
+                    print(p_out.rstrip())
 
-                                while True:
-                                    events = sel.select(timeout=0.1)
-                                    for key, mask in events:
-                                        if key.fileobj == sys.stdin:
-                                            line = sys.stdin.readline().strip()
-                                            if line.lower() == 'q':
-                                                sys.exit()
-                                    if p_exe.poll() is not None:
-                                        break
-                            except KeyboardInterrupt:
-                                p_exe.terminate()
-                                try:
-                                    p_exe.wait(1)
-                                except subprocess.TimeoutExpired:
-                                    p_exe.kill()
-                                sys.exit()
-                            finally:
-                                p_exe.wait()
-                            sisyphus.syncdb.lcl_tbl()
+                p_exe.wait()
+                print("\nWon't uninstall! Other packages depend on " + str(pkgname))
+            else:
+                p_exe = subprocess.Popen(
+                    ['emerge'] + args + ['--pretend', '--verbose'] + list(pkgname))
+                try:
+                    set_nonblocking(sys.stdout.fileno())
+                    spinner_animation()
+
+                    sel = selectors.DefaultSelector()
+                    sel.register(sys.stdin, selectors.EVENT_READ)
+
+                    while True:
+                        events = sel.select(timeout=0.1)
+                        for key, mask in events:
+                            if key.fileobj == sys.stdin:
+                                line = sys.stdin.readline().strip()
+                                if line.lower() == 'q':
+                                    sys.exit()
+                        if p_exe.poll() is not None:
                             break
-                        elif confirmation_input.lower() in ['no', 'n']:
-                            break
-                        else:
-                            print("\nSorry, response" + " " + "'" +
-                                  confirmation_input + "'" + " " + "not understood.\n")
-                            continue
-                    break
-                elif user_input.lower() in ['no', 'n']:
-                    break
-                else:
-                    print("\nSorry, response" + " " + "'" +
-                          user_input + "'" + " " + "not understood.\n")
-                    continue
-        elif depclean:
+                except KeyboardInterrupt:
+                    p_exe.terminate()
+                    try:
+                        p_exe.wait(1)
+                    except subprocess.TimeoutExpired:
+                        p_exe.kill()
+                    sys.exit()
+                finally:
+                    p_exe.wait()
+                print(sisyphus.getclr.bright_red + "\nWon't uninstall! Other packages depend on " +
+                      sisyphus.getclr.reset + str(pkgname))
+                print(sisyphus.getclr.bright_white + "Use the " + sisyphus.getclr.reset + sisyphus.getclr.green + "'--force'" +
+                      sisyphus.getclr.reset + sisyphus.getclr.bright_white + " option to override at your own risk!\n" + sisyphus.getclr.reset)
+        else:
             if gfx_ui:
                 p_exe = subprocess.Popen(
                     ['emerge'] + args + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
