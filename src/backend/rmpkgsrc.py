@@ -48,8 +48,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
     args = ['--quiet', '--depclean']
 
     if not sisyphus.checkenv.root() and (unmerge or depclean):
-        print(sisyphus.getclr.bright_red +
-              "\nYou need root permissions to do this!\n" + sisyphus.getclr.reset)
+        print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required to perform this action.\n{sisyphus.getclr.reset}")
         sys.exit()
     else:
         if gfx_ui:
@@ -139,27 +138,22 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                     sys.exit()
                 finally:
                     p_exe.wait()
-                print(sisyphus.getclr.bright_red +
-                      "\nUnable to proceed! There are other packages with dependencies that prevent removal." + sisyphus.getclr.reset)
-                print(sisyphus.getclr.bright_white + "Use the " + sisyphus.getclr.reset + sisyphus.getclr.green + "'--force'" +
-                      sisyphus.getclr.reset + sisyphus.getclr.bright_white + " option to override at your own risk!\n" + sisyphus.getclr.reset)
-
+                print(f"{sisyphus.getclr.bright_red}\nUnable to proceed! Other packages have dependencies preventing removal.{sisyphus.getclr.reset}")
+                print(f"{sisyphus.getclr.bright_white}Use the {sisyphus.getclr.reset}{sisyphus.getclr.green}'--force'{sisyphus.getclr.reset}{sisyphus.getclr.bright_white} option to override at your own risk!{sisyphus.getclr.reset}\n")
     else:
         if is_installed == 0:
-            print(sisyphus.getclr.bright_red +
-                  "\nUnable to proceed! One or more selected packages could not be located for removal.\n" + sisyphus.getclr.reset)
+            print(f"{sisyphus.getclr.bright_red}\nUnable to proceed! One or more selected packages could not be located for removal.\n{sisyphus.getclr.reset}")
             sys.exit()
         else:
             if unmerge:
-                print("\n" + sisyphus.getclr.bright_white + "Selected packages are slated for" + sisyphus.getclr.reset + " " + sisyphus.getclr.green +
-                      "'forced'" + sisyphus.getclr.reset + " " + sisyphus.getclr.bright_white + "removal." + sisyphus.getclr.reset + "\n")
+                print(f"\n{sisyphus.getclr.bright_white}Selected packages are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'forced'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
                 while True:
-                    user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
-                                       "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
+                    user_input = input(
+                        f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
                     if user_input.lower() in ['yes', 'y', '']:
                         while True:
-                            confirmation_input = input(sisyphus.getclr.bright_white + "Are you sure you would like to proceed?" + sisyphus.getclr.reset + " " +
-                                                       "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
+                            confirmation_input = input(
+                                f"{sisyphus.getclr.bright_white}Are you sure you would like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
                             if confirmation_input.lower() in ['yes', 'y', '']:
                                 p_exe = subprocess.Popen(
                                     ['emerge', '--quiet', '--unmerge'] + list(pkgname))
@@ -194,15 +188,15 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                             elif confirmation_input.lower() in ['no', 'n']:
                                 break
                             else:
-                                print("\nSorry, response" + " " + "'" +
-                                      confirmation_input + "'" + " " + "not understood.\n")
+                                print(
+                                    f"\nApologies, the response '{confirmation_input}' was not recognized.\n")
                                 continue
                         break
                     elif user_input.lower() in ['no', 'n']:
                         break
                     else:
-                        print("\nSorry, response" + " " + "'" +
-                              user_input + "'" + " " + "not understood.\n")
+                        print(
+                            f"\nApologies, the response '{user_input}' was not recognized.\n")
                         continue
             else:
                 if gfx_ui:
@@ -217,11 +211,10 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                     p_exe.wait()
                     sisyphus.syncdb.lcl_tbl()
                 else:
-                    print("\n" + sisyphus.getclr.bright_white + "Selected packages are slated for" + sisyphus.getclr.reset + " " + sisyphus.getclr.green +
-                          "'safe'" + sisyphus.getclr.reset + " " + sisyphus.getclr.bright_white + "removal." + sisyphus.getclr.reset + "\n")
+                    print(f"\n{sisyphus.getclr.bright_white}Selected packages are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'safe'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
                     while True:
-                        user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
-                                           "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
+                        user_input = input(
+                            f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
                         if user_input.lower() in ['yes', 'y', '']:
                             p_exe = subprocess.Popen(
                                 ['emerge'] + args + list(pkgname))
@@ -255,6 +248,6 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                         elif user_input.lower() in ['no', 'n']:
                             break
                         else:
-                            print("\nSorry, response" + " " + "'" +
-                                  user_input + "'" + " " + "not understood.\n")
+                            print(
+                                f"\nApologies, the response '{user_input}' was not recognized.\n")
                             continue

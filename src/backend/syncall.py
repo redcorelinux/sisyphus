@@ -35,15 +35,15 @@ def start(gfx_ui=False):
 
     if is_online != 1:
         if gfx_ui:
-            print("\n\nNo internet connection; Aborting!\n")
+            print("\nNo internet connection detected. Aborting!\n")
             for i in range(9, 0, -1):
                 print(f"Killing application in : {i} seconds!")
                 time.sleep(1)
 
             sys.exit(app.exec_())  # kill GUI window
         else:
-            print(sisyphus.getclr.bright_red +
-                  "\n\nNo internet connection; Aborting!\n" + sisyphus.getclr.reset)
+            print(
+                f"{sisyphus.getclr.bright_red}\nNo internet connection detected; Aborting!\n{sisyphus.getclr.reset}")
             sys.exit()
     else:
         if is_sane == 1:
@@ -51,18 +51,16 @@ def start(gfx_ui=False):
         else:
             if gfx_ui:
                 if "packages-next" in bhst_addr:
-                    print("\n\nActive branch:" + " " + "'" +
-                          actv_brch + "'" + " " + "(stable)")
-                    print("\n\nActive binhost:" + " " + "'" +
-                          bhst_addr + "'" + " " + "(testing)")
+                    print(f"\n\nThe active branch is '{actv_brch}' (stable)")
+                    print(f"\n\nThe active binhost is '{bhst_addr}' (testing)")
                 else:
-                    print("\n\nActive branch:" + " " + "'" +
-                          actv_brch + "'" + " " + "(testing)")
-                    print("\n\nActive binhost:" + " " + "'" +
-                          bhst_addr + "'" + " " + "(stable)")
+                    print(f"\n\nThe active branch is '{actv_brch}' (testing)")
+                    print(f"\n\nThe active binhost is '{bhst_addr}' (stable)")
 
-                print("\n\nInvalid configuration!")
-                print("\nUse 'sisyphus branch --help' for help\n")
+                print("\nInvalid configuration!")
+                print(
+                    "\nUse the Sisyphus CLI command: 'sisyphus branch --help' for assistance; Aborting.\n")
+
                 for i in range(9, 0, -1):
                     print(f"Killing application in : {i} seconds!")
                     time.sleep(1)
@@ -70,19 +68,18 @@ def start(gfx_ui=False):
                 sys.exit(app.exec_())  # kill GUI window
             else:
                 if "packages-next" in bhst_addr:
-                    print(sisyphus.getclr.green + "\n\nActive branch:" + " " +
-                          sisyphus.getclr.reset + "'" + actv_brch + "'" + " " + "(stable)")
-                    print(sisyphus.getclr.green + "\nActive binhost:" + " " +
-                          sisyphus.getclr.reset + "'" + bhst_addr + "'" + " " + "(testing)")
+                    print(
+                        f"{sisyphus.getclr.green}\n\nThe active branch is '{actv_brch}' (stable){sisyphus.getclr.reset}")
+                    print(
+                        f"{sisyphus.getclr.green}The active binhost is '{bhst_addr}' (testing){sisyphus.getclr.reset}")
                 else:
-                    print(sisyphus.getclr.green + "\n\nActive branch:" + " " +
-                          sisyphus.getclr.reset + "'" + actv_brch + "'" + " " + "(testing)")
-                    print(sisyphus.getclr.green + "\nActive binhost:" + " " +
-                          sisyphus.getclr.reset + "'" + bhst_addr + "'" + " " + "(stable)")
+                    print(
+                        f"{sisyphus.getclr.green}\n\nThe active branch is '{actv_brch}' (testing){sisyphus.getclr.reset}")
+                    print(
+                        f"{sisyphus.getclr.green}The active binhost is '{bhst_addr}' (stable){sisyphus.getclr.reset}")
 
-                print(sisyphus.getclr.bright_red +
-                      "\n\nInvalid configuration!" + sisyphus.getclr.reset)
-                print(sisyphus.getclr.bright_yellow + "\nUse" + sisyphus.getclr.reset + " " + "'" +
-                      "sisyphus branch --help" + "'" + " " + sisyphus.getclr.bright_yellow + "for help" + sisyphus.getclr.reset)
-                time.sleep(1)
+                print(
+                    f"{sisyphus.getclr.bright_red}\nInvalid configuration!{sisyphus.getclr.reset}")
+                print(
+                    f"{sisyphus.getclr.bright_yellow}\nUse{sisyphus.getclr.reset} 'sisyphus branch --help' for assistance; Aborting.\n")
                 sys.exit()

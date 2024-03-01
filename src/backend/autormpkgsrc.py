@@ -45,11 +45,10 @@ def start(gfx_ui=False):
     args = ['--quiet', '--depclean']
 
     if sisyphus.checkenv.root() and not gfx_ui:
-        print("\n" + sisyphus.getclr.bright_white + "Orphaned, no longer needed packages are slated for" + sisyphus.getclr.reset + " " +
-              sisyphus.getclr.green + "'safe'" + sisyphus.getclr.reset + " " + sisyphus.getclr.bright_white + "removal." + sisyphus.getclr.reset + "\n")
+        print(f"\n{sisyphus.getclr.bright_white}Packages identified as orphaned and no longer needed are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'safe'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
         while True:
-            user_input = input(sisyphus.getclr.bright_white + "Would you like to proceed?" + sisyphus.getclr.reset + " " +
-                               "[" + sisyphus.getclr.bright_green + "Yes" + sisyphus.getclr.reset + "/" + sisyphus.getclr.bright_red + "No" + sisyphus.getclr.reset + "]" + " ")
+            user_input = input(
+                f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
             if user_input.lower() in ['yes', 'y', '']:
                 p_exe = subprocess.Popen(['emerge'] + args)
                 try:
@@ -82,8 +81,8 @@ def start(gfx_ui=False):
             elif user_input.lower() in ['no', 'n']:
                 break
             else:
-                print("\nSorry, response" + " " + "'" +
-                      user_input + "'" + " " + "not understood.\n")
+                print(
+                    f"\nApologies, the response '{user_input}' was not recognized.\n")
                 continue
     elif gfx_ui:
         p_exe = subprocess.Popen(
@@ -97,6 +96,5 @@ def start(gfx_ui=False):
         p_exe.wait()
         sisyphus.syncdb.lcl_tbl()
     else:
-        print(sisyphus.getclr.bright_red +
-              "\nYou need root permissions to do this!\n" + sisyphus.getclr.reset)
+        print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required for this operation.\n{sisyphus.getclr.reset}")
         sys.exit()

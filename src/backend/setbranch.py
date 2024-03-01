@@ -97,16 +97,12 @@ def set_brch_next_index():
 
 def set_bhst_index(branch, remote):
     if "master" in branch:
-        print(sisyphus.getclr.green + "\nActive branch switched:" +
-              " " + sisyphus.getclr.reset + "'" + branch + "'")
-        print(sisyphus.getclr.green + "Active remote switched:" +
-              " " + sisyphus.getclr.reset + "'" + remote + "'")
+        print(f"{sisyphus.getclr.green}\nThe active branch has been switched to '{branch}'{sisyphus.getclr.reset}")
+        print(f"{sisyphus.getclr.green}The active remote has been switched to '{remote}'{sisyphus.getclr.reset}")
         set_brch_master_index()  # Set binhost index for branch 'master' (random odd index)
     elif "next" in branch:
-        print(sisyphus.getclr.green + "\nActive branch switched:" +
-              " " + sisyphus.getclr.reset + "'" + branch + "'")
-        print(sisyphus.getclr.green + "Active remote switched:" +
-              " " + sisyphus.getclr.reset + "'" + remote + "'")
+        print(f"{sisyphus.getclr.green}\nThe active branch has been switched to '{branch}'{sisyphus.getclr.reset}")
+        print(f"{sisyphus.getclr.green}The active remote has been switched to '{remote}'{sisyphus.getclr.reset}")
         set_brch_next_index()  # Set binhost index for branch 'next' (random even index)
 
 
@@ -124,10 +120,9 @@ def start(branch, remote):
             sisyphus.setprofile.start()
             set_bhst_index(branch, remote)
         else:
-            print(sisyphus.getclr.bright_red +
-                  "\nNo internet connection; Aborting!\n" + sisyphus.getclr.reset)
+            print(
+                f"{sisyphus.getclr.bright_red}\nNo internet connection detected; Aborting!\n{sisyphus.getclr.reset}")
             sys.exit()
     else:
-        print(sisyphus.getclr.bright_red +
-              "\nYou need root permissions to do this!\n" + sisyphus.getclr.reset)
+        print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required to perform this action.\n{sisyphus.getclr.reset}")
         sys.exit()
