@@ -83,7 +83,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 pass  # GUI always calls <category>/<pkgname>, no ambiguity
             else:
                 p_exe = subprocess.Popen(
-                    ['emerge', '--depclean', '--quiet', '--pretend', '--verbose'] + list(pkgname))
+                    ['emerge'] + args + ['--pretend', '--verbose'] + list(pkgname))
                 try:
                     p_exe.wait()
                 except KeyboardInterrupt:

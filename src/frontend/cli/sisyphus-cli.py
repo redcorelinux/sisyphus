@@ -101,44 +101,62 @@ def search(package: List[str] = typer.Argument(...),
 @app.command("install")
 def install(pkgname: List[str],
             ebuild: bool = typer.Option(
-                False, "--ebuild", "-e", help='Install ebuild(source) package if binary package is not found (slower)'),
-            oneshot: bool = typer.Option(False, "--oneshot", "-1", help='Do not mark the package as explicitly installed')):
+                False, "--ebuild", "-e", help='Install ebuild(source) package if binary package is not found (slower).'),
+            oneshot: bool = typer.Option(
+                False, "--oneshot", "-1", help='Install the package without marking it as explicitly installed.'),
+            nodeps: bool = typer.Option(False, "--nodeps", help='Install the package without retrieving its dependencies.')):
     """
     Install binary and/or ebuild(source) packages.\n
     Binary packages are default, however the --ebuild option can be used to install ebuild(source) packages.\n
-    The --ebuild option will be automatically suggested if a binary package is not found, but an ebuild(source) package is found.\n
-    The --ebuild option will fall back to binary packages if installation from ebuild(source) package is not required. (Can be used at all times, *SAFELY*).\n
-    The --ebuild option will prefer to use binary packages (if available) to satisfy dependencies for the ebuild(source) package, speeding up the installation.\n
-    The --oneshot option follows the above rules, however it will not mark the package as explicitly installed. (In Gentoo Linux terms: not added to world set).\n
-    The --ebuild and the --oneshot options can be used both independently of each other and/or combined with each other.\n
+    The --ebuild option will be recommended automatically if a binary package is not found but a corresponding ebuild (source) package is available.\n
+    The --ebuild option will revert to binary packages when installation from an ebuild (source) package is unnecessary. This option can be safely used at all times.\n
+    The --ebuild option will prioritize the use of binary packages (when available) to fulfill dependencies for the ebuild (source) package, thereby accelerating the installation process.\n
+    The --oneshot option adheres to the aforementioned rules but does not designate the package as explicitly installed. In Gentoo Linux terminology, this means it is not added to the world set.\n
+    The --nodeps option adheres to the aforementioned rules but does not retrieve the package dependecies. In conjunction with the --oneshot option, it can be used to quickly reinstall any already installed *BINARY* package.\n
+    The options --ebuild, --oneshot, and --nodeps can be utilized independently or in conjunction with one another, in either their short or long forms.\n
+    The sequence of utilizing the --ebuild, --oneshot, and --nodeps options is flexible; they can be applied before or after specifying the package name.\n
+    \n
+    !!! NOTE !!!\n
+    \n
+    To minimize the risk of inadvertent input or typographical errors, the --nodeps option is intentionally without a shortened form.\n
+    \n
+    !!! WARNING !!!\n
+    \n
+    Unless all required dependencies are already installed, attempting to install an ebuild (source) package using the --ebuild option in conjunction with the --nodeps option is likely to result in failure.\n
     \n
     * Examples:\n
         sisyphus install firefox\n
         sisyphus install pidgin --ebuild\n
-        sisyphus install xonotic -e\n
+        sisyphus install -e xonotic\n
         sisyphus install filezilla --oneshot\n
-        sisyphus install thunderbird -1\n
+        sisyphus install -1 thunderbird\n
         sisyphus install falkon -e -1\n
-        sisyphus install opera --ebuild --oneshot\n
-        sisyphus install vivaldi --oneshot --ebuild\n
+        sisyphus install --nodeps --oneshot opera\n
+        sisyphus install -e --nodeps vivaldi\n
     """
     if ebuild:
-        sisyphus.instpkgsrc.start(pkgname, ebuild=True,
-                               gfx_ui=False, oneshot=oneshot)
+        sisyphus.instpkgsrc.start(
+            pkgname, ebuild=True, gfx_ui=False, oneshot=oneshot, nodeps=nodeps)
     else:
-        sisyphus.instpkgsrc.start(pkgname, ebuild=False,
-                               gfx_ui=False, oneshot=oneshot)
+        sisyphus.instpkgsrc.start(
+            pkgname, ebuild=False, gfx_ui=False, oneshot=oneshot, nodeps=nodeps)
 
 
 @app.command("uninstall")
 def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f", help='Ignore the reverse dependencies and force uninstall the package (DANGEROUS)')):
     """
     Uninstall packages *SAFELY* by checking for reverse dependencies.\n
-    If there are any reverse dependencies, the package or packages will NOT be uninstalled to prevent the system from breaking.\n
-    If you are serious about uninstalling the package, it is recommended you uninstall all the reverse dependencies of it as well.\n
-    This will not always be possible because the reverse dependency tree may be too long and you may need to uninstall important system packages.\n
-    DANGEROUS : The --force option will ignore the reverse dependencies and uninstall the package *UNSAFELY*, without safeguards.\n
-    WARNING   : The --force option will break your system if you uninstall important system packages (bootloader, kernel, init).\n
+    To maintain system integrity, if there are any reverse dependencies, the package or packages will not be uninstalled to prevent system instability.\n
+    If you're set on uninstalling the package or packages, consider removing all of its reverse dependencies first.\n
+    However, this may not always be feasible due to the extensive nature of the reverse dependency tree, which could involve critical system packages.\n
+    \n
+    !!! DANGEROUS !!!\n
+    \n
+    The --force option will ignore the reverse dependencies and uninstall the package *UNSAFELY*, without safeguards.\n
+    \n
+    !!! WARNING !!!\n
+    \n
+    The --force option will break your system if you uninstall important system packages (bootloader, kernel, init).\n
     \n
     * Examples:\n
         sisyphus uninstall firefox              # this will succeed, no package depends on firefox\n
@@ -158,9 +176,11 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
 def autoremove():
     """
     Uninstall packages which become orphans and which are no longer needed.\n
-    Uninstalling a package will usually leave it's dependencies behind. Those dependencies become orphans if no other package requires them.\n
-    A package may also gain extra dependencies, or loose some dependencies. The lost dependencies become orphans if no other package requires them.\n
-    In both cases, the orphan packages are no longer needed and can be safely removed.\n
+    Uninstalling a package will usually leave its dependencies behind.\n
+    Those dependencies become orphans if no other package requires them.\n
+    A package may also gain extra dependencies or lose some dependencies.\n
+    The lost dependencies become orphans if no other package requires them.\n
+    In either case, the orphan packages are no longer needed and can be safely removed.\n
     Use this option to check the whole dependency tree for orphan packages, and remove them.\n
     \n
     * Examples:\n
@@ -203,9 +223,9 @@ def upgrade(
     """
     Upgrade the system using binary and/or ebuild(source) packages.\n
     Binary packages are default, however the --ebuild option can be used to upgrade the ebuild(source) packages as well, alongside the binary packages.\n
-    The --ebuild option will be automatically suggested if the ebuild(source) packages need to be upgraded as well, alongside the binary packages.\n
-    The --ebuild option will fall back to binary packages if the ebuild(source) packages don't require any upgrade. (Can be used at all times, *SAFELY*).\n
-    The --ebuild option will prefer to use binary packages (if available) to satisfy dependencies for the ebuild(source) packages, speeding up the upgrade.\n
+    The --ebuild option will be automatically recommended if upgrades are necessary for the ebuild (source) packages, in addition to the binary packages.\n
+    The --ebuild option will default to binary packages if upgrades are unnecessary for the ebuild (source) packages. This option is safe to use at all times.\n
+    The --ebuild option will prioritize the use of binary packages (when available) to fulfill dependencies for the ebuild (source) packages, thereby accelerating the upgrade process.\n
     \n
     * Examples:\n
         sisyphus upgrade\n
@@ -222,8 +242,8 @@ def upgrade(
 def spmsync():
     """
     Sync Sisyphus's package database with Portage's package database.\n
-    Sisyphus does not track packages installed directly via Portage in it's package database.\n
-    Use this command to synchronize Sisyphus's package database with Portage's package database.\n
+    Sisyphus doesn't monitor packages installed directly via Portage in its package database.\n
+    Use this command to align Sisyphus's package database with Portage's package database.\n
     \n
     * Examples:\n
         sisyphus spmsync\n
@@ -234,10 +254,10 @@ def spmsync():
 @app.command("rescue")
 def rescue():
     """
-    Resurrect Sisyphus's package database if lost or corrupted.\n
-    If for some reason Sisyphus's package database is lost or corrupted, it can be resurrected using Portage's package database.\n
-    If Portage's package database is corrupted (in this case you're screwed anyway :D), only a partial resurrection will be possible.\n
-    If Portage's package database is intact, full resurrection will be possible.\n
+    Resurrect Sisyphus's package database if it becomes lost or corrupted.\n
+    If, for any reason, Sisyphus's package database becomes lost or corrupted, it can be resurrected using Portage's package database.\n
+    In the event of corruption in Portage's package database (in which case, you're in trouble anyway :D), only partial resurrection will be feasible.\n
+    With Portage's package database intact, complete resurrection will be achievable.\n
     \n
     * Examples:\n
         sisyphus rescue\n

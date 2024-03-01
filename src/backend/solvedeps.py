@@ -17,15 +17,15 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 
 @animation.wait('resolving dependencies')
-def start(pkgname=None):
+def start(pkgname=None, nodeps=False):
     bin_list = []
     src_list = []
     is_vague = int()
     need_cfg = int()
 
     if pkgname:
-        args = ['--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
-                '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname)
+        args = ['--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n',
+                '--fuzzy-search=n'] + (['--nodeps'] if nodeps else ['--with-bdeps=y']) + list(pkgname)
     else:
         args = ['--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries',
                 '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world']

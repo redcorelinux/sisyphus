@@ -47,23 +47,31 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
+def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False):
+    go_args = ['--quiet', '--verbose',
+               '--misspell-suggestion=n', '--fuzzy-search=n']
+    nogo_args = ['--quiet', '--pretend', '--getbinpkg',
+                 '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n']
     if not sisyphus.checkenv.root():
         print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required for this operation.\n{sisyphus.getclr.reset}")
         sys.exit()
     else:
         if gfx_ui:
-            sisyphus.solvedeps.start.__wrapped__(pkgname)  # undecorate
+            sisyphus.solvedeps.start.__wrapped__(
+                pkgname, nodeps=False)  # undecorate
         else:
             sisyphus.syncall.start(gfx_ui=False)
-            sisyphus.solvedeps.start(pkgname)
+            if nodeps:
+                sisyphus.solvedeps.start(pkgname, nodeps=True)
+            else:
+                sisyphus.solvedeps.start(pkgname, nodeps=False)
 
         bin_list, src_list, is_vague, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
     if is_vague != 0:  # catch ambiguous packages
-        p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
-                                 '--with-bdeps=y', '--misspell-suggestion=y', '--fuzzy-search=y'] + list(pkgname))
+        p_exe = subprocess.Popen(
+            ['emerge'] + nogo_args + (['--nodeps'] if nodeps else ['--with-bdeps=y']) + list(pkgname))
         try:
             p_exe.wait()
         except KeyboardInterrupt:
@@ -79,8 +87,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
             sys.exit()
 
     elif need_cfg != 0:  # catch aliens
-        p_exe = subprocess.Popen(['emerge', '--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries',
-                                 '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + list(pkgname))
+        p_exe = subprocess.Popen(
+            ['emerge'] + nogo_args + (['--nodeps'] if nodeps else ['--with-bdeps=y']) + list(pkgname))
         try:
             p_exe.wait()
         except KeyboardInterrupt:
@@ -115,8 +123,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                     user_input = input(
                         f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
                     if user_input.lower() in ['yes', 'y', '']:
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--with-bdeps=y', '--misspell-suggestion=n',
-                                                 '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
+                        p_exe = subprocess.Popen(['emerge'] + go_args + (['--nodeps'] if nodeps else [
+                                                 '--with-bdeps=y']) + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -170,8 +178,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=False, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--rebuilt-binaries', '--with-bdeps=y',
-                                                 '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
+                        p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--rebuilt-binaries'] + (
+                            ['--nodeps'] if nodeps else ['--with-bdeps=y']) + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -218,8 +226,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=False, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                                                 '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
+                        p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries'] + (
+                            ['--nodeps'] if nodeps else ['--with-bdeps=y']) + (['--oneshot'] if oneshot else []) + list(pkgname))
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -294,8 +302,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                           str(len(bin_list)) + " binary package(s)\n\n")
                     sisyphus.dlbinpkg.start(dl_world=False, gfx_ui=True)
                     os.chdir(sisyphus.getfs.p_cch_dir)
-                    p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries', '--with-bdeps=y',
-                                             '--misspell-suggestion=n', '--fuzzy-search=n'] + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries'] + (
+                        ['--nodeps'] if nodeps else ['--with-bdeps=y']) + (['--oneshot'] if oneshot else []) + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # --nodeps && --oneshot are set to False in the graphical client
                     # kill portage if the program dies or it's terminated by the user
                     atexit.register(sisyphus.killemerge.start, p_exe)
 
@@ -318,8 +326,8 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False):
                             sisyphus.dlbinpkg.start(
                                 dl_world=False, gfx_ui=False)
                             os.chdir(sisyphus.getfs.p_cch_dir)
-                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                                                     '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n'] + (['--oneshot'] if oneshot else []) + list(pkgname))
+                            p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries'] + (
+                                ['--nodeps'] if nodeps else ['--with-bdeps=y']) + (['--oneshot'] if oneshot else []) + list(pkgname))
                             try:
                                 set_nonblocking(sys.stdout.fileno())
                                 spinner_animation()

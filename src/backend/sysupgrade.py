@@ -48,6 +48,10 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 
 def start(ebuild=False, gfx_ui=False):
+    go_args = ['--quiet', '--verbose', '--update', '--deep', '--newuse',
+               '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n']
+    nogo_args = ['--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg',
+                  '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n',]
     if not sisyphus.checkenv.root():
         print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required for this operation.\n{sisyphus.getclr.reset}")
         sys.exit()
@@ -62,8 +66,7 @@ def start(ebuild=False, gfx_ui=False):
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
     if need_cfg != 0:  # catch aliens
-        p_exe = subprocess.Popen(['emerge', '--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg',
-                                 '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+        p_exe = subprocess.Popen(['emerge'] + nogo_args + ['@world'])
         try:
             p_exe.wait()
         except KeyboardInterrupt:
@@ -104,8 +107,8 @@ def start(ebuild=False, gfx_ui=False):
                     user_input = input(
                         f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
                     if user_input.lower() in ['yes', 'y', '']:
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse',
-                                                 '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                        p_exe = subprocess.Popen(
+                            ['emerge'] + go_args + ['@world'])
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -159,8 +162,8 @@ def start(ebuild=False, gfx_ui=False):
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg',
-                                                 '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                        p_exe = subprocess.Popen(
+                            ['emerge'] + go_args + ['--usepkg', '--rebuilt-binaries', '@world'])
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -207,8 +210,8 @@ def start(ebuild=False, gfx_ui=False):
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
-                        p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
-                                                 '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                        p_exe = subprocess.Popen(
+                            ['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries', '@world'])
                         try:
                             set_nonblocking(sys.stdout.fileno())
                             spinner_animation()
@@ -285,8 +288,8 @@ def start(ebuild=False, gfx_ui=False):
                           f"\n\nTotal: {len(bin_list)} binary package(s)\n")
                     sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=True)
                     os.chdir(sisyphus.getfs.p_cch_dir)
-                    p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly', '--rebuilt-binaries',
-                                             '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly',
+                                             '--rebuilt-binaries', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     # kill portage if the program dies or it's terminated by the user
                     atexit.register(sisyphus.killemerge.start, p_exe)
 
@@ -309,8 +312,8 @@ def start(ebuild=False, gfx_ui=False):
                             sisyphus.dlbinpkg.start(
                                 dl_world=True, gfx_ui=False)
                             os.chdir(sisyphus.getfs.p_cch_dir)
-                            p_exe = subprocess.Popen(['emerge', '--quiet', '--verbose', '--update', '--deep', '--newuse', '--usepkg', '--usepkgonly',
-                                                     '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world'])
+                            p_exe = subprocess.Popen(
+                                ['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries', '@world'])
                             try:
                                 set_nonblocking(sys.stdout.fileno())
                                 spinner_animation()
