@@ -135,10 +135,10 @@ def install(pkgname: List[str],
         sisyphus install -e --nodeps vivaldi\n
     """
     if ebuild:
-        sisyphus.instpkgsrc.start(
+        sisyphus.binpkgsrcinst.start(
             pkgname, ebuild=True, gfx_ui=False, oneshot=oneshot, nodeps=nodeps)
     else:
-        sisyphus.instpkgsrc.start(
+        sisyphus.binpkgsrcinst.start(
             pkgname, ebuild=False, gfx_ui=False, oneshot=oneshot, nodeps=nodeps)
 
 
@@ -165,10 +165,10 @@ def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "
         sisyphus uninstall openrc -f            # this will succeed, but the system will no longer boot\n
     """
     if force:
-        sisyphus.rmpkgsrc.start(
+        sisyphus.binpkgsrcunst.start(
             pkgname, depclean=False, gfx_ui=False, unmerge=True)
     else:
-        sisyphus.rmpkgsrc.start(
+        sisyphus.binpkgsrcunst.start(
             pkgname, depclean=True, gfx_ui=False, unmerge=False)
 
 
@@ -186,7 +186,7 @@ def autoremove():
     * Examples:\n
         sisyphus autoremove\n
     """
-    sisyphus.autormpkgsrc.start(gfx_ui=False)
+    sisyphus.binpkgsrcautorm.start(gfx_ui=False)
 
 
 @app.command("autoclean")
@@ -233,9 +233,9 @@ def upgrade(
         sisyphus upgrade -e\n
     """
     if ebuild:
-        sisyphus.sysupgrade.start(ebuild=True, gfx_ui=False)
+        sisyphus.binpkgsrcupgd.start(ebuild=True, gfx_ui=False)
     else:
-        sisyphus.sysupgrade.start(ebuild=False, gfx_ui=False)
+        sisyphus.binpkgsrcupgd.start(ebuild=False, gfx_ui=False)
 
 
 @app.command("spmsync")

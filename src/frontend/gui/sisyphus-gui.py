@@ -21,7 +21,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         ])
         self.applicationFilter.addItems(self.filterApplications.keys())
         self.applicationFilter.setCurrentText('Package Name')
-        self.applicationFilter.currentIndexChanged.connect(self.setApplicationFilter)
+        self.applicationFilter.currentIndexChanged.connect(
+            self.setApplicationFilter)
         Sisyphus.applicationView = self.filterApplications['Package Name']
 
         self.filterDatabases = OrderedDict([
@@ -45,7 +46,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.settingsButton.clicked.connect(self.showMirrorWindow)
         self.licenseButton.clicked.connect(self.showLicenseWindow)
 
-        sys.stdout = MainWorker(workerOutput=self.updateProgress) # capture stdout
+        sys.stdout = MainWorker(
+            workerOutput=self.updateProgress)  # capture stdout
 
         self.updateWorker = MainWorker()
         self.updateThread = QtCore.QThread()
@@ -70,7 +72,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.uninstallThread = QtCore.QThread()
         self.uninstallWorker.moveToThread(self.uninstallThread)
         self.uninstallWorker.started.connect(self.showProgress)
-        self.uninstallThread.started.connect(self.uninstallWorker.startUninstall)
+        self.uninstallThread.started.connect(
+            self.uninstallWorker.startUninstall)
         self.uninstallWorker.workerOutput.connect(self.updateProgress)
         self.uninstallThread.finished.connect(self.hideProgress)
         self.uninstallWorker.finished.connect(self.uninstallThread.quit)
@@ -90,7 +93,8 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.autoremoveThread = QtCore.QThread()
         self.autoremoveWorker.moveToThread(self.autoremoveThread)
         self.autoremoveWorker.started.connect(self.showProgress)
-        self.autoremoveThread.started.connect(self.autoremoveWorker.startAutoremove)
+        self.autoremoveThread.started.connect(
+            self.autoremoveWorker.startAutoremove)
         self.autoremoveWorker.workerOutput.connect(self.updateProgress)
         self.autoremoveThread.finished.connect(self.hideProgress)
         self.autoremoveWorker.finished.connect(self.autoremoveThread.quit)
@@ -104,23 +108,29 @@ class Sisyphus(QtWidgets.QMainWindow):
     def centerOnScreen(self):
         screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
         windowGeometry = self.geometry()
-        horizontalPosition = int(( screenGeometry.width() - windowGeometry.width() ) / 2)
-        verticalPosition = int(( screenGeometry.height() - windowGeometry.height() ) / 2)
+        horizontalPosition = int(
+            (screenGeometry.width() - windowGeometry.width()) / 2)
+        verticalPosition = int(
+            (screenGeometry.height() - windowGeometry.height()) / 2)
         self.move(horizontalPosition, verticalPosition)
 
     def rowClicked(self):
-        Sisyphus.pkgSelect = len(self.databaseTable.selectionModel().selectedRows())
+        Sisyphus.pkgSelect = len(
+            self.databaseTable.selectionModel().selectedRows())
         self.showPackageCount()
 
     def showPackageCount(self):
-        self.statusBar().showMessage("Found: %d, Selected: %d packages" % (Sisyphus.pkgCount, Sisyphus.pkgSelect))
+        self.statusBar().showMessage("Found: %d, Selected: %d packages" %
+                                     (Sisyphus.pkgCount, Sisyphus.pkgSelect))
 
     def setApplicationFilter(self):
-        Sisyphus.applicationView = self.filterApplications[self.applicationFilter.currentText()]
+        Sisyphus.applicationView = self.filterApplications[self.applicationFilter.currentText(
+        )]
         self.loadDatabase()
 
     def setDatabaseFilter(self):
-        Sisyphus.databaseView = self.filterDatabases[self.databaseFilter.currentText()]
+        Sisyphus.databaseView = self.filterDatabases[self.databaseFilter.currentText(
+        )]
         Sisyphus.SELECT = self.databaseFilter.currentText()
         self.loadDatabase()
 
@@ -220,7 +230,8 @@ class Sisyphus(QtWidgets.QMainWindow):
             Sisyphus.pkgCount = len(rows)
             Sisyphus.pkgSelect = 0
             model = QtGui.QStandardItemModel(len(rows), 5)
-            model.setHorizontalHeaderLabels(['Category', 'Name', 'Installed Version', 'Available Version', 'Description'])
+            model.setHorizontalHeaderLabels(
+                ['Category', 'Name', 'Installed Version', 'Available Version', 'Description'])
             for row in rows:
                 indx = rows.index(row)
                 for column in range(0, 5):
@@ -243,12 +254,15 @@ class Sisyphus(QtWidgets.QMainWindow):
         def byRow(e):
             return e['row']
 
-        pkg_categs = [{'row': pkg.row(), 'cat': pkg.data()} for pkg in self.databaseTable.selectionModel().selectedRows(0)]
-        pkg_names = [{'row': pkg.row(), 'name': pkg.data()} for pkg in self.databaseTable.selectionModel().selectedRows(1)]
+        pkg_categs = [{'row': pkg.row(), 'cat': pkg.data()}
+                      for pkg in self.databaseTable.selectionModel().selectedRows(0)]
+        pkg_names = [{'row': pkg.row(), 'name': pkg.data()}
+                     for pkg in self.databaseTable.selectionModel().selectedRows(1)]
         pkg_categs = sorted(pkg_categs, key=byRow)
         pkg_names = sorted(pkg_names, key=byRow)
-        selected_pkgs = [pkg_categs[i]['cat'] + '/' + pkg_names[i]['name'] for i in range(len(pkg_categs))]
-        return(selected_pkgs)
+        selected_pkgs = [pkg_categs[i]['cat'] + '/' +
+                         pkg_names[i]['name'] for i in range(len(pkg_categs))]
+        return (selected_pkgs)
 
     def packageInstall(self):
         if not self.databaseTable.selectionModel().hasSelection():
@@ -355,9 +369,11 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.close()
 
     def __del__(self):
-        sys.stdout = sys.__stdout__ # restore stdout
+        sys.stdout = sys.__stdout__  # restore stdout
 
 # mirror configuration window
+
+
 class MirrorConfiguration(QtWidgets.QMainWindow):
     def __init__(self):
         super(MirrorConfiguration, self).__init__()
@@ -372,8 +388,10 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
     def centerOnScreen(self):
         screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
         windowGeometry = self.geometry()
-        horizontalPosition = int(( screenGeometry.width() - windowGeometry.width() ) / 2)
-        verticalPosition = int(( screenGeometry.height() - windowGeometry.height() ) / 2)
+        horizontalPosition = int(
+            (screenGeometry.width() - windowGeometry.width()) / 2)
+        verticalPosition = int(
+            (screenGeometry.height() - windowGeometry.height()) / 2)
         self.move(horizontalPosition, verticalPosition)
 
     def updateMirrorList(self):
@@ -410,8 +428,10 @@ class LicenseInformation(QtWidgets.QMainWindow):
     def centerOnScreen(self):
         screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
         windowGeometry = self.geometry()
-        horizontalPosition = int(( screenGeometry.width() - windowGeometry.width() ) / 2)
-        verticalPosition = int(( screenGeometry.height() - windowGeometry.height() ) / 2)
+        horizontalPosition = int(
+            (screenGeometry.width() - windowGeometry.width()) / 2)
+        verticalPosition = int(
+            (screenGeometry.height() - windowGeometry.height()) / 2)
         self.move(horizontalPosition, verticalPosition)
 
 
@@ -434,33 +454,35 @@ class MainWorker(QtCore.QObject):
     def startUpdate(self):
         self.started.emit()
         sisyphus.setjobs.start()
-        sisyphus.syncall.start.__wrapped__(gfx_ui=True) # undecorate
+        sisyphus.syncall.start.__wrapped__(gfx_ui=True)  # undecorate
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startInstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.instpkgsrc.start(pkgname, ebuild=False, gfx_ui=True, oneshot=False, nodeps=False)
+        sisyphus.binpkgsrcinst.start(
+            pkgname, ebuild=False, gfx_ui=True, oneshot=False, nodeps=False)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.rmpkgsrc.start(pkgname, depclean=True, gfx_ui=True, unmerge=False)
+        sisyphus.binpkgsrcunst.start(
+            pkgname, depclean=True, gfx_ui=True, unmerge=False)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        sisyphus.sysupgrade.start(ebuild=False, gfx_ui=True)
+        sisyphus.binpkgsrcupgd.start(ebuild=False, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        sisyphus.autormpkgsrc.start(gfx_ui=True)
+        sisyphus.binpkgsrcautorm.start(gfx_ui=True)
         self.finished.emit()
 
 
