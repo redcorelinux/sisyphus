@@ -17,7 +17,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 def start():
     if platform.uname()[4] == 'x86_64':
         e_exe = subprocess.Popen(
-            ['eselect', 'profile', 'set', 'default/linux/amd64/17.1/hardened'])
+            ['eselect', 'profile', 'set', 'default/linux/amd64/23.0/split-usr/hardened'])
         try:
             e_exe.wait()
         except KeyboardInterrupt:
@@ -30,7 +30,7 @@ def start():
 
     if platform.uname()[4] == 'aarch64':
         e_exe = subprocess.Popen(
-            ['eselect', 'profile', 'set', 'default/linux/arm64/17.0'])
+            ['eselect', 'profile', 'set', 'default/linux/arm64/23.0/split-usr'])
         try:
             e_exe.wait()
         except KeyboardInterrupt:
