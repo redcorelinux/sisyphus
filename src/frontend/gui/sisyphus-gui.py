@@ -461,7 +461,7 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.binpkgsrcinst.start(
+        sisyphus.binpkgsrc_inst.start(
             pkgname, ebuild=False, gfx_ui=True, oneshot=False, nodeps=False)
         self.finished.emit()
 
@@ -469,20 +469,20 @@ class MainWorker(QtCore.QObject):
     def startUninstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.binpkgsrcunst.start(
+        sisyphus.binpkgsrc_unst.start(
             pkgname, depclean=True, gfx_ui=True, unmerge=False)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        sisyphus.binpkgsrcupgd.start(ebuild=False, gfx_ui=True)
+        sisyphus.binpkgsrc_upg.start(ebuild=False, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        sisyphus.binpkgsrcautorm.start(gfx_ui=True)
+        sisyphus.binpkgsrc_cln.start(gfx_ui=True)
         self.finished.emit()
 
 

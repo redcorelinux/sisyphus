@@ -45,7 +45,7 @@ def start(gfx_ui=False):
     args = ['--quiet', '--depclean']
 
     if sisyphus.checkenv.root() and not gfx_ui:
-        print(f"\n{sisyphus.getclr.bright_white}Packages identified as orphaned and no longer needed are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'safe'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
+        print(f"\n{sisyphus.getclr.bright_white}Orphaned and no longer needed packages are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'safe'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
         while True:
             user_input = input(
                 f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
