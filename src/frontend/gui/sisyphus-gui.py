@@ -23,7 +23,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.applicationFilter.setCurrentText('Package Name')
         self.applicationFilter.currentIndexChanged.connect(
             self.setApplicationFilter)
-        Sisyphus.applicationView = self.filterApplications['Package Name']
+        Sisyphus.appFilter = self.filterApplications['Package Name']
 
         self.filterDatabases = OrderedDict([
             ('All Packages', 'all'),
@@ -35,7 +35,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.databaseFilter.addItems(self.filterDatabases.keys())
         self.databaseFilter.setCurrentText('All Packages')
         self.databaseFilter.currentIndexChanged.connect(self.setDatabaseFilter)
-        Sisyphus.databaseView = self.filterDatabases['All Packages']
+        Sisyphus.dbFilter = self.filterDatabases['All Packages']
 
         Sisyphus.searchTerm = "'%%'"
 
@@ -124,108 +124,26 @@ class Sisyphus(QtWidgets.QMainWindow):
                                      (Sisyphus.pkgCount, Sisyphus.pkgSelect))
 
     def setApplicationFilter(self):
-        Sisyphus.applicationView = self.filterApplications[self.applicationFilter.currentText(
+        Sisyphus.appFilter = self.filterApplications[self.applicationFilter.currentText(
         )]
         self.loadDatabase()
 
     def setDatabaseFilter(self):
-        Sisyphus.databaseView = self.filterDatabases[self.databaseFilter.currentText(
+        Sisyphus.dbFilter = self.filterDatabases[self.databaseFilter.currentText(
         )]
         Sisyphus.SELECT = self.databaseFilter.currentText()
         self.loadDatabase()
 
     def loadDatabase(self):
-        noVirtual = "AND cat NOT LIKE 'virtual'"
-        self.SELECTS = OrderedDict([
-            ('all', '''SELECT
-                i.category AS cat,
-                i.name as pn,
-                i.version as iv,
-                IFNULL(a.version, 'alien') AS av,
-                d.description AS descr
-                FROM local_packages AS i LEFT OUTER JOIN remote_packages as a
-                ON i.category = a.category
-                AND i.name = a.name
-                AND i.slot = a.slot
-				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                WHERE %s LIKE %s %s
-                UNION
-                SELECT
-                a.category AS cat,
-                a.name as pn,
-                IFNULL(i.version, 'None') AS iv,
-                a.version as av,
-                d.description AS descr
-                FROM remote_packages AS a LEFT OUTER JOIN local_packages AS i
-                ON a.category = i.category
-                AND a.name = i.name
-                AND a.slot = i.slot
-				LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
-                WHERE %s LIKE %s %s
-            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual, Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
-            ('installed', '''SELECT
-                i.category AS cat,
-                i.name AS pn,
-                i.version AS iv,
-                a.version as av,
-                d.description AS descr
-                FROM local_packages AS i
-                LEFT JOIN remote_packages AS a
-                ON i.category = a.category
-                AND i.name = a.name
-                AND i.slot = a.slot
-				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                WHERE %s LIKE %s %s
-            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
-            ('alien', '''SELECT
-                i.category AS cat,
-                i.name AS pn,
-                i.version as iv,
-                IFNULL(a.version, 'alien') AS av,
-                d.description AS desc
-                FROM local_packages AS i
-                LEFT JOIN remote_packages AS a
-                ON a.category = i.category
-                AND a.name = i.name
-                AND a.slot = i.slot
-                LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                WHERE %s LIKE %s %s
-                AND av IS 'alien'
-            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
-            ('available', '''SELECT
-                a.category AS cat,
-                a.name AS pn,
-                i.version as iv,
-                a.version AS av,
-                d.description AS descr
-                FROM remote_packages AS a
-                LEFT JOIN local_packages AS i
-                ON a.category = i.category
-                AND a.name = i.name
-                AND a.slot = i.slot
-				LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
-                WHERE %s LIKE %s %s
-                AND iv IS NULL
-            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
-            ('upgradable', '''SELECT
-                i.category AS cat,
-                i.name AS pn,
-                i.version as iv,
-                a.version AS av,
-                d.description AS descr
-                FROM local_packages AS i
-                INNER JOIN remote_packages AS a
-                ON i.category = a.category
-                AND i.name = a.name
-                AND i.slot = a.slot
-				LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                WHERE %s LIKE %s %s
-                AND iv <> av
-            ''' % (Sisyphus.applicationView, Sisyphus.searchTerm, noVirtual)),
-        ])
+        filter = Sisyphus.dbFilter
+        cat = '%' + self.inputBox.text() + '%' if self.applicationFilter.currentText() == 'Package Category' else ''
+        pn = '%' + self.inputBox.text() + '%' if self.applicationFilter.currentText() == 'Package Name' else ''
+        desc = '%' + self.inputBox.text() + '%' if self.applicationFilter.currentText() == 'Package Description' else ''
+
+        query = sisyphus.querydb.start(filter, cat, pn, desc)
         with sqlite3.connect(sisyphus.getfs.lcl_db) as db:
             cursor = db.cursor()
-            cursor.execute('%s' % (self.SELECTS[Sisyphus.databaseView]))
+            cursor.execute(query)
             rows = cursor.fetchall()
             Sisyphus.pkgCount = len(rows)
             Sisyphus.pkgSelect = 0
@@ -241,8 +159,7 @@ class Sisyphus(QtWidgets.QMainWindow):
             self.showPackageCount()
 
     def searchDatabase(self):
-        search = self.inputBox.text()
-        Sisyphus.searchTerm = "'%" + search + "%'"
+        Sisyphus.searchTerm = "'%" + self.inputBox.text() + "%'"
         self.loadDatabase()
 
     def updateSystem(self):

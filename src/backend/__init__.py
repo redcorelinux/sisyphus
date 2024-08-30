@@ -7,6 +7,7 @@ from .killemerge import *
 from .pkgadd import *
 from .pkgremove import *
 from .purgeenv import *
+from .querydb import *
 from .recoverdb import *
 from .solvedeps import *
 from .solverevdeps import *
