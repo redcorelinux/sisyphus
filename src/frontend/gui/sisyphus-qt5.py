@@ -149,7 +149,7 @@ class Sisyphus(QtWidgets.QMainWindow):
             Sisyphus.pkgSelect = 0
             model = QtGui.QStandardItemModel(len(rows), 5)
             model.setHorizontalHeaderLabels(
-                ['Category', 'Name', 'Installed Version', 'Available Version', 'Description'])
+                ['Package Category', 'Package Name', 'Installed Version', 'Available Version', 'Package Description'])
             for row in rows:
                 indx = rows.index(row)
                 for column in range(0, 5):

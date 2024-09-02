@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Sisyphus-GUI is a simple frontend for libsisyphus
+# Sisyphus-GUI is a PyQt frontend for Sisyphus
 # Main Author : Ghiunhan Mamut @ Redcore Linux Project
 
 if [[ -f /lib/gentoo/functions.sh ]] ; then
@@ -21,7 +21,13 @@ checkifroot() {
 main() {
 	if checkifroot; then
 		pushd /usr/share/sisyphus > /dev/null 2>&1
-		tmux new-session -d -s sisyphus 'python3 sisyphus-gui.py'
+		if [ -e sisyphus-qt6.py ]; then
+			tmux new-session -d -s sisyphus 'python3 sisyphus-qt6.py'
+		elif [ -e sisyphus-qt5.py ]; then
+			tmux new-session -d -s sisyphus 'python3 sisyphus-qt5.py'
+		else
+			eerror "Cannot find a PyQt application to execute!"
+		fi
 		popd > /dev/null 2>&1
 	fi
 }

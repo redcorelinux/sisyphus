@@ -362,7 +362,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Install selected package(s)</string>
+          <string>Install Selected Package(s)</string>
          </property>
          <property name="icon">
           <iconset>
@@ -400,7 +400,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Uninstall selected package(s)</string>
+          <string>Uninstall Selected Package(s)</string>
          </property>
          <property name="icon">
           <iconset>
@@ -438,7 +438,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Upgrade the system</string>
+          <string>System Upgrade</string>
          </property>
          <property name="icon">
           <iconset>
@@ -473,7 +473,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Uninstall orphan package(s)</string>
+          <string>Purge Orphaned Package(s)</string>
          </property>
          <property name="icon">
           <iconset>
@@ -508,7 +508,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Quit program</string>
+          <string>Exit Application</string>
          </property>
          <property name="icon">
           <iconset>
