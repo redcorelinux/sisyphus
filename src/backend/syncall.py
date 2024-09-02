@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import animation
+import os
 import signal
 import sys
 import time
@@ -40,7 +41,7 @@ def start(gfx_ui=False):
                 print(f"Killing application in : {i} seconds!")
                 time.sleep(1)
 
-            sys.exit(app.exec_())  # kill GUI window
+            os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
         else:
             print(
                 f"{sisyphus.getclr.bright_red}\nNo internet connection detected; Aborting!\n{sisyphus.getclr.reset}")
@@ -65,7 +66,7 @@ def start(gfx_ui=False):
                     print(f"Killing application in : {i} seconds!")
                     time.sleep(1)
 
-                sys.exit(app.exec_())  # kill GUI window
+                os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
             else:
                 if "packages-next" in bhst_addr:
                     print(

@@ -2,6 +2,7 @@
 
 import sys
 import sqlite3
+import signal
 import sisyphus
 from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
@@ -11,6 +12,7 @@ class Sisyphus(QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
         uic.loadUi('/usr/share/sisyphus/ui/sisyphus.ui', self)
+        signal.signal(signal.SIGTERM, self.handleSigterm)
         self.centerOnScreen()
         self.show()
 
@@ -283,6 +285,9 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.window.show()
 
     def sisyphusExit(self):
+        self.close()
+
+    def handleSigterm(self, signum, frame):
         self.close()
 
     def __del__(self):

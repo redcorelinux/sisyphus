@@ -104,7 +104,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False):
                 print(f"Killing application in : {i} seconds!")
                 time.sleep(1)
 
-            sys.exit(app.exec_())  # kill GUI window
+            os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
         else:
             print(f"{sisyphus.getclr.bright_red}\nCannot proceed!\n{sisyphus.getclr.reset}{sisyphus.getclr.bright_yellow}Please apply the above changes to your portage configuration files and try again!{sisyphus.getclr.reset}")
             sys.exit()
@@ -272,7 +272,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False):
                         print(f"Killing application in : {i} seconds!")
                         time.sleep(1)
 
-                    sys.exit(app.exec_())  # kill GUI window
+                    os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
                 else:
                     print(
                         f"{sisyphus.getclr.bright_red}\nSource package(s) found in the mix!\n{sisyphus.getclr.reset}")
@@ -288,7 +288,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False):
                         print(f"Killing application in : {i} seconds!")
                         time.sleep(1)
 
-                    sys.exit(app.exec_())  # kill GUI window
+                    os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
                 else:
                     print(
                         f"{sisyphus.getclr.bright_red}\nSource package(s) found in the mix!\n{sisyphus.getclr.reset}")
