@@ -9,6 +9,7 @@ import signal
 import selectors
 import subprocess
 import sys
+import time
 import sisyphus.checkenv
 import sisyphus.getclr
 import sisyphus.getfs
@@ -110,6 +111,11 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 p_exe.wait()
                 print(
                     "\nUnable to proceed! There are other packages with dependencies that prevent removal.")
+                for i in range(9, 0, -1):
+                    print(f"Killing application in : {i} seconds!")
+                    time.sleep(1)
+
+                os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
             else:
                 p_exe = subprocess.Popen(
                     ['emerge'] + args + ['--pretend', '--verbose'] + list(pkgname))
@@ -140,10 +146,20 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                     p_exe.wait()
                 print(f"{sisyphus.getclr.bright_red}\nUnable to proceed! Other packages have dependencies preventing removal.{sisyphus.getclr.reset}")
                 print(f"{sisyphus.getclr.bright_white}Use the {sisyphus.getclr.reset}{sisyphus.getclr.green}'--force'{sisyphus.getclr.reset}{sisyphus.getclr.bright_white} option to override at your own risk!{sisyphus.getclr.reset}\n")
+                sys.exit()
     else:
         if is_installed == 0:
-            print(f"{sisyphus.getclr.bright_red}\nUnable to proceed! One or more selected packages could not be located for removal.\n{sisyphus.getclr.reset}")
-            sys.exit()
+            if gfx_ui:
+                print(
+                    "\nUnable to proceed! One or more selected packages could not be located for removal.")
+                for i in range(9, 0, -1):
+                    print(f"Killing application in : {i} seconds!")
+                    time.sleep(1)
+
+                os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
+            else:
+                print(f"{sisyphus.getclr.bright_red}\nUnable to proceed! One or more selected packages could not be located for removal.\n{sisyphus.getclr.reset}")
+                sys.exit()
         else:
             if unmerge:
                 print(f"\n{sisyphus.getclr.bright_white}Selected packages are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'forced'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
