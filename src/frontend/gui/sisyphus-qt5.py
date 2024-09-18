@@ -40,16 +40,12 @@ class Sisyphus(QtWidgets.QMainWindow):
         Sisyphus.dbFilter = self.filterDatabases['All Packages']
 
         Sisyphus.searchTerm = "'%%'"
+        self.progressWindow = None
 
         self.databaseTable.clicked.connect(self.rowClicked)
-
         self.inputBox.textEdited.connect(self.searchDatabase)
-
-        self.settingsButton.clicked.connect(self.showMirrorWindow)
-        self.licenseButton.clicked.connect(self.showLicenseWindow)
-
-        sys.stdout = MainWorker(
-            workerOutput=self.updateProgress)  # capture stdout
+        self.progressButton.clicked.connect(self.showProgressWindow)
+        self.settingsButton.clicked.connect(self.showSettingsWindow)
 
         self.updateWorker = MainWorker()
         self.updateThread = QtCore.QThread()
@@ -65,7 +61,6 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.installWorker.moveToThread(self.installThread)
         self.installWorker.started.connect(self.showProgress)
         self.installThread.started.connect(self.installWorker.startInstall)
-        self.installWorker.workerOutput.connect(self.updateProgress)
         self.installThread.finished.connect(self.hideProgress)
         self.installWorker.finished.connect(self.installThread.quit)
 
@@ -76,7 +71,6 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.uninstallWorker.started.connect(self.showProgress)
         self.uninstallThread.started.connect(
             self.uninstallWorker.startUninstall)
-        self.uninstallWorker.workerOutput.connect(self.updateProgress)
         self.uninstallThread.finished.connect(self.hideProgress)
         self.uninstallWorker.finished.connect(self.uninstallThread.quit)
 
@@ -86,7 +80,6 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.upgradeWorker.moveToThread(self.upgradeThread)
         self.upgradeWorker.started.connect(self.showProgress)
         self.upgradeThread.started.connect(self.upgradeWorker.startUpgrade)
-        self.upgradeWorker.workerOutput.connect(self.updateProgress)
         self.upgradeThread.finished.connect(self.hideProgress)
         self.upgradeWorker.finished.connect(self.upgradeThread.quit)
 
@@ -97,15 +90,12 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.autoremoveWorker.started.connect(self.showProgress)
         self.autoremoveThread.started.connect(
             self.autoremoveWorker.startAutoremove)
-        self.autoremoveWorker.workerOutput.connect(self.updateProgress)
         self.autoremoveThread.finished.connect(self.hideProgress)
         self.autoremoveWorker.finished.connect(self.autoremoveThread.quit)
 
         self.updateSystem()
-        self.progressBar.hide()
-        self.progressBox.hide()
 
-        self.exitButton.clicked.connect(self.sisyphusExit)
+        self.exitButton.clicked.connect(self.closeMainWindow)
 
     def centerOnScreen(self):
         screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
@@ -138,9 +128,12 @@ class Sisyphus(QtWidgets.QMainWindow):
 
     def loadDatabase(self):
         filter = Sisyphus.dbFilter
-        cat = '%' + self.inputBox.text() + '%' if self.applicationFilter.currentText() == 'Package Category' else ''
-        pn = '%' + self.inputBox.text() + '%' if self.applicationFilter.currentText() == 'Package Name' else ''
-        desc = '%' + self.inputBox.text() + '%' if self.applicationFilter.currentText() == 'Package Description' else ''
+        cat = '%' + self.inputBox.text() + \
+            '%' if self.applicationFilter.currentText() == 'Package Category' else ''
+        pn = '%' + self.inputBox.text() + \
+            '%' if self.applicationFilter.currentText() == 'Package Name' else ''
+        desc = '%' + self.inputBox.text() + \
+            '%' if self.applicationFilter.currentText() == 'Package Description' else ''
 
         query = sisyphus.querydb.start(filter, cat, pn, desc)
         with sqlite3.connect(sisyphus.getfs.lcl_db) as db:
@@ -207,104 +200,139 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.statusBar().showMessage("I am busy with some cleaning, please don't rush me ...")
         self.autoremoveThread.start()
 
-    def enableUiInput(self):
-        self.databaseTable.show()
-        self.installButton.setEnabled(True)
-        self.uninstallButton.setEnabled(True)
-        self.autoremoveButton.setEnabled(True)
-        self.upgradeButton.setEnabled(True)
-        self.exitButton.setEnabled(True)
-        self.licenseButton.setEnabled(True)
-        self.settingsButton.setEnabled(True)
-        self.applicationFilter.setEnabled(True)
-        self.databaseFilter.setEnabled(True)
-        self.inputBox.setEnabled(True)
-        self.label1.setEnabled(True)
-        self.label2.setEnabled(True)
+    def hideProgressButton(self):
+        self.progressButton.hide()
 
-    def disableUiInput(self):
-        self.databaseTable.hide()
-        self.installButton.setEnabled(False)
-        self.uninstallButton.setEnabled(False)
-        self.autoremoveButton.setEnabled(False)
-        self.upgradeButton.setEnabled(False)
-        self.exitButton.setEnabled(False)
-        self.licenseButton.setEnabled(False)
-        self.settingsButton.setEnabled(False)
-        self.applicationFilter.setEnabled(False)
-        self.databaseFilter.setEnabled(False)
-        self.inputBox.setEnabled(False)
-        self.label1.setEnabled(False)
-        self.label2.setEnabled(False)
+    def showProgressButton(self):
+        self.progressButton.show()
 
-    def showProgressBar(self):
-        self.progressBar.setRange(0, 0)
-        self.progressBar.show()
+    def hideSettingsButton(self):
+        self.settingsButton.hide()
+
+    def showSettingsButton(self):
+        self.settingsButton.show()
+
+    def hideUiButtons(self):
+        self.installButton.hide()
+        self.uninstallButton.hide()
+        self.autoremoveButton.hide()
+        self.upgradeButton.hide()
+        self.exitButton.hide()
+
+    def showUiButtons(self):
+        self.installButton.show()
+        self.uninstallButton.show()
+        self.autoremoveButton.show()
+        self.upgradeButton.show()
+        self.exitButton.show()
 
     def hideProgressBar(self):
         self.progressBar.setRange(0, 1)
         self.progressBar.setValue(1)
         self.progressBar.hide()
 
-    def clearProgressBox(self):
-        self.progressBox.clear()
-
-    def showProgressBox(self):
-        self.progressBox.show()
-
-    def hideProgressBox(self):
-        self.progressBox.hide()
+    def showProgressBar(self):
+        self.progressBar.setRange(0, 0)
+        self.progressBar.show()
 
     def setInputFocus(self):
         self.inputBox.setFocus()
 
     def showProgress(self):
-        self.disableUiInput()
+        self.hideUiButtons()
+        self.hideSettingsButton()
+        self.showProgressButton()
         self.showProgressBar()
-        self.showProgressBox()
-        self.clearProgressBox()
         self.setInputFocus()
 
     def hideProgress(self):
-        self.enableUiInput()
+        self.showUiButtons()
+        self.showSettingsButton()
+        self.hideProgressButton()
         self.hideProgressBar()
-        self.hideProgressBox()
-        self.loadDatabase()
         self.setInputFocus()
+        self.loadDatabase()
 
-    def updateProgress(self, workerMessage):
-        self.progressBox.insertPlainText(workerMessage)
-        self.progressBox.ensureCursorVisible()
+    def showProgressWindow(self):
+        if self.progressWindow is None:
+            self.progressWindow = ProgressWindow(self)
 
-    def showMirrorWindow(self):
-        self.window = MirrorConfiguration()
-        self.window.show()
+            self.installWorker.workerOutput.connect(
+                self.progressWindow.updateProgressWindow)
+            self.uninstallWorker.workerOutput.connect(
+                self.progressWindow.updateProgressWindow)
+            self.upgradeWorker.workerOutput.connect(
+                self.progressWindow.updateProgressWindow)
+            self.autoremoveWorker.workerOutput.connect(
+                self.progressWindow.updateProgressWindow)
 
-    def showLicenseWindow(self):
-        self.window = LicenseInformation()
-        self.window.show()
+        self.progressWindow.show()
 
-    def sisyphusExit(self):
+    def showSettingsWindow(self):
+        self.settingsWindow = SettingsWindow(self)
+        self.settingsWindow.show()
+
+    def closeMainWindow(self):
         self.close()
 
     def handleSigterm(self, signum, frame):
         self.close()
 
     def __del__(self):
-        sys.stdout = sys.__stdout__  # restore stdout
-
-# mirror configuration window
+        sys.stdout = sys.__stdout__
 
 
-class MirrorConfiguration(QtWidgets.QMainWindow):
-    def __init__(self):
-        super(MirrorConfiguration, self).__init__()
-        uic.loadUi('/usr/share/sisyphus/ui/mirrorcfg.ui', self)
+class ProgressWindow(QtWidgets.QMainWindow):
+    progress_messages = []
+
+    def __init__(self, parent=None):
+        super(ProgressWindow, self).__init__(parent)
+        uic.loadUi('/usr/share/sisyphus/ui/progress.ui', self)
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.centerOnScreen()
+        self.refreshProgressWindow()
+        self.clearButton.clicked.connect(self.clearProgressWindow)
+        self.hideButton.clicked.connect(self.hideProgressWindow)
+
+        sys.stdout = MainWorker(workerOutput=self.updateProgressWindow)
+
+    def centerOnScreen(self):
+        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
+        windowGeometry = self.geometry()
+        horizontalPosition = int(
+            (screenGeometry.width() - windowGeometry.width()) / 2)
+        verticalPosition = int(
+            (screenGeometry.height() - windowGeometry.height()) / 2)
+        self.move(horizontalPosition, verticalPosition)
+
+    def updateProgressWindow(self, workerMessage):
+        ProgressWindow.progress_messages.append(workerMessage)
+        self.progressBox.insertPlainText(workerMessage)
+        self.progressBox.ensureCursorVisible()
+
+    def refreshProgressWindow(self):
+        self.progressBox.clear()
+        self.progressBox.setPlainText(
+            ''.join(ProgressWindow.progress_messages))
+        self.progressBox.ensureCursorVisible()
+
+    def clearProgressWindow(self):
+        self.progressBox.clear()
+        ProgressWindow.progress_messages.clear()
+
+    def hideProgressWindow(self):
+        self.hide()
+
+
+class SettingsWindow(QtWidgets.QMainWindow):
+    def __init__(self, parent=None):
+        super(SettingsWindow, self).__init__(parent)
+        uic.loadUi('/usr/share/sisyphus/ui/settings.ui', self)
         self.centerOnScreen()
         self.MIRRORLIST = sisyphus.setmirror.getList()
         self.updateMirrorList()
-        self.applyButton.pressed.connect(self.mirrorCfgApply)
-        self.applyButton.released.connect(self.mirrorCfgExit)
+        self.applyButton.pressed.connect(self.writeMirrorList)
+        self.applyButton.released.connect(self.closeSettingsWindow)
         self.mirrorCombo.activated.connect(self.setMirrorList)
 
     def centerOnScreen(self):
@@ -333,31 +361,13 @@ class MirrorConfiguration(QtWidgets.QMainWindow):
         self.ACTIVEMIRRORINDEX = self.mirrorCombo.currentIndex()
         self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = True
 
-    def mirrorCfgApply(self):
+    def writeMirrorList(self):
         sisyphus.setmirror.writeList(self.MIRRORLIST)
 
-    def mirrorCfgExit(self):
+    def closeSettingsWindow(self):
         self.close()
 
 
-# license information window
-class LicenseInformation(QtWidgets.QMainWindow):
-    def __init__(self):
-        super(LicenseInformation, self).__init__()
-        uic.loadUi('/usr/share/sisyphus/ui/license.ui', self)
-        self.centerOnScreen()
-
-    def centerOnScreen(self):
-        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
-        windowGeometry = self.geometry()
-        horizontalPosition = int(
-            (screenGeometry.width() - windowGeometry.width()) / 2)
-        verticalPosition = int(
-            (screenGeometry.height() - windowGeometry.height()) / 2)
-        self.move(horizontalPosition, verticalPosition)
-
-
-# worker/multithreading class
 class MainWorker(QtCore.QObject):
     started = QtCore.pyqtSignal()
     finished = QtCore.pyqtSignal()
@@ -408,7 +418,6 @@ class MainWorker(QtCore.QObject):
         self.finished.emit()
 
 
-# launch application
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Breeze')
