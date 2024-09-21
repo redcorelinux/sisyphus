@@ -8,7 +8,6 @@ import time
 import sisyphus.checkenv
 import sisyphus.getclr
 import sisyphus.getenv
-import sisyphus.purgeenv
 import sisyphus.syncdb
 import sisyphus.syncenv
 

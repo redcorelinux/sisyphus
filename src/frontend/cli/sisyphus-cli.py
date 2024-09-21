@@ -307,7 +307,10 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
         sisyphus mirror set 2\n
         sisyphus mirror set 8\n
     """
-    sisyphus.setbranch.start(branch.value, remote.value)
+    if sisyphus.checkenv.root():
+        sisyphus.setbranch.start(branch.value, remote.value, gfx_ui=False)
+    else:
+        sys.exit("\nYou need root permissions to do this, exiting!\n")
 
 
 @app.command("sysinfo")

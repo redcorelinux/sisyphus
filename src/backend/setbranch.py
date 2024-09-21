@@ -6,6 +6,7 @@ import os
 import random
 import signal
 import sys
+import time
 import sisyphus.checkenv
 import sisyphus.getclr
 import sisyphus.getfs
@@ -55,30 +56,63 @@ def get_brch_rmt(branch, remote):
 
 
 @animation.wait('injecting Gentoo Linux portage tree')
-def ins_g_repo(branch, remote):
+def ins_g_repo(branch, remote, gfx_ui=False):
     g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
+
+    if gfx_ui:
+        print("\ninjecting Gentoo Linux portage tree", flush=True)
+    else:
+        pass
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
         git.Repo.clone_from(
             "/".join(g_rmt), sisyphus.getfs.g_src_dir, depth=1, branch=branch)
 
+    if gfx_ui:
+        print("\r" + " " * len("injecting Gentoo Linux portage tree") +
+              "\r", end='', flush=True)
+    else:
+        pass
+
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
-def ins_r_repo(branch, remote):
+def ins_r_repo(branch, remote, gfx_ui=False):
     g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
+
+    if gfx_ui:
+        print("\ninjecting Rentoo Linux ebuild overlay", flush=True)
+    else:
+        pass
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.r_src_dir, '.git')):
         git.Repo.clone_from(
             "/".join(r_rmt), sisyphus.getfs.r_src_dir, depth=1, branch=branch)
 
+    if gfx_ui:
+        print("\r" + " " * len("injecting Redcore Linux ebuild overlay") +
+              "\r", end='', flush=True)
+    else:
+        pass
+
 
 @animation.wait('injecting Redcore Linux portage config')
-def ins_p_cfg_repo(branch, remote):
+def ins_p_cfg_repo(branch, remote, gfx_ui=False):
     g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
+
+    if gfx_ui:
+        print("\ninjecting Redcore Linux portage config", flush=True)
+    else:
+        pass
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.p_cfg_dir, '.git')):
         git.Repo.clone_from("/".join(p_cfg_rmt),
                             sisyphus.getfs.p_cfg_dir, depth=1, branch=branch)
+
+    if gfx_ui:
+        print("\r" + " " * len("injecting Redcore Linux portage config") +
+              "\r", end='', flush=True)
+    else:
+        pass
 
 
 def set_brch_master_index():
@@ -95,34 +129,51 @@ def set_brch_next_index():
     sisyphus.setmirror.setActive(chosen_index)
 
 
-def set_bhst_index(branch, remote):
+def set_bhst_index(branch, remote, gfx_ui=False):
+    if gfx_ui:
+        print(f"\nThe active branch has been switched to '{branch}'")
+        print(f"\nThe active remote has been switched to '{remote}'")
+    else:
+        print(f"{sisyphus.getclr.green}\nThe active branch has been switched to '{branch}'{sisyphus.getclr.reset}")
+        print(f"{sisyphus.getclr.green}\nThe active remote has been switched to '{remote}'{sisyphus.getclr.reset}")
+
     if "master" in branch:
-        print(f"{sisyphus.getclr.green}\nThe active branch has been switched to '{branch}'{sisyphus.getclr.reset}")
-        print(f"{sisyphus.getclr.green}The active remote has been switched to '{remote}'{sisyphus.getclr.reset}")
-        set_brch_master_index()  # Set binhost index for branch 'master' (random odd index)
+        set_brch_master_index()
     elif "next" in branch:
-        print(f"{sisyphus.getclr.green}\nThe active branch has been switched to '{branch}'{sisyphus.getclr.reset}")
-        print(f"{sisyphus.getclr.green}The active remote has been switched to '{remote}'{sisyphus.getclr.reset}")
-        set_brch_next_index()  # Set binhost index for branch 'next' (random even index)
+        set_brch_next_index()
 
 
-def start(branch, remote):
+def start(branch, remote, gfx_ui=False):
     is_online = sisyphus.checkenv.connectivity()
 
-    if sisyphus.checkenv.root():
-        if is_online == 1:
-            sisyphus.purgeenv.branch()
-            sisyphus.purgeenv.metadata()
-            ins_g_repo(branch, remote)
-            ins_r_repo(branch, remote)
-            ins_p_cfg_repo(branch, remote)
-            sisyphus.setjobs.start()
-            sisyphus.setprofile.start()
-            set_bhst_index(branch, remote)
+    if is_online != 1:
+        if gfx_ui:
+            print("\nNo internet connection detected. Aborting!\n")
+            for i in range(9, 0, -1):
+                print(f"Killing application in : {i} seconds!")
+                time.sleep(1)
+
+            os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
         else:
             print(
                 f"{sisyphus.getclr.bright_red}\nNo internet connection detected; Aborting!\n{sisyphus.getclr.reset}")
             sys.exit()
     else:
-        print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required to perform this action.\n{sisyphus.getclr.reset}")
-        sys.exit()
+        if gfx_ui:
+            sisyphus.purgeenv.branch.__wrapped__()
+            sisyphus.purgeenv.metadata.__wrapped__()
+            ins_g_repo.__wrapped__(branch, remote, gfx_ui=True)
+            ins_r_repo.__wrapped__(branch, remote, gfx_ui=True)
+            ins_p_cfg_repo.__wrapped__(branch, remote, gfx_ui=True)
+            set_bhst_index(branch, remote, gfx_ui=True)
+            sisyphus.setprofile.start.__wrapped__()
+            sisyphus.setjobs.start()
+        else:
+            sisyphus.purgeenv.branch()
+            sisyphus.purgeenv.metadata()
+            ins_g_repo(branch, remote, gfx_ui=False)
+            ins_r_repo(branch, remote, gfx_ui=False)
+            ins_p_cfg_repo(branch, remote, gfx_ui=False)
+            set_bhst_index(branch, remote, gfx_ui=False)
+            sisyphus.setprofile.start()
+            sisyphus.setjobs.start()

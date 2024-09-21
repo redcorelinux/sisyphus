@@ -11,6 +11,8 @@ from PyQt6 import QtCore, QtGui, QtWidgets, uic
 class Sisyphus(QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
+        self.progressWindow = None
+        self.settingsWindow = None
         uic.loadUi('/usr/share/sisyphus/ui/sisyphus.ui', self)
         signal.signal(signal.SIGTERM, self.handleSigterm)
         self.centerOnScreen()
@@ -40,7 +42,6 @@ class Sisyphus(QtWidgets.QMainWindow):
         Sisyphus.dbFilter = self.filterDatabases['All Packages']
 
         Sisyphus.searchTerm = "'%%'"
-        self.progressWindow = None
 
         self.databaseTable.clicked.connect(self.rowClicked)
         self.inputBox.textEdited.connect(self.searchDatabase)
@@ -96,15 +97,6 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.updateSystem()
 
         self.exitButton.clicked.connect(self.closeMainWindow)
-
-    def centerOnScreen(self):
-        screenGeometry = QtGui.QGuiApplication.primaryScreen().geometry()
-        windowGeometry = self.geometry()
-        horizontalPosition = int(
-            (screenGeometry.width() - windowGeometry.width()) / 2)
-        verticalPosition = int(
-            (screenGeometry.height() - windowGeometry.height()) / 2)
-        self.move(horizontalPosition, verticalPosition)
 
     def rowClicked(self):
         Sisyphus.pkgSelect = len(
@@ -200,17 +192,17 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.statusBar().showMessage("I am busy with some cleaning, please don't rush me ...")
         self.autoremoveThread.start()
 
-    def hideProgressButton(self):
-        self.progressButton.hide()
+    def disableProgressButton(self):
+        self.progressButton.setEnabled(False)
 
-    def showProgressButton(self):
-        self.progressButton.show()
+    def enableProgressButton(self):
+        self.progressButton.setEnabled(True)
 
-    def hideSettingsButton(self):
-        self.settingsButton.hide()
+    def disableSettingsButton(self):
+        self.settingsButton.setEnabled(False)
 
-    def showSettingsButton(self):
-        self.settingsButton.show()
+    def enableSettingsButton(self):
+        self.settingsButton.setEnabled(True)
 
     def hideUiButtons(self):
         self.installButton.hide()
@@ -240,15 +232,15 @@ class Sisyphus(QtWidgets.QMainWindow):
 
     def showProgress(self):
         self.hideUiButtons()
-        self.hideSettingsButton()
-        self.showProgressButton()
+        self.disableSettingsButton()
+        self.enableProgressButton()
         self.showProgressBar()
         self.setInputFocus()
 
     def hideProgress(self):
         self.showUiButtons()
-        self.showSettingsButton()
-        self.hideProgressButton()
+        self.enableSettingsButton()
+        self.disableProgressButton()
         self.hideProgressBar()
         self.setInputFocus()
         self.loadDatabase()
@@ -269,7 +261,9 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.progressWindow.show()
 
     def showSettingsWindow(self):
-        self.settingsWindow = SettingsWindow(self)
+        if self.settingsWindow is None:
+            self.settingsWindow = SettingsWindow(self, self.progressWindow)
+
         self.settingsWindow.show()
 
     def closeMainWindow(self):
@@ -280,6 +274,15 @@ class Sisyphus(QtWidgets.QMainWindow):
 
     def __del__(self):
         sys.stdout = sys.__stdout__
+
+    def centerOnScreen(self):
+        screenGeometry = QtGui.QGuiApplication.primaryScreen().geometry()
+        windowGeometry = self.geometry()
+        horizontalPosition = int(
+            (screenGeometry.width() - windowGeometry.width()) / 2)
+        verticalPosition = int(
+            (screenGeometry.height() - windowGeometry.height()) / 2)
+        self.move(horizontalPosition, verticalPosition)
 
 
 class ProgressWindow(QtWidgets.QMainWindow):
@@ -295,15 +298,6 @@ class ProgressWindow(QtWidgets.QMainWindow):
         self.hideButton.clicked.connect(self.hideProgressWindow)
 
         sys.stdout = MainWorker(workerOutput=self.updateProgressWindow)
-
-    def centerOnScreen(self):
-        screenGeometry = QtGui.QGuiApplication.primaryScreen().geometry()
-        windowGeometry = self.geometry()
-        horizontalPosition = int(
-            (screenGeometry.width() - windowGeometry.width()) / 2)
-        verticalPosition = int(
-            (screenGeometry.height() - windowGeometry.height()) / 2)
-        self.move(horizontalPosition, verticalPosition)
 
     def updateProgressWindow(self, workerMessage):
         ProgressWindow.progress_messages.append(workerMessage)
@@ -323,18 +317,6 @@ class ProgressWindow(QtWidgets.QMainWindow):
     def hideProgressWindow(self):
         self.hide()
 
-
-class SettingsWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
-        super(SettingsWindow, self).__init__(parent)
-        uic.loadUi('/usr/share/sisyphus/ui/settings.ui', self)
-        self.centerOnScreen()
-        self.MIRRORLIST = sisyphus.setmirror.getList()
-        self.updateMirrorList()
-        self.applyButton.pressed.connect(self.writeMirrorList)
-        self.applyButton.released.connect(self.closeSettingsWindow)
-        self.mirrorCombo.activated.connect(self.setMirrorList)
-
     def centerOnScreen(self):
         screenGeometry = QtGui.QGuiApplication.primaryScreen().geometry()
         windowGeometry = self.geometry()
@@ -343,6 +325,58 @@ class SettingsWindow(QtWidgets.QMainWindow):
         verticalPosition = int(
             (screenGeometry.height() - windowGeometry.height()) / 2)
         self.move(horizontalPosition, verticalPosition)
+
+
+class SettingsWindow(QtWidgets.QMainWindow):
+    def __init__(self, parent=None, progressWindow=None):
+        super(SettingsWindow, self).__init__(parent)
+        self.mainWindow = parent
+        self.progressWindow = progressWindow
+        selected_branch = None
+        selected_remote = None
+        uic.loadUi('/usr/share/sisyphus/ui/settings.ui', self)
+        self.centerOnScreen()
+
+        self.MIRRORLIST = sisyphus.setmirror.getList()
+        self.updateMirrorList()
+        self.mirrorCombo.activated.connect(self.setMirrorList)
+
+        self.branches = OrderedDict([
+            ('Branch Master (stable)', 'master'),
+            ('Branch Next (testing)', 'next')
+        ])
+
+        self.branchCombo.blockSignals(True)
+        self.branchCombo.addItems(self.branches.keys())
+        system_branch = sisyphus.getenv.sys_brch()
+        self.branchCombo.setCurrentText(next(name for name, value in self.branches.items(
+        ) if value == system_branch))  # default to current branch, we have an API for it
+        self.branchCombo.blockSignals(False)
+        self.branchCombo.currentIndexChanged.connect(self.loadBranchRemote)
+
+        self.remotes = OrderedDict([
+            ('Github Remote : https://github.com/redcorelinux', 'github'),
+            ('Gitlab Remote : https://gitlab.com/redcore', 'gitlab'),
+            ('Pagure Remote : https://pagure.io/redcore', 'pagure')
+        ])
+
+        self.remoteCombo.blockSignals(True)
+        self.remoteCombo.addItems(self.remotes.keys())
+        self.remoteCombo.setCurrentText(
+            'Gitlab Remote : https://gitlab.com/redcore')
+        self.remoteCombo.blockSignals(False)
+        self.remoteCombo.currentIndexChanged.connect(self.loadBranchRemote)
+
+        self.mirrorButton.clicked.connect(self.writeMirrorList)
+        self.branchButton.clicked.connect(self.changeBranchRemote)
+
+        self.branchWorker = MainWorker()
+        self.branchThread = QtCore.QThread()
+        self.branchWorker.moveToThread(self.branchThread)
+        self.branchWorker.started.connect(self.showProgress)
+        self.branchThread.started.connect(self.branchWorker.setBranch)
+        self.branchThread.finished.connect(self.hideProgress)
+        self.branchWorker.finished.connect(self.branchThread.quit)
 
     def updateMirrorList(self):
         model = QtGui.QStandardItemModel()
@@ -364,8 +398,52 @@ class SettingsWindow(QtWidgets.QMainWindow):
     def writeMirrorList(self):
         sisyphus.setmirror.writeList(self.MIRRORLIST)
 
-    def closeSettingsWindow(self):
-        self.close()
+    def loadBranchRemote(self):
+        selected_branch = self.branches[self.branchCombo.currentText()]
+        selected_remote = self.remotes[self.remoteCombo.currentText()]
+
+        return selected_branch, selected_remote
+
+    def changeBranchRemote(self):
+        selected_branch, selected_remote = self.loadBranchRemote()
+
+        self.branchWorker.selected_branch = selected_branch
+        self.branchWorker.selected_remote = selected_remote
+
+        self.branchThread.start()
+
+    def disableUiButtons(self):
+        self.mirrorButton.setEnabled(False)
+        self.branchButton.setEnabled(False)
+
+    def enableUiButtons(self):
+        self.mirrorButton.setEnabled(True)
+        self.branchButton.setEnabled(True)
+
+    def showProgress(self):
+        self.disableUiButtons()
+        self.mainWindow.showProgress()
+
+        if self.progressWindow is None:
+            self.progressWindow = ProgressWindow(self.mainWindow)
+            self.branchWorker.workerOutput.connect(
+                self.progressWindow.updateProgressWindow)
+
+    def hideProgress(self):
+        self.mainWindow.hideProgress()
+        self.mainWindow.updateSystem()
+        self.MIRRORLIST = sisyphus.setmirror.getList()
+        self.updateMirrorList()
+        self.enableUiButtons()
+
+    def centerOnScreen(self):
+        screenGeometry = QtGui.QGuiApplication.primaryScreen().geometry()
+        windowGeometry = self.geometry()
+        horizontalPosition = int(
+            (screenGeometry.width() - windowGeometry.width()) / 2)
+        verticalPosition = int(
+            (screenGeometry.height() - windowGeometry.height()) / 2)
+        self.move(horizontalPosition, verticalPosition)
 
 
 class MainWorker(QtCore.QObject):
@@ -415,6 +493,13 @@ class MainWorker(QtCore.QObject):
     def startAutoremove(self):
         self.started.emit()
         sisyphus.sysclean.start(gfx_ui=True)
+        self.finished.emit()
+
+    @QtCore.pyqtSlot()
+    def setBranch(self):
+        self.started.emit()
+        sisyphus.setbranch.start(self.selected_branch,
+                                 self.selected_remote, gfx_ui=True)
         self.finished.emit()
 
 
