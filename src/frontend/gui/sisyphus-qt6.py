@@ -134,12 +134,12 @@ class Sisyphus(QtWidgets.QMainWindow):
             rows = cursor.fetchall()
             Sisyphus.pkgCount = len(rows)
             Sisyphus.pkgSelect = 0
-            model = QtGui.QStandardItemModel(len(rows), 5)
+            model = QtGui.QStandardItemModel(len(rows), 6)
             model.setHorizontalHeaderLabels(
-                ['Package Category', 'Package Name', 'Installed Version', 'Available Version', 'Package Description'])
+                ['Package Category', 'Package Name', 'SLOT', 'Installed Version', 'Available Version', 'Package Description'])
             for row in rows:
                 indx = rows.index(row)
-                for column in range(0, 5):
+                for column in range(0, 6):
                     item = QtGui.QStandardItem("%s" % (row[column]))
                     model.setItem(indx, column, item)
             self.databaseTable.setModel(model)
@@ -162,10 +162,13 @@ class Sisyphus(QtWidgets.QMainWindow):
                       for pkg in self.databaseTable.selectionModel().selectedRows(0)]
         pkg_names = [{'row': pkg.row(), 'name': pkg.data()}
                      for pkg in self.databaseTable.selectionModel().selectedRows(1)]
+        pkg_slots = [{'row': pkg.row(), 'slot': pkg.data()}
+                     for pkg in self.databaseTable.selectionModel().selectedRows(2)]
         pkg_categs = sorted(pkg_categs, key=byRow)
         pkg_names = sorted(pkg_names, key=byRow)
-        selected_pkgs = [pkg_categs[i]['cat'] + '/' +
-                         pkg_names[i]['name'] for i in range(len(pkg_categs))]
+        pkg_slots = sorted(pkg_slots, key=byRow)
+        selected_pkgs = [pkg_categs[i]['cat'] + '/' + pkg_names[i]['name'] +
+                         ':' + pkg_slots[i]['slot'] for i in range(len(pkg_categs))]
         return (selected_pkgs)
 
     def packageInstall(self):
@@ -294,6 +297,7 @@ class ProgressWindow(QtWidgets.QMainWindow):
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         self.centerOnScreen()
         self.refreshProgressWindow()
+
         self.clearButton.clicked.connect(self.clearProgressWindow)
         self.hideButton.clicked.connect(self.hideProgressWindow)
 
