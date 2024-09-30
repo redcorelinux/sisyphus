@@ -75,7 +75,6 @@ def search(package: List[str] = typer.Argument(...),
     \n
     * Examples:\n
         sisyphus search * -f installed          # not valid\n
-        sisyphus search \* -f alien             # valid\n
         sisyphus search '*' -f available        # valid\n
         sisyphus search '' -f upgradable        # valid\n
     \n
