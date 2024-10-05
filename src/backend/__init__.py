@@ -3,6 +3,7 @@ from .dlbinpkg import *
 from .getclr import *
 from .getenv import *
 from .getfs import *
+from .getnews import *
 from .killemerge import *
 from .pkgadd import *
 from .pkgremove import *

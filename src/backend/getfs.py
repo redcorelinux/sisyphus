@@ -17,6 +17,8 @@ p_cch_dir = '/var/cache/packages'
 p_dst_dir = '/var/cache/distfiles'
 p_mtd_dir = '/var/cache/edb'
 
+s_cfg_dir = '/etc/sisyphus'
+
 rmt_pcsv = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
 rmt_dcsv = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
 lcl_pcsv = '/var/lib/sisyphus/csv/localPackagesPre.csv'

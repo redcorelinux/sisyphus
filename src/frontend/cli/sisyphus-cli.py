@@ -8,8 +8,11 @@ import sys
 
 app = typer.Typer()
 mirrorSetup = typer.Typer()
+getNews = typer.Typer()
 app.add_typer(mirrorSetup, name="mirror",
               help='List/Set the active binhost (binary repository) mirror.')
+app.add_typer(getNews, name="news",
+              help='Check/List/Mark Read/Mark Unread news articles.')
 
 
 @app.callback()
@@ -324,7 +327,7 @@ def sysinfo():
 
 
 @mirrorSetup.command("list")
-def mirrorlist():
+def listmirrors():
     """
     List available binary package repository mirrors (the active one is marked with *).\n
     \n
@@ -335,7 +338,7 @@ def mirrorlist():
 
 
 @mirrorSetup.command("set")
-def mirrorset(index: int):
+def setmirror(index: int):
     """
     Change the binary package repository to the selected mirror.\n
     \n
@@ -344,6 +347,50 @@ def mirrorset(index: int):
         sisyphus mirror set 5\n
     """
     sisyphus.setmirror.setActive(index)
+
+
+@getNews.command("check")
+def checknews():
+    """
+    Check for unread news articles,\n
+    \n
+    * Example:\n
+        sisyphus news check\n
+    """
+    sisyphus.getnews.start(check=True)
+
+
+@getNews.command("list")
+def listnews():
+    """
+    List all news articles.\n
+    \n
+    * Example:\n
+        sisyphus news list\n
+    """
+    sisyphus.getnews.start(list=True)
+
+
+@getNews.command("read")
+def readnews(index: int):
+    """
+    Mark a news article as read.\n
+    \n
+    * Example:\n
+        sisyphus news read 1\n
+    """
+    sisyphus.getnews.start(read=True, article_nr=index)
+
+
+@getNews.command("unread")
+def unreadnews(index: int):
+    """
+    Mark a news article as unread.\n
+    \n
+    * Example:\n
+        sisyphus news unread 2\n
+    """
+    sisyphus.getnews.start(unread=True, article_nr=index)
 
 
 if __name__ == "__main__":
