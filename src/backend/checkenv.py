@@ -3,6 +3,7 @@
 import os
 import subprocess
 import sisyphus.getenv
+import sisyphus.getnews
 import urllib.request
 
 
@@ -20,6 +21,15 @@ def connectivity():
 
 def root():
     return True if os.getuid() == 0 else False
+
+
+def news():
+    n_news = sisyphus.getnews.ld_n_news()
+    r_news_index = sisyphus.getnews.ld_r_news()
+
+    unread_count = len(n_news) - len(r_news_index)
+
+    return unread_count
 
 
 def sanity():

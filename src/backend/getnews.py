@@ -84,19 +84,7 @@ def list_all_news():
             f"\nArticle {sisyphus.getclr.green}{index + 1}{sisyphus.getclr.reset} ({status}):\n{news}")
 
 
-def check_n_news():
-    n_news = ld_n_news()
-    r_news_index = ld_r_news()
-
-    unread_count = len(n_news) - len(r_news_index)
-
-    return unread_count
-
-
-def start(check=False, list=False, read=False, unread=False, article_nr=None):
-    if check:
-        check_n_news()
-
+def start(list=False, read=False, unread=False, article_nr=None):
     if list:
         list_all_news()
 

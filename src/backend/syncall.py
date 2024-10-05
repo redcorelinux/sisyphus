@@ -32,6 +32,7 @@ def start(gfx_ui=False):
     bhst_addr = sisyphus.getenv.bhst_addr()
     is_sane = sisyphus.checkenv.sanity()
     is_online = sisyphus.checkenv.connectivity()
+    unread_count = sisyphus.checkenv.news()
 
     if is_online != 1:
         if gfx_ui:
@@ -48,6 +49,15 @@ def start(gfx_ui=False):
     else:
         if is_sane == 1:
             sync_evrth()
+            if gfx_ui:
+                print(f"\n\nThere are {unread_count} unread news article(s).")
+            else:
+                if unread_count > 0:
+                    print(
+                        f"\n\nThere are {sisyphus.getclr.bright_red}{unread_count}{sisyphus.getclr.reset} unread news article(s).")
+                else:
+                    print(
+                        f"\n\nThere are {sisyphus.getclr.green}{unread_count}{sisyphus.getclr.reset} unread news article(s).")
         else:
             if gfx_ui:
                 if "packages-next" in bhst_addr:
