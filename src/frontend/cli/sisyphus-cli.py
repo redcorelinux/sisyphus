@@ -12,7 +12,7 @@ getNews = typer.Typer()
 app.add_typer(mirrorSetup, name="mirror",
               help='List/Set the active binhost (binary repository) mirror.')
 app.add_typer(getNews, name="news",
-              help='Check/List/Mark Read/Mark Unread news articles.')
+              help='List/Mark Read/Mark Unread news articles.')
 
 
 @app.callback()
@@ -347,18 +347,6 @@ def setmirror(index: int):
         sisyphus mirror set 5\n
     """
     sisyphus.setmirror.setActive(index)
-
-
-@getNews.command("check")
-def checknews():
-    """
-    Check for unread news articles,\n
-    \n
-    * Example:\n
-        sisyphus news check\n
-    """
-    unread_count = sisyphus.checkenv.news()
-    print(f"\nThere are {unread_count} unread news article(s).\n")
 
 
 @getNews.command("list")
