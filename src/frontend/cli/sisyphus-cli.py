@@ -357,7 +357,8 @@ def checknews():
     * Example:\n
         sisyphus news check\n
     """
-    sisyphus.getnews.start(check=True)
+    unread_count = sisyphus.getnews.start(check=True)
+    print(f"\nThere are {unread_count} unread news article(s).\n")
 
 
 @getNews.command("list")

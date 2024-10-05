@@ -42,7 +42,8 @@ def mark_read(article_nr):
         r_news_index = ld_r_news()
 
         if article_index in r_news_index:
-            print(f"\nArticle {sisyphus.getclr.green}{article_nr}{sisyphus.getclr.reset} is already marked as {sisyphus.getclr.green}read{sisyphus.getclr.reset}.")
+            print(
+                f"\nArticle {sisyphus.getclr.green}{article_nr}{sisyphus.getclr.reset} is already marked as {sisyphus.getclr.green}read{sisyphus.getclr.reset}.")
         else:
             r_news_index.append(article_index)
             save_r_news(r_news_index)
@@ -61,7 +62,8 @@ def mark_unread(article_nr):
         r_news_index = ld_r_news()
 
         if article_index not in r_news_index:
-            print(f"\nArticle {sisyphus.getclr.green}{article_nr}{sisyphus.getclr.reset} is already marked as {sisyphus.getclr.green}unread{sisyphus.getclr.reset}.")
+            print(
+                f"\nArticle {sisyphus.getclr.green}{article_nr}{sisyphus.getclr.reset} is already marked as {sisyphus.getclr.green}unread{sisyphus.getclr.reset}.")
         else:
             r_news_index.remove(article_index)
             save_r_news(r_news_index)
@@ -88,12 +90,7 @@ def check_n_news():
 
     unread_count = len(n_news) - len(r_news_index)
 
-    if unread_count > 0:
-        print(
-            f"\nThere are {sisyphus.getclr.bright_red}{unread_count}{sisyphus.getclr.reset} unread news article(s).")
-    else:
-        print(
-            f"\nThere are {sisyphus.getclr.green}{unread_count}{sisyphus.getclr.reset} unread news article(s).")
+    return unread_count
 
 
 def start(check=False, list=False, read=False, unread=False, article_nr=None):
