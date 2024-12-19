@@ -496,7 +496,7 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        sisyphus.sysclean.start(gfx_ui=True)
+        sisyphus.sysclean.start(depclean=True, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()

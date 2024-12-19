@@ -63,8 +63,8 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 sisyphus.solverevdeps.start(
                     pkgname, depclean=True, unmerge=False)
 
-        is_installed, is_needed, is_vague = pickle.load(open(os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
+        is_installed, is_needed, is_vague, rm_list = pickle.load(
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
 
     if is_vague != 0:  # catch ambiguous packages
         if unmerge:
@@ -162,7 +162,11 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 sys.exit()
         else:
             if unmerge:
-                print(f"\n{sisyphus.getclr.bright_white}Selected packages are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'forced'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
+                print(f"\n{sisyphus.getclr.green}These are the selected packages that would be{sisyphus.getclr.reset} 'forcefully' {sisyphus.getclr.green}unmerged, in order:{sisyphus.getclr.reset}\n")
+                print(
+                    f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
+                print(
+                    f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} package(s){sisyphus.getclr.reset}\n")
                 while True:
                     user_input = input(
                         f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
@@ -227,7 +231,12 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                     p_exe.wait()
                     sisyphus.syncdb.lcl_tbl()
                 else:
-                    print(f"\n{sisyphus.getclr.bright_white}Selected packages are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'safe'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
+                    print(f"\n{sisyphus.getclr.green}These are the selected packages that would be{sisyphus.getclr.reset} 'safely' {sisyphus.getclr.green}unmerged, in order:{sisyphus.getclr.reset}\n")
+                    print(
+                        f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
+                    print(
+                        f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} package(s){sisyphus.getclr.reset}\n")
+
                     while True:
                         user_input = input(
                             f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")

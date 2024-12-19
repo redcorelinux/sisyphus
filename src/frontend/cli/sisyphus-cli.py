@@ -188,7 +188,7 @@ def autoremove():
     * Examples:\n
         sisyphus autoremove\n
     """
-    sisyphus.sysclean.start(gfx_ui=False)
+    sisyphus.sysclean.start(depclean=True, gfx_ui=False)
 
 
 @app.command("autoclean")

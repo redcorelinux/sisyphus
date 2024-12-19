@@ -4,6 +4,7 @@ import atexit
 import fcntl
 import io
 import os
+import pickle
 import signal
 import selectors
 import subprocess
@@ -11,6 +12,7 @@ import sys
 import sisyphus.checkenv
 import sisyphus.getclr
 import sisyphus.killemerge
+import sisyphus.solverevdeps
 import sisyphus.syncdb
 
 
@@ -41,11 +43,40 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(gfx_ui=False):
+def start(depclean=False, gfx_ui=False):
     args = ['--quiet', '--depclean']
 
-    if sisyphus.checkenv.root() and not gfx_ui:
-        print(f"\n{sisyphus.getclr.bright_white}Orphaned and no longer needed packages are slated for{sisyphus.getclr.reset} {sisyphus.getclr.green}'safe'{sisyphus.getclr.reset} {sisyphus.getclr.bright_white}removal.{sisyphus.getclr.reset}\n")
+    if not sisyphus.checkenv.root() and depclean:
+        print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required to perform this action.\n{sisyphus.getclr.reset}")
+        sys.exit()
+    else:
+        if gfx_ui:
+            sisyphus.solverevdeps.start.__wrapped__(depclean=True)
+        else:
+            sisyphus.solverevdeps.start(depclean=True)
+
+        is_installed, is_needed, is_vague, rm_list = pickle.load(
+            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
+
+    if gfx_ui:
+        p_exe = subprocess.Popen(
+            ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # kill portage if the program dies or it's terminated by the user
+        atexit.register(sisyphus.killemerge.start, p_exe)
+
+        for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
+            print(p_out.rstrip())
+
+        p_exe.wait()
+        sisyphus.syncdb.lcl_tbl()
+
+    else:
+        print(f"\n{sisyphus.getclr.green}These are the orphaned packages that would be{sisyphus.getclr.reset} 'safely' {sisyphus.getclr.green}unmerged, in order:{sisyphus.getclr.reset}\n")
+        print(
+            f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
+        print(
+            f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} package(s){sisyphus.getclr.reset}\n")
+
         while True:
             user_input = input(
                 f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
@@ -83,18 +114,3 @@ def start(gfx_ui=False):
             else:
                 print(
                     f"\nApologies, the response '{user_input}' was not recognized.\n")
-                continue
-    elif gfx_ui:
-        p_exe = subprocess.Popen(
-            ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # kill portage if the program dies or it's terminated by the user
-        atexit.register(sisyphus.killemerge.start, p_exe)
-
-        for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
-            print(p_out.rstrip())
-
-        p_exe.wait()
-        sisyphus.syncdb.lcl_tbl()
-    else:
-        print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required for this operation.\n{sisyphus.getclr.reset}")
-        sys.exit()
