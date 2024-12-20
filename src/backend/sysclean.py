@@ -75,7 +75,7 @@ def start(depclean=False, gfx_ui=False):
         print(
             f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
         print(
-            f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} package(s){sisyphus.getclr.reset}\n")
+            f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} orphaned package(s){sisyphus.getclr.reset}\n")
 
         while True:
             user_input = input(

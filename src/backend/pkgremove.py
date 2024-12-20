@@ -166,7 +166,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 print(
                     f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
                 print(
-                    f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} package(s){sisyphus.getclr.reset}\n")
+                    f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} selected package(s){sisyphus.getclr.reset}\n")
                 while True:
                     user_input = input(
                         f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
@@ -235,7 +235,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                     print(
                         f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
                     print(
-                        f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} package(s){sisyphus.getclr.reset}\n")
+                        f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} selected package(s){sisyphus.getclr.reset}\n")
 
                     while True:
                         user_input = input(
