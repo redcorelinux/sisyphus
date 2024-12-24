@@ -8,7 +8,7 @@ import subprocess
 import sys
 import pickle
 import sisyphus.getfs
-import sisyphus.killemerge
+import sisyphus.watchdog
 
 
 def sigint_handler(signal, frame):
@@ -40,7 +40,7 @@ def start(dl_world=False, gfx_ui=False):
         p_exe = subprocess.Popen(
             ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # kill portage if the program dies or it's terminated by the user
-        atexit.register(sisyphus.killemerge.start, p_exe)
+        atexit.register(sisyphus.watchdog.start, p_exe)
 
         for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
             print(p_out.rstrip())

@@ -13,9 +13,9 @@ import time
 import sisyphus.checkenv
 import sisyphus.getclr
 import sisyphus.getfs
-import sisyphus.killemerge
-import sisyphus.solverevdeps
+import sisyphus.revdepsolve
 import sisyphus.syncdb
+import sisyphus.watchdog
 
 
 def set_nonblocking(fd):
@@ -53,14 +53,14 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
         sys.exit()
     else:
         if gfx_ui:
-            sisyphus.solverevdeps.start.__wrapped__(
+            sisyphus.revdepsolve.start.__wrapped__(
                 pkgname, depclean=True, unmerge=False)
         else:
             if unmerge:
-                sisyphus.solverevdeps.start.__wrapped__(
+                sisyphus.revdepsolve.start.__wrapped__(
                     pkgname, depclean=False, unmerge=True)
             else:
-                sisyphus.solverevdeps.start(
+                sisyphus.revdepsolve.start(
                     pkgname, depclean=True, unmerge=False)
 
         is_installed, is_needed, is_vague, rm_list = pickle.load(
@@ -103,7 +103,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 p_exe = subprocess.Popen(['emerge'] + args + ['--pretend', '--verbose'] + list(
                     pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 # kill portage if the program dies or it's terminated by the user
-                atexit.register(sisyphus.killemerge.start, p_exe)
+                atexit.register(sisyphus.watchdog.start, p_exe)
 
                 for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
                     print(p_out.rstrip())
@@ -223,7 +223,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                     p_exe = subprocess.Popen(
                         ['emerge'] + args + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     # kill portage if the program dies or it's terminated by the user
-                    atexit.register(sisyphus.killemerge.start, p_exe)
+                    atexit.register(sisyphus.watchdog.start, p_exe)
 
                     for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
                         print(p_out.rstrip())

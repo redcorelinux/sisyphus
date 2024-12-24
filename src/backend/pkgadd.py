@@ -11,13 +11,13 @@ import subprocess
 import sys
 import time
 import sisyphus.checkenv
+import sisyphus.depsolve
 import sisyphus.dlbinpkg
 import sisyphus.getclr
 import sisyphus.getfs
-import sisyphus.killemerge
-import sisyphus.solvedeps
 import sisyphus.syncdb
 import sisyphus.syncall
+import sisyphus.watchdog
 
 
 def set_nonblocking(fd):
@@ -57,14 +57,14 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False):
         sys.exit()
     else:
         if gfx_ui:
-            sisyphus.solvedeps.start.__wrapped__(
+            sisyphus.depsolve.start.__wrapped__(
                 pkgname, nodeps=False)  # undecorate
         else:
             sisyphus.syncall.start(gfx_ui=False)
             if nodeps:
-                sisyphus.solvedeps.start(pkgname, nodeps=True)
+                sisyphus.depsolve.start(pkgname, nodeps=True)
             else:
-                sisyphus.solvedeps.start(pkgname, nodeps=False)
+                sisyphus.depsolve.start(pkgname, nodeps=False)
 
         bin_list, src_list, is_vague, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
@@ -305,7 +305,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False):
                     p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries'] + (
                         ['--nodeps'] if nodeps else ['--with-bdeps=y']) + (['--oneshot'] if oneshot else []) + pkgname, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # --nodeps && --oneshot are set to False in the graphical client
                     # kill portage if the program dies or it's terminated by the user
-                    atexit.register(sisyphus.killemerge.start, p_exe)
+                    atexit.register(sisyphus.watchdog.start, p_exe)
 
                     for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
                         print(p_out.rstrip())

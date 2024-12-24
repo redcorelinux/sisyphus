@@ -11,13 +11,13 @@ import subprocess
 import sys
 import time
 import sisyphus.checkenv
+import sisyphus.depsolve
 import sisyphus.dlbinpkg
 import sisyphus.getclr
 import sisyphus.getfs
-import sisyphus.killemerge
-import sisyphus.solvedeps
 import sisyphus.syncdb
 import sisyphus.syncall
+import sisyphus.watchdog
 
 
 def set_nonblocking(fd):
@@ -57,10 +57,10 @@ def start(ebuild=False, gfx_ui=False):
         sys.exit()
     else:
         if gfx_ui:
-            sisyphus.solvedeps.start.__wrapped__()  # undecorate
+            sisyphus.depsolve.start.__wrapped__()  # undecorate
         else:
             sisyphus.syncall.start(gfx_ui=False)
-            sisyphus.solvedeps.start()
+            sisyphus.depsolve.start()
 
         bin_list, src_list, is_vague, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
@@ -291,7 +291,7 @@ def start(ebuild=False, gfx_ui=False):
                     p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly',
                                              '--rebuilt-binaries', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     # kill portage if the program dies or it's terminated by the user
-                    atexit.register(sisyphus.killemerge.start, p_exe)
+                    atexit.register(sisyphus.watchdog.start, p_exe)
 
                     for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
                         print(p_out.rstrip())

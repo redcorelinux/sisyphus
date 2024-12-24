@@ -11,9 +11,9 @@ import subprocess
 import sys
 import sisyphus.checkenv
 import sisyphus.getclr
-import sisyphus.killemerge
-import sisyphus.solverevdeps
+import sisyphus.revdepsolve
 import sisyphus.syncdb
+import sisyphus.watchdog
 
 
 def set_nonblocking(fd):
@@ -51,9 +51,9 @@ def start(depclean=False, gfx_ui=False):
         sys.exit()
     else:
         if gfx_ui:
-            sisyphus.solverevdeps.start.__wrapped__(depclean=True)
+            sisyphus.revdepsolve.start.__wrapped__(depclean=True)
         else:
-            sisyphus.solverevdeps.start(depclean=True)
+            sisyphus.revdepsolve.start(depclean=True)
 
         is_installed, is_needed, is_vague, rm_list = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
@@ -62,7 +62,7 @@ def start(depclean=False, gfx_ui=False):
         p_exe = subprocess.Popen(
             ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # kill portage if the program dies or it's terminated by the user
-        atexit.register(sisyphus.killemerge.start, p_exe)
+        atexit.register(sisyphus.watchdog.start, p_exe)
 
         for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
             print(p_out.rstrip())
