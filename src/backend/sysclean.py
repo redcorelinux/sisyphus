@@ -58,59 +58,68 @@ def start(depclean=False, gfx_ui=False):
         is_installed, is_needed, is_vague, rm_list = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
 
-    if gfx_ui:
-        p_exe = subprocess.Popen(
-            ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # kill portage if the program dies or it's terminated by the user
-        atexit.register(sisyphus.watchdog.start, p_exe)
-
-        for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
-            print(p_out.rstrip())
-
-        p_exe.wait()
-        sisyphus.syncdb.lcl_tbl()
+    if len(rm_list) == 0:
+        if gfx_ui:
+            print("\nThe system is clean; no orphaned packages found.\n")
+        else:
+            print(
+                f"{sisyphus.getclr.bright_red}\nThe system is clean; no orphaned packages found.\n{sisyphus.getclr.reset}")
+            sys.exit()
 
     else:
-        print(f"\n{sisyphus.getclr.green}These are the orphaned packages that would be{sisyphus.getclr.reset} 'safely' {sisyphus.getclr.green}unmerged, in order:{sisyphus.getclr.reset}\n")
-        print(
-            f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
-        print(
-            f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} orphaned package(s){sisyphus.getclr.reset}\n")
+        if gfx_ui:
+            p_exe = subprocess.Popen(
+                ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # kill portage if the program dies or it's terminated by the user
+            atexit.register(sisyphus.watchdog.start, p_exe)
 
-        while True:
-            user_input = input(
-                f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
-            if user_input.lower() in ['yes', 'y', '']:
-                p_exe = subprocess.Popen(['emerge'] + args)
-                try:
-                    set_nonblocking(sys.stdout.fileno())
-                    spinner_animation()
+            for p_out in io.TextIOWrapper(p_exe.stdout, encoding="utf-8"):
+                print(p_out.rstrip())
 
-                    sel = selectors.DefaultSelector()
-                    sel.register(sys.stdin, selectors.EVENT_READ)
+            p_exe.wait()
+            sisyphus.syncdb.lcl_tbl()
 
-                    while True:
-                        events = sel.select(timeout=0.1)
-                        for key, mask in events:
-                            if key.fileobj == sys.stdin:
-                                line = sys.stdin.readline().strip()
-                                if line.lower() == 'q':
-                                    sys.exit()
-                        if p_exe.poll() is not None:
-                            break
-                except KeyboardInterrupt:
-                    p_exe.terminate()
+        else:
+            print(f"\n{sisyphus.getclr.green}These are the orphaned packages that would be{sisyphus.getclr.reset} 'safely' {sisyphus.getclr.green}unmerged, in order:{sisyphus.getclr.reset}\n")
+            print(
+                f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
+            print(
+                f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} orphaned package(s){sisyphus.getclr.reset}\n")
+
+            while True:
+                user_input = input(
+                    f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
+                if user_input.lower() in ['yes', 'y', '']:
+                    p_exe = subprocess.Popen(['emerge'] + args)
                     try:
-                        p_exe.wait(1)
-                    except subprocess.TimeoutExpired:
-                        p_exe.kill()
-                    sys.exit()
-                finally:
-                    p_exe.wait()
-                sisyphus.syncdb.lcl_tbl()
-                break
-            elif user_input.lower() in ['no', 'n']:
-                break
-            else:
-                print(
-                    f"\nApologies, the response '{user_input}' was not recognized.\n")
+                        set_nonblocking(sys.stdout.fileno())
+                        spinner_animation()
+
+                        sel = selectors.DefaultSelector()
+                        sel.register(sys.stdin, selectors.EVENT_READ)
+
+                        while True:
+                            events = sel.select(timeout=0.1)
+                            for key, mask in events:
+                                if key.fileobj == sys.stdin:
+                                    line = sys.stdin.readline().strip()
+                                    if line.lower() == 'q':
+                                        sys.exit()
+                            if p_exe.poll() is not None:
+                                break
+                    except KeyboardInterrupt:
+                        p_exe.terminate()
+                        try:
+                            p_exe.wait(1)
+                        except subprocess.TimeoutExpired:
+                            p_exe.kill()
+                        sys.exit()
+                    finally:
+                        p_exe.wait()
+                    sisyphus.syncdb.lcl_tbl()
+                    break
+                elif user_input.lower() in ['no', 'n']:
+                    break
+                else:
+                    print(
+                        f"\nApologies, the response '{user_input}' was not recognized.\n")
