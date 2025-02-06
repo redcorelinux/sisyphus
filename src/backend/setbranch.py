@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import animation
+import colorama
 import git
 import os
 import random
@@ -8,12 +9,14 @@ import signal
 import sys
 import time
 import sisyphus.checkenv
-import sisyphus.getclr
 import sisyphus.getfs
 import sisyphus.purgeenv
 import sisyphus.setjobs
 import sisyphus.setmirror
 import sisyphus.setprofile
+from colorama import Fore, Back, Style
+
+colorama.init()
 
 
 brch_rmt_map = {
@@ -134,8 +137,10 @@ def set_bhst_index(branch, remote, gfx_ui=False):
         print(f"\nThe active branch has been switched to '{branch}'")
         print(f"\nThe active remote has been switched to '{remote}'")
     else:
-        print(f"{sisyphus.getclr.green}\nThe active branch has been switched to '{branch}'{sisyphus.getclr.reset}")
-        print(f"{sisyphus.getclr.green}\nThe active remote has been switched to '{remote}'{sisyphus.getclr.reset}")
+        print(
+            f"{Fore.GREEN}\nThe active branch has been switched to '{branch}'{Style.RESET_ALL}")
+        print(
+            f"{Fore.GREEN}\nThe active remote has been switched to '{remote}'{Style.RESET_ALL}")
 
     if "master" in branch:
         set_brch_master_index()
@@ -156,7 +161,7 @@ def start(branch, remote, gfx_ui=False):
             os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
         else:
             print(
-                f"{sisyphus.getclr.bright_red}\nNo internet connection detected; Aborting!\n{sisyphus.getclr.reset}")
+                f"{Fore.RED}{Style.BRIGHT}\nNo internet connection detected; Aborting!\n{Style.RESET_ALL}")
             sys.exit()
     else:
         if gfx_ui:
