@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import atexit
+import colorama
 import fcntl
 import io
 import os
@@ -10,10 +11,12 @@ import selectors
 import subprocess
 import sys
 import sisyphus.checkenv
-import sisyphus.getclr
 import sisyphus.revdepsolve
 import sisyphus.syncdb
 import sisyphus.watchdog
+from colorama import Fore, Back, Style
+
+colorama.init()
 
 
 def set_nonblocking(fd):
@@ -47,7 +50,7 @@ def start(depclean=False, gfx_ui=False):
     args = ['--quiet', '--depclean']
 
     if not sisyphus.checkenv.root() and depclean:
-        print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required to perform this action.\n{sisyphus.getclr.reset}")
+        print(f"{Fore.RED}{Style.BRIGHT}\nRoot permissions are required to perform this action.\n{Style.RESET_ALL}")
         sys.exit()
     else:
         if gfx_ui:
@@ -63,7 +66,7 @@ def start(depclean=False, gfx_ui=False):
             print("\nThe system is clean; no orphaned packages found.\n")
         else:
             print(
-                f"{sisyphus.getclr.bright_red}\nThe system is clean; no orphaned packages found.\n{sisyphus.getclr.reset}")
+                f"{Fore.GREEN}{Style.BRIGHT}\nThe system is clean; no orphaned packages found.\n{Style.RESET_ALL}")
             sys.exit()
 
     else:
@@ -80,15 +83,15 @@ def start(depclean=False, gfx_ui=False):
             sisyphus.syncdb.lcl_tbl()
 
         else:
-            print(f"\n{sisyphus.getclr.green}These are the orphaned packages that would be{sisyphus.getclr.reset} 'safely' {sisyphus.getclr.green}unmerged, in order:{sisyphus.getclr.reset}\n")
+            print(f"\n{Fore.GREEN}These are the orphaned packages that would be{Style.RESET_ALL} 'safely' {Fore.GREEN}unmerged, in order:{Style.RESET_ALL}\n")
             print(
-                f"\n{sisyphus.getclr.magenta}{', '.join(rm_list)}{sisyphus.getclr.reset}\n")
+                f"\n{Fore.MAGENTA}{', '.join(rm_list)}{Style.RESET_ALL}\n")
             print(
-                f"\n{sisyphus.getclr.bright_white}Total: {len(rm_list)} orphaned package(s){sisyphus.getclr.reset}\n")
+                f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(rm_list)} orphaned package(s){Style.RESET_ALL}\n")
 
             while True:
                 user_input = input(
-                    f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
+                    f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
                 if user_input.lower() in ['yes', 'y', '']:
                     p_exe = subprocess.Popen(['emerge'] + args)
                     try:
