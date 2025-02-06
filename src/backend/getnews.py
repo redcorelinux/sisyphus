@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 
+import colorama
 import os
-import sisyphus.getclr
 import sisyphus.getfs
+from colorama import Fore, Back, Style
+
+colorama.init()
 
 NEWS_DIR = "news"
 
@@ -43,15 +46,15 @@ def mark_read(article_nr):
 
         if article_index in r_news_index:
             print(
-                f"\nArticle {sisyphus.getclr.bright_white}{article_nr}{sisyphus.getclr.reset} is already marked as {sisyphus.getclr.bright_green}read{sisyphus.getclr.reset}.")
+                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} is already marked as {Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}.")
         else:
             r_news_index.append(article_index)
             save_r_news(r_news_index)
             print(
-                f"\nArticle {sisyphus.getclr.bright_white}{article_nr}{sisyphus.getclr.reset} marked as {sisyphus.getclr.bright_green}read{sisyphus.getclr.reset}.")
+                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} marked as {Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}.")
     else:
         print(
-            f"\nArticle {sisyphus.getclr.bright_white}{article_nr}{sisyphus.getclr.reset} doesn't exist.")
+            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} doesn't exist.")
 
 
 def mark_unread(article_nr):
@@ -63,15 +66,15 @@ def mark_unread(article_nr):
 
         if article_index not in r_news_index:
             print(
-                f"\nArticle {sisyphus.getclr.bright_white}{article_nr}{sisyphus.getclr.reset} is already marked as {sisyphus.getclr.bright_red}unread{sisyphus.getclr.reset}.")
+                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} is already marked as {Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}.")
         else:
             r_news_index.remove(article_index)
             save_r_news(r_news_index)
             print(
-                f"\nArticle {sisyphus.getclr.bright_white}{article_nr}{sisyphus.getclr.reset} marked as {sisyphus.getclr.bright_red}unread{sisyphus.getclr.reset}.")
+                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} marked as {Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}.")
     else:
         print(
-            f"\nArticle {sisyphus.getclr.bright_white}{article_nr}{sisyphus.getclr.reset} doesn't exist.")
+            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} doesn't exist.")
 
 
 def list_all_news():
@@ -79,9 +82,9 @@ def list_all_news():
     r_news_index = ld_r_news()
 
     for index, news in enumerate(n_news):
-        status = f"{sisyphus.getclr.bright_green}Read{sisyphus.getclr.reset}" if index in r_news_index else f"{sisyphus.getclr.bright_red}Unread{sisyphus.getclr.reset}"
+        status = f"{Fore.GREEN}{Style.BRIGHT}Read{Style.RESET_ALL}" if index in r_news_index else f"{Fore.RED}{Style.BRIGHT}Unread{Style.RESET_ALL}"
         print(
-            f"\n{sisyphus.getclr.bright_yellow}Article {sisyphus.getclr.bright_white}{index + 1}{sisyphus.getclr.reset} ({status}):\n\n{news}")
+            f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {index + 1}{Style.RESET_ALL} ({status}):\n\n{news}")
 
 
 def start(list=False, read=False, unread=False, article_nr=None):
