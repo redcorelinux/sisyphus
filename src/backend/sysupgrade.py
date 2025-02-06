@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import atexit
+import colorama
 import fcntl
 import io
 import os
@@ -13,11 +14,13 @@ import time
 import sisyphus.checkenv
 import sisyphus.depsolve
 import sisyphus.dlbinpkg
-import sisyphus.getclr
 import sisyphus.getfs
 import sisyphus.syncdb
 import sisyphus.syncall
 import sisyphus.watchdog
+from colorama import Fore, Back, Style
+
+colorama.init()
 
 
 def set_nonblocking(fd):
@@ -51,9 +54,9 @@ def start(ebuild=False, gfx_ui=False):
     go_args = ['--quiet', '--verbose', '--update', '--deep', '--newuse',
                '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n']
     nogo_args = ['--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg',
-                  '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n',]
+                 '--rebuilt-binaries', '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n',]
     if not sisyphus.checkenv.root():
-        print(f"{sisyphus.getclr.bright_red}\nRoot permissions are required for this operation.\n{sisyphus.getclr.reset}")
+        print(f"{Fore.RED}{Style.BRIGHT}\nRoot permissions are required for this operation.\n{Style.RESET_ALL}")
         sys.exit()
     else:
         if gfx_ui:
@@ -84,7 +87,7 @@ def start(ebuild=False, gfx_ui=False):
 
             os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
         else:
-            print(f"{sisyphus.getclr.bright_red}\nCannot proceed!\n{sisyphus.getclr.reset}{sisyphus.getclr.bright_yellow}Please apply the above changes to your portage configuration files and try again!{sisyphus.getclr.reset}")
+            print(f"{Fore.RED}{Style.BRIGHT}\nCannot proceed!\n{Style.RESET_ALL}{Fore.WHITE}{Style.BRIGHT}Please apply the above changes to your portage configuration files and try again!{Style.RESET_ALL}")
             sys.exit()
     else:
         if len(bin_list) == 0 and len(src_list) == 0:
@@ -92,20 +95,20 @@ def start(ebuild=False, gfx_ui=False):
                 print("\nThe system is up to date; no package upgrades are required.\n")
             else:
                 print(
-                    f"{sisyphus.getclr.bright_red}\nThe system is up to date; no package upgrades are required.\n{sisyphus.getclr.reset}")
+                    f"{Fore.GREEN}{Style.BRIGHT}\nThe system is up to date; no package upgrades are required.\n{Style.RESET_ALL}")
                 sys.exit()
 
         if ebuild:  # ebuild mode
             if len(bin_list) == 0 and len(src_list) != 0:  # source mode, ignore aliens
                 print(
-                    f"\n{sisyphus.getclr.green}These are the source packages that would be merged, in order:{sisyphus.getclr.reset}\n")
+                    f"\n{Fore.GREEN}These are the source packages that would be merged, in order:{Style.RESET_ALL}\n")
                 print(
-                    f"\n{sisyphus.getclr.green}{', '.join(src_list)}{sisyphus.getclr.reset}\n")
+                    f"\n{Fore.GREEN}{', '.join(src_list)}{Style.RESET_ALL}\n")
                 print(
-                    f"\n{sisyphus.getclr.bright_white}Total: {len(src_list)} source package(s){sisyphus.getclr.reset}\n")
+                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(src_list)} source package(s){Style.RESET_ALL}\n")
                 while True:
                     user_input = input(
-                        f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
+                        f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
                     if user_input.lower() in ['yes', 'y', '']:
                         p_exe = subprocess.Popen(
                             ['emerge'] + go_args + ['@world'])
@@ -144,21 +147,21 @@ def start(ebuild=False, gfx_ui=False):
                         continue
             elif len(bin_list) != 0 and len(src_list) != 0:  # hybrid mode, ignore aliens
                 print(
-                    f"\n{sisyphus.getclr.green}These are the binary packages that would be merged, in order:{sisyphus.getclr.reset}\n")
+                    f"\n{Fore.GREEN}These are the binary packages that would be merged, in order:{Style.RESET_ALL}\n")
                 print(
-                    f"\n{sisyphus.getclr.magenta}{', '.join(bin_list)}{sisyphus.getclr.reset}\n")
+                    f"\n{Fore.MAGENTA}{', '.join(bin_list)}{Style.RESET_ALL}\n")
                 print(
-                    f"\n{sisyphus.getclr.bright_white}Total: {len(bin_list)} binary package(s){sisyphus.getclr.reset}\n")
+                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(bin_list)} binary package(s){Style.RESET_ALL}\n")
 
                 print(
-                    f"\n{sisyphus.getclr.green}These are the source packages that would be merged, in order:{sisyphus.getclr.reset}\n")
+                    f"\n{Fore.GREEN}These are the source packages that would be merged, in order:{Style.RESET_ALL}\n")
                 print(
-                    f"\n{sisyphus.getclr.green}{', '.join(src_list)}{sisyphus.getclr.reset}\n")
+                    f"\n{Fore.GREEN}{', '.join(src_list)}{Style.RESET_ALL}\n")
                 print(
-                    f"\n{sisyphus.getclr.bright_white}Total: {len(src_list)} source package(s){sisyphus.getclr.reset}\n")
+                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(src_list)} source package(s){Style.RESET_ALL}\n")
                 while True:
                     user_input = input(
-                        f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
+                        f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
@@ -199,14 +202,14 @@ def start(ebuild=False, gfx_ui=False):
                         continue
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode, fallback
                 print(
-                    f"\n{sisyphus.getclr.green}These are the binary packages that would be merged, in order:{sisyphus.getclr.reset}\n")
+                    f"\n{Fore.GREEN}These are the binary packages that would be merged, in order:{Style.RESET_ALL}\n")
                 print(
-                    f"\n{sisyphus.getclr.magenta}{', '.join(bin_list)}{sisyphus.getclr.reset}\n")
+                    f"\n{Fore.MAGENTA}{', '.join(bin_list)}{Style.RESET_ALL}\n")
                 print(
-                    f"\n{sisyphus.getclr.bright_white}Total: {len(bin_list)} binary package(s){sisyphus.getclr.reset}\n")
+                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(bin_list)} binary package(s){Style.RESET_ALL}\n")
                 while True:
                     user_input = input(
-                        f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
+                        f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
@@ -259,9 +262,9 @@ def start(ebuild=False, gfx_ui=False):
                     os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
                 else:
                     print(
-                        f"{sisyphus.getclr.bright_red}\nSource package(s) found in the mix!{sisyphus.getclr.reset}")
+                        f"{Fore.RED}{Style.BRIGHT}\nSource package(s) found in the mix!{Style.RESET_ALL}")
                     print(
-                        f"{sisyphus.getclr.bright_yellow}Use{sisyphus.getclr.reset} 'sisyphus upgrade --ebuild' to perform the upgrade; Aborting.")
+                        f"{Fore.WHITE}{Style.BRIGHT}Use 'sisyphus upgrade --ebuild' to perform the upgrade; Aborting.{Style.RESET_ALL}")
                     sys.exit()
             elif len(bin_list) != 0 and len(src_list) != 0:  # hybrid mode (noop), catch aliens
                 if gfx_ui:
@@ -276,9 +279,9 @@ def start(ebuild=False, gfx_ui=False):
                     os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
                 else:
                     print(
-                        f"{sisyphus.getclr.bright_red}\nSource package(s) found in the mix!{sisyphus.getclr.reset}")
+                        f"{Fore.RED}{Style.BRIGHT}\nSource package(s) found in the mix!{Style.RESET_ALL}")
                     print(
-                        f"{sisyphus.getclr.bright_yellow}Use{sisyphus.getclr.reset} 'sisyphus upgrade --ebuild' to perform the upgrade; Aborting.")
+                        f"{Fore.WHITE}{Style.BRIGHT}Use 'sisyphus upgrade --ebuild' to perform the upgrade; Aborting.{Style.RESET_ALL}")
                     sys.exit()
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
@@ -300,14 +303,14 @@ def start(ebuild=False, gfx_ui=False):
                     sisyphus.syncdb.lcl_tbl()
                 else:
                     print(
-                        f"\n{sisyphus.getclr.green}These are the binary packages that would be merged, in order:{sisyphus.getclr.reset}\n")
+                        f"\n{Fore.GREEN}These are the binary packages that would be merged, in order:{Style.RESET_ALL}\n")
                     print(
-                        f"\n{sisyphus.getclr.magenta}{', '.join(bin_list)}{sisyphus.getclr.reset}\n")
+                        f"\n{Fore.MAGENTA}{', '.join(bin_list)}{Style.RESET_ALL}\n")
                     print(
-                        f"\n{sisyphus.getclr.bright_white}Total: {len(bin_list)} binary package(s){sisyphus.getclr.reset}\n")
+                        f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(bin_list)} binary package(s){Style.RESET_ALL}\n")
                     while True:
                         user_input = input(
-                            f"{sisyphus.getclr.bright_white}Would you like to proceed?{sisyphus.getclr.reset} [{sisyphus.getclr.bright_green}Yes{sisyphus.getclr.reset}/{sisyphus.getclr.bright_red}No{sisyphus.getclr.reset}] ")
+                            f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.dlbinpkg.start(
                                 dl_world=True, gfx_ui=False)
