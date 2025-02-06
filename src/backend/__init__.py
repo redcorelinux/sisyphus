@@ -1,7 +1,6 @@
 from .checkenv import *
 from .depsolve import *
 from .dlbinpkg import *
-from .getclr import *
 from .getenv import *
 from .getfs import *
 from .getnews import *
