@@ -1,15 +1,18 @@
 #!/usr/bin/python3
 
 import animation
+import colorama
 import os
 import signal
 import sys
 import time
 import sisyphus.checkenv
-import sisyphus.getclr
 import sisyphus.getenv
 import sisyphus.syncdb
 import sisyphus.syncenv
+from colorama import Fore, Back, Style
+
+colorama.init()
 
 
 def sigint_handler(signal, frame):
@@ -44,7 +47,7 @@ def start(gfx_ui=False):
             os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
         else:
             print(
-                f"{sisyphus.getclr.bright_red}\nNo internet connection detected; Aborting!\n{sisyphus.getclr.reset}")
+                f"{Fore.RED}{Style.BRIGHT}\nNo internet connection detected; Aborting!\n{Style.RESET_ALL}")
             sys.exit()
     else:
         if is_sane == 1:
@@ -54,10 +57,10 @@ def start(gfx_ui=False):
             else:
                 if unread_count > 0:
                     print(
-                        f"\n\nThere are {sisyphus.getclr.bright_red}{unread_count}{sisyphus.getclr.reset} unread news article(s).")
+                        f"\n\nThere are {Fore.RED}{Style.BRIGHT}{unread_count}{Style.RESET_ALL} unread news article(s).")
                 else:
                     print(
-                        f"\n\nThere are {sisyphus.getclr.green}{unread_count}{sisyphus.getclr.reset} unread news article(s).")
+                        f"\n\nThere are {Fore.GREEN}{unread_count}{Style.RESET_ALL} unread news article(s).")
         else:
             if gfx_ui:
                 if "packages-next" in bhst_addr:
@@ -79,17 +82,17 @@ def start(gfx_ui=False):
             else:
                 if "packages-next" in bhst_addr:
                     print(
-                        f"{sisyphus.getclr.green}\n\nThe active branch is '{actv_brch}' (stable){sisyphus.getclr.reset}")
+                        f"{Fore.GREEN}\n\nThe active branch is '{actv_brch}' (stable){Style.RESET_ALL}")
                     print(
-                        f"{sisyphus.getclr.green}The active binhost is '{bhst_addr}' (testing){sisyphus.getclr.reset}")
+                        f"{Fore.GREEN}The active binhost is '{bhst_addr}' (testing){Style.RESET_ALL}")
                 else:
                     print(
-                        f"{sisyphus.getclr.green}\n\nThe active branch is '{actv_brch}' (testing){sisyphus.getclr.reset}")
+                        f"{Fore.GREEN}\n\nThe active branch is '{actv_brch}' (testing){Style.RESET_ALL}")
                     print(
-                        f"{sisyphus.getclr.green}The active binhost is '{bhst_addr}' (stable){sisyphus.getclr.reset}")
+                        f"{Fore.GREEN}The active binhost is '{bhst_addr}' (stable){Style.RESET_ALL}")
 
                 print(
-                    f"{sisyphus.getclr.bright_red}\nInvalid configuration!{sisyphus.getclr.reset}")
+                    f"{Fore.RED}{Style.BRIGHT}\nInvalid configuration!{Style.RESET_ALL}")
                 print(
-                    f"{sisyphus.getclr.bright_yellow}\nUse{sisyphus.getclr.reset} 'sisyphus branch --help' for assistance; Aborting.\n")
+                    f"{FORE.WHITE}{Style.BRIGHT}\nUse 'sisyphus branch --help' for assistance; Aborting.{Style.RESET_ALL}\n")
                 sys.exit()
