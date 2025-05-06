@@ -22,9 +22,9 @@ main() {
 	if checkifroot; then
 		pushd /usr/share/sisyphus > /dev/null 2>&1
 		if [ -e sisyphus-qt6.py ]; then
-			tmux new-session -d -s sisyphus 'python3 sisyphus-qt6.py'
+			tmux new-session -d -s sisyphus './sisyphus-qt6.py'
 		elif [ -e sisyphus-qt5.py ]; then
-			tmux new-session -d -s sisyphus 'python3 sisyphus-qt5.py'
+			tmux new-session -d -s sisyphus './sisyphus-qt5.py'
 		else
 			eerror "Cannot find a PyQt application to execute!"
 		fi
