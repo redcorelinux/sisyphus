@@ -19,7 +19,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 @animation.wait('resolving reverse dependencies')
 def start(pkgname=None, depclean=False, unmerge=False):
-    pattern = r'(\b[a-zA-Z0-9-_]+/[a-zA-Z0-9-_]+):\s+([0-9]+(\.[0-9]+){0,4})'
+    pattern = r'(\b[a-zA-Z0-9-_]+/[a-zA-Z0-9-_]+):\s+([0-9]+(?:\.[0-9]+){0,4})(_p[0-9]+)?(-r[1-9][0-9]*)?'
     rm_list = []
 
     args = ['--quiet', '--pretend', '--verbose']
@@ -42,6 +42,10 @@ def start(pkgname=None, depclean=False, unmerge=False):
             match = re.search(pattern, p_out)
             if match:
                 to_remove = f"{match.group(1)}-{match.group(2)}"
+                if match.group(3):
+                    to_remove += match.group(3)
+                if match.group(4):
+                    to_remove += match.group(4)
                 rm_list.append(to_remove)
 
             if any(key in p_out for key in ["pulled in by:", "required"]):
