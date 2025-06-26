@@ -19,7 +19,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 @animation.wait('resolving reverse dependencies')
 def start(pkgname=None, depclean=False, unmerge=False):
-    pattern = r'(\b[a-zA-Z0-9-_]+/[a-zA-Z0-9-_]+):\s+([0-9]+(?:\.[0-9]+){0,4})(_p[0-9]+)?(-r[1-9][0-9]*)?'
+    pattern = r'(\b[a-zA-Z0-9-_]+/[a-zA-Z0-9-_]+):\s+([0-9]+(?:\.[0-9]+){0,4})(_[a-zA-Z0-9]+)?(-r[1-9][0-9]*)?'
     rm_list = []
 
     args = ['--quiet', '--pretend', '--verbose']
