@@ -11,6 +11,7 @@ import selectors
 import subprocess
 import sys
 import sisyphus.checkenv
+import sisyphus.colsview
 import sisyphus.revdepsolve
 import sisyphus.syncdb
 import sisyphus.watchdog
@@ -83,12 +84,7 @@ def start(depclean=False, gfx_ui=False):
             sisyphus.syncdb.lcl_tbl()
 
         else:
-            print(f"\n{Fore.GREEN}These are the orphaned packages that would be{Style.RESET_ALL} 'safely' {Fore.GREEN}unmerged, in order:{Style.RESET_ALL}\n")
-            print(
-                f"\n{Fore.MAGENTA}{', '.join(rm_list)}{Style.RESET_ALL}\n")
-            print(
-                f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(rm_list)} orphaned package(s){Style.RESET_ALL}\n")
-
+            sisyphus.colsview.print_packages(rm_list=rm_list)
             while True:
                 user_input = input(
                     f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")

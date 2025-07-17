@@ -12,6 +12,7 @@ import subprocess
 import sys
 import time
 import sisyphus.checkenv
+import sisyphus.colsview
 import sisyphus.getfs
 import sisyphus.revdepsolve
 import sisyphus.syncdb
@@ -166,11 +167,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 sys.exit()
         else:
             if unmerge:
-                print(f"\n{Fore.GREEN}These are the selected packages that would be{Style.RESET_ALL} 'forcefully' {Fore.GREEN}unmerged, in order:{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.MAGENTA}{', '.join(rm_list)}{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(rm_list)} selected package(s){Style.RESET_ALL}\n")
+                sisyphus.colsview.print_packages(rm_list=rm_list)
                 while True:
                     user_input = input(
                         f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
@@ -235,13 +232,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                     p_exe.wait()
                     sisyphus.syncdb.lcl_tbl()
                 else:
-                    print(
-                        f"\n{Fore.GREEN}These are the selected packages that would be{Style.RESET_ALL} 'safely' {Fore.GREEN}unmerged, in order:{Style.RESET_ALL}\n")
-                    print(
-                        f"\n{Fore.MAGENTA}{', '.join(rm_list)}{Style.RESET_ALL}\n")
-                    print(
-                        f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(rm_list)} selected package(s){Style.RESET_ALL}\n")
-
+                    sisyphus.colsview.print_packages(rm_list=rm_list)
                     while True:
                         user_input = input(
                             f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")

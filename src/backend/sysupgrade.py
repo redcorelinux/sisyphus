@@ -12,6 +12,7 @@ import subprocess
 import sys
 import time
 import sisyphus.checkenv
+import sisyphus.colsview
 import sisyphus.depsolve
 import sisyphus.dlbinpkg
 import sisyphus.getfs
@@ -100,12 +101,7 @@ def start(ebuild=False, gfx_ui=False):
 
         if ebuild:  # ebuild mode
             if len(bin_list) == 0 and len(src_list) != 0:  # source mode, ignore aliens
-                print(
-                    f"\n{Fore.GREEN}These are the source packages that would be merged, in order:{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.GREEN}{', '.join(src_list)}{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(src_list)} source package(s){Style.RESET_ALL}\n")
+                sisyphus.colsview.print_packages(src_list=src_list)
                 while True:
                     user_input = input(
                         f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
@@ -146,19 +142,8 @@ def start(ebuild=False, gfx_ui=False):
                             f"\nApologies, the response '{user_input}' was not recognized.\n")
                         continue
             elif len(bin_list) != 0 and len(src_list) != 0:  # hybrid mode, ignore aliens
-                print(
-                    f"\n{Fore.GREEN}These are the binary packages that would be merged, in order:{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.MAGENTA}{', '.join(bin_list)}{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(bin_list)} binary package(s){Style.RESET_ALL}\n")
-
-                print(
-                    f"\n{Fore.GREEN}These are the source packages that would be merged, in order:{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.GREEN}{', '.join(src_list)}{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(src_list)} source package(s){Style.RESET_ALL}\n")
+                sisyphus.colsview.print_packages(
+                    bin_list=bin_list, src_list=src_list)
                 while True:
                     user_input = input(
                         f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
@@ -201,12 +186,7 @@ def start(ebuild=False, gfx_ui=False):
                             f"\nApologies, the response '{user_input}' was not recognized.\n")
                         continue
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode, fallback
-                print(
-                    f"\n{Fore.GREEN}These are the binary packages that would be merged, in order:{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.MAGENTA}{', '.join(bin_list)}{Style.RESET_ALL}\n")
-                print(
-                    f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(bin_list)} binary package(s){Style.RESET_ALL}\n")
+                sisyphus.colsview.print_packages(bin_list=bin_list)
                 while True:
                     user_input = input(
                         f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
@@ -285,10 +265,6 @@ def start(ebuild=False, gfx_ui=False):
                     sys.exit()
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
-                    print(
-                        f"\nThese are the binary packages that will be merged, in order:\n")
-                    print(", ".join(bin_list) +
-                          f"\n\nTotal: {len(bin_list)} binary package(s)\n")
                     sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=True)
                     os.chdir(sisyphus.getfs.p_cch_dir)
                     p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly',
@@ -302,12 +278,7 @@ def start(ebuild=False, gfx_ui=False):
                     p_exe.wait()
                     sisyphus.syncdb.lcl_tbl()
                 else:
-                    print(
-                        f"\n{Fore.GREEN}These are the binary packages that would be merged, in order:{Style.RESET_ALL}\n")
-                    print(
-                        f"\n{Fore.MAGENTA}{', '.join(bin_list)}{Style.RESET_ALL}\n")
-                    print(
-                        f"\n{Fore.WHITE}{Style.BRIGHT}Total: {len(bin_list)} binary package(s){Style.RESET_ALL}\n")
+                    sisyphus.colsview.print_packages(bin_list=bin_list)
                     while True:
                         user_input = input(
                             f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")

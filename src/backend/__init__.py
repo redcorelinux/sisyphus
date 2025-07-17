@@ -1,4 +1,5 @@
 from .checkenv import *
+from .colsview import *
 from .depsolve import *
 from .dlbinpkg import *
 from .getenv import *
