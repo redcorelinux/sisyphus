@@ -38,7 +38,26 @@ def start(pkgname=None, depclean=False, unmerge=False):
 
         stdout, stderr = p_exe.communicate()
 
-        for p_out in stdout.decode('utf-8').splitlines():
+        stdout_lines = stdout.decode('utf-8').splitlines()
+        stderr_lines = stderr.decode('utf-8').splitlines()
+        combined_output = stdout_lines + stderr_lines
+
+        ambiguous_patterns = [
+            r"short ebuild name",
+            r"is ambiguous"
+        ]
+
+        required_patterns = [
+            r"pulled in by:",
+            r"required"
+        ]
+
+        missing_patterns = [
+            r"Couldn't find",
+            r"to depclean\."
+        ]
+
+        for p_out in stdout_lines:
             match = re.search(pattern, p_out)
             if match:
                 to_remove = f"{match.group(1)}-{match.group(2)}"
@@ -48,15 +67,12 @@ def start(pkgname=None, depclean=False, unmerge=False):
                     to_remove += match.group(4)
                 rm_list.append(to_remove)
 
-            if any(key in p_out for key in ["pulled in by:", "required"]):
-                is_needed = int(1)
-
-        for p_out in stderr.decode('utf-8').splitlines():
-            if any(key in p_out for key in ["Couldn't find", "to depclean."]):
-                is_installed = int(0)
-
-            if any(key in p_out for key in ["short ebuild name", "is ambiguous"]):
-                is_vague = int(1)
+        is_vague = int(any(re.search(p, line)
+                       for line in combined_output for p in ambiguous_patterns))
+        is_needed = int(any(re.search(p, line)
+                        for line in combined_output for p in required_patterns))
+        is_installed = int(not any(re.search(p, line)
+                           for line in combined_output for p in missing_patterns))
 
     except KeyboardInterrupt:
         p_exe.terminate()

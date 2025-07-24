@@ -3,6 +3,7 @@
 import animation
 import os
 import pickle
+import re
 import signal
 import subprocess
 import sys
@@ -20,6 +21,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 def start(pkgname=None, nodeps=False):
     bin_list = []
     src_list = []
+    is_absent = []
     is_vague = int()
     need_cfg = int()
 
@@ -32,37 +34,64 @@ def start(pkgname=None, nodeps=False):
 
     p_exe = subprocess.Popen(
         ['emerge'] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
     try:
         stdout, stderr = p_exe.communicate()
 
-        for p_out in stderr.decode('utf-8').splitlines():
-            if pkgname:
-                if any(key in p_out for key in ["short ebuild name",
-                                                "is ambiguous",
-                                                "there are no ebuilds to satisfy"]):  # likely very fragile
-                    is_vague = int(1)
+        stdout_lines = stdout.decode('utf-8').splitlines()
+        stderr_lines = stderr.decode('utf-8').splitlines()
+        combined_output = stdout_lines + stderr_lines
 
-            if any(key in p_out for key in ["The following keyword changes are necessary to proceed:",
-                                            "The following mask changes are necessary to proceed:",
-                                            "The following USE changes are necessary to proceed:",
-                                            "The following REQUIRED_USE flag constraints are unsatisfied:",
-                                            "One of the following masked packages is required to complete your request:"]):  # likely very fragile
-                need_cfg = int(1)
+        absent_patterns = [
+            r"no ebuilds.*satisfy"
+        ]
 
-        for p_out in stdout.decode('utf-8').splitlines():
+        ambiguous_patterns = [
+            r"short ebuild name",
+            r"is ambiguous",
+        ]
+
+        config_patterns = [
+            r"The following .* changes are necessary to proceed",
+            r"REQUIRED_USE flag constraints are unsatisfied",
+            r"masked packages.*required to complete your request"
+        ]
+
+        if pkgname:
+            is_absent = int(any(
+                any(re.search(p, line) for p in absent_patterns)
+                for line in combined_output
+            ))
+        else:
+            is_absent = 0
+
+        if pkgname:
+            is_vague = int(any(
+                any(re.search(p, line) for p in ambiguous_patterns)
+                for line in combined_output
+            ))
+        else:
+            is_vague = 0
+
+        need_cfg = int(any(
+            any(re.search(p, line) for p in config_patterns)
+            for line in combined_output
+        ))
+
+        for p_out in stdout_lines:
             if "[binary" in p_out:
-                is_bin = p_out.split("]")[1].split("[")[0].strip(" ")
+                is_bin = p_out.split("]")[1].split("[")[0].strip()
                 bin_list.append(is_bin)
 
             if "[ebuild" in p_out:
-                is_src = p_out.split("]")[1].split("[")[0].strip(" ")
+                is_src = p_out.split("]")[1].split("[")[0].strip()
                 src_list.append(is_src)
 
         if pkgname:
-            pickle.dump([bin_list, src_list, is_vague, need_cfg], open(
+            pickle.dump([bin_list, src_list, is_vague, is_absent, need_cfg], open(
                 os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "wb"))
         else:
-            pickle.dump([bin_list, src_list, is_vague, need_cfg], open(
+            pickle.dump([bin_list, src_list, is_vague, is_absent, need_cfg], open(
                 os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "wb"))
     except KeyboardInterrupt:
         p_exe.terminate()
