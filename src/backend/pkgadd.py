@@ -70,7 +70,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False):
             else:
                 sisyphus.depsolve.start(pkgname, nodeps=False)
 
-        bin_list, src_list, is_vague, is_absent, need_cfg = pickle.load(
+        bin_list, src_list, is_missing, is_vague, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "rb"))
 
     if is_vague != 0:  # catch ambiguous packages
@@ -113,7 +113,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False):
             print(f"{Fore.RED}{Style.BRIGHT}\nCannot proceed!\n{Style.RESET_ALL}{Fore.WHITE}{Style.BRIGHT}Please apply the above changes to your portage configuration files and try again!{Style.RESET_ALL}")
             sys.exit()
 
-    elif is_absent != 0:  # catch typos
+    elif is_missing != 0:  # catch typos
         p_exe = subprocess.Popen(
             ['emerge'] + nogo_args + (['--nodeps'] if nodeps else ['--with-bdeps=y']) + list(pkgname))
         try:

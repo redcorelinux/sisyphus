@@ -66,7 +66,7 @@ def start(ebuild=False, gfx_ui=False):
             sisyphus.syncall.start(gfx_ui=False)
             sisyphus.depsolve.start()
 
-        bin_list, src_list, is_vague, is_absent, need_cfg = pickle.load(
+        bin_list, src_list, is_missing, is_vague, need_cfg = pickle.load(
             open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
     if need_cfg != 0:  # catch aliens

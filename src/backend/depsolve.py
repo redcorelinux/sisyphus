@@ -21,7 +21,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 def start(pkgname=None, nodeps=False):
     bin_list = []
     src_list = []
-    is_absent = []
+    is_missing = []
     is_vague = int()
     need_cfg = int()
 
@@ -42,10 +42,6 @@ def start(pkgname=None, nodeps=False):
         stderr_lines = stderr.decode('utf-8').splitlines()
         combined_output = stdout_lines + stderr_lines
 
-        absent_patterns = [
-            r"no ebuilds.*satisfy"
-        ]
-
         ambiguous_patterns = [
             r"short ebuild name",
             r"is ambiguous",
@@ -57,13 +53,17 @@ def start(pkgname=None, nodeps=False):
             r"masked packages.*required to complete your request"
         ]
 
+        pkg_missing_patterns = [
+            r"no ebuilds.*satisfy"
+        ]
+
         if pkgname:
-            is_absent = int(any(
-                any(re.search(p, line) for p in absent_patterns)
+            is_missing = int(any(
+                any(re.search(p, line) for p in pkg_missing_patterns)
                 for line in combined_output
             ))
         else:
-            is_absent = 0
+            is_missing = 0
 
         if pkgname:
             is_vague = int(any(
@@ -88,10 +88,10 @@ def start(pkgname=None, nodeps=False):
                 src_list.append(is_src)
 
         if pkgname:
-            pickle.dump([bin_list, src_list, is_vague, is_absent, need_cfg], open(
+            pickle.dump([bin_list, src_list, is_missing, is_vague, need_cfg], open(
                 os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "wb"))
         else:
-            pickle.dump([bin_list, src_list, is_vague, is_absent, need_cfg], open(
+            pickle.dump([bin_list, src_list, is_missing, is_vague, need_cfg], open(
                 os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "wb"))
     except KeyboardInterrupt:
         p_exe.terminate()

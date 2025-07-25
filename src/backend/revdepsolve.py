@@ -47,14 +47,14 @@ def start(pkgname=None, depclean=False, unmerge=False):
             r"is ambiguous"
         ]
 
+        pkg_missing_patterns = [
+            r"Couldn't find",
+            r"to depclean\."
+        ]
+
         required_patterns = [
             r"pulled in by:",
             r"required"
-        ]
-
-        missing_patterns = [
-            r"Couldn't find",
-            r"to depclean\."
         ]
 
         for p_out in stdout_lines:
@@ -67,12 +67,12 @@ def start(pkgname=None, depclean=False, unmerge=False):
                     to_remove += match.group(4)
                 rm_list.append(to_remove)
 
+        is_installed = int(not any(re.search(p, line)
+                                   for line in combined_output for p in pkg_missing_patterns))
+        is_needed = int(any(re.search(p, line)
+                            for line in combined_output for p in required_patterns))
         is_vague = int(any(re.search(p, line)
                        for line in combined_output for p in ambiguous_patterns))
-        is_needed = int(any(re.search(p, line)
-                        for line in combined_output for p in required_patterns))
-        is_installed = int(not any(re.search(p, line)
-                           for line in combined_output for p in missing_patterns))
 
     except KeyboardInterrupt:
         p_exe.terminate()

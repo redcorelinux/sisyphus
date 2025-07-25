@@ -29,7 +29,7 @@ def start(dl_world=False, gfx_ui=False):
             sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle")
 
     with open(file_path, "rb") as f:
-        bin_list, src_list, is_vague, is_absent, need_cfg = pickle.load(f)
+        bin_list, src_list, is_missing, is_vague, need_cfg = pickle.load(f)
 
     dl_list = [f'={package}' for package in bin_list]
 
