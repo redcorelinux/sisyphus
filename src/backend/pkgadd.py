@@ -123,7 +123,13 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False, only
                 p_exe.kill()
             sys.exit()
         if gfx_ui:
-            pass  # GUI always calls correctly, no typos
+            print(
+                "\nInstallation failed; some specified packages are missing or not found.")
+            for i in range(9, 0, -1):
+                print(f"Killing application in : {i} seconds!")
+                time.sleep(1)
+
+            os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
         else:
             print(f"{Fore.RED}{Style.BRIGHT}\nInstallation failed; some specified packages are missing or not found.\n{Style.RESET_ALL}")
             sys.exit()
