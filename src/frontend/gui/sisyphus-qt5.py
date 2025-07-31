@@ -475,8 +475,8 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgname = Sisyphus.pkgname
-        sisyphus.pkgadd.start(
-            pkgname, ebuild=False, gfx_ui=True, oneshot=False, nodeps=False)
+        sisyphus.pkgadd.start(pkgname, ebuild=False, gfx_ui=True,
+                              oneshot=False, nodeps=False, onlydeps=False)
         self.finished.emit()
 
     @QtCore.pyqtSlot()

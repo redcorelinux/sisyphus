@@ -106,21 +106,25 @@ def install(pkgname: List[str],
                 False, "--ebuild", "-e", help='Install ebuild(source) package if binary package is not found (slower).'),
             oneshot: bool = typer.Option(
                 False, "--oneshot", "-1", help='Install the package without marking it as explicitly installed.'),
-            nodeps: bool = typer.Option(False, "--nodeps", help='Install the package without retrieving its dependencies.')):
+            nodeps: bool = typer.Option(
+                False, "--nodeps", help='Install only the package itself without installing any dependencies.'),
+            onlydeps: bool = typer.Option(False, "--onlydeps", help='Install only the package dependencies without installing the package itself.')):
     """
     Install binary and/or ebuild(source) packages.\n
     Binary packages are default, however the --ebuild option can be used to install ebuild(source) packages.\n
     The --ebuild option will be recommended automatically if a binary package is not found but a corresponding ebuild (source) package is available.\n
     The --ebuild option will revert to binary packages when installation from an ebuild (source) package is unnecessary. This option can be safely used at all times.\n
     The --ebuild option will prioritize the use of binary packages (when available) to fulfill dependencies for the ebuild (source) package, thereby accelerating the installation process.\n
-    The --oneshot option adheres to the aforementioned rules but does not designate the package as explicitly installed. In Gentoo Linux terminology, this means it is not added to the world set.\n
-    The --nodeps option adheres to the aforementioned rules but does not retrieve the package dependecies. In conjunction with the --oneshot option, it can be used to quickly reinstall any already installed *BINARY* package.\n
-    The options --ebuild, --oneshot, and --nodeps can be utilized independently or in conjunction with one another, in either their short or long forms.\n
-    The sequence of utilizing the --ebuild, --oneshot, and --nodeps options is flexible; they can be applied before or after specifying the package name.\n
+    The --oneshot option adheres to the aforementioned rules but does not mark the package as explicitly installed.\n
+    The --nodeps option adheres to the aforementioned rules but does not install the package dependecies.\n
+    The --onlydeps option adheres to the aforementioned rules but does not install the package itself.\n
+    The --ebuild, --oneshot, and/or --nodeps/--onlydeps options can be utilized independently or in conjunction with one another, in either their short or long forms.\n
+    The sequence of utilizing the --ebuild, --oneshot, and/or --nodeps/--onlydeps options is flexible; they can be applied before or after specifying the package name.\n
+    The --nodeps and --onlydeps options are mutually exclusive and cannot be used at the same time.\n
     \n
     !!! NOTE !!!\n
     \n
-    To minimize the risk of inadvertent input or typographical errors, the --nodeps option is intentionally without a shortened form.\n
+    To minimize the risk of inadvertent input or typographical errors, the --nodeps and --onlydeps options are intentionally without a shortened form.\n
     \n
     !!! WARNING !!!\n
     \n
@@ -134,14 +138,19 @@ def install(pkgname: List[str],
         sisyphus install -1 thunderbird\n
         sisyphus install falkon -e -1\n
         sisyphus install --nodeps --oneshot opera\n
-        sisyphus install -e --nodeps vivaldi\n
+        sisyphus install -e --onlydeps vivaldi\n
     """
-    if ebuild:
-        sisyphus.pkgadd.start(
-            pkgname, ebuild=True, gfx_ui=False, oneshot=oneshot, nodeps=nodeps)
+    if nodeps and onlydeps:
+        typer.secho(
+            "Error: The --nodeps and --onlydeps options are mutually exclusive and cannot be used together.", fg=typer.colors.RED)
+        raise typer.Exit(code=1)
     else:
-        sisyphus.pkgadd.start(
-            pkgname, ebuild=False, gfx_ui=False, oneshot=oneshot, nodeps=nodeps)
+        if ebuild:
+            sisyphus.pkgadd.start(pkgname, ebuild=True, gfx_ui=False,
+                                  oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps)
+        else:
+            sisyphus.pkgadd.start(pkgname, ebuild=False, gfx_ui=False,
+                                  oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps)
 
 
 @app.command("uninstall")

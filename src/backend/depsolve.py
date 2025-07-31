@@ -18,7 +18,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 
 @animation.wait('resolving dependencies')
-def start(pkgname=None, nodeps=False):
+def start(pkgname=None, nodeps=False, onlydeps=False):
     bin_list = []
     src_list = []
     is_missing = []
@@ -26,8 +26,9 @@ def start(pkgname=None, nodeps=False):
     need_cfg = int()
 
     if pkgname:
-        args = ['--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n',
-                '--fuzzy-search=n'] + (['--nodeps'] if nodeps else ['--with-bdeps=y']) + list(pkgname)
+        args = ['--quiet', '--pretend', '--getbinpkg', '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n'] + \
+            (['--nodeps'] if nodeps else ['--with-bdeps=y']) + \
+            (['--onlydeps'] if onlydeps else []) + list(pkgname)
     else:
         args = ['--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg', '--rebuilt-binaries',
                 '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n', '@world']
