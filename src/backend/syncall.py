@@ -53,14 +53,15 @@ def start(gfx_ui=False):
         if is_sane == 1:
             sync_evrth()
             if gfx_ui:
-                print(f"\n\nThere are {unread_count} unread news article(s).")
+                print(
+                    f"\n\nThere are {unread_count} unread Redcore Linux Project news article(s).")
             else:
                 if unread_count > 0:
                     print(
-                        f"\n\nThere are {Fore.RED}{Style.BRIGHT}{unread_count}{Style.RESET_ALL} unread news article(s).")
+                        f"\n\nThere are {Fore.RED}{Style.BRIGHT}{unread_count}{Style.RESET_ALL} unread Redcore Linux Project news article(s).")
                 else:
                     print(
-                        f"\n\nThere are {Fore.GREEN}{unread_count}{Style.RESET_ALL} unread news article(s).")
+                        f"\n\nThere are {Fore.GREEN}{unread_count}{Style.RESET_ALL} unread Redcore Linux Project news article(s).")
         else:
             if gfx_ui:
                 if "packages-next" in bhst_addr:
