@@ -58,10 +58,10 @@ def start(gfx_ui=False):
             else:
                 if unread_count > 0:
                     print(
-                        f"\n\nThere are {Fore.RED}{Style.BRIGHT}{unread_count}{Style.RESET_ALL} unread Redcore Linux Project news article(s).")
+                        f"\n\nThere are {Fore.RED}{Style.BRIGHT}{unread_count}{Style.RESET_ALL} unread {Fore.WHITE}{Style.BRIGHT}Redcore Linux Project{Style.RESET_ALL} news article(s).")
                 else:
                     print(
-                        f"\n\nThere are {Fore.GREEN}{unread_count}{Style.RESET_ALL} unread Redcore Linux Project news article(s).")
+                        f"\n\nThere are {Fore.GREEN}{unread_count}{Style.RESET_ALL} unread {Fore.WHITE}{Style.BRIGHT}Redcore Linux Project{Style.RESET_ALL} news article(s).")
         else:
             if gfx_ui:
                 if "packages-next" in bhst_addr:
