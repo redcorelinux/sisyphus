@@ -86,18 +86,18 @@ def search(package: List[str] = typer.Argument(...),
     With this option, more than one package can be provided as search term.\n
     '-d', '-f' and '-q' (quiet) options are ignored in this mode.\n
     """
-    if not ebuild:
+    if not package:
+        raise typer.Exit(
+            'No search term provided, try: sisyphus search --help')
+
+    if ebuild:
+        sisyphus.searchdb.start('ebuild', '', package, '', quiet)
+    else:
         if '/' in package[0]:
             cat, pn = package[0].split('/')
         else:
             cat, pn = '', package[0]
         sisyphus.searchdb.start(filter.value, cat, pn, desc, quiet)
-    else:
-        if not package:
-            raise typer.Exit(
-                'No search term provided, try: sisyphus search --help')
-        else:
-            sisyphus.searchdb.estart(package)
 
 
 @app.command("install")
@@ -211,7 +211,7 @@ def autoclean():
     if sisyphus.checkenv.root():
         sisyphus.purgeenv.cache()
     else:
-        sys.exit("\nYou need root permissions to do this, exiting!\n")
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
 @app.command("update")
@@ -225,7 +225,7 @@ def update():
     if sisyphus.checkenv.root():
         sisyphus.syncall.start(gfx_ui=False)
     else:
-        sys.exit("\nYou need root permissions to do this, exiting!\n")
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
 @app.command("upgrade")
@@ -259,7 +259,10 @@ def spmsync():
     * Examples:\n
         sisyphus spmsync\n
     """
-    sisyphus.syncspm.start()
+    if sisyphus.checkenv.root():
+        sisyphus.syncspm.start()
+    else:
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
 @app.command("rescue")
@@ -273,7 +276,10 @@ def rescue():
     * Examples:\n
         sisyphus rescue\n
     """
-    sisyphus.recoverdb.start()
+    if sisyphus.checkenv.root()
+        sisyphus.recoverdb.start()
+    else:
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
 class Branch(str, Enum):
@@ -321,7 +327,7 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
     if sisyphus.checkenv.root():
         sisyphus.setbranch.start(branch.value, remote.value, gfx_ui=False)
     else:
-        sys.exit("\nYou need root permissions to do this, exiting!\n")
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
 @app.command("sysinfo")
@@ -355,7 +361,10 @@ def setmirror(index: int):
         sisyphus mirror set 2\n
         sisyphus mirror set 5\n
     """
-    sisyphus.setmirror.setActive(index)
+    if sisyphus.checkenv.root():
+        sisyphus.setmirror.setActive(index)
+    else:
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
 @getNews.command("list")
@@ -377,7 +386,10 @@ def readnews(index: int):
     * Example:\n
         sisyphus news read 1\n
     """
-    sisyphus.getnews.start(read=True, article_nr=index)
+    if sisyphus.checkenv.root():
+        sisyphus.getnews.start(read=True, article_nr=index)
+    else:
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
 @getNews.command("unread")
@@ -388,7 +400,10 @@ def unreadnews(index: int):
     * Example:\n
         sisyphus news unread 2\n
     """
-    sisyphus.getnews.start(unread=True, article_nr=index)
+    if sisyphus.checkenv.root():
+        sisyphus.getnews.start(unread=True, article_nr=index)
+    else:
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
 if __name__ == "__main__":

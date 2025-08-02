@@ -51,7 +51,7 @@ def start(depclean=False, gfx_ui=False):
     args = ['--quiet', '--depclean']
 
     if not sisyphus.checkenv.root() and depclean:
-        print(f"{Fore.RED}{Style.BRIGHT}\nRoot permissions are required to perform this action.\n{Style.RESET_ALL}")
+        print(f"{Fore.WHITE}\nYou need root permissions to do this, exiting!\n{Style.RESET_ALL}")
         sys.exit()
     else:
         if gfx_ui:

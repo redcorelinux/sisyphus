@@ -71,6 +71,13 @@ def srch_rslt(filter, cat, pn, desc, single):
 
 
 def start(filter, cat, pn, desc, single):
+    if filter == 'ebuild':
+        pkgnames = [pn] if isinstance(pn, str) else pn
+        print(
+            f"\nSearching {Fore.WHITE}{Style.BRIGHT}source{Style.RESET_ALL} packages...\n")
+        subprocess.call(['emerge', '--search', '--getbinpkg'] + pkgnames)
+        return
+
     if sisyphus.checkenv.root():
         print(f"{Fore.RED}{Style.BRIGHT}Searching as root allows database updates. {Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results would be accurate.{Style.RESET_ALL}")
         while True:
@@ -88,7 +95,3 @@ def start(filter, cat, pn, desc, single):
         print(f"{Fore.RED}{Style.BRIGHT}Searching as user does not allow database updates.{Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results may not be accurate.{Style.RESET_ALL}")
 
     srch_rslt(filter, cat, pn, desc, single)
-
-
-def estart(pkgname):
-    subprocess.call(['emerge', '--search', '--getbinpkg'] + list(pkgname))
