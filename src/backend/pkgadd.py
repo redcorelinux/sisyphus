@@ -57,7 +57,7 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False, only
     nogo_args = ['--quiet', '--pretend', '--getbinpkg',
                  '--rebuilt-binaries', '--misspell-suggestion=n', '--fuzzy-search=n']
     if not sisyphus.checkenv.root():
-        print(f"{Fore.RED}{Style.BRIGHT}\nRoot permissions are required for this operation.\n{Style.RESET_ALL}")
+        print(f"{Fore.WHITE}\nYou need root permissions to do this, exiting!\n{Style.RESET_ALL}")
         sys.exit()
     else:
         if gfx_ui:
