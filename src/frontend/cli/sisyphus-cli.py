@@ -276,7 +276,7 @@ def rescue():
     * Examples:\n
         sisyphus rescue\n
     """
-    if sisyphus.checkenv.root()
+    if sisyphus.checkenv.root():
         sisyphus.recoverdb.start()
     else:
         raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
