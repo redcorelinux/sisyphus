@@ -267,6 +267,10 @@ class Sisyphus(QtWidgets.QMainWindow):
         if self.settingsWindow is None:
             self.settingsWindow = SettingsWindow(self, self.progressWindow)
 
+            self.settingsWindow.showProgressRequested.connect(self.showProgress)
+            self.settingsWindow.hideProgressRequested.connect(self.hideProgress)
+            self.settingsWindow.updateSystemRequested.connect(self.updateSystem)
+
         self.settingsWindow.show()
 
     def closeMainWindow(self):
@@ -332,9 +336,12 @@ class ProgressWindow(QtWidgets.QMainWindow):
 
 
 class SettingsWindow(QtWidgets.QMainWindow):
+    showProgressRequested = QtCore.pyqtSignal()
+    hideProgressRequested = QtCore.pyqtSignal()
+    updateSystemRequested = QtCore.pyqtSignal()
+
     def __init__(self, parent=None, progressWindow=None):
         super(SettingsWindow, self).__init__(parent)
-        self.mainWindow = parent
         self.progressWindow = progressWindow
         selected_branch = None
         selected_remote = None
@@ -426,16 +433,16 @@ class SettingsWindow(QtWidgets.QMainWindow):
 
     def showProgress(self):
         self.disableUiButtons()
-        self.mainWindow.showProgress()
+        self.showProgressRequested.emit()
 
         if self.progressWindow is None:
-            self.progressWindow = ProgressWindow(self.mainWindow)
+            self.progressWindow = ProgressWindow(self)
             self.branchWorker.workerOutput.connect(
                 self.progressWindow.updateProgressWindow)
 
     def hideProgress(self):
-        self.mainWindow.hideProgress()
-        self.mainWindow.updateSystem()
+        self.hideProgressRequested.emit()
+        self.updateSystemRequested.emit()
         self.MIRRORLIST = sisyphus.setmirror.getList()
         self.updateMirrorList()
         self.enableUiButtons()
