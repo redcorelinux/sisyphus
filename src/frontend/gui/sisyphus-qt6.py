@@ -18,6 +18,13 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.centerOnScreen()
         self.show()
 
+        def setupWorkerThread(worker, thread, start_slot):
+            worker.moveToThread(thread)
+            worker.started.connect(self.showProgress)
+            thread.started.connect(start_slot)
+            thread.finished.connect(self.hideProgress)
+            worker.finished.connect(thread.quit)
+
         self.filterApplications = OrderedDict([
             ('Package Name', 'pn'),
             ('Package Category', 'cat'),
@@ -50,49 +57,32 @@ class Sisyphus(QtWidgets.QMainWindow):
 
         self.updateWorker = MainWorker()
         self.updateThread = QtCore.QThread()
-        self.updateWorker.moveToThread(self.updateThread)
-        self.updateWorker.started.connect(self.showProgress)
-        self.updateThread.started.connect(self.updateWorker.startUpdate)
-        self.updateThread.finished.connect(self.hideProgress)
-        self.updateWorker.finished.connect(self.updateThread.quit)
+        setupWorkerThread(self.updateWorker, self.updateThread,
+                          self.updateWorker.startUpdate)
 
         self.installButton.clicked.connect(self.packageInstall)
         self.installWorker = MainWorker()
         self.installThread = QtCore.QThread()
-        self.installWorker.moveToThread(self.installThread)
-        self.installWorker.started.connect(self.showProgress)
-        self.installThread.started.connect(self.installWorker.startInstall)
-        self.installThread.finished.connect(self.hideProgress)
-        self.installWorker.finished.connect(self.installThread.quit)
+        setupWorkerThread(self.installWorker, self.installThread,
+                          self.installWorker.startInstall)
 
         self.uninstallButton.clicked.connect(self.packageUninstall)
         self.uninstallWorker = MainWorker()
         self.uninstallThread = QtCore.QThread()
-        self.uninstallWorker.moveToThread(self.uninstallThread)
-        self.uninstallWorker.started.connect(self.showProgress)
-        self.uninstallThread.started.connect(
-            self.uninstallWorker.startUninstall)
-        self.uninstallThread.finished.connect(self.hideProgress)
-        self.uninstallWorker.finished.connect(self.uninstallThread.quit)
+        setupWorkerThread(self.uninstallWorker, self.uninstallThread,
+                          self.uninstallWorker.startUninstall)
 
         self.upgradeButton.clicked.connect(self.systemUpgrade)
         self.upgradeWorker = MainWorker()
         self.upgradeThread = QtCore.QThread()
-        self.upgradeWorker.moveToThread(self.upgradeThread)
-        self.upgradeWorker.started.connect(self.showProgress)
-        self.upgradeThread.started.connect(self.upgradeWorker.startUpgrade)
-        self.upgradeThread.finished.connect(self.hideProgress)
-        self.upgradeWorker.finished.connect(self.upgradeThread.quit)
+        setupWorkerThread(self.upgradeWorker, self.upgradeThread,
+                          self.upgradeWorker.startUpgrade)
 
         self.autoremoveButton.clicked.connect(self.autoRemove)
         self.autoremoveWorker = MainWorker()
         self.autoremoveThread = QtCore.QThread()
-        self.autoremoveWorker.moveToThread(self.autoremoveThread)
-        self.autoremoveWorker.started.connect(self.showProgress)
-        self.autoremoveThread.started.connect(
-            self.autoremoveWorker.startAutoremove)
-        self.autoremoveThread.finished.connect(self.hideProgress)
-        self.autoremoveWorker.finished.connect(self.autoremoveThread.quit)
+        setupWorkerThread(self.autoremoveWorker, self.autoremoveThread,
+                          self.autoremoveWorker.startAutoremove)
 
         self.updateSystem()
 
@@ -267,9 +257,12 @@ class Sisyphus(QtWidgets.QMainWindow):
         if self.settingsWindow is None:
             self.settingsWindow = SettingsWindow(self, self.progressWindow)
 
-            self.settingsWindow.showProgressRequested.connect(self.showProgress)
-            self.settingsWindow.hideProgressRequested.connect(self.hideProgress)
-            self.settingsWindow.updateSystemRequested.connect(self.updateSystem)
+            self.settingsWindow.showProgressRequested.connect(
+                self.showProgress)
+            self.settingsWindow.hideProgressRequested.connect(
+                self.hideProgress)
+            self.settingsWindow.updateSystemRequested.connect(
+                self.updateSystem)
 
         self.settingsWindow.show()
 
