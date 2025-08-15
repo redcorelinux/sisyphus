@@ -323,7 +323,7 @@ class Sisyphus(QtWidgets.QMainWindow):
         self.progressWindow.show()
 
     def showSettingsWindow(self):
-        if self.settingsWindow is None:
+        if self.settingsWindow is None or not self.settingsWindow.isVisible():
             self.settingsWindow = SettingsWindow(
                 self, self.progressWindow, auto_show_progress=False, first_run=False)
 
