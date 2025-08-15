@@ -1,11 +1,80 @@
 #!/usr/bin/python3
 
+import os
 import sys
 import sqlite3
 import signal
 import sisyphus
 from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
+
+marker_paths = [
+    os.path.join(sisyphus.getfs.g_src_dir, '.git'),
+    os.path.join(sisyphus.getfs.r_src_dir, '.git'),
+    os.path.join(sisyphus.getfs.p_cfg_dir, '.git')
+]
+
+
+class FirstRun(QtWidgets.QDialog):
+    finishedFirstRun = QtCore.pyqtSignal()
+
+    def __init__(self):
+        super(FirstRun, self).__init__()
+        self.settingsWindow = None
+        self.progressWindow = ProgressWindow(parent=None)
+        self.progressWindow.hideButton.hide()
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        uic.loadUi('/usr/share/sisyphus/ui/firstrun.ui', self)
+        self.centerOnScreen()
+        self.show()
+
+        self.abortButton.clicked.connect(self.abortFirstRun)
+        self.configureButton.clicked.connect(self.showSettingsWindow)
+
+    def showProgress(self):
+        self.abortButton.setEnabled(False)
+        self.configureButton.setEnabled(False)
+        if self.progressWindow:
+            self.progressWindow.show()
+
+    def hideProgress(self):
+        self.abortButton.setEnabled(True)
+        self.configureButton.setEnabled(True)
+        if self.progressWindow:
+            self.progressWindow.hide()
+
+        self.finishedFirstRun.emit()
+        self.close()
+
+    def abortFirstRun(self):
+        self.close()
+
+    def showSettingsWindow(self):
+        if self.settingsWindow is None or not self.settingsWindow.isVisible():
+            self.settingsWindow = SettingsWindow(
+                self, self.progressWindow, auto_show_progress=True, first_run=True)
+
+            self.settingsWindow.showProgressRequested.connect(
+                self.showProgress)
+            self.settingsWindow.hideProgressRequested.connect(
+                self.hideProgress)
+            self.settingsWindow.destroyed.connect(self.onSettingsWindowClosed)
+
+        self.settingsWindow.show()
+        self.settingsWindow.raise_()
+        self.settingsWindow.activateWindow()
+
+    def onSettingsWindowClosed(self):
+        self.settingsWindow = None
+
+    def centerOnScreen(self):
+        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
+        windowGeometry = self.geometry()
+        horizontalPosition = int(
+            (screenGeometry.width() - windowGeometry.width()) / 2)
+        verticalPosition = int(
+            (screenGeometry.height() - windowGeometry.height()) / 2)
+        self.move(horizontalPosition, verticalPosition)
 
 
 class Sisyphus(QtWidgets.QMainWindow):
@@ -255,7 +324,8 @@ class Sisyphus(QtWidgets.QMainWindow):
 
     def showSettingsWindow(self):
         if self.settingsWindow is None:
-            self.settingsWindow = SettingsWindow(self, self.progressWindow)
+            self.settingsWindow = SettingsWindow(
+                self, self.progressWindow, auto_show_progress=False, first_run=False)
 
             self.settingsWindow.showProgressRequested.connect(
                 self.showProgress)
@@ -263,8 +333,14 @@ class Sisyphus(QtWidgets.QMainWindow):
                 self.hideProgress)
             self.settingsWindow.updateSystemRequested.connect(
                 self.updateSystem)
+            self.settingsWindow.destroyed.connect(self.onSettingsWindowClosed)
 
         self.settingsWindow.show()
+        self.settingsWindow.raise_()
+        self.settingsWindow.activateWindow()
+
+    def onSettingsWindowClosed(self):
+        self.settingsWindow = None
 
     def closeMainWindow(self):
         self.close()
@@ -333,9 +409,11 @@ class SettingsWindow(QtWidgets.QMainWindow):
     hideProgressRequested = QtCore.pyqtSignal()
     updateSystemRequested = QtCore.pyqtSignal()
 
-    def __init__(self, parent=None, progressWindow=None):
+    def __init__(self, parent=None, progressWindow=None, auto_show_progress=False, first_run=False):
         super(SettingsWindow, self).__init__(parent)
         self.progressWindow = progressWindow
+        self.auto_show_progress = auto_show_progress
+        self.first_run = first_run
         selected_branch = None
         selected_remote = None
         uic.loadUi('/usr/share/sisyphus/ui/settings.ui', self)
@@ -352,9 +430,7 @@ class SettingsWindow(QtWidgets.QMainWindow):
 
         self.branchCombo.blockSignals(True)
         self.branchCombo.addItems(self.branches.keys())
-        system_branch = sisyphus.getenv.sys_brch()
-        self.branchCombo.setCurrentText(next(name for name, value in self.branches.items(
-        ) if value == system_branch))  # default to current branch, we have an API for it
+        self.branchCombo.setCurrentText('master')
         self.branchCombo.blockSignals(False)
         self.branchCombo.currentIndexChanged.connect(self.loadBranchRemote)
 
@@ -416,29 +492,27 @@ class SettingsWindow(QtWidgets.QMainWindow):
 
         self.branchThread.start()
 
-    def disableUiButtons(self):
-        self.mirrorButton.setEnabled(False)
-        self.branchButton.setEnabled(False)
-
-    def enableUiButtons(self):
-        self.mirrorButton.setEnabled(True)
-        self.branchButton.setEnabled(True)
-
     def showProgress(self):
-        self.disableUiButtons()
         self.showProgressRequested.emit()
 
         if self.progressWindow is None:
-            self.progressWindow = ProgressWindow(self)
+            self.progressWindow = ProgressWindow(None)
             self.branchWorker.workerOutput.connect(
                 self.progressWindow.updateProgressWindow)
+
+        if self.auto_show_progress and self.progressWindow is not None:
+            self.progressWindow.show()
+
+        self.close()
 
     def hideProgress(self):
         self.hideProgressRequested.emit()
         self.updateSystemRequested.emit()
         self.MIRRORLIST = sisyphus.setmirror.getList()
         self.updateMirrorList()
-        self.enableUiButtons()
+
+        if self.first_run and self.progressWindow is not None:
+            self.progressWindow.hide()
 
     def centerOnScreen(self):
         screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
@@ -510,6 +584,20 @@ class MainWorker(QtCore.QObject):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Breeze')
-    window = Sisyphus()
-    window.inputBox.setFocus()
+
+    if not all(os.path.exists(path) for path in marker_paths):
+        first_run = FirstRun()
+
+        def launch_main():
+            global window
+            window = Sisyphus()
+            window.inputBox.setFocus()
+            window.show()
+
+        first_run.finishedFirstRun.connect(launch_main)
+        window = first_run
+    else:
+        window = Sisyphus()
+        window.inputBox.setFocus()
+
     sys.exit(app.exec_())

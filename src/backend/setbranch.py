@@ -83,7 +83,7 @@ def ins_r_repo(branch, remote, gfx_ui=False):
     g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
 
     if gfx_ui:
-        print("\ninjecting Rentoo Linux ebuild overlay", flush=True)
+        print("\ninjecting Redcore Linux ebuild overlay", flush=True)
     else:
         pass
 
