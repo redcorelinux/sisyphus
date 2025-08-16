@@ -285,6 +285,7 @@ def rescue():
 class Branch(str, Enum):
     master = 'master'
     next = 'next'
+    purge = 'purge'
 
 
 class Remote(str, Enum):
@@ -296,17 +297,19 @@ class Remote(str, Enum):
 @app.command("branch")
 def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(Remote.gitlab, "--remote", "-r")):
     """
-    Switch between the branches of Redcore Linux : 'master' (stable) or 'next' (testing), default branch is 'master' (stable)\n
-    Reconfigure the source trees, package configs (USE flags, keywords, masks, etc) and the binhost (binary repository)\n
-    Selection of a remote is optional (default is gitlab), but it can be accomplished by using the --remote option.\n
-    'BRANCH' can be one of the following : master, next\n
-    'REMOTE' can be one of the following : github, gitlab, pagure (default is gitlab)\n
+    Switch between the branches of Redcore Linux : 'master' (stable), 'next' (testing), or 'purge' (purge branch configuration).\n
+    Configure the source trees and package configs (USE flags, keywords, masks, etc)\n
+    Purge the source trees and package configs (USE flags, keywords, masks, etc)\n
+    Selection of a remote is optional, but it can be accomplished by using the --remote option.\n
+    'BRANCH' can be one of the following : master, next, purge\n
+    'REMOTE' can be one of the following : github, gitlab, pagure\n
     \n
     * Examples:\n
         sisyphus branch master                  # switch to branch 'master', use default remote (gitlab)\n
         sisyphus branch next                    # switch to branch 'next', use default remote (gitlab)\n
         sisyphus branch master --remote=github  # switch to branch 'master', use github remote\n
-        sisyphus branch next --remote=pagure    # switch to branch 'next', use pagure remote\n
+        sisyphus branch next -r pagure          # switch to branch 'next', use pagure remote\n
+        sisyphus branch purge                   # purge branch configuration (source trees, package configs(USE flags, keywords, masks, etc))\n
     \n
     Sisyphus will automatically pair the selected branch with the correct binhost (binary repository).\n
     However, since no geolocation is ever used, it may select one which is geographically far from you.\n
@@ -325,7 +328,15 @@ def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(R
         sisyphus mirror set 8\n
     """
     if sisyphus.checkenv.root():
-        sisyphus.setbranch.start(branch.value, remote.value, gfx_ui=False)
+        if branch.value == "purge":
+            if any(arg.startswith("--remote") or arg.startswith("-r") for arg in sys.argv):
+                raise typer.Exit(
+                    "\nThe 'purge' argument does not accept a '--remote' option. Please run: sisyphus branch purge\n")
+            else:
+                sisyphus.purgeenv.branch()
+                sisyphus.purgeenv.metadata()
+        else:
+            sisyphus.setbranch.start(branch.value, remote.value, gfx_ui=False)
     else:
         raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
