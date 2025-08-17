@@ -1,18 +1,53 @@
 #!/usr/bin/python3
 
+import click
+import os
 import sisyphus
 import typer
 from typing import List
 from enum import Enum
 import sys
 
+marker_paths = [
+    os.path.join(sisyphus.getfs.g_src_dir, '.git'),
+    os.path.join(sisyphus.getfs.r_src_dir, '.git'),
+    os.path.join(sisyphus.getfs.p_cfg_dir, '.git')
+]
+
 app = typer.Typer()
-mirrorSetup = typer.Typer()
+firstRun = typer.Typer()
 getNews = typer.Typer()
-app.add_typer(mirrorSetup, name="mirror",
-              help='List/Set the active binhost (binary repository) mirror.')
+mirrorSetup = typer.Typer()
 app.add_typer(getNews, name="news",
               help='List/Mark Read/Mark Unread news articles.')
+app.add_typer(mirrorSetup, name="mirror",
+              help='List/Set the active binhost (binary repository) mirror.')
+
+
+@firstRun.callback(invoke_without_command=True)
+def interactive_first_run(ctx: typer.Context):
+    if ctx.invoked_subcommand is None:
+        typer.secho(
+            "Welcome to Sisyphus!\n\n"
+            "This is your first time running the application.\n"
+            "Please configure your settings to continue.\n",
+            fg=typer.colors.GREEN,
+        )
+        branch_choice = typer.prompt(
+            "Select branch to initialize",
+            type=click.Choice(["master", "next"], case_sensitive=False),
+            default="master"
+        )
+        remote_choice = typer.prompt(
+            "Select remote to use",
+            type=click.Choice(["github", "gitlab", "pagure"],
+                              case_sensitive=False),
+            default="gitlab"
+        )
+        branchSetup(branch=Branch(branch_choice.lower()),
+                    remote=Remote(remote_choice.lower()))
+        typer.secho("\nFirst-run setup complete!", fg=typer.colors.GREEN)
+        raise typer.Exit(0)
 
 
 @app.callback()
@@ -282,65 +317,6 @@ def rescue():
         raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
-class Branch(str, Enum):
-    master = 'master'
-    next = 'next'
-    purge = 'purge'
-
-
-class Remote(str, Enum):
-    github = 'github'
-    gitlab = 'gitlab'
-    pagure = 'pagure'
-
-
-@app.command("branch")
-def branch(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(Remote.gitlab, "--remote", "-r")):
-    """
-    Switch between the branches of Redcore Linux : 'master' (stable), 'next' (testing), or 'purge' (purge branch configuration).\n
-    Configure the source trees and package configs (USE flags, keywords, masks, etc)\n
-    Purge the source trees and package configs (USE flags, keywords, masks, etc)\n
-    Selection of a remote is optional, but it can be accomplished by using the --remote option.\n
-    'BRANCH' can be one of the following : master, next, purge\n
-    'REMOTE' can be one of the following : github, gitlab, pagure\n
-    \n
-    * Examples:\n
-        sisyphus branch master                  # switch to branch 'master', use default remote (gitlab)\n
-        sisyphus branch next                    # switch to branch 'next', use default remote (gitlab)\n
-        sisyphus branch master --remote=github  # switch to branch 'master', use github remote\n
-        sisyphus branch next -r pagure          # switch to branch 'next', use pagure remote\n
-        sisyphus branch purge                   # purge branch configuration (source trees, package configs(USE flags, keywords, masks, etc))\n
-    \n
-    Sisyphus will automatically pair the selected branch with the correct binhost (binary repository).\n
-    However, since no geolocation is ever used, it may select one which is geographically far from you.\n
-    If that is inconvenient, you can manually select a binhost (binary repository) closer to your location,\n
-    \n
-    !!! WARNING !!!\n
-    \n
-    Branch 'master' must be paired with the stable binhost (binary repository) (odd numbers in 'sisyphus mirror list').\n
-    * Examples:\n
-        sisyphus mirror set 1\n
-        sisyphus mirror set 5\n
-    \n
-    Branch 'next' must be paired with the testing binhost (binary repository) (even numbers in 'sisyphus mirror list').\n
-    * Examples:\n
-        sisyphus mirror set 2\n
-        sisyphus mirror set 8\n
-    """
-    if sisyphus.checkenv.root():
-        if branch.value == "purge":
-            if any(arg.startswith("--remote") or arg.startswith("-r") for arg in sys.argv):
-                raise typer.Exit(
-                    "\nThe 'purge' argument does not accept a '--remote' option. Please run: sisyphus branch purge\n")
-            else:
-                sisyphus.purgeenv.branch()
-                sisyphus.purgeenv.metadata()
-        else:
-            sisyphus.setbranch.start(branch.value, remote.value, gfx_ui=False)
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
 @app.command("sysinfo")
 def sysinfo():
     """
@@ -417,7 +393,85 @@ def unreadnews(index: int):
         raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
 
 
+class Branch(str, Enum):
+    master = 'master'
+    next = 'next'
+    purge = 'purge'
+
+
+class Remote(str, Enum):
+    github = 'github'
+    gitlab = 'gitlab'
+    pagure = 'pagure'
+
+
+def branchSetup(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(Remote.gitlab, "--remote", "-r")):
+    """
+    Switch between the branches of Redcore Linux : 'master' (stable), 'next' (testing), or 'purge' (purge branch configuration).\n
+    Configure the source trees and package configs (USE flags, keywords, masks, etc)\n
+    Purge the source trees and package configs (USE flags, keywords, masks, etc)\n
+    Selection of a remote is optional, but it can be accomplished by using the --remote option.\n
+    'BRANCH' can be one of the following : master, next, purge\n
+    'REMOTE' can be one of the following : github, gitlab, pagure\n
+    \n
+    * Examples:\n
+        sisyphus branch master                  # switch to branch 'master', use default remote (gitlab)\n
+        sisyphus branch next                    # switch to branch 'next', use default remote (gitlab)\n
+        sisyphus branch master --remote=github  # switch to branch 'master', use github remote\n
+        sisyphus branch next -r pagure          # switch to branch 'next', use pagure remote\n
+        sisyphus branch purge                   # purge branch configuration (source trees, package configs(USE flags, keywords, masks, etc))\n
+    \n
+    Sisyphus will automatically pair the selected branch with the correct binhost (binary repository).\n
+    However, since no geolocation is ever used, it may select one which is geographically far from you.\n
+    If that is inconvenient, you can manually select a binhost (binary repository) closer to your location,\n
+    \n
+    !!! WARNING !!!\n
+    \n
+    Branch 'master' must be paired with the stable binhost (binary repository) (odd numbers in 'sisyphus mirror list').\n
+    * Examples:\n
+        sisyphus mirror set 1\n
+        sisyphus mirror set 5\n
+    \n
+    Branch 'next' must be paired with the testing binhost (binary repository) (even numbers in 'sisyphus mirror list').\n
+    * Examples:\n
+        sisyphus mirror set 2\n
+        sisyphus mirror set 8\n
+    """
+    if sisyphus.checkenv.root():
+        if branch.value == "purge":
+            if any(arg.startswith("--remote") or arg.startswith("-r") for arg in sys.argv):
+                raise typer.Exit(
+                    "\nThe 'purge' argument does not accept a '--remote' option. Please run: sisyphus branch purge\n")
+            else:
+                sisyphus.purgeenv.branch()
+                sisyphus.purgeenv.metadata()
+        else:
+            sisyphus.setbranch.start(branch.value, remote.value, gfx_ui=False)
+    else:
+        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
+
+
+app.command("branch")(branchSetup)
+firstRun.command("branch")(branchSetup)
+
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and not '--help' in sys.argv:
+    if ("--help" in sys.argv or "-h" in sys.argv):
+        app()
+        sys.exit(0)
+
+    if not all(os.path.exists(path) for path in marker_paths):
+        if len(sys.argv) > 1:
+            typer.secho(
+                "\nSisyphus is not initialized!\n\n"
+                "First-time setup is required before you can use any commands.\n"
+                "Please run this program with no arguments to launch the setup wizard.\n",
+                fg=typer.colors.RED,
+            )
+            sys.exit(1)
+        firstRun()
+        sys.exit(0)
+
+    if len(sys.argv) > 1:
         sisyphus.setjobs.start()
+
     app()
