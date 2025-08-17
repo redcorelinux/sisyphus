@@ -8,12 +8,6 @@ import sisyphus
 from collections import OrderedDict
 from PyQt6 import QtCore, QtGui, QtWidgets, uic
 
-marker_paths = [
-    os.path.join(sisyphus.getfs.g_src_dir, '.git'),
-    os.path.join(sisyphus.getfs.r_src_dir, '.git'),
-    os.path.join(sisyphus.getfs.p_cfg_dir, '.git')
-]
-
 
 class FirstRun(QtWidgets.QDialog):
     finishedFirstRun = QtCore.pyqtSignal()
@@ -585,7 +579,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Breeze')
 
-    if not all(os.path.exists(path) for path in marker_paths):
+    if not sisyphus.getmarkers.markers_exist():
         first_run = FirstRun()
 
         def launch_main():

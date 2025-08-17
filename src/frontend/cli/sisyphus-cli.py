@@ -8,12 +8,6 @@ from typing import List
 from enum import Enum
 import sys
 
-marker_paths = [
-    os.path.join(sisyphus.getfs.g_src_dir, '.git'),
-    os.path.join(sisyphus.getfs.r_src_dir, '.git'),
-    os.path.join(sisyphus.getfs.p_cfg_dir, '.git')
-]
-
 app = typer.Typer()
 firstRun = typer.Typer()
 getNews = typer.Typer()
@@ -459,7 +453,7 @@ if __name__ == "__main__":
         app()
         sys.exit(0)
 
-    if not all(os.path.exists(path) for path in marker_paths):
+    if not sisyphus.getmarkers.markers_exist():
         if len(sys.argv) > 1:
             typer.secho(
                 "\nSisyphus is not initialized!\n\n"

@@ -4,6 +4,7 @@ from .depsolve import *
 from .dlbinpkg import *
 from .getenv import *
 from .getfs import *
+from .getmarkers import *
 from .getnews import *
 from .pkgadd import *
 from .pkgremove import *
