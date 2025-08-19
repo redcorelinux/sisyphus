@@ -3,12 +3,32 @@
 import os
 import sisyphus.getfs
 
-marker_paths = [
-    os.path.join(sisyphus.getfs.g_src_dir, ".git"),
-    os.path.join(sisyphus.getfs.r_src_dir, ".git"),
-    os.path.join(sisyphus.getfs.p_cfg_dir, ".git"),
+marker_dirs = [
+    sisyphus.getfs.g_src_dir,
+    sisyphus.getfs.r_src_dir,
+    sisyphus.getfs.p_cfg_dir,
 ]
 
 
 def markers_exist():
-    return all(os.path.exists(path) for path in marker_paths)
+    for d in marker_dirs:
+        if not os.path.isdir(d):
+            return False
+
+        git_path = os.path.join(d, ".git")
+        if not os.path.exists(git_path):
+            return False
+
+        entries = [f for f in os.listdir(d) if f != ".git"]
+
+        if os.path.isdir(git_path):
+            if not entries:
+                return False
+        elif os.path.isfile(git_path):
+            if entries:
+                return False
+            # else pass to bypass firstRun during ISO spin
+        else:
+            return False
+
+    return True
