@@ -1,47 +1,209 @@
 #!/usr/bin/python3
 
+import sys
 import click
-import os
-import sisyphus
 import typer
+import sisyphus
 from typing import List
 from enum import Enum
-import sys
 
 app = typer.Typer()
-firstRun = typer.Typer()
-getNews = typer.Typer()
-mirrorSetup = typer.Typer()
-app.add_typer(getNews, name="news",
-              help='List/Mark Read/Mark Unread news articles.')
-app.add_typer(mirrorSetup, name="mirror",
-              help='List/Set the active binhost (binary repository) mirror.')
+first_run = typer.Typer()
+news = typer.Typer()
+mirror = typer.Typer()
+
+app.add_typer(news, name="news", help="News management commands.")
+app.add_typer(mirror, name="mirror", help="Mirror management commands.")
 
 
-@firstRun.callback(invoke_without_command=True)
+class Filter(str, Enum):
+    all = "all"
+    alien = "alien"
+    installed = "installed"
+    available = "available"
+    upgradable = "upgradable"
+
+
+class Branch(str, Enum):
+    master = "master"
+    next = "next"
+    purge = "purge"
+
+
+class Remote(str, Enum):
+    github = "github"
+    gitlab = "gitlab"
+    pagure = "pagure"
+
+
+def branch_setup(branch: Branch = typer.Argument(...),
+                 remote: Remote = typer.Option(Remote.gitlab, "--remote", "-r")):
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+
+    if branch.value == "purge":
+        if any(arg.startswith("--remote") or arg.startswith("-r") for arg in sys.argv):
+            raise typer.Exit(
+                "\nThe 'purge' argument does not accept '--remote'.\n")
+        sisyphus.purgeenv.branch()
+        sisyphus.purgeenv.metadata()
+    else:
+        sisyphus.setbranch.start(branch.value, remote.value, gfx_ui=False)
+
+
+@first_run.callback(invoke_without_command=True)
 def interactive_first_run(ctx: typer.Context):
-    if ctx.invoked_subcommand is None:
+    if ctx.invoked_subcommand:
+        return
+
+    typer.secho(
+        "Welcome to Sisyphus!\n\n"
+        "This is your first time running the application.\n"
+        "Please configure your settings to continue.\n",
+        fg=typer.colors.GREEN,
+    )
+
+    branch_choice = typer.prompt(
+        "Select branch to initialize",
+        type=click.Choice(["master", "next"], case_sensitive=False),
+        default="master",
+    )
+    remote_choice = typer.prompt(
+        "Select remote to use",
+        type=click.Choice(["github", "gitlab", "pagure"],
+                          case_sensitive=False),
+        default="gitlab",
+    )
+
+    branch_setup(branch=Branch(branch_choice.lower()),
+                 remote=Remote(remote_choice.lower()))
+
+    typer.secho("\nFirst-run setup complete!", fg=typer.colors.GREEN)
+    raise typer.Exit(0)
+
+
+@app.command("search", help=sisyphus.helptexts.SEARCH)
+def search(package: List[str] = typer.Argument(...),
+           desc: str = typer.Option("", "--description", "-d"),
+           filter: Filter = typer.Option(
+               Filter.all, "--filter", "-f", show_default=True),
+           quiet: bool = typer.Option(False, "-q"),
+           ebuild: bool = typer.Option(False, "--ebuild", "-e")):
+    if not package:
+        raise typer.Exit(
+            "No search term provided, try: sisyphus search --help")
+
+    if ebuild:
+        sisyphus.searchdb.start("ebuild", "", package, "", quiet)
+    else:
+        cat, pn = package[0].split("/") if "/" in package else ("", package)
+        sisyphus.searchdb.start(filter.value, cat, pn, desc, quiet)
+
+
+@app.command("install", help=sisyphus.helptexts.INSTALL)
+def install(pkgname: List[str],
+            ebuild: bool = typer.Option(False, "--ebuild", "-e"),
+            oneshot: bool = typer.Option(False, "--oneshot", "-1"),
+            nodeps: bool = typer.Option(False, "--nodeps"),
+            onlydeps: bool = typer.Option(False, "--onlydeps")):
+    if nodeps and onlydeps:
         typer.secho(
-            "Welcome to Sisyphus!\n\n"
-            "This is your first time running the application.\n"
-            "Please configure your settings to continue.\n",
-            fg=typer.colors.GREEN,
-        )
-        branch_choice = typer.prompt(
-            "Select branch to initialize",
-            type=click.Choice(["master", "next"], case_sensitive=False),
-            default="master"
-        )
-        remote_choice = typer.prompt(
-            "Select remote to use",
-            type=click.Choice(["github", "gitlab", "pagure"],
-                              case_sensitive=False),
-            default="gitlab"
-        )
-        branchSetup(branch=Branch(branch_choice.lower()),
-                    remote=Remote(remote_choice.lower()))
-        typer.secho("\nFirst-run setup complete!", fg=typer.colors.GREEN)
-        raise typer.Exit(0)
+            "Error: --nodeps and --onlydeps are mutually exclusive.", fg=typer.colors.RED)
+        raise typer.Exit(code=1)
+
+    sisyphus.pkgadd.start(
+        pkgname, ebuild=ebuild, gfx_ui=False,
+        oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps
+    )
+
+
+@app.command("uninstall", help=sisyphus.helptexts.UNINSTALL)
+def uninstall(pkgname: List[str],
+              force: bool = typer.Option(False, "--force", "-f")):
+    sisyphus.pkgremove.start(
+        pkgname,
+        depclean=not force,
+        gfx_ui=False,
+        unmerge=force,
+    )
+
+
+@app.command("autoremove", help=sisyphus.helptexts.AUTOREMOVE)
+def autoremove():
+    sisyphus.sysclean.start(depclean=True, gfx_ui=False)
+
+
+@app.command("autoclean", help=sisyphus.helptexts.AUTOCLEAN)
+def autoclean():
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+    sisyphus.purgeenv.cache()
+
+
+@app.command("update", help=sisyphus.helptexts.UPDATE)
+def update():
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+    sisyphus.syncall.start(gfx_ui=False)
+
+
+@app.command("upgrade", help=sisyphus.helptexts.UPGRADE)
+def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
+    sisyphus.sysupgrade.start(ebuild=ebuild, gfx_ui=False)
+
+
+@app.command("spmsync", help=sisyphus.helptexts.SPMSYNC)
+def spmsync():
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+    sisyphus.syncspm.start()
+
+
+@app.command("rescue", help=sisyphus.helptexts.RESCUE)
+def rescue():
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+    sisyphus.recoverdb.start()
+
+
+@app.command("sysinfo", help=sisyphus.helptexts.SYSINFO)
+def sysinfo():
+    sisyphus.sysinfo.show()
+
+
+@mirror.command("list", help=sisyphus.helptexts.MIRROR_LIST)
+def list_mirrors():
+    sisyphus.setmirror.printList()
+
+
+@mirror.command("set", help=sisyphus.helptexts.MIRROR_SET)
+def set_mirror(index: int):
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+    sisyphus.setmirror.setActive(index)
+
+
+@news.command("list", help=sisyphus.helptexts.NEWS_LIST)
+def list_news():
+    sisyphus.getnews.start(list=True)
+
+
+@news.command("read", help=sisyphus.helptexts.NEWS_READ)
+def read_news(index: int):
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+    sisyphus.getnews.start(read=True, article_nr=index)
+
+
+@news.command("unread", help=sisyphus.helptexts.NEWS_UNREAD)
+def unread_news(index: int):
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+    sisyphus.getnews.start(unread=True, article_nr=index)
+
+
+app.command("branch", help=sisyphus.helptexts.BRANCH)(branch_setup)
+first_run.command("branch", help=sisyphus.helptexts.BRANCH)(branch_setup)
 
 
 @app.callback()
@@ -53,403 +215,12 @@ def app_callback(ctx: typer.Context):
 
     Use 'sisyphus COMMAND --help' for detailed usage.
     """
-    ctx.info_name = 'sisyphus'
 
+    ctx.info_name = "sisyphus"
 
-class Filter(str, Enum):
-    all = 'all'
-    alien = 'alien'
-    installed = 'installed'
-    available = 'available'
-    upgradable = 'upgradable'
-
-
-@app.command("search")
-def search(package: List[str] = typer.Argument(...),
-           desc: str = typer.Option(
-               '', '--description', '-d', help='Match description.'),
-           filter: Filter = typer.Option(
-               Filter.all, '--filter', '-f', show_default=True),
-           quiet: bool = typer.Option(
-               False, '-q', help='Short (one line) output.'),
-           ebuild: bool = typer.Option(False, "--ebuild", "-e", help='Search in ebuilds (slower).')):
-    """Search for binary and/or ebuild (source) packages.\n
-    By default will search for binary packages, using internal database.\n
-    The search term can be provided also in the category/name format.\n
-    \n
-    * Examples:\n
-        sisyphus search openbox\n
-        sisyphus search x11-wm/openbox\n
-    \n
-    Using * and ? wildcards is supported. An empty string will match everything (similar to *).\n
-    \n
-    * Examples:\n
-        sisyphus search x11-wm/     # search all packages in the x11-wm category\n
-        sisyphus search x11-wm/*    # search all packages in the x11-wm category\n
-    \n
-    In addition, search can be performed by package description, using the -d (--description) option:\n
-    \n
-    * Examples:\n
-        sisyphus search x11/open -d 'window manager'    # use single or double quotes when the description contains spaces\n
-    \n
-    Use the -f (--filter) option to select only packages of interest. Possible values:\n
-    \n
-        all (default)   - search the entire database\n
-        alien           - search for installed packages but not available     # (this filter can match packages installed from ebuilds or packages no longer maintained as binaries)\n
-        installed       - search in all installed packages\n
-        available       - search for available packages but not installed\n
-        upgradable      - search for installed packages where installed version is different from available version\n
-    \n
-    !!! NOTE !!!\n
-    \n
-    Bash will expand a single * character as current folder listing.\n
-    To search for all matching '--filter' packages you need to escape it, surround it with quotes, or just use an empty string.\n
-    \n
-    * Examples:\n
-        sisyphus search * -f installed          # not valid\n
-        sisyphus search '*' -f available        # valid\n
-        sisyphus search '' -f upgradable        # valid\n
-    \n
-    To search for all (including source) packages, use the --ebuild option.\n
-    This is slower since will perform an 'emerge --search' actually.\n
-    With this option, more than one package can be provided as search term.\n
-    '-d', '-f' and '-q' (quiet) options are ignored in this mode.\n
-    """
-    if not package:
-        raise typer.Exit(
-            'No search term provided, try: sisyphus search --help')
-
-    if ebuild:
-        sisyphus.searchdb.start('ebuild', '', package, '', quiet)
-    else:
-        if '/' in package[0]:
-            cat, pn = package[0].split('/')
-        else:
-            cat, pn = '', package[0]
-        sisyphus.searchdb.start(filter.value, cat, pn, desc, quiet)
-
-
-@app.command("install")
-def install(pkgname: List[str],
-            ebuild: bool = typer.Option(
-                False, "--ebuild", "-e", help='Install ebuild(source) package if binary package is not found (slower).'),
-            oneshot: bool = typer.Option(
-                False, "--oneshot", "-1", help='Install the package without marking it as explicitly installed.'),
-            nodeps: bool = typer.Option(
-                False, "--nodeps", help='Install only the package itself without installing any dependencies.'),
-            onlydeps: bool = typer.Option(False, "--onlydeps", help='Install only the package dependencies without installing the package itself.')):
-    """
-    Install binary and/or ebuild(source) packages.\n
-    Binary packages are default, however the --ebuild option can be used to install ebuild(source) packages.\n
-    The --ebuild option will be recommended automatically if a binary package is not found but a corresponding ebuild (source) package is available.\n
-    The --ebuild option will revert to binary packages when installation from an ebuild (source) package is unnecessary. This option can be safely used at all times.\n
-    The --ebuild option will prioritize the use of binary packages (when available) to fulfill dependencies for the ebuild (source) package, thereby accelerating the installation process.\n
-    The --oneshot option adheres to the aforementioned rules but does not mark the package as explicitly installed.\n
-    The --nodeps option adheres to the aforementioned rules but does not install the package dependecies.\n
-    The --onlydeps option adheres to the aforementioned rules but does not install the package itself.\n
-    The --ebuild, --oneshot, and/or --nodeps/--onlydeps options can be utilized independently or in conjunction with one another, in either their short or long forms.\n
-    The sequence of utilizing the --ebuild, --oneshot, and/or --nodeps/--onlydeps options is flexible; they can be applied before or after specifying the package name.\n
-    The --nodeps and --onlydeps options are mutually exclusive and cannot be used at the same time.\n
-    \n
-    !!! NOTE !!!\n
-    \n
-    To minimize the risk of inadvertent input or typographical errors, the --nodeps and --onlydeps options are intentionally without a shortened form.\n
-    \n
-    !!! WARNING !!!\n
-    \n
-    Unless all required dependencies are already installed, attempting to install an ebuild (source) package using the --ebuild option in conjunction with the --nodeps option is likely to result in failure.\n
-    \n
-    * Examples:\n
-        sisyphus install firefox\n
-        sisyphus install pidgin --ebuild\n
-        sisyphus install -e xonotic\n
-        sisyphus install filezilla --oneshot\n
-        sisyphus install -1 thunderbird\n
-        sisyphus install falkon -e -1\n
-        sisyphus install --nodeps --oneshot opera\n
-        sisyphus install -e --onlydeps vivaldi\n
-    """
-    if nodeps and onlydeps:
-        typer.secho(
-            "Error: The --nodeps and --onlydeps options are mutually exclusive and cannot be used together.", fg=typer.colors.RED)
-        raise typer.Exit(code=1)
-    else:
-        if ebuild:
-            sisyphus.pkgadd.start(pkgname, ebuild=True, gfx_ui=False,
-                                  oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps)
-        else:
-            sisyphus.pkgadd.start(pkgname, ebuild=False, gfx_ui=False,
-                                  oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps)
-
-
-@app.command("uninstall")
-def uninstall(pkgname: List[str], force: bool = typer.Option(False, "--force", "-f", help='Ignore the reverse dependencies and force uninstall the package (DANGEROUS)')):
-    """
-    Uninstall packages *SAFELY* by checking for reverse dependencies.\n
-    To maintain system integrity, if there are any reverse dependencies, the package or packages will not be uninstalled to prevent system instability.\n
-    If you're set on uninstalling the package or packages, consider removing all of its reverse dependencies first.\n
-    However, this may not always be feasible due to the extensive nature of the reverse dependency tree, which could involve critical system packages.\n
-    \n
-    !!! DANGEROUS !!!\n
-    \n
-    The --force option will ignore the reverse dependencies and uninstall the package *UNSAFELY*, without safeguards.\n
-    \n
-    !!! WARNING !!!\n
-    \n
-    The --force option will break your system if you uninstall important system packages (bootloader, kernel, init).\n
-    \n
-    * Examples:\n
-        sisyphus uninstall firefox              # this will succeed, no package depends on firefox\n
-        sisyphus uninstall pulseaudio           # this will fail, many packages depend on pulseaudio\n
-        sisyphus uninstall pulseaudio --force   # this will succeed, but the sound may no longer work\n
-        sisyphus uninstall openrc -f            # this will succeed, but the system will no longer boot\n
-    """
-    if force:
-        sisyphus.pkgremove.start(
-            pkgname, depclean=False, gfx_ui=False, unmerge=True)
-    else:
-        sisyphus.pkgremove.start(
-            pkgname, depclean=True, gfx_ui=False, unmerge=False)
-
-
-@app.command("autoremove")
-def autoremove():
-    """
-    Uninstall packages which become orphans and which are no longer needed.\n
-    Uninstalling a package will usually leave its dependencies behind.\n
-    Those dependencies become orphans if no other package requires them.\n
-    A package may also gain extra dependencies or lose some dependencies.\n
-    The lost dependencies become orphans if no other package requires them.\n
-    In either case, the orphan packages are no longer needed and can be safely removed.\n
-    Use this option to check the whole dependency tree for orphan packages, and remove them.\n
-    \n
-    * Examples:\n
-        sisyphus autoremove\n
-    """
-    sisyphus.sysclean.start(depclean=True, gfx_ui=False)
-
-
-@app.command("autoclean")
-def autoclean():
-    """
-    Clean the binary package cache and the source tarball cache.\n
-    \n
-    * Examples:\n
-        sisyphus autoclean\n
-    """
-    if sisyphus.checkenv.root():
-        sisyphus.purgeenv.cache()
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
-@app.command("update")
-def update():
-    """
-    Update the source trees, package configs (USE flags, keywords, masks, etc) and the binary package database.\n
-    \n
-    * Examples:\n
-        sisyphus update\n
-    """
-    if sisyphus.checkenv.root():
-        sisyphus.syncall.start(gfx_ui=False)
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
-@app.command("upgrade")
-def upgrade(
-        ebuild: bool = typer.Option(False, "--ebuild", "-e", help='Upgrade all packages, including ebuild(source) packages (slower)')):
-    """
-    Upgrade the system using binary and/or ebuild(source) packages.\n
-    Binary packages are default, however the --ebuild option can be used to upgrade the ebuild(source) packages as well, alongside the binary packages.\n
-    The --ebuild option will be automatically recommended if upgrades are necessary for the ebuild (source) packages, in addition to the binary packages.\n
-    The --ebuild option will default to binary packages if upgrades are unnecessary for the ebuild (source) packages. This option is safe to use at all times.\n
-    The --ebuild option will prioritize the use of binary packages (when available) to fulfill dependencies for the ebuild (source) packages, thereby accelerating the upgrade process.\n
-    \n
-    * Examples:\n
-        sisyphus upgrade\n
-        sisyphus upgrade --ebuild\n
-        sisyphus upgrade -e\n
-    """
-    if ebuild:
-        sisyphus.sysupgrade.start(ebuild=True, gfx_ui=False)
-    else:
-        sisyphus.sysupgrade.start(ebuild=False, gfx_ui=False)
-
-
-@app.command("spmsync")
-def spmsync():
-    """
-    Sync Sisyphus's package database with Portage's package database.\n
-    Sisyphus doesn't monitor packages installed directly via Portage in its package database.\n
-    Use this command to align Sisyphus's package database with Portage's package database.\n
-    \n
-    * Examples:\n
-        sisyphus spmsync\n
-    """
-    if sisyphus.checkenv.root():
-        sisyphus.syncspm.start()
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
-@app.command("rescue")
-def rescue():
-    """
-    Resurrect Sisyphus's package database if it becomes lost or corrupted.\n
-    If, for any reason, Sisyphus's package database becomes lost or corrupted, it can be resurrected using Portage's package database.\n
-    In the event of corruption in Portage's package database (in which case, you're in trouble anyway :D), only partial resurrection will be feasible.\n
-    With Portage's package database intact, complete resurrection will be achievable.\n
-    \n
-    * Examples:\n
-        sisyphus rescue\n
-    """
-    if sisyphus.checkenv.root():
-        sisyphus.recoverdb.start()
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
-@app.command("sysinfo")
-def sysinfo():
-    """
-    Display information about installed core packages and portage configuration.\n
-    \n
-    * Examples:\n
-        sisyphus sysinfo\n
-    """
-    sisyphus.sysinfo.show()
-
-
-@mirrorSetup.command("list")
-def listmirrors():
-    """
-    List available binary package repository mirrors (the active one is marked with *).\n
-    \n
-    * Examples:\n
-        sisyphus mirror list\n
-    """
-    sisyphus.setmirror.printList()
-
-
-@mirrorSetup.command("set")
-def setmirror(index: int):
-    """
-    Change the binary package repository to the selected mirror.\n
-    \n
-    * Examples:\n
-        sisyphus mirror set 2\n
-        sisyphus mirror set 5\n
-    """
-    if sisyphus.checkenv.root():
-        sisyphus.setmirror.setActive(index)
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
-@getNews.command("list")
-def listnews():
-    """
-    List all news articles.\n
-    \n
-    * Example:\n
-        sisyphus news list\n
-    """
-    sisyphus.getnews.start(list=True)
-
-
-@getNews.command("read")
-def readnews(index: int):
-    """
-    Mark a news article as read.\n
-    \n
-    * Example:\n
-        sisyphus news read 1\n
-    """
-    if sisyphus.checkenv.root():
-        sisyphus.getnews.start(read=True, article_nr=index)
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
-@getNews.command("unread")
-def unreadnews(index: int):
-    """
-    Mark a news article as unread.\n
-    \n
-    * Example:\n
-        sisyphus news unread 2\n
-    """
-    if sisyphus.checkenv.root():
-        sisyphus.getnews.start(unread=True, article_nr=index)
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
-class Branch(str, Enum):
-    master = 'master'
-    next = 'next'
-    purge = 'purge'
-
-
-class Remote(str, Enum):
-    github = 'github'
-    gitlab = 'gitlab'
-    pagure = 'pagure'
-
-
-def branchSetup(branch: Branch = typer.Argument(...), remote: Remote = typer.Option(Remote.gitlab, "--remote", "-r")):
-    """
-    Switch between the branches of Redcore Linux : 'master' (stable), 'next' (testing), or 'purge' (purge branch configuration).\n
-    Configure the source trees and package configs (USE flags, keywords, masks, etc)\n
-    Purge the source trees and package configs (USE flags, keywords, masks, etc)\n
-    Selection of a remote is optional, but it can be accomplished by using the --remote option.\n
-    'BRANCH' can be one of the following : master, next, purge\n
-    'REMOTE' can be one of the following : github, gitlab, pagure\n
-    \n
-    * Examples:\n
-        sisyphus branch master                  # switch to branch 'master', use default remote (gitlab)\n
-        sisyphus branch next                    # switch to branch 'next', use default remote (gitlab)\n
-        sisyphus branch master --remote=github  # switch to branch 'master', use github remote\n
-        sisyphus branch next -r pagure          # switch to branch 'next', use pagure remote\n
-        sisyphus branch purge                   # purge branch configuration (source trees, package configs(USE flags, keywords, masks, etc))\n
-    \n
-    Sisyphus will automatically pair the selected branch with the correct binhost (binary repository).\n
-    However, since no geolocation is ever used, it may select one which is geographically far from you.\n
-    If that is inconvenient, you can manually select a binhost (binary repository) closer to your location,\n
-    \n
-    !!! WARNING !!!\n
-    \n
-    Branch 'master' must be paired with the stable binhost (binary repository) (odd numbers in 'sisyphus mirror list').\n
-    * Examples:\n
-        sisyphus mirror set 1\n
-        sisyphus mirror set 5\n
-    \n
-    Branch 'next' must be paired with the testing binhost (binary repository) (even numbers in 'sisyphus mirror list').\n
-    * Examples:\n
-        sisyphus mirror set 2\n
-        sisyphus mirror set 8\n
-    """
-    if sisyphus.checkenv.root():
-        if branch.value == "purge":
-            if any(arg.startswith("--remote") or arg.startswith("-r") for arg in sys.argv):
-                raise typer.Exit(
-                    "\nThe 'purge' argument does not accept a '--remote' option. Please run: sisyphus branch purge\n")
-            else:
-                sisyphus.purgeenv.branch()
-                sisyphus.purgeenv.metadata()
-        else:
-            sisyphus.setbranch.start(branch.value, remote.value, gfx_ui=False)
-    else:
-        raise typer.Exit('\nYou need root permissions to do this, exiting!\n')
-
-
-app.command("branch")(branchSetup)
-firstRun.command("branch")(branchSetup)
 
 if __name__ == "__main__":
-    if ("--help" in sys.argv or "-h" in sys.argv):
+    if "--help" in sys.argv or "-h" in sys.argv:
         app()
         sys.exit(0)
 
@@ -457,12 +228,13 @@ if __name__ == "__main__":
         if len(sys.argv) > 1:
             typer.secho(
                 "\nSisyphus is not initialized!\n\n"
-                "First-time setup is required before you can use any commands.\n"
-                "Please run this program with no arguments to launch the setup wizard.\n",
+                "First-time setup required before using commands.\n"
+                "Run this program with no arguments to start setup wizard.\n",
                 fg=typer.colors.RED,
             )
             sys.exit(1)
-        firstRun()
+
+        first_run()
         sys.exit(0)
 
     if len(sys.argv) > 1:

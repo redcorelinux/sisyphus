@@ -6,6 +6,7 @@ from .getenv import *
 from .getfs import *
 from .getmarkers import *
 from .getnews import *
+from .helptexts import *
 from .pkgadd import *
 from .pkgremove import *
 from .purgeenv import *
