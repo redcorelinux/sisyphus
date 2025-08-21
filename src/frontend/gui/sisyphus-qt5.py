@@ -9,7 +9,18 @@ from collections import OrderedDict
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 
-class FirstRun(QtWidgets.QDialog):
+class CenterMixin:
+    def centerOnScreen(self):
+        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
+        windowGeometry = self.geometry()
+        horizontalPosition = int(
+            (screenGeometry.width() - windowGeometry.width()) / 2)
+        verticalPosition = int(
+            (screenGeometry.height() - windowGeometry.height()) / 2)
+        self.move(horizontalPosition, verticalPosition)
+
+
+class FirstRun(CenterMixin, QtWidgets.QDialog):
     finishedFirstRun = QtCore.pyqtSignal()
 
     def __init__(self):
@@ -19,7 +30,6 @@ class FirstRun(QtWidgets.QDialog):
         self.progressWindow.hideButton.hide()
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         uic.loadUi('/usr/share/sisyphus/ui/firstrun.ui', self)
-        self.centerOnScreen()
         self.show()
 
         self.abortButton.clicked.connect(self.abortFirstRun)
@@ -61,24 +71,14 @@ class FirstRun(QtWidgets.QDialog):
     def onSettingsWindowClosed(self):
         self.settingsWindow = None
 
-    def centerOnScreen(self):
-        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
-        windowGeometry = self.geometry()
-        horizontalPosition = int(
-            (screenGeometry.width() - windowGeometry.width()) / 2)
-        verticalPosition = int(
-            (screenGeometry.height() - windowGeometry.height()) / 2)
-        self.move(horizontalPosition, verticalPosition)
 
-
-class Sisyphus(QtWidgets.QMainWindow):
+class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
     def __init__(self):
         super(Sisyphus, self).__init__()
         self.progressWindow = None
         self.settingsWindow = None
         uic.loadUi('/usr/share/sisyphus/ui/sisyphus.ui', self)
         signal.signal(signal.SIGTERM, self.handleSigterm)
-        self.centerOnScreen()
         self.show()
 
         def setupWorkerThread(worker, thread, start_slot):
@@ -345,24 +345,14 @@ class Sisyphus(QtWidgets.QMainWindow):
     def __del__(self):
         sys.stdout = sys.__stdout__
 
-    def centerOnScreen(self):
-        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
-        windowGeometry = self.geometry()
-        horizontalPosition = int(
-            (screenGeometry.width() - windowGeometry.width()) / 2)
-        verticalPosition = int(
-            (screenGeometry.height() - windowGeometry.height()) / 2)
-        self.move(horizontalPosition, verticalPosition)
 
-
-class ProgressWindow(QtWidgets.QMainWindow):
+class ProgressWindow(CenterMixin, QtWidgets.QMainWindow):
     progress_messages = []
 
     def __init__(self, parent=None):
         super(ProgressWindow, self).__init__(parent)
         uic.loadUi('/usr/share/sisyphus/ui/progress.ui', self)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        self.centerOnScreen()
         self.refreshProgressWindow()
 
         self.clearButton.clicked.connect(self.clearProgressWindow)
@@ -388,17 +378,8 @@ class ProgressWindow(QtWidgets.QMainWindow):
     def hideProgressWindow(self):
         self.hide()
 
-    def centerOnScreen(self):
-        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
-        windowGeometry = self.geometry()
-        horizontalPosition = int(
-            (screenGeometry.width() - windowGeometry.width()) / 2)
-        verticalPosition = int(
-            (screenGeometry.height() - windowGeometry.height()) / 2)
-        self.move(horizontalPosition, verticalPosition)
 
-
-class SettingsWindow(QtWidgets.QMainWindow):
+class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
     showProgressRequested = QtCore.pyqtSignal()
     hideProgressRequested = QtCore.pyqtSignal()
     updateSystemRequested = QtCore.pyqtSignal()
@@ -411,7 +392,6 @@ class SettingsWindow(QtWidgets.QMainWindow):
         selected_branch = None
         selected_remote = None
         uic.loadUi('/usr/share/sisyphus/ui/settings.ui', self)
-        self.centerOnScreen()
 
         self.MIRRORLIST = sisyphus.setmirror.getList()
         self.updateMirrorList()
@@ -507,15 +487,6 @@ class SettingsWindow(QtWidgets.QMainWindow):
 
         if self.first_run and self.progressWindow is not None:
             self.progressWindow.hide()
-
-    def centerOnScreen(self):
-        screenGeometry = QtWidgets.QDesktopWidget().screenGeometry()
-        windowGeometry = self.geometry()
-        horizontalPosition = int(
-            (screenGeometry.width() - windowGeometry.width()) / 2)
-        verticalPosition = int(
-            (screenGeometry.height() - windowGeometry.height()) / 2)
-        self.move(horizontalPosition, verticalPosition)
 
 
 class MainWorker(QtCore.QObject):
