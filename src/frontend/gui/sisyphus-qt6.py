@@ -24,7 +24,7 @@ class FirstRun(CenterMixin, QtWidgets.QDialog):
     finishedFirstRun = QtCore.pyqtSignal()
 
     def __init__(self):
-        super(FirstRun, self).__init__()
+        super().__init__()
         self.settingsWindow = None
         self.progressWindow = ProgressWindow(parent=None)
         self.progressWindow.hideButton.hide()
@@ -74,19 +74,38 @@ class FirstRun(CenterMixin, QtWidgets.QDialog):
 
 class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
     def __init__(self):
-        super(Sisyphus, self).__init__()
+        super().__init__()
         self.progressWindow = None
         self.settingsWindow = None
         uic.loadUi('/usr/share/sisyphus/ui/sisyphus.ui', self)
         signal.signal(signal.SIGTERM, self.handleSigterm)
         self.show()
 
-        def setupWorkerThread(worker, thread, start_slot):
-            worker.moveToThread(thread)
-            worker.started.connect(self.showProgress)
-            thread.started.connect(start_slot)
-            thread.finished.connect(self.hideProgress)
-            worker.finished.connect(thread.quit)
+        # Worker Threads
+        self.updateWorker = MainWorker()
+        self.updateThread = QtCore.QThread()
+        self._setup_worker_thread(
+            self.updateWorker, self.updateThread, self.updateWorker.startUpdate)
+
+        self.installWorker = MainWorker()
+        self.installThread = QtCore.QThread()
+        self._setup_worker_thread(
+            self.installWorker, self.installThread, self.installWorker.startInstall)
+
+        self.uninstallWorker = MainWorker()
+        self.uninstallThread = QtCore.QThread()
+        self._setup_worker_thread(
+            self.uninstallWorker, self.uninstallThread, self.uninstallWorker.startUninstall)
+
+        self.upgradeWorker = MainWorker()
+        self.upgradeThread = QtCore.QThread()
+        self._setup_worker_thread(
+            self.upgradeWorker, self.upgradeThread, self.upgradeWorker.startUpgrade)
+
+        self.autoremoveWorker = MainWorker()
+        self.autoremoveThread = QtCore.QThread()
+        self._setup_worker_thread(
+            self.autoremoveWorker, self.autoremoveThread, self.autoremoveWorker.startAutoremove)
 
         self.filterApplications = OrderedDict([
             ('Package Name', 'pn'),
@@ -118,38 +137,20 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         self.progressButton.clicked.connect(self.showProgressWindow)
         self.settingsButton.clicked.connect(self.showSettingsWindow)
 
-        self.updateWorker = MainWorker()
-        self.updateThread = QtCore.QThread()
-        setupWorkerThread(self.updateWorker, self.updateThread,
-                          self.updateWorker.startUpdate)
-
         self.installButton.clicked.connect(self.packageInstall)
-        self.installWorker = MainWorker()
-        self.installThread = QtCore.QThread()
-        setupWorkerThread(self.installWorker, self.installThread,
-                          self.installWorker.startInstall)
-
         self.uninstallButton.clicked.connect(self.packageUninstall)
-        self.uninstallWorker = MainWorker()
-        self.uninstallThread = QtCore.QThread()
-        setupWorkerThread(self.uninstallWorker, self.uninstallThread,
-                          self.uninstallWorker.startUninstall)
-
         self.upgradeButton.clicked.connect(self.systemUpgrade)
-        self.upgradeWorker = MainWorker()
-        self.upgradeThread = QtCore.QThread()
-        setupWorkerThread(self.upgradeWorker, self.upgradeThread,
-                          self.upgradeWorker.startUpgrade)
-
         self.autoremoveButton.clicked.connect(self.autoRemove)
-        self.autoremoveWorker = MainWorker()
-        self.autoremoveThread = QtCore.QThread()
-        setupWorkerThread(self.autoremoveWorker, self.autoremoveThread,
-                          self.autoremoveWorker.startAutoremove)
+        self.exitButton.clicked.connect(self.closeMainWindow)
 
         self.updateSystem()
 
-        self.exitButton.clicked.connect(self.closeMainWindow)
+    def _setup_worker_thread(self, worker, thread, start_slot):
+        worker.moveToThread(thread)
+        worker.started.connect(self.showProgress)
+        thread.started.connect(start_slot)
+        thread.finished.connect(self.hideProgress)
+        worker.finished.connect(thread.quit)
 
     def rowClicked(self):
         Sisyphus.pkgSelect = len(
@@ -172,7 +173,7 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         self.loadDatabase()
 
     def loadDatabase(self):
-        filter = Sisyphus.dbFilter
+        filter_val = Sisyphus.dbFilter
         cat = '%' + self.inputBox.text() + \
             '%' if self.applicationFilter.currentText() == 'Package Category' else ''
         pn = '%' + self.inputBox.text() + \
@@ -180,7 +181,7 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         desc = '%' + self.inputBox.text() + \
             '%' if self.applicationFilter.currentText() == 'Package Description' else ''
 
-        query = sisyphus.querydb.start(filter, cat, pn, desc)
+        query = sisyphus.querydb.start(filter_val, cat, pn, desc)
         with sqlite3.connect(sisyphus.getfs.lcl_db) as db:
             cursor = db.cursor()
             cursor.execute(query)
@@ -190,10 +191,9 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
             model = QtGui.QStandardItemModel(len(rows), 6)
             model.setHorizontalHeaderLabels(
                 ['Package Category', 'Package Name', 'SLOT', 'Installed Version', 'Available Version', 'Package Description'])
-            for row in rows:
-                indx = rows.index(row)
-                for column in range(0, 6):
-                    item = QtGui.QStandardItem("%s" % (row[column]))
+            for indx, row in enumerate(rows):
+                for column in range(6):
+                    item = QtGui.QStandardItem(str(row[column]))
                     model.setItem(indx, column, item)
             self.databaseTable.setModel(model)
             self.showPackageCount()
@@ -217,12 +217,13 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
                      for pkg in self.databaseTable.selectionModel().selectedRows(1)]
         pkg_slots = [{'row': pkg.row(), 'slot': pkg.data()}
                      for pkg in self.databaseTable.selectionModel().selectedRows(2)]
+
         pkg_categs = sorted(pkg_categs, key=byRow)
         pkg_names = sorted(pkg_names, key=byRow)
         pkg_slots = sorted(pkg_slots, key=byRow)
-        selected_pkgs = [pkg_categs[i]['cat'] + '/' + pkg_names[i]['name'] +
-                         ':' + pkg_slots[i]['slot'] for i in range(len(pkg_categs))]
-        return (selected_pkgs)
+        selected_pkgs = [
+            f"{pkg_categs[i]['cat']}/{pkg_names[i]['name']}:{pkg_slots[i]['slot']}" for i in range(len(pkg_categs))]
+        return selected_pkgs
 
     def packageInstall(self):
         if not self.databaseTable.selectionModel().hasSelection():
@@ -248,63 +249,38 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         self.statusBar().showMessage("I am busy with some cleaning, please don't rush me ...")
         self.autoremoveThread.start()
 
-    def disableProgressButton(self):
-        self.progressButton.setEnabled(False)
+    def setProgressBarVisible(self, visible):
+        self.progressBar.setRange(0, 0 if visible else 1)
+        if visible:
+            self.progressBar.show()
+        else:
+            self.progressBar.hide()
 
-    def enableProgressButton(self):
-        self.progressButton.setEnabled(True)
+    def setUiButtonsVisible(self, visible):
+        for btn in (self.installButton, self.uninstallButton, self.autoremoveButton, self.upgradeButton, self.exitButton):
+            btn.setVisible(visible)
 
-    def disableSettingsButton(self):
-        self.settingsButton.setEnabled(False)
-
-    def enableSettingsButton(self):
-        self.settingsButton.setEnabled(True)
-
-    def hideUiButtons(self):
-        self.installButton.hide()
-        self.uninstallButton.hide()
-        self.autoremoveButton.hide()
-        self.upgradeButton.hide()
-        self.exitButton.hide()
-
-    def showUiButtons(self):
-        self.installButton.show()
-        self.uninstallButton.show()
-        self.autoremoveButton.show()
-        self.upgradeButton.show()
-        self.exitButton.show()
-
-    def hideProgressBar(self):
-        self.progressBar.setRange(0, 1)
-        self.progressBar.setValue(1)
-        self.progressBar.hide()
-
-    def showProgressBar(self):
-        self.progressBar.setRange(0, 0)
-        self.progressBar.show()
-
-    def setInputFocus(self):
-        self.inputBox.setFocus()
+    def setButtonEnabled(self, button, enabled):
+        button.setEnabled(enabled)
 
     def showProgress(self):
-        self.hideUiButtons()
-        self.disableSettingsButton()
-        self.enableProgressButton()
-        self.showProgressBar()
-        self.setInputFocus()
+        self.setUiButtonsVisible(False)
+        self.setButtonEnabled(self.settingsButton, False)
+        self.setButtonEnabled(self.progressButton, True)
+        self.setProgressBarVisible(True)
+        self.inputBox.setFocus()
 
     def hideProgress(self):
-        self.showUiButtons()
-        self.enableSettingsButton()
-        self.disableProgressButton()
-        self.hideProgressBar()
-        self.setInputFocus()
+        self.setUiButtonsVisible(True)
+        self.setButtonEnabled(self.settingsButton, True)
+        self.setButtonEnabled(self.progressButton, False)
+        self.setProgressBarVisible(False)
+        self.inputBox.setFocus()
         self.loadDatabase()
 
     def showProgressWindow(self):
         if self.progressWindow is None:
             self.progressWindow = ProgressWindow(self)
-
             self.installWorker.workerOutput.connect(
                 self.progressWindow.updateProgressWindow)
             self.uninstallWorker.workerOutput.connect(
@@ -313,22 +289,19 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
                 self.progressWindow.updateProgressWindow)
             self.autoremoveWorker.workerOutput.connect(
                 self.progressWindow.updateProgressWindow)
-
         self.progressWindow.show()
+
+    def connectSettingsWindowSignals(self, settings_window):
+        settings_window.showProgressRequested.connect(self.showProgress)
+        settings_window.hideProgressRequested.connect(self.hideProgress)
+        settings_window.updateSystemRequested.connect(self.updateSystem)
+        settings_window.destroyed.connect(self.onSettingsWindowClosed)
 
     def showSettingsWindow(self):
         if self.settingsWindow is None or not self.settingsWindow.isVisible():
             self.settingsWindow = SettingsWindow(
                 self, self.progressWindow, auto_show_progress=False, first_run=False)
-
-            self.settingsWindow.showProgressRequested.connect(
-                self.showProgress)
-            self.settingsWindow.hideProgressRequested.connect(
-                self.hideProgress)
-            self.settingsWindow.updateSystemRequested.connect(
-                self.updateSystem)
-            self.settingsWindow.destroyed.connect(self.onSettingsWindowClosed)
-
+            self.connectSettingsWindowSignals(self.settingsWindow)
         self.settingsWindow.show()
         self.settingsWindow.raise_()
         self.settingsWindow.activateWindow()
@@ -350,7 +323,7 @@ class ProgressWindow(CenterMixin, QtWidgets.QMainWindow):
     progress_messages = []
 
     def __init__(self, parent=None):
-        super(ProgressWindow, self).__init__(parent)
+        super().__init__(parent)
         uic.loadUi('/usr/share/sisyphus/ui/progress.ui', self)
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         self.refreshProgressWindow()
@@ -385,12 +358,10 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
     updateSystemRequested = QtCore.pyqtSignal()
 
     def __init__(self, parent=None, progressWindow=None, auto_show_progress=False, first_run=False):
-        super(SettingsWindow, self).__init__(parent)
+        super().__init__(parent)
         self.progressWindow = progressWindow
         self.auto_show_progress = auto_show_progress
         self.first_run = first_run
-        selected_branch = None
-        selected_remote = None
         uic.loadUi('/usr/share/sisyphus/ui/settings.ui', self)
 
         self.MIRRORLIST = sisyphus.setmirror.getList()
@@ -455,20 +426,16 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
     def loadBranchRemote(self):
         selected_branch = self.branches[self.branchCombo.currentText()]
         selected_remote = self.remotes[self.remoteCombo.currentText()]
-
         return selected_branch, selected_remote
 
     def changeBranchRemote(self):
         selected_branch, selected_remote = self.loadBranchRemote()
-
         self.branchWorker.selected_branch = selected_branch
         self.branchWorker.selected_remote = selected_remote
-
         self.branchThread.start()
 
     def showProgress(self):
         self.showProgressRequested.emit()
-
         if self.progressWindow is None:
             self.progressWindow = ProgressWindow(None)
             self.branchWorker.workerOutput.connect(
@@ -476,7 +443,6 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
 
         if self.auto_show_progress and self.progressWindow is not None:
             self.progressWindow.show()
-
         self.close()
 
     def hideProgress(self):
@@ -484,7 +450,6 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
         self.updateSystemRequested.emit()
         self.MIRRORLIST = sisyphus.setmirror.getList()
         self.updateMirrorList()
-
         if self.first_run and self.progressWindow is not None:
             self.progressWindow.hide()
 
