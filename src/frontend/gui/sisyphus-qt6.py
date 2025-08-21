@@ -9,6 +9,32 @@ from collections import OrderedDict
 from PyQt6 import QtCore, QtGui, QtWidgets, uic
 
 
+FILTER_APPLICATIONS = OrderedDict([
+    ('Package Name', 'pn'),
+    ('Package Category', 'cat'),
+    ('Package Description', 'descr')
+])
+
+FILTER_DATABASES = OrderedDict([
+    ('All Packages', 'all'),
+    ('Installed Packages', 'installed'),
+    ('Alien Packages', 'alien'),
+    ('Available Packages', 'available'),
+    ('Upgradable Packages', 'upgradable')
+])
+
+BRANCHES = OrderedDict([
+    ('Branch Master (stable)', 'master'),
+    ('Branch Next (testing)', 'next')
+])
+
+REMOTES = OrderedDict([
+    ('Github Remote : https://github.com/redcorelinux', 'github'),
+    ('Gitlab Remote : https://gitlab.com/redcore', 'gitlab'),
+    ('Pagure Remote : https://pagure.io/redcore', 'pagure')
+])
+
+
 class CenterMixin:
     def centerOnScreen(self):
         screenGeometry = QtGui.QGuiApplication.primaryScreen().geometry()
@@ -56,8 +82,8 @@ class FirstRun(CenterMixin, QtWidgets.QDialog):
     def showSettingsWindow(self):
         if self.settingsWindow is None or not self.settingsWindow.isVisible():
             self.settingsWindow = SettingsWindow(
-                self, self.progressWindow, auto_show_progress=True, first_run=True)
-
+                self, self.progressWindow, auto_show_progress=True, first_run=True
+            )
             self.settingsWindow.showProgressRequested.connect(
                 self.showProgress)
             self.settingsWindow.hideProgressRequested.connect(
@@ -81,56 +107,51 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         signal.signal(signal.SIGTERM, self.handleSigterm)
         self.show()
 
-        # Worker Threads
-        self.updateWorker = MainWorker()
+        self.appFilter = FILTER_APPLICATIONS['Package Name']
+        self.dbFilter = FILTER_DATABASES['All Packages']
+        self.searchTerm = "'%%'"
+        self.pkgname = []
+        self.pkgCount = 0
+        self.pkgSelect = 0
+
+        self.updateWorker = MainWorker(self)
         self.updateThread = QtCore.QThread()
         self._setup_worker_thread(
-            self.updateWorker, self.updateThread, self.updateWorker.startUpdate)
+            self.updateWorker, self.updateThread, self.updateWorker.startUpdate
+        )
 
-        self.installWorker = MainWorker()
+        self.installWorker = MainWorker(self)
         self.installThread = QtCore.QThread()
         self._setup_worker_thread(
-            self.installWorker, self.installThread, self.installWorker.startInstall)
+            self.installWorker, self.installThread, self.installWorker.startInstall
+        )
 
-        self.uninstallWorker = MainWorker()
+        self.uninstallWorker = MainWorker(self)
         self.uninstallThread = QtCore.QThread()
         self._setup_worker_thread(
-            self.uninstallWorker, self.uninstallThread, self.uninstallWorker.startUninstall)
+            self.uninstallWorker, self.uninstallThread, self.uninstallWorker.startUninstall
+        )
 
-        self.upgradeWorker = MainWorker()
+        self.upgradeWorker = MainWorker(self)
         self.upgradeThread = QtCore.QThread()
         self._setup_worker_thread(
-            self.upgradeWorker, self.upgradeThread, self.upgradeWorker.startUpgrade)
+            self.upgradeWorker, self.upgradeThread, self.upgradeWorker.startUpgrade
+        )
 
-        self.autoremoveWorker = MainWorker()
+        self.autoremoveWorker = MainWorker(self)
         self.autoremoveThread = QtCore.QThread()
         self._setup_worker_thread(
-            self.autoremoveWorker, self.autoremoveThread, self.autoremoveWorker.startAutoremove)
+            self.autoremoveWorker, self.autoremoveThread, self.autoremoveWorker.startAutoremove
+        )
 
-        self.filterApplications = OrderedDict([
-            ('Package Name', 'pn'),
-            ('Package Category', 'cat'),
-            ('Package Description', 'descr')
-        ])
-        self.applicationFilter.addItems(self.filterApplications.keys())
+        self.applicationFilter.addItems(FILTER_APPLICATIONS.keys())
         self.applicationFilter.setCurrentText('Package Name')
         self.applicationFilter.currentIndexChanged.connect(
             self.setApplicationFilter)
-        Sisyphus.appFilter = self.filterApplications['Package Name']
 
-        self.filterDatabases = OrderedDict([
-            ('All Packages', 'all'),
-            ('Installed Packages', 'installed'),
-            ('Alien Packages', 'alien'),
-            ('Available Packages', 'available'),
-            ('Upgradable Packages', 'upgradable')
-        ])
-        self.databaseFilter.addItems(self.filterDatabases.keys())
+        self.databaseFilter.addItems(FILTER_DATABASES.keys())
         self.databaseFilter.setCurrentText('All Packages')
         self.databaseFilter.currentIndexChanged.connect(self.setDatabaseFilter)
-        Sisyphus.dbFilter = self.filterDatabases['All Packages']
-
-        Sisyphus.searchTerm = "'%%'"
 
         self.databaseTable.clicked.connect(self.rowClicked)
         self.inputBox.textEdited.connect(self.searchDatabase)
@@ -153,27 +174,28 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         worker.finished.connect(thread.quit)
 
     def rowClicked(self):
-        Sisyphus.pkgSelect = len(
+        self.pkgSelect = len(
             self.databaseTable.selectionModel().selectedRows())
         self.showPackageCount()
 
     def showPackageCount(self):
-        self.statusBar().showMessage("Found: %d, Selected: %d packages" %
-                                     (Sisyphus.pkgCount, Sisyphus.pkgSelect))
+        self.statusBar().showMessage(
+            "Found: %d, Selected: %d packages" % (
+                self.pkgCount, self.pkgSelect)
+        )
 
     def setApplicationFilter(self):
-        Sisyphus.appFilter = self.filterApplications[self.applicationFilter.currentText(
+        self.appFilter = FILTER_APPLICATIONS[self.applicationFilter.currentText(
         )]
         self.loadDatabase()
 
     def setDatabaseFilter(self):
-        Sisyphus.dbFilter = self.filterDatabases[self.databaseFilter.currentText(
-        )]
-        Sisyphus.SELECT = self.databaseFilter.currentText()
+        self.dbFilter = FILTER_DATABASES[self.databaseFilter.currentText()]
+        self.SELECT = self.databaseFilter.currentText()
         self.loadDatabase()
 
     def loadDatabase(self):
-        filter_val = Sisyphus.dbFilter
+        filter_val = self.dbFilter
         cat = '%' + self.inputBox.text() + \
             '%' if self.applicationFilter.currentText() == 'Package Category' else ''
         pn = '%' + self.inputBox.text() + \
@@ -186,8 +208,8 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
             cursor = db.cursor()
             cursor.execute(query)
             rows = cursor.fetchall()
-            Sisyphus.pkgCount = len(rows)
-            Sisyphus.pkgSelect = 0
+            self.pkgCount = len(rows)
+            self.pkgSelect = 0
             model = QtGui.QStandardItemModel(len(rows), 6)
             model.setHorizontalHeaderLabels(
                 ['Package Category', 'Package Name', 'SLOT', 'Installed Version', 'Available Version', 'Package Description'])
@@ -199,7 +221,7 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
             self.showPackageCount()
 
     def searchDatabase(self):
-        Sisyphus.searchTerm = "'%" + self.inputBox.text() + "%'"
+        self.searchTerm = "'%" + self.inputBox.text() + "%'"
         self.loadDatabase()
 
     def updateSystem(self):
@@ -229,7 +251,7 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         if not self.databaseTable.selectionModel().hasSelection():
             self.statusBar().showMessage("No package selected, please pick at least one!")
         else:
-            Sisyphus.pkgname = self.getSelectedPackages()
+            self.pkgname = self.getSelectedPackages()
             self.statusBar().showMessage("I am installing requested package(s), please wait ...")
             self.installThread.start()
 
@@ -237,7 +259,7 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         if not self.databaseTable.selectionModel().hasSelection():
             self.statusBar().showMessage("No package selected, please pick at least one!")
         else:
-            Sisyphus.pkgname = self.getSelectedPackages()
+            self.pkgname = self.getSelectedPackages()
             self.statusBar().showMessage("I am removing requested package(s), please wait ...")
             self.uninstallThread.start()
 
@@ -368,25 +390,14 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
         self.updateMirrorList()
         self.mirrorCombo.activated.connect(self.setMirrorList)
 
-        self.branches = OrderedDict([
-            ('Branch Master (stable)', 'master'),
-            ('Branch Next (testing)', 'next')
-        ])
-
         self.branchCombo.blockSignals(True)
-        self.branchCombo.addItems(self.branches.keys())
-        self.branchCombo.setCurrentText('master')
+        self.branchCombo.addItems(BRANCHES.keys())
+        self.branchCombo.setCurrentText('Branch Master (stable)')
         self.branchCombo.blockSignals(False)
         self.branchCombo.currentIndexChanged.connect(self.loadBranchRemote)
 
-        self.remotes = OrderedDict([
-            ('Github Remote : https://github.com/redcorelinux', 'github'),
-            ('Gitlab Remote : https://gitlab.com/redcore', 'gitlab'),
-            ('Pagure Remote : https://pagure.io/redcore', 'pagure')
-        ])
-
         self.remoteCombo.blockSignals(True)
-        self.remoteCombo.addItems(self.remotes.keys())
+        self.remoteCombo.addItems(REMOTES.keys())
         self.remoteCombo.setCurrentText(
             'Gitlab Remote : https://gitlab.com/redcore')
         self.remoteCombo.blockSignals(False)
@@ -424,8 +435,8 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
         sisyphus.setmirror.writeList(self.MIRRORLIST)
 
     def loadBranchRemote(self):
-        selected_branch = self.branches[self.branchCombo.currentText()]
-        selected_remote = self.remotes[self.remoteCombo.currentText()]
+        selected_branch = BRANCHES[self.branchCombo.currentText()]
+        selected_remote = REMOTES[self.remoteCombo.currentText()]
         return selected_branch, selected_remote
 
     def changeBranchRemote(self):
@@ -459,6 +470,12 @@ class MainWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     workerOutput = QtCore.pyqtSignal(str)
 
+    def __init__(self, sisyphus_window=None, workerOutput=None):
+        super().__init__()
+        self.sisyphus_window = sisyphus_window
+        if workerOutput:
+            self.workerOutput.connect(workerOutput)
+
     def write(self, text):
         self.workerOutput.emit(str(text))
 
@@ -478,7 +495,7 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startInstall(self):
         self.started.emit()
-        pkgname = Sisyphus.pkgname
+        pkgname = self.sisyphus_window.pkgname if self.sisyphus_window else []
         sisyphus.pkgadd.start(pkgname, ebuild=False, gfx_ui=True,
                               oneshot=False, nodeps=False, onlydeps=False)
         self.finished.emit()
@@ -486,7 +503,7 @@ class MainWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def startUninstall(self):
         self.started.emit()
-        pkgname = Sisyphus.pkgname
+        pkgname = self.sisyphus_window.pkgname if self.sisyphus_window else []
         sisyphus.pkgremove.start(
             pkgname, depclean=True, gfx_ui=True, unmerge=False)
         self.finished.emit()
