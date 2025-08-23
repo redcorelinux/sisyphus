@@ -4,11 +4,12 @@ import colorama
 import signal
 import sqlite3
 import subprocess
+import sys
 import sisyphus.checkenv
 import sisyphus.getfs
 import sisyphus.querydb
 import sisyphus.syncall
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 
 colorama.init()
 
@@ -20,20 +21,34 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
+def tosql(value):
+    if isinstance(value, list):
+        return [tosql(v) for v in value]
+    if value == '':
+        return '%%'
+    return str(value).replace('*', '%').replace('?', '_')
+
+
 def srch_db(filter, cat='', pn='', desc=''):
-    query = sisyphus.querydb.start(filter, cat, pn, desc)
+    results = []
 
     with sqlite3.connect(sisyphus.getfs.lcl_db) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
-        cursor.execute(query)
-        rows = cursor.fetchall()
 
-    return rows
+        if isinstance(pn, list):
+            for name in pn:
+                query = sisyphus.querydb.start(
+                    filter, tosql(cat), tosql(name), tosql(desc))
+                cursor.execute(query)
+                results.extend(cursor.fetchall())
+        else:
+            query = sisyphus.querydb.start(
+                filter, tosql(cat), tosql(pn), tosql(desc))
+            cursor.execute(query)
+            results = cursor.fetchall()
 
-
-def tosql(string):
-    return '%%' if string == '' else string.replace('*', '%').replace('?', '_')
+    return results
 
 
 def srch_rslt(filter, cat, pn, desc, single):
