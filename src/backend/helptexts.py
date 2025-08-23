@@ -1,4 +1,4 @@
-# helptexts.py
+#!/usr/bin/python3
 
 SEARCH = """Search for binary and/or ebuild (source) packages.
 Default: binary packages. Use --ebuild to search source packages.
