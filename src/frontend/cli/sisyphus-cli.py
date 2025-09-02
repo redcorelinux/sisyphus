@@ -120,11 +120,13 @@ def install(pkgname: List[str],
 @app.command("uninstall", help=sisyphus.helptexts.UNINSTALL)
 def uninstall(pkgname: List[str],
               force: bool = typer.Option(False, "--force", "-f")):
+    depclean = True if not force else False
+    unmerge = True if force else False
     sisyphus.pkgremove.start(
         pkgname,
-        depclean=not force,
+        depclean=depclean,
         gfx_ui=False,
-        unmerge=force,
+        unmerge=unmerge,
     )
 
 
