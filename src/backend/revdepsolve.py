@@ -23,9 +23,13 @@ def start(pkgname=None, depclean=False, unmerge=False):
     rm_list = []
 
     args = ['--quiet', '--pretend', '--verbose']
-    args += ['--unmerge'] if unmerge else ['--depclean']
+    if unmerge:
+        args.append('--unmerge')
+    else:
+        args.append('--depclean')
+
     if pkgname:
-        args += list(pkgname)
+        args.extend(pkgname)
 
     is_installed = int(1)
     is_needed = int(0)
