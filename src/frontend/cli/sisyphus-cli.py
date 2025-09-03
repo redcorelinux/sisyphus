@@ -84,11 +84,11 @@ def interactive_first_run(ctx: typer.Context):
 
 @app.command("search", help=sisyphus.helptexts.SEARCH)
 def search(package: List[str] = typer.Argument(...),
-           desc: str = typer.Option("", "--description", "-d"),
+           desc: str = typer.Option("", "--description"),
            filter: Filter = typer.Option(
-               Filter.all, "--filter", "-f", show_default=True),
-           quiet: bool = typer.Option(False, "-q"),
-           ebuild: bool = typer.Option(False, "--ebuild", "-e")):
+               Filter.all, "--filter", show_default=True),
+           quiet: bool = typer.Option(False, "--quiet"),
+           ebuild: bool = typer.Option(False, "--ebuild")):
     if not package:
         raise typer.Exit(
             "No search term provided, try: sisyphus search --help")
@@ -102,8 +102,9 @@ def search(package: List[str] = typer.Argument(...),
 
 @app.command("install", help=sisyphus.helptexts.INSTALL)
 def install(pkgname: List[str],
-            ebuild: bool = typer.Option(False, "--ebuild", "-e"),
-            oneshot: bool = typer.Option(False, "--oneshot", "-1"),
+            ask: bool = typer.Option(False, "--ask"),
+            ebuild: bool = typer.Option(False, "--ebuild"),
+            oneshot: bool = typer.Option(False, "--oneshot"),
             nodeps: bool = typer.Option(False, "--nodeps"),
             onlydeps: bool = typer.Option(False, "--onlydeps")):
     if nodeps and onlydeps:
@@ -112,18 +113,22 @@ def install(pkgname: List[str],
         raise typer.Exit(code=1)
 
     sisyphus.pkgadd.start(
-        pkgname, ebuild=ebuild, gfx_ui=False,
+        pkgname, ask=ask, ebuild=ebuild, gfx_ui=False,
         oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps
     )
 
 
 @app.command("uninstall", help=sisyphus.helptexts.UNINSTALL)
 def uninstall(pkgname: List[str],
-              force: bool = typer.Option(False, "--force", "-f")):
+              ask: bool = typer.Option(False, "--ask"),
+              force: bool = typer.Option(False, "--force")):
+    if force:
+        ask = True
     depclean = True if not force else False
     unmerge = True if force else False
     sisyphus.pkgremove.start(
         pkgname,
+        ask=ask,
         depclean=depclean,
         gfx_ui=False,
         unmerge=unmerge,
@@ -131,8 +136,8 @@ def uninstall(pkgname: List[str],
 
 
 @app.command("autoremove", help=sisyphus.helptexts.AUTOREMOVE)
-def autoremove():
-    sisyphus.sysclean.start(depclean=True, gfx_ui=False)
+def autoremove(ask: bool = typer.Option(False, "--ask")):
+    sisyphus.sysclean.start(ask=ask, depclean=True, gfx_ui=False)
 
 
 @app.command("autoclean", help=sisyphus.helptexts.AUTOCLEAN)
@@ -150,8 +155,10 @@ def update():
 
 
 @app.command("upgrade", help=sisyphus.helptexts.UPGRADE)
-def upgrade(ebuild: bool = typer.Option(False, "--ebuild", "-e")):
-    sisyphus.sysupgrade.start(ebuild=ebuild, gfx_ui=False)
+def upgrade(
+        ask: bool = typer.Option(False, "--ask"),
+        ebuild: bool = typer.Option(False, "--ebuild")):
+    sisyphus.sysupgrade.start(ask=ask, ebuild=ebuild, gfx_ui=False)
 
 
 @app.command("spmsync", help=sisyphus.helptexts.SPMSYNC)

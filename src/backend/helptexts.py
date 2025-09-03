@@ -5,23 +5,24 @@ Default: binary packages. Use --ebuild to search source packages.
 Supports wildcards (* and ?).
 
 Options:\n
-  --ebuild / -e   Search source packages.\n
+  --ebuild        Search source packages.\n
 
 Examples:\n
   sisyphus search openbox\n
   sisyphus search x11-wm/openbox\n
   sisyphus search x11-wm/*\n
-  sisyphus search '' -f upgradable\n
-  sisyphus search x11/open -d 'window manager'\n
-  sisyphus search -e firefox thunderbird\n
+  sisyphus search '' --filter upgradable\n
+  sisyphus search x11/open --description 'window manager'\n
+  sisyphus search --ebuild firefox thunderbird\n
 """
 
 INSTALL = """Install binary and/or ebuild (source) packages.
 Default: binary packages. Use --ebuild to install source packages.
 
 Options:\n
-  --ebuild / -e   Install source packages.\n
-  --oneshot / -1  Do not mark package as explicitly installed.\n
+  --ask           Ask for user confirmation to proceed.\n
+  --ebuild        Install source packages.\n
+  --oneshot       Do not mark package as explicitly installed.\n
   --nodeps        Do not install dependencies.\n
   --onlydeps      Install only dependencies.\n
 
@@ -29,25 +30,33 @@ Examples:\n
   sisyphus install firefox\n
   sisyphus install pidgin --ebuild\n
   sisyphus install filezilla --oneshot\n
-  sisyphus install -e --onlydeps vivaldi\n
+  sisyphus install --ask --onlydeps vivaldi\n
 """
 
 UNINSTALL = """Uninstall packages safely (or forcefully if --force is used).
 Default: uninstall safely. Use --force to force uninstall (DANGEROUS).
 
 Options:\n
-  --force / -f   Force uninstall ignoring reverse deps (DANGEROUS).\n
+  --ask          Ask for user confirmation to proceed.\n
+  --force        Force uninstall ignoring reverse deps (DANGEROUS).\n
 
 Examples:\n
-  sisyphus uninstall firefox\n
+  sisyphus uninstall firefox --ask\n
   sisyphus uninstall pulseaudio\n
   sisyphus uninstall pulseaudio --force\n
+
+Note:\n
+  --force option will always ask for user confirmation.\n
 """
 
 AUTOREMOVE = """Uninstall orphaned packages no longer required by the system.
 
+Options:\n
+  --ask          Ask for user confirmation to proceed.\n
+
 Example:\n
   sisyphus autoremove\n
+  sisyphus autoremove --ask\n
 """
 
 AUTOCLEAN = """Clean binary & source caches.
@@ -66,9 +75,10 @@ UPGRADE = """Upgrade the system.
 Default: binary packages. Use --ebuild to upgrade source packages.
 
 Options:\n
-  --ebuild / -e   Upgrade source packages.\n
+  --ask          Ask for user confirmation to proceed.\n
+  --ebuild       Upgrade source packages.\n
 Examples:\n
-  sisyphus upgrade\n
+  sisyphus upgrade --ask\n
   sisyphus upgrade --ebuild\n
 """
 

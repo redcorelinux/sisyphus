@@ -499,8 +499,8 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgname = self.sisyphus_window.pkgname if self.sisyphus_window else []
-        sisyphus.pkgadd.start(pkgname, ebuild=False, gfx_ui=True,
-                              oneshot=False, nodeps=False, onlydeps=False)
+        sisyphus.pkgadd.start(pkgname, ask=False, ebuild=False,
+                              gfx_ui=True, oneshot=False, nodeps=False, onlydeps=False)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -508,19 +508,19 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
         pkgname = self.sisyphus_window.pkgname if self.sisyphus_window else []
         sisyphus.pkgremove.start(
-            pkgname, depclean=True, gfx_ui=True, unmerge=False)
+            pkgname, ask=False, depclean=True, gfx_ui=True, unmerge=False)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        sisyphus.sysupgrade.start(ebuild=False, gfx_ui=True)
+        sisyphus.sysupgrade.start(ask=False, ebuild=False, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startAutoremove(self):
         self.started.emit()
-        sisyphus.sysclean.start(depclean=True, gfx_ui=True)
+        sisyphus.sysclean.start(ask=False, depclean=True, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()

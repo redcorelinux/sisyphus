@@ -51,7 +51,7 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False, onlydeps=False):
+def start(pkgname, ask=False, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False, onlydeps=False):
     go_args = ['--quiet', '--verbose',
                '--misspell-suggestion=n', '--fuzzy-search=n']
     nogo_args = ['--quiet', '--pretend', '--getbinpkg',
@@ -152,8 +152,12 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False, only
             if len(bin_list) == 0 and len(src_list) != 0:  # source mode, ignore aliens
                 sisyphus.colsview.print_packages(src_list=src_list)
                 while True:
-                    user_input = input(
-                        f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                    if ask:
+                        user_input = input(
+                            f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                    else:
+                        user_input = 'yes'
+
                     if user_input.lower() in ['yes', 'y', '']:
                         p_exe = subprocess.Popen(
                             ['emerge'] + go_args + list(pkgname))
@@ -194,8 +198,12 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False, only
                 sisyphus.colsview.print_packages(
                     bin_list=bin_list, src_list=src_list)
                 while True:
-                    user_input = input(
-                        f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                    if ask:
+                        user_input = input(
+                            f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                    else:
+                        user_input = 'yes'
+
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=False, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
@@ -237,8 +245,12 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False, only
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode, fallback
                 sisyphus.colsview.print_packages(bin_list=bin_list)
                 while True:
-                    user_input = input(
-                        f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                    if ask:
+                        user_input = input(
+                            f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                    else:
+                        user_input = 'yes'
+
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=False, gfx_ui=False)
                         os.chdir(sisyphus.getfs.p_cch_dir)
@@ -329,8 +341,11 @@ def start(pkgname, ebuild=False, gfx_ui=False, oneshot=False, nodeps=False, only
                 else:
                     sisyphus.colsview.print_packages(bin_list=bin_list)
                     while True:
-                        user_input = input(
-                            f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                        if ask:
+                            user_input = input(
+                                f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                        else:
+                            user_input = 'yes'
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.dlbinpkg.start(
                                 dl_world=False, gfx_ui=False)

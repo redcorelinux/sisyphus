@@ -47,11 +47,12 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(depclean=False, gfx_ui=False):
+def start(ask=False, depclean=False, gfx_ui=False):
     args = ['--quiet', '--depclean']
 
     if not sisyphus.checkenv.root() and depclean:
-        print(f"{Fore.WHITE}\nYou need root permissions to do this, exiting!\n{Style.RESET_ALL}")
+        print(
+            f"{Fore.WHITE}\nYou need root permissions to do this, exiting!\n{Style.RESET_ALL}")
         sys.exit()
     else:
         if gfx_ui:
@@ -86,8 +87,12 @@ def start(depclean=False, gfx_ui=False):
         else:
             sisyphus.colsview.print_packages(rm_list=rm_list)
             while True:
-                user_input = input(
-                    f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                if ask:
+                    user_input = input(
+                        f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                else:
+                    user_input = 'yes'
+
                 if user_input.lower() in ['yes', 'y', '']:
                     p_exe = subprocess.Popen(['emerge'] + args)
                     try:

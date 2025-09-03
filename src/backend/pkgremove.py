@@ -49,7 +49,7 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
+def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
     args = ['--quiet', '--verbose']
 
     if unmerge:
@@ -175,12 +175,20 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
             if unmerge:
                 sisyphus.colsview.print_packages(rm_list=rm_list)
                 while True:
-                    user_input = input(
-                        f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                    if ask:
+                        user_input = input(
+                            f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                    else:
+                        user_input = 'yes'
+
                     if user_input.lower() in ['yes', 'y', '']:
                         while True:
-                            confirmation_input = input(
-                                f"{Fore.WHITE}{Style.BRIGHT}Are you sure you would like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                            if ask:
+                                confirmation_input = input(
+                                    f"{Fore.WHITE}{Style.BRIGHT}Are you sure you would like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                            else:
+                                confirmation_input = 'yes'
+
                             if confirmation_input.lower() in ['yes', 'y', '']:
                                 p_exe = subprocess.Popen(
                                     ['emerge'] + args + list(pkgname))
@@ -240,8 +248,11 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 else:
                     sisyphus.colsview.print_packages(rm_list=rm_list)
                     while True:
-                        user_input = input(
-                            f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                        if ask:
+                            user_input = input(
+                                f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
+                        else:
+                            user_input = 'yes'
                         if user_input.lower() in ['yes', 'y', '']:
                             p_exe = subprocess.Popen(
                                 ['emerge'] + args + list(pkgname))
