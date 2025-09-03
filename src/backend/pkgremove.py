@@ -50,10 +50,16 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 
 def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
-    args = ['--quiet', '--depclean']
+    args = ['--quiet', '--verbose']
+
+    if unmerge:
+        args.append('--unmerge')
+    else:
+        args.append('--depclean')
 
     if not sisyphus.checkenv.root() and (unmerge or depclean):
-        print(f"{Fore.WHITE}\nYou need root permissions to do this, exiting!\n{Style.RESET_ALL}")
+        print(
+            f"{Fore.WHITE}\nYou need root permissions to do this, exiting!\n{Style.RESET_ALL}")
         sys.exit()
     else:
         if gfx_ui:
@@ -73,7 +79,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
     if is_vague != 0:  # catch ambiguous packages
         if unmerge:
             p_exe = subprocess.Popen(
-                ['emerge', '--unmerge', '--quiet', '--pretend', '--verbose'] + list(pkgname))
+                ['emerge'] + args + ['--pretend'] + list(pkgname))
             try:
                 p_exe.wait()
             except KeyboardInterrupt:
@@ -88,7 +94,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 pass  # GUI always calls <category>/<pkgname>, no ambiguity
             else:
                 p_exe = subprocess.Popen(
-                    ['emerge'] + args + ['--pretend', '--verbose'] + list(pkgname))
+                    ['emerge'] + args + ['--pretend'] + list(pkgname))
                 try:
                     p_exe.wait()
                 except KeyboardInterrupt:
@@ -104,7 +110,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
             pass
         else:
             if gfx_ui:
-                p_exe = subprocess.Popen(['emerge'] + args + ['--pretend', '--verbose'] + list(
+                p_exe = subprocess.Popen(['emerge'] + args + ['--pretend'] + list(
                     pkgname), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 # kill portage if the program dies or it's terminated by the user
                 atexit.register(sisyphus.watchdog.start, p_exe)
@@ -122,7 +128,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                 os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
             else:
                 p_exe = subprocess.Popen(
-                    ['emerge'] + args + ['--pretend', '--verbose'] + list(pkgname))
+                    ['emerge'] + args + ['--pretend'] + list(pkgname))
                 try:
                     set_nonblocking(sys.stdout.fileno())
                     spinner_animation()
@@ -177,7 +183,7 @@ def start(pkgname, depclean=False, gfx_ui=False, unmerge=False):
                                 f"{Fore.WHITE}{Style.BRIGHT}Are you sure you would like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
                             if confirmation_input.lower() in ['yes', 'y', '']:
                                 p_exe = subprocess.Popen(
-                                    ['emerge', '--quiet', '--unmerge'] + list(pkgname))
+                                    ['emerge'] + args + list(pkgname))
                                 try:
                                     set_nonblocking(sys.stdout.fileno())
                                     spinner_animation()
