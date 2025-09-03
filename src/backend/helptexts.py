@@ -20,14 +20,14 @@ INSTALL = """Install binary and/or ebuild (source) packages.
 Default: binary packages. Use --ebuild to install source packages.
 
 Options:\n
-  --ask           Ask for user confirmation to proceed.\n
+  --ask/--no-ask  Ask/Don't ask for user confirmation to proceed.\n
   --ebuild        Install source packages.\n
   --oneshot       Do not mark package as explicitly installed.\n
   --nodeps        Do not install dependencies.\n
   --onlydeps      Install only dependencies.\n
 
 Examples:\n
-  sisyphus install firefox\n
+  sisyphus install firefox --no-ask\n
   sisyphus install pidgin --ebuild\n
   sisyphus install filezilla --oneshot\n
   sisyphus install --ask --onlydeps vivaldi\n
@@ -37,8 +37,8 @@ UNINSTALL = """Uninstall packages safely (or forcefully if --force is used).
 Default: uninstall safely. Use --force to force uninstall (DANGEROUS).
 
 Options:\n
-  --ask          Ask for user confirmation to proceed.\n
-  --force        Force uninstall ignoring reverse deps (DANGEROUS).\n
+  --ask/--no-ask  Ask/Don't ask for user confirmation to proceed.\n
+  --force         Force uninstall ignoring reverse deps (DANGEROUS).\n
 
 Examples:\n
   sisyphus uninstall firefox --ask\n
@@ -52,7 +52,7 @@ Note:\n
 AUTOREMOVE = """Uninstall orphaned packages no longer required by the system.
 
 Options:\n
-  --ask          Ask for user confirmation to proceed.\n
+  --ask/--no-ask  Ask/Don't ask for user confirmation to proceed.\n
 
 Example:\n
   sisyphus autoremove\n
@@ -75,8 +75,8 @@ UPGRADE = """Upgrade the system.
 Default: binary packages. Use --ebuild to upgrade source packages.
 
 Options:\n
-  --ask          Ask for user confirmation to proceed.\n
-  --ebuild       Upgrade source packages.\n
+  --ask/--no-ask  Ask for user confirmation to proceed.\n
+  --ebuild        Upgrade source packages.\n
 Examples:\n
   sisyphus upgrade --ask\n
   sisyphus upgrade --ebuild\n

@@ -102,7 +102,7 @@ def search(package: List[str] = typer.Argument(...),
 
 @app.command("install", help=sisyphus.helptexts.INSTALL)
 def install(pkgname: List[str],
-            ask: bool = typer.Option(False, "--ask"),
+            ask: bool = typer.Option(True),
             ebuild: bool = typer.Option(False, "--ebuild"),
             oneshot: bool = typer.Option(False, "--oneshot"),
             nodeps: bool = typer.Option(False, "--nodeps"),
@@ -120,10 +120,8 @@ def install(pkgname: List[str],
 
 @app.command("uninstall", help=sisyphus.helptexts.UNINSTALL)
 def uninstall(pkgname: List[str],
-              ask: bool = typer.Option(False, "--ask"),
+              ask: bool = typer.Option(True),
               force: bool = typer.Option(False, "--force")):
-    if force:
-        ask = True
     depclean = True if not force else False
     unmerge = True if force else False
     sisyphus.pkgremove.start(
@@ -136,7 +134,7 @@ def uninstall(pkgname: List[str],
 
 
 @app.command("autoremove", help=sisyphus.helptexts.AUTOREMOVE)
-def autoremove(ask: bool = typer.Option(False, "--ask")):
+def autoremove(ask: bool = typer.Option(True)):
     sisyphus.sysclean.start(ask=ask, depclean=True, gfx_ui=False)
 
 
@@ -156,7 +154,7 @@ def update():
 
 @app.command("upgrade", help=sisyphus.helptexts.UPGRADE)
 def upgrade(
-        ask: bool = typer.Option(False, "--ask"),
+        ask: bool = typer.Option(True),
         ebuild: bool = typer.Option(False, "--ebuild")):
     sisyphus.sysupgrade.start(ask=ask, ebuild=ebuild, gfx_ui=False)
 
