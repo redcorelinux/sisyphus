@@ -140,7 +140,7 @@ Branches:\n
   purge  = purge all configs and source trees\n
 
 Remotes:\n
-  github, gitlab (default), pagure\n
+  github, gitlab (default), codeberg\n
 
 Examples:\n
   sisyphus branch master\n

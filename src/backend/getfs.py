@@ -4,7 +4,7 @@ import platform
 
 rmt_gh_addr = 'https://github.com/redcorelinux'
 rmt_gl_addr = 'https://gitlab.com/redcore'
-rmt_pg_addr = 'https://pagure.io/redcore'
+rmt_cb_addr = 'https://codeberg.org/redcore'
 
 g_repo = 'portage.git'
 r_repo = 'redcore-desktop.git'
