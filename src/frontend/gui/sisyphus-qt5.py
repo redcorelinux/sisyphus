@@ -31,6 +31,7 @@ BRANCHES = OrderedDict([
 REMOTES = OrderedDict([
     (f'Github Remote : https://github.com/redcorelinux', 'github'),
     (f'Gitlab Remote : https://gitlab.com/redcore', 'gitlab'),
+    (f'Pagure Remote : https://pagure.io/redcore', 'pagure'),
     (f'Codeberg Remote : https://codeberg.org/redcore', 'codeberg')
 ])
 

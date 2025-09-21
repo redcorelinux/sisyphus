@@ -33,6 +33,7 @@ class Branch(str, Enum):
 class Remote(str, Enum):
     github = "github"
     gitlab = "gitlab"
+    pagure = "pagure"
     codeberg = "codeberg"
 
 
@@ -70,7 +71,7 @@ def interactive_first_run(ctx: typer.Context):
     )
     remote_choice = typer.prompt(
         "Select remote to use",
-        type=click.Choice(["github", "gitlab", "codeberg"],
+        type=click.Choice(["github", "gitlab", "pagure", "codeberg"],
                           case_sensitive=False),
         default="gitlab",
     )
