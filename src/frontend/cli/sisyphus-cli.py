@@ -123,6 +123,8 @@ def install(pkgname: List[str],
 def uninstall(pkgname: List[str],
               ask: bool = typer.Option(True),
               force: bool = typer.Option(False, "--force")):
+    if force:
+        ask = True
     depclean = True if not force else False
     unmerge = True if force else False
     sisyphus.pkgremove.start(
