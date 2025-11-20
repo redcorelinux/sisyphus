@@ -7,6 +7,7 @@ import signal
 import sys
 import time
 import sisyphus.checkenv
+import sisyphus.checksig
 import sisyphus.getenv
 import sisyphus.syncdb
 import sisyphus.syncenv
@@ -22,15 +23,18 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def sync_evrth():
+def _sync_all():
     sisyphus.syncenv.g_repo()
     sisyphus.syncenv.r_repo()
     sisyphus.syncenv.p_cfg_repo()
     sisyphus.syncdb.rmt_tbl()
 
-
 @animation.wait('fetching updates')
-def start(gfx_ui=False):
+def sync_all():
+    _sync_all()
+
+
+def _start(gfx_ui=False):
     actv_brch = sisyphus.getenv.sys_brch()
     bhst_addr = sisyphus.getenv.bhst_addr()
     is_sane = sisyphus.checkenv.sanity()
@@ -51,7 +55,13 @@ def start(gfx_ui=False):
             sys.exit()
     else:
         if is_sane == 1:
-            sync_evrth()
+            if gfx_ui:
+                _sync_all()
+                sisyphus.checksig.start()
+            else:
+                sync_all()
+                sisyphus.checksig.start()
+
             if gfx_ui:
                 print(
                     f"\n\nThere are {unread_count} unread Redcore Linux Project news article(s).")
@@ -97,3 +107,10 @@ def start(gfx_ui=False):
                 print(
                     f"{FORE.WHITE}{Style.BRIGHT}\nUse 'sisyphus branch --help' for assistance; Aborting.{Style.RESET_ALL}\n")
                 sys.exit()
+
+
+def start(gfx_ui=False):
+    if gfx_ui:
+        _start(gfx_ui=True)
+    else:
+        _start(gfx_ui=False)
