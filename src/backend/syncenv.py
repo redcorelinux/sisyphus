@@ -1,151 +1,79 @@
 #!/usr/bin/python3
 
 import os
+import sys
 import signal
 import subprocess
 import sisyphus.getfs
+from pathlib import Path
 
 
-def sigint_handler(signal, frame):
+def sigint_handler(signum, frame):
     sys.exit(0)
 
 
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def g_repo():
-    os.chdir(sisyphus.getfs.g_src_dir)
+def run_git(cmd, cwd=None):
+    proc = subprocess.Popen(
+        cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,)
+    try:
+        return proc.wait()
+    except KeyboardInterrupt:
+        proc.terminate()
+        try:
+            proc.wait(1)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+        sys.exit()
+
+
+def get_branch(repo_dir):
     lcl_brch = subprocess.check_output(
-        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_dir, stderr=subprocess.DEVNULL,).decode().strip()
+
     rmt_brch = subprocess.check_output(
-        ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
+        ["git", "rev-parse", "--symbolic-full-name", "@{u}"], cwd=repo_dir, stderr=subprocess.DEVNULL,).decode().strip()
 
-    g_exe1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                              lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
-    try:
-        g_exe1.wait()
-    except KeyboardInterrupt:
-        g_exe1.terminate()
-        try:
-            g_exe1.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe1.kill()
-        sys.exit()
-
-    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode().strip(
-    ).replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
-    try:
-        g_exe2.wait()
-    except KeyboardInterrupt:
-        g_exe2.terminate()
-        try:
-            g_exe2.wait()
-        except subprocess.TimeoutExpired:
-            g_exe2.kill()
-        sys.exit()
+    return lcl_brch, rmt_brch
 
 
-def r_repo():
-    os.chdir(sisyphus.getfs.r_src_dir)
-    lcl_brch = subprocess.check_output(
-        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    rmt_brch = subprocess.check_output(
-        ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
+def repo_sync(repo_dir, mode="hard"):
+    repo_dir = Path(repo_dir)
 
-    g_exe1 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                              lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
-    try:
-        g_exe1.wait()
-    except KeyboardInterrupt:
-        g_exe1.terminate()
-        try:
-            g_exe1.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe1.kill()
-        sys.exit()
+    if not (repo_dir / ".git").exists():
+        return
 
-    g_exe2 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode().strip(
-    ).replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
     try:
-        g_exe2.wait()
-    except KeyboardInterrupt:
-        g_exe2.terminate()
-        try:
-            g_exe2.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe2.kill()
-        sys.exit()
+        lcl_brch, rmt_brch = get_branch(repo_dir)
+    except subprocess.CalledProcessError:
+        print(
+            f"[WARN] Skipping {repo_dir}: no upstream or bad HEAD", file=sys.stderr)
+        return
+
+    upstream = rmt_brch.replace("refs/remotes/", "")
+
+    if mode == "stash":
+        run_git(["git", "stash"], cwd=repo_dir)
+
+    run_git(["git", "fetch", "--depth=1", "origin",
+            lcl_brch, "--quiet"], cwd=repo_dir)
+
+    run_git(["git", "reset", "--hard", upstream, "--quiet"], cwd=repo_dir)
+
+    if mode == "stash":
+        run_git(["git", "stash", "apply"], cwd=repo_dir)
+        run_git(["git", "stash", "clear"], cwd=repo_dir)
+        run_git(["git", "gc", "--prune=now", "--quiet"], cwd=repo_dir)
 
 
-def p_cfg_repo():
-    os.chdir(sisyphus.getfs.p_cfg_dir)
-    lcl_brch = subprocess.check_output(
-        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    rmt_brch = subprocess.check_output(
-        ['git', 'rev-parse', '--symbolic-full-name', '@{u}'])
+def overlay_sync(base_dir, mode="hard"):
+    base = Path(base_dir)
+    for entry in base.iterdir():
+        if not entry.is_dir():
+            continue
+        if not (entry / ".git").is_dir():
+            continue
 
-    g_exe1 = subprocess.Popen(['git', 'stash'], stdout=subprocess.PIPE)
-    try:
-        g_exe1.wait()
-    except KeyboardInterrupt:
-        g_exe1.terminate()
-        try:
-            g_exe1.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe1.kill()
-        sys.exit()
-    g_exe2 = subprocess.Popen(['git', 'fetch', '--depth=1', 'origin'] +
-                              lcl_brch.decode().strip().split() + ['--quiet'], stdout=subprocess.PIPE)
-    try:
-        g_exe2.wait()
-    except KeyboardInterrupt:
-        g_exe2.terminate()
-        try:
-            g_exe2.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe2.kill()
-        sys.exit()
-    g_exe3 = subprocess.Popen(['git', 'reset', '--hard'] + rmt_brch.decode().strip(
-    ).replace('refs/remotes/', '').split() + ['--quiet'], stdout=subprocess.PIPE)
-    try:
-        g_exe3.wait()
-    except KeyboardInterrupt:
-        g_exe3.terminate()
-        try:
-            g_exe3.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe3.kill()
-        sys.exit()
-    g_exe4 = subprocess.Popen(
-        ['git', 'stash', 'apply'], stdout=subprocess.PIPE)
-    try:
-        g_exe4.wait()
-    except KeyboardInterrupt:
-        g_exe4.terminate()
-        try:
-            g_exe4.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe4.kill()
-        sys.exit()
-    g_exe5 = subprocess.Popen(
-        ['git', 'stash', 'clear'], stdout=subprocess.PIPE)
-    try:
-        g_exe5.wait()
-    except KeyboardInterrupt:
-        g_exe5.terminate()
-        try:
-            g_exe5.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe5.kill()
-        sys.exit()
-    g_exe6 = subprocess.Popen(
-        ['git', 'gc', '--prune=now', '--quiet'], stdout=subprocess.PIPE)
-    try:
-        g_exe6.wait()
-    except KeyboardInterrupt:
-        g_exe6.terminate()
-        try:
-            g_exe6.wait(1)
-        except subprocess.TimeoutExpired:
-            g_exe6.kill()
-        sys.exit()
+        repo_sync(entry, mode=mode)

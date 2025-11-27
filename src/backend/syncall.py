@@ -23,18 +23,20 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def _sync_all():
-    sisyphus.syncenv.g_repo()
-    sisyphus.syncenv.r_repo()
-    sisyphus.syncenv.p_cfg_repo()
+def gfx_sync():
+    sisyphus.syncenv.repo_sync(sisyphus.getfs.g_src_dir, mode="hard")
+    sisyphus.syncenv.repo_sync(sisyphus.getfs.r_src_dir, mode="hard")
+    sisyphus.syncenv.repo_sync(sisyphus.getfs.p_cfg_dir, mode="stash")
+    sisyphus.syncenv.overlay_sync("/var/db/repos", mode="hard")
     sisyphus.syncdb.rmt_tbl()
 
+
 @animation.wait('fetching updates')
-def sync_all():
-    _sync_all()
+def cli_sync():
+    gfx_sync()
 
 
-def _start(gfx_ui=False):
+def check_n_sync(gfx_ui=False):
     actv_brch = sisyphus.getenv.sys_brch()
     bhst_addr = sisyphus.getenv.bhst_addr()
     is_sane = sisyphus.checkenv.sanity()
@@ -56,10 +58,10 @@ def _start(gfx_ui=False):
     else:
         if is_sane == 1:
             if gfx_ui:
-                _sync_all()
+                gfx_sync()
                 sisyphus.checksig.start()
             else:
-                sync_all()
+                cli_sync()
                 sisyphus.checksig.start()
 
             if gfx_ui:
@@ -111,6 +113,6 @@ def _start(gfx_ui=False):
 
 def start(gfx_ui=False):
     if gfx_ui:
-        _start(gfx_ui=True)
+        check_n_sync(gfx_ui=True)
     else:
-        _start(gfx_ui=False)
+        check_n_sync(gfx_ui=False)
