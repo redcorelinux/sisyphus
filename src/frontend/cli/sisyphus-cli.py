@@ -181,6 +181,13 @@ def sysinfo():
     sisyphus.sysinfo.show()
 
 
+@app.command("inject", help=sisyphus.helptexts.INJECT)
+def inject():
+    if not sisyphus.checkenv.root():
+        raise typer.Exit("\nYou need root permissions.\n")
+    sisyphus.injrepos.start()
+
+
 @mirror.command("list", help=sisyphus.helptexts.MIRROR_LIST)
 def list_mirrors():
     sisyphus.setmirror.printList()

@@ -147,3 +147,9 @@ Examples:\n
   sisyphus branch master --remote=github\n
   sisyphus branch purge\n
 """
+
+INJECT = """Inject overlays (repositories) enabled by eselect-repository.
+
+Example:\n
+  sisyphus inject\n
+"""

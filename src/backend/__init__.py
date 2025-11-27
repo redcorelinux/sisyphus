@@ -8,6 +8,7 @@ from .getfs import *
 from .getmarkers import *
 from .getnews import *
 from .helptexts import *
+from .injrepos import *
 from .pkgadd import *
 from .pkgremove import *
 from .purgeenv import *
