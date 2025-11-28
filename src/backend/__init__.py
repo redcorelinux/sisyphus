@@ -8,7 +8,6 @@ from .getfs import *
 from .getmarkers import *
 from .getnews import *
 from .helptexts import *
-from .injrepos import *
 from .pkgadd import *
 from .pkgremove import *
 from .purgeenv import *
@@ -20,6 +19,7 @@ from .setbranch import *
 from .setjobs import *
 from .setmirror import *
 from .setprofile import *
+from .superpose import *
 from .syncall import *
 from .syncdb import *
 from .syncenv import *

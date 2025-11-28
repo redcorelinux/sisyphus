@@ -181,11 +181,11 @@ def sysinfo():
     sisyphus.sysinfo.show()
 
 
-@app.command("inject", help=sisyphus.helptexts.INJECT)
+@app.command("superpose", help=sisyphus.helptexts.SUPERPOSE)
 def inject():
     if not sisyphus.checkenv.root():
         raise typer.Exit("\nYou need root permissions.\n")
-    sisyphus.injrepos.start()
+    sisyphus.superpose.start()
 
 
 @mirror.command("list", help=sisyphus.helptexts.MIRROR_LIST)

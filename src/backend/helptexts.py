@@ -6,7 +6,7 @@ Supports wildcards (* and ?).
 
 Options:\n
   --ebuild        Search source packages.\n
-
+  \n
 Examples:\n
   sisyphus search openbox\n
   sisyphus search x11-wm/openbox\n
@@ -25,7 +25,7 @@ Options:\n
   --oneshot       Do not mark package as explicitly installed.\n
   --nodeps        Do not install dependencies.\n
   --onlydeps      Install only dependencies.\n
-
+  \n
 Examples:\n
   sisyphus install firefox --no-ask\n
   sisyphus install pidgin --ebuild\n
@@ -39,12 +39,12 @@ Default: uninstall safely. Use --force to force uninstall (DANGEROUS).
 Options:\n
   --ask/--no-ask  Ask/Don't ask for user confirmation to proceed.\n
   --force         Force uninstall ignoring reverse deps (DANGEROUS).\n
-
+  \n
 Examples:\n
   sisyphus uninstall firefox --ask\n
   sisyphus uninstall pulseaudio\n
   sisyphus uninstall pulseaudio --force\n
-
+  \n
 Note:\n
   --force option will always ask for user confirmation.\n
 """
@@ -53,7 +53,7 @@ AUTOREMOVE = """Uninstall orphaned packages no longer required by the system.
 
 Options:\n
   --ask/--no-ask  Ask/Don't ask for user confirmation to proceed.\n
-
+  \n
 Example:\n
   sisyphus autoremove\n
   sisyphus autoremove --ask\n
@@ -77,6 +77,7 @@ Default: binary packages. Use --ebuild to upgrade source packages.
 Options:\n
   --ask/--no-ask  Ask for user confirmation to proceed.\n
   --ebuild        Upgrade source packages.\n
+  \n
 Examples:\n
   sisyphus upgrade --ask\n
   sisyphus upgrade --ebuild\n
@@ -138,18 +139,27 @@ Branches:\n
   master = stable (use odd-number mirrors)\n
   next   = testing (use even-number mirrors)\n
   purge  = purge all configs and source trees\n
-
+  \n
 Remotes:\n
   github, gitlab (default), pagure, codeberg\n
-
+  \n
 Examples:\n
   sisyphus branch master\n
   sisyphus branch master --remote=github\n
   sisyphus branch purge\n
 """
 
-INJECT = """Inject overlays (repositories) enabled by eselect-repository.
+SUPERPOSE = """Inject overlays (repositories) enabled by eselect-repository.
 
-Example:\n
-  sisyphus inject\n
+Requirements:\n
+  sisyphus install eselect-repository\n
+  \n
+Examples:\n
+  eselect repository enable guru\n
+  sisyphus superpose\n
+  eselect repository remove guru\n
+  \n
+  eselect repository enable guru steam-overlay palemoon another-brave-overlay\n
+  sisyphus superpose\n
+  eselect repository remove guru steam-overlay palemoon another-brave-overlay\n
 """
