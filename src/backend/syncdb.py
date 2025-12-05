@@ -4,6 +4,8 @@ import csv
 import shutil
 import urllib3
 import sqlite3
+import os
+import re
 import subprocess
 import sisyphus.getenv
 import sisyphus.getfs
@@ -20,8 +22,61 @@ def rmt_csv():
         shutil.copyfileobj(tmp_buffer, output_file)
 
 
-def lcl_csv():
-    subprocess.call(['/usr/share/sisyphus/helpers/make_local_csv'])
+def lcl_tbl():
+    base_dir = '/var/db/pkg'
+    pattern = re.compile(r'^(.+)-([0-9][^,-]*?)(-r[0-9]+)?$')
+
+    sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
+    cursor = sisyphusdb.cursor()
+
+    cursor.execute('''drop table if exists local_packages''')
+    cursor.execute(
+        '''create table local_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
+
+    packages = []
+    if os.path.exists(base_dir):
+        for category_name in os.listdir(base_dir):
+            category_dir = os.path.join(base_dir, category_name)
+            if not os.path.isdir(category_dir):
+                continue
+
+            for pkg_dir_name in os.listdir(category_dir):
+                pkg_dir = os.path.join(category_dir, pkg_dir_name)
+                if not os.path.isdir(pkg_dir):
+                    continue
+
+                category_file = os.path.join(pkg_dir, 'CATEGORY')
+                pf_file = os.path.join(pkg_dir, 'PF')
+                slot_file = os.path.join(pkg_dir, 'SLOT')
+
+                if not all(os.path.exists(f) for f in [category_file, pf_file, slot_file]):
+                    continue
+
+                with open(category_file, 'r', encoding='utf-8') as f:
+                    category = f.read().strip()
+                with open(pf_file, 'r', encoding='utf-8') as f:
+                    pf = f.read().strip()
+                with open(slot_file, 'r', encoding='utf-8') as f:
+                    slot = f.read().strip()
+
+                m = pattern.match(pf)
+                if not m:
+                    continue
+
+                pn = m.group(1)
+                pv = m.group(2)
+                pr = m.group(3) or ''
+                pvr = pv + pr
+
+                packages.append((category, pn, pvr, slot))
+
+    cursor.executemany(
+        "insert into local_packages (category, name, version, slot) values (?, ?, ?, ?)",
+        packages
+    )
+
+    sisyphusdb.commit()
+    sisyphusdb.close()
 
 
 def rmt_tbl():
@@ -44,23 +99,6 @@ def rmt_tbl():
         for row in csv.reader(input_file):
             sisyphusdb.cursor().execute(
                 "insert into remote_descriptions (category, name, description) values (?, ?, ?);", row)
-
-    sisyphusdb.commit()
-    sisyphusdb.close()
-
-
-def lcl_tbl():
-    lcl_csv()
-
-    sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
-    sisyphusdb.cursor().execute('''drop table if exists local_packages''')
-    sisyphusdb.cursor().execute(
-        '''create table local_packages (category TEXT,name TEXT,version TEXT,slot TEXT)''')
-
-    with open(sisyphus.getfs.lcl_pcsv) as input_file:
-        for row in csv.reader(input_file):
-            sisyphusdb.cursor().execute(
-                "insert into local_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
 
     sisyphusdb.commit()
     sisyphusdb.close()

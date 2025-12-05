@@ -22,7 +22,6 @@ s_cfg_dir = '/etc/sisyphus'
 
 rmt_pcsv = '/var/lib/sisyphus/csv/remotePackagesPre.csv'
 rmt_dcsv = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
-lcl_pcsv = '/var/lib/sisyphus/csv/localPackagesPre.csv'
 
 lcl_db = '/var/lib/sisyphus/db/sisyphus.db'
 

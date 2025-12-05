@@ -16,8 +16,6 @@ install-cli:
 	for d in $(SUBDIRS); do $(MAKE) -C $$d install; done
 
 	install -d $(DESTDIR)$(SISYPHUSDATADIR)
-	install -d $(DESTDIR)$(SISYPHUSDATADIR)/helpers
-	install -m 0755 src/helpers/* $(DESTDIR)$(SISYPHUSDATADIR)/helpers/
 	install -m 0755 src/frontend/cli/*.py $(DESTDIR)$(SISYPHUSDATADIR)/
 
 install-gui:
