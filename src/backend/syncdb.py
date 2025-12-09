@@ -11,18 +11,18 @@ import sisyphus.getenv
 import sisyphus.getfs
 
 
-def rmt_csv():
-    pcsv_addr, dcsv_addr = sisyphus.getenv.csv_addr()
+def remote_csv():
+    pkg_csv_addr, desc_csv_addr = sisyphus.getenv.csv_addr()
     http = urllib3.PoolManager()
 
-    with http.request('GET', pcsv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.rmt_pcsv, 'wb') as output_file:
+    with http.request('GET', pkg_csv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.rmt_pcsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-    with http.request('GET', dcsv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.rmt_dcsv, 'wb') as output_file:
+    with http.request('GET', desc_csv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.rmt_dcsv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
 
-def lcl_tbl():
+def local_table():
     base_dir = '/var/db/pkg'
     pattern = re.compile(r'^(.+)-([0-9][^,-]*?)(-r[0-9]+)?$')
 
@@ -79,8 +79,8 @@ def lcl_tbl():
     sisyphusdb.close()
 
 
-def rmt_tbl():
-    rmt_csv()
+def remote_table():
+    remote_csv()
 
     sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
     sisyphusdb.cursor().execute('''drop table if exists remote_packages''')

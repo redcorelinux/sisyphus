@@ -30,13 +30,13 @@ def run_git(cmd, cwd=None):
 
 
 def get_branch(repo_dir):
-    lcl_brch = subprocess.check_output(
+    local_branch = subprocess.check_output(
         ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_dir, stderr=subprocess.DEVNULL,).decode().strip()
 
-    rmt_brch = subprocess.check_output(
+    remote_branch = subprocess.check_output(
         ["git", "rev-parse", "--symbolic-full-name", "@{u}"], cwd=repo_dir, stderr=subprocess.DEVNULL,).decode().strip()
 
-    return lcl_brch, rmt_brch
+    return local_branch, remote_branch
 
 
 def repo_sync(repo_dir, mode="hard"):
@@ -46,19 +46,19 @@ def repo_sync(repo_dir, mode="hard"):
         return
 
     try:
-        lcl_brch, rmt_brch = get_branch(repo_dir)
+        local_branch, remote_branch = get_branch(repo_dir)
     except subprocess.CalledProcessError:
         print(
             f"[WARN] Skipping {repo_dir}: no upstream or bad HEAD", file=sys.stderr)
         return
 
-    upstream = rmt_brch.replace("refs/remotes/", "")
+    upstream = remote_branch.replace("refs/remotes/", "")
 
     if mode == "stash":
         run_git(["git", "stash"], cwd=repo_dir)
 
     run_git(["git", "fetch", "--depth=1", "origin",
-            lcl_brch, "--quiet"], cwd=repo_dir)
+            local_branch, "--quiet"], cwd=repo_dir)
 
     run_git(["git", "reset", "--hard", upstream, "--quiet"], cwd=repo_dir)
 

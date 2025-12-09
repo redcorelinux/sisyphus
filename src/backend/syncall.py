@@ -28,7 +28,7 @@ def gfx_sync():
     sisyphus.syncenv.repo_sync(sisyphus.getfs.r_src_dir, mode="hard")
     sisyphus.syncenv.repo_sync(sisyphus.getfs.p_cfg_dir, mode="stash")
     sisyphus.syncenv.overlay_sync("/var/db/repos", mode="hard")
-    sisyphus.syncdb.rmt_tbl()
+    sisyphus.syncdb.remote_table()
 
 
 @animation.wait('fetching updates')
@@ -37,8 +37,8 @@ def cli_sync():
 
 
 def check_n_sync(gfx_ui=False):
-    actv_brch = sisyphus.getenv.sys_brch()
-    bhst_addr = sisyphus.getenv.bhst_addr()
+    active_branch = sisyphus.getenv.system_branch()
+    binhost_addr = sisyphus.getenv.binhost_addr()
     is_sane = sisyphus.checkenv.sanity()
     is_online = sisyphus.checkenv.connectivity()
     unread_count = sisyphus.checkenv.news()
@@ -76,12 +76,12 @@ def check_n_sync(gfx_ui=False):
                         f"\n\nThere are {Fore.GREEN}{unread_count}{Style.RESET_ALL} unread {Fore.WHITE}{Style.BRIGHT}Redcore Linux Project{Style.RESET_ALL} news article(s).")
         else:
             if gfx_ui:
-                if "packages-next" in bhst_addr:
-                    print(f"\n\nThe active branch is '{actv_brch}' (stable)")
-                    print(f"\n\nThe active binhost is '{bhst_addr}' (testing)")
+                if "packages-next" in binhost_addr:
+                    print(f"\n\nThe active branch is '{active_branch}' (stable)")
+                    print(f"\n\nThe active binhost is '{binhost_addr}' (testing)")
                 else:
-                    print(f"\n\nThe active branch is '{actv_brch}' (testing)")
-                    print(f"\n\nThe active binhost is '{bhst_addr}' (stable)")
+                    print(f"\n\nThe active branch is '{active_branch}' (testing)")
+                    print(f"\n\nThe active binhost is '{binhost_addr}' (stable)")
 
                 print("\nInvalid configuration!")
                 print(
@@ -93,16 +93,16 @@ def check_n_sync(gfx_ui=False):
 
                 os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
             else:
-                if "packages-next" in bhst_addr:
+                if "packages-next" in binhost_addr:
                     print(
-                        f"{Fore.GREEN}\n\nThe active branch is '{actv_brch}' (stable){Style.RESET_ALL}")
+                        f"{Fore.GREEN}\n\nThe active branch is '{active_branch}' (stable){Style.RESET_ALL}")
                     print(
-                        f"{Fore.GREEN}The active binhost is '{bhst_addr}' (testing){Style.RESET_ALL}")
+                        f"{Fore.GREEN}The active binhost is '{binhost_addr}' (testing){Style.RESET_ALL}")
                 else:
                     print(
-                        f"{Fore.GREEN}\n\nThe active branch is '{actv_brch}' (testing){Style.RESET_ALL}")
+                        f"{Fore.GREEN}\n\nThe active branch is '{active_branch}' (testing){Style.RESET_ALL}")
                     print(
-                        f"{Fore.GREEN}The active binhost is '{bhst_addr}' (stable){Style.RESET_ALL}")
+                        f"{Fore.GREEN}The active binhost is '{binhost_addr}' (stable){Style.RESET_ALL}")
 
                 print(
                     f"{Fore.RED}{Style.BRIGHT}\nInvalid configuration!{Style.RESET_ALL}")

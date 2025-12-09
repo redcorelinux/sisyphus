@@ -72,17 +72,17 @@ def news():
 
 
 def sanity():
-    actv_brch = sisyphus.getenv.sys_brch()
-    bhst_addr = sisyphus.getenv.bhst_addr()
+    active_branch = sisyphus.getenv.system_branch()
+    binhost_addr = sisyphus.getenv.binhost_addr()
     is_sane = int()
 
-    if "packages-next" in bhst_addr:
-        if actv_brch == "next":
+    if "packages-next" in binhost_addr:
+        if active_branch == "next":
             is_sane = int(1)
         else:
             is_sane = int(0)
     else:
-        if actv_brch == "master":
+        if active_branch == "master":
             is_sane = int(1)
         else:
             is_sane = int(0)

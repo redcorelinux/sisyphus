@@ -138,7 +138,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                             sys.exit()
                         finally:
                             p_exe.wait()
-                        sisyphus.syncdb.lcl_tbl()
+                        sisyphus.syncdb.local_table()
                         break
                     elif user_input.lower() in ['no', 'n']:
                         break
@@ -186,7 +186,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                             sys.exit()
                         finally:
                             p_exe.wait()
-                        sisyphus.syncdb.lcl_tbl()
+                        sisyphus.syncdb.local_table()
                         break
                     elif user_input.lower() in ['no', 'n']:
                         break
@@ -233,7 +233,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                             sys.exit()
                         finally:
                             p_exe.wait()
-                        sisyphus.syncdb.lcl_tbl()
+                        sisyphus.syncdb.local_table()
                         break
                     elif user_input.lower() in ['no', 'n']:
                         break
@@ -289,7 +289,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                         print(p_out.rstrip())
 
                     p_exe.wait()
-                    sisyphus.syncdb.lcl_tbl()
+                    sisyphus.syncdb.local_table()
                 else:
                     sisyphus.colsview.print_packages(bin_list=bin_list)
                     while True:
@@ -330,7 +330,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                                 sys.exit()
                             finally:
                                 p_exe.wait()
-                            sisyphus.syncdb.lcl_tbl()
+                            sisyphus.syncdb.local_table()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             break

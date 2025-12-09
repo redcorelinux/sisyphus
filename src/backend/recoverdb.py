@@ -17,5 +17,5 @@ def start():
     if os.path.exists(sisyphus.getfs.lcl_db):
         os.remove(sisyphus.getfs.lcl_db)
 
-    sisyphus.syncdb.rmt_tbl()
-    sisyphus.syncdb.lcl_tbl()
+    sisyphus.syncdb.remote_table()
+    sisyphus.syncdb.local_table()

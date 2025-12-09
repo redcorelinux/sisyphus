@@ -19,7 +19,7 @@ from colorama import Fore, Back, Style
 colorama.init()
 
 
-brch_rmt_map = {
+branch_remote_map = {
     "master": {
         "github": sisyphus.getfs.rmt_gh_addr,
         "gitlab": sisyphus.getfs.rmt_gl_addr,
@@ -42,27 +42,27 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def get_brch_rmt(branch, remote):
-    g_rmt = []
-    r_rmt = []
-    p_cfg_rmt = []
+def get_branch_remote(branch, remote):
+    gentoo_remote = []
+    redcore_remote = []
+    portage_cfg_remote = []
 
-    if branch in brch_rmt_map and remote in brch_rmt_map[branch]:
-        remote = brch_rmt_map[branch][remote]
+    if branch in branch_remote_map and remote in branch_remote_map[branch]:
+        remote = branch_remote_map[branch][remote]
     else:
         # set a default remote here if needed
         pass
 
-    g_rmt = [remote, sisyphus.getfs.g_repo]
-    r_rmt = [remote, sisyphus.getfs.r_repo]
-    p_cfg_rmt = [remote, sisyphus.getfs.p_cfg_repo]
+    gentoo_remote = [remote, sisyphus.getfs.g_repo]
+    redcore_remote = [remote, sisyphus.getfs.r_repo]
+    portage_cfg_remote = [remote, sisyphus.getfs.p_cfg_repo]
 
-    return g_rmt, r_rmt, p_cfg_rmt
+    return gentoo_remote, redcore_remote, portage_cfg_remote
 
 
 @animation.wait('injecting Gentoo Linux portage tree')
-def ins_g_repo(branch, remote, gfx_ui=False):
-    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
+def insert_gentoo_repo(branch, remote, gfx_ui=False):
+    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(branch, remote)
 
     if gfx_ui:
         print("\ninjecting Gentoo Linux portage tree", flush=True)
@@ -71,7 +71,7 @@ def ins_g_repo(branch, remote, gfx_ui=False):
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
         git.Repo.clone_from(
-            "/".join(g_rmt), sisyphus.getfs.g_src_dir, depth=1, branch=branch)
+            "/".join(gentoo_remote), sisyphus.getfs.g_src_dir, depth=1, branch=branch)
 
     if gfx_ui:
         print("\r" + " " * len("injecting Gentoo Linux portage tree") +
@@ -81,8 +81,8 @@ def ins_g_repo(branch, remote, gfx_ui=False):
 
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
-def ins_r_repo(branch, remote, gfx_ui=False):
-    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
+def insert_redcore_repo(branch, remote, gfx_ui=False):
+    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(branch, remote)
 
     if gfx_ui:
         print("\ninjecting Redcore Linux ebuild overlay", flush=True)
@@ -91,7 +91,7 @@ def ins_r_repo(branch, remote, gfx_ui=False):
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.r_src_dir, '.git')):
         git.Repo.clone_from(
-            "/".join(r_rmt), sisyphus.getfs.r_src_dir, depth=1, branch=branch)
+            "/".join(redcore_remote), sisyphus.getfs.r_src_dir, depth=1, branch=branch)
 
     if gfx_ui:
         print("\r" + " " * len("injecting Redcore Linux ebuild overlay") +
@@ -101,8 +101,8 @@ def ins_r_repo(branch, remote, gfx_ui=False):
 
 
 @animation.wait('injecting Redcore Linux portage config')
-def ins_p_cfg_repo(branch, remote, gfx_ui=False):
-    g_rmt, r_rmt, p_cfg_rmt = get_brch_rmt(branch, remote)
+def insert_portage_cfg_repo(branch, remote, gfx_ui=False):
+    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(branch, remote)
 
     if gfx_ui:
         print("\ninjecting Redcore Linux portage config", flush=True)
@@ -110,7 +110,7 @@ def ins_p_cfg_repo(branch, remote, gfx_ui=False):
         pass
 
     if not os.path.isdir(os.path.join(sisyphus.getfs.p_cfg_dir, '.git')):
-        git.Repo.clone_from("/".join(p_cfg_rmt),
+        git.Repo.clone_from("/".join(portage_cfg_remote),
                             sisyphus.getfs.p_cfg_dir, depth=1, branch=branch)
 
     if gfx_ui:
@@ -120,21 +120,21 @@ def ins_p_cfg_repo(branch, remote, gfx_ui=False):
         pass
 
 
-def set_brch_master_index():
+def set_branch_master_index():
     mirrorList = sisyphus.setmirror.getList()
     odd_indices = [i + 1 for i in range(len(mirrorList)) if (i + 1) % 2 == 1]
     chosen_index = random.choice(odd_indices)
     sisyphus.setmirror.setActive(chosen_index)
 
 
-def set_brch_next_index():
+def set_branch_next_index():
     mirrorList = sisyphus.setmirror.getList()
     even_indices = [i + 1 for i in range(len(mirrorList)) if (i + 1) % 2 == 0]
     chosen_index = random.choice(even_indices)
     sisyphus.setmirror.setActive(chosen_index)
 
 
-def set_bhst_index(branch, remote, gfx_ui=False):
+def set_binhost_index(branch, remote, gfx_ui=False):
     if gfx_ui:
         print(f"\nThe active branch has been switched to '{branch}'")
         print(f"\nThe active remote has been switched to '{remote}'")
@@ -145,9 +145,9 @@ def set_bhst_index(branch, remote, gfx_ui=False):
             f"{Fore.GREEN}\nThe active remote has been switched to '{remote}'{Style.RESET_ALL}")
 
     if "master" in branch:
-        set_brch_master_index()
+        set_branch_master_index()
     elif "next" in branch:
-        set_brch_next_index()
+        set_branch_next_index()
 
 
 def start(branch, remote, gfx_ui=False):
@@ -169,18 +169,18 @@ def start(branch, remote, gfx_ui=False):
         if gfx_ui:
             sisyphus.purgeenv.branch.__wrapped__()
             sisyphus.purgeenv.metadata.__wrapped__()
-            ins_g_repo.__wrapped__(branch, remote, gfx_ui=True)
-            ins_r_repo.__wrapped__(branch, remote, gfx_ui=True)
-            ins_p_cfg_repo.__wrapped__(branch, remote, gfx_ui=True)
-            set_bhst_index(branch, remote, gfx_ui=True)
+            insert_gentoo_repo.__wrapped__(branch, remote, gfx_ui=True)
+            insert_redcore_repo.__wrapped__(branch, remote, gfx_ui=True)
+            insert_portage_cfg_repo.__wrapped__(branch, remote, gfx_ui=True)
+            set_binhost_index(branch, remote, gfx_ui=True)
             sisyphus.setprofile.start.__wrapped__()
             sisyphus.setjobs.start()
         else:
             sisyphus.purgeenv.branch()
             sisyphus.purgeenv.metadata()
-            ins_g_repo(branch, remote, gfx_ui=False)
-            ins_r_repo(branch, remote, gfx_ui=False)
-            ins_p_cfg_repo(branch, remote, gfx_ui=False)
-            set_bhst_index(branch, remote, gfx_ui=False)
+            insert_gentoo_repo(branch, remote, gfx_ui=False)
+            insert_redcore_repo(branch, remote, gfx_ui=False)
+            insert_portage_cfg_repo(branch, remote, gfx_ui=False)
+            set_binhost_index(branch, remote, gfx_ui=False)
             sisyphus.setprofile.start()
             sisyphus.setjobs.start()

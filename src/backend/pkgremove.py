@@ -218,7 +218,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                                     sys.exit()
                                 finally:
                                     p_exe.wait()
-                                sisyphus.syncdb.lcl_tbl()
+                                sisyphus.syncdb.local_table()
                                 break
                             elif confirmation_input.lower() in ['no', 'n']:
                                 break
@@ -244,7 +244,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                         print(p_out.rstrip())
 
                     p_exe.wait()
-                    sisyphus.syncdb.lcl_tbl()
+                    sisyphus.syncdb.local_table()
                 else:
                     sisyphus.colsview.print_packages(rm_list=rm_list)
                     while True:
@@ -281,7 +281,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                                 sys.exit()
                             finally:
                                 p_exe.wait()
-                            sisyphus.syncdb.lcl_tbl()
+                            sisyphus.syncdb.local_table()
                             break
                         elif user_input.lower() in ['no', 'n']:
                             break
