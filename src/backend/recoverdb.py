@@ -12,8 +12,6 @@ def start():
         os.remove(sisyphus.getfs.remote_pkg_csv)
     if os.path.exists(sisyphus.getfs.remote_desc_csv):
         os.remove(sisyphus.getfs.remote_desc_csv)
-    if os.path.exists(sisyphus.getfs.lcl_pcsv):
-        os.remove(sisyphus.getfs.lcl_pcsv)
     if os.path.exists(sisyphus.getfs.local_db):
         os.remove(sisyphus.getfs.local_db)
 
