@@ -68,7 +68,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
             sisyphus.depsolve.start()
 
         bin_list, src_list, is_missing, is_vague, need_cfg = pickle.load(
-            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "rb"))
+            open(os.path.join(sisyphus.getfs.pkg_metadata_dir, "sisyphus_worlddeps.pickle"), "rb"))
 
     if need_cfg != 0:  # catch aliens
         p_exe = subprocess.Popen(['emerge'] + nogo_args + ['@world'])
@@ -158,7 +158,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
 
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=False)
-                        os.chdir(sisyphus.getfs.p_cch_dir)
+                        os.chdir(sisyphus.getfs.pkg_cache_dir)
                         p_exe = subprocess.Popen(
                             ['emerge'] + go_args + ['--usepkg', '--rebuilt-binaries', '@world'])
                         try:
@@ -205,7 +205,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
 
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=False)
-                        os.chdir(sisyphus.getfs.p_cch_dir)
+                        os.chdir(sisyphus.getfs.pkg_cache_dir)
                         p_exe = subprocess.Popen(
                             ['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries', '@world'])
                         try:
@@ -279,7 +279,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
                     sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=True)
-                    os.chdir(sisyphus.getfs.p_cch_dir)
+                    os.chdir(sisyphus.getfs.pkg_cache_dir)
                     p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly',
                                              '--rebuilt-binaries', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     # kill portage if the program dies or it's terminated by the user
@@ -302,7 +302,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.dlbinpkg.start(
                                 dl_world=True, gfx_ui=False)
-                            os.chdir(sisyphus.getfs.p_cch_dir)
+                            os.chdir(sisyphus.getfs.pkg_cache_dir)
                             p_exe = subprocess.Popen(
                                 ['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries', '@world'])
                             try:

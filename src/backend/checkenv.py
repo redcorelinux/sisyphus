@@ -11,7 +11,7 @@ from urllib.error import HTTPError
 
 
 NETWORK_CHECK_URL_FILE = os.path.join(
-    sisyphus.getfs.s_cfg_dir, "sisyphus.net_chk_addr.conf")
+    sisyphus.getfs.sisyphus_cfg_dir, "sisyphus.net_chk_addr.conf")
 
 
 def is_valid_url(url):

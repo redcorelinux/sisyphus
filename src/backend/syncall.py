@@ -24,9 +24,9 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 
 def gfx_sync():
-    sisyphus.syncenv.repo_sync(sisyphus.getfs.g_src_dir, mode="hard")
-    sisyphus.syncenv.repo_sync(sisyphus.getfs.r_src_dir, mode="hard")
-    sisyphus.syncenv.repo_sync(sisyphus.getfs.p_cfg_dir, mode="stash")
+    sisyphus.syncenv.repo_sync(sisyphus.getfs.gentoo_ebuild_dir, mode="hard")
+    sisyphus.syncenv.repo_sync(sisyphus.getfs.redcore_ebuild_dir, mode="hard")
+    sisyphus.syncenv.repo_sync(sisyphus.getfs.portage_cfg_dir, mode="stash")
     sisyphus.syncenv.overlay_sync("/var/db/repos", mode="hard")
     sisyphus.syncdb.remote_table()
 

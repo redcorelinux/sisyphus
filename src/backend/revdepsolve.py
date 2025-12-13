@@ -87,4 +87,4 @@ def start(pkgname=None, depclean=False, unmerge=False):
         sys.exit()
 
     pickle.dump([is_installed, is_needed, is_vague, rm_list], open(
-        os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "wb"))
+        os.path.join(sisyphus.getfs.pkg_metadata_dir, "sisyphus_pkgrevdeps.pickle"), "wb"))

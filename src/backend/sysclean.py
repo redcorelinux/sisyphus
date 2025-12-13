@@ -61,7 +61,7 @@ def start(ask=False, depclean=False, gfx_ui=False):
             sisyphus.revdepsolve.start(depclean=True)
 
         is_installed, is_needed, is_vague, rm_list = pickle.load(
-            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
+            open(os.path.join(sisyphus.getfs.pkg_metadata_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
 
     if len(rm_list) == 0:
         if gfx_ui:

@@ -5,7 +5,7 @@ import re
 import sisyphus.getfs
 
 makeopts_file_path = os.path.join(
-    sisyphus.getfs.s_cfg_dir, 'sisyphus.make-opts.conf')
+    sisyphus.getfs.sisyphus_cfg_dir, 'sisyphus.make-opts.conf')
 
 
 def get_ncpus():

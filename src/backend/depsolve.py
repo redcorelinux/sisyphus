@@ -96,10 +96,10 @@ def start(pkgname=None, nodeps=False, onlydeps=False):
 
         if pkgname:
             pickle.dump([bin_list, src_list, is_missing, is_vague, need_cfg], open(
-                os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle"), "wb"))
+                os.path.join(sisyphus.getfs.pkg_metadata_dir, "sisyphus_pkgdeps.pickle"), "wb"))
         else:
             pickle.dump([bin_list, src_list, is_missing, is_vague, need_cfg], open(
-                os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle"), "wb"))
+                os.path.join(sisyphus.getfs.pkg_metadata_dir, "sisyphus_worlddeps.pickle"), "wb"))
     except KeyboardInterrupt:
         p_exe.terminate()
         try:

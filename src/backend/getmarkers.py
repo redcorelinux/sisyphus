@@ -4,9 +4,9 @@ import os
 import sisyphus.getfs
 
 marker_dirs = [
-    sisyphus.getfs.g_src_dir,
-    sisyphus.getfs.r_src_dir,
-    sisyphus.getfs.p_cfg_dir,
+    sisyphus.getfs.gentoo_ebuild_dir,
+    sisyphus.getfs.redcore_ebuild_dir,
+    sisyphus.getfs.portage_cfg_dir,
 ]
 
 

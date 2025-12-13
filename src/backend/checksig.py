@@ -15,7 +15,7 @@ KEY_PATH = os.path.join(
 
 
 def start():
-    tree = sisyphus.getfs.g_src_dir
+    tree = sisyphus.getfs.gentoo_ebuild_dir
     try:
         g_exec = subprocess.Popen(['gemato', 'verify', tree, '-s', '-K', KEY_PATH],
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')

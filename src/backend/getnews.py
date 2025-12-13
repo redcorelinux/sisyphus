@@ -9,9 +9,9 @@ colorama.init()
 
 NEWS_DIR = "news"
 
-N_NEWS_FILE = os.path.join(sisyphus.getfs.p_cfg_dir,
+N_NEWS_FILE = os.path.join(sisyphus.getfs.portage_cfg_dir,
                            os.path.join(NEWS_DIR, "n_news.txt"))
-R_NEWS_FILE = os.path.join(sisyphus.getfs.s_cfg_dir,
+R_NEWS_FILE = os.path.join(sisyphus.getfs.sisyphus_cfg_dir,
                            os.path.join(NEWS_DIR, "r_news.txt"))
 DELIMITER = "---"
 

@@ -57,8 +57,8 @@ def csv_addr():
 def system_branch():
     active_branch = None
 
-    if os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
-        os.chdir(sisyphus.getfs.g_src_dir)
+    if os.path.isdir(os.path.join(sisyphus.getfs.gentoo_ebuild_dir, '.git')):
+        os.chdir(sisyphus.getfs.gentoo_ebuild_dir)
         local_branch = subprocess.check_output(
             ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 

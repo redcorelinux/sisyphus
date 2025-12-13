@@ -15,10 +15,10 @@ def remote_csv():
     pkg_csv_addr, desc_csv_addr = sisyphus.getenv.csv_addr()
     http = urllib3.PoolManager()
 
-    with http.request('GET', pkg_csv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.rmt_pcsv, 'wb') as output_file:
+    with http.request('GET', pkg_csv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remote_pkg_csv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
-    with http.request('GET', desc_csv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.rmt_dcsv, 'wb') as output_file:
+    with http.request('GET', desc_csv_addr, preload_content=False) as tmp_buffer, open(sisyphus.getfs.remote_desc_csv, 'wb') as output_file:
         shutil.copyfileobj(tmp_buffer, output_file)
 
 
@@ -26,7 +26,7 @@ def local_table():
     base_dir = '/var/db/pkg'
     pattern = re.compile(r'^(.+)-([0-9][^,-]*?)(-r[0-9]+)?$')
 
-    sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
+    sisyphusdb = sqlite3.connect(sisyphus.getfs.local_db)
     cursor = sisyphusdb.cursor()
 
     cursor.execute('''drop table if exists local_packages''')
@@ -82,7 +82,7 @@ def local_table():
 def remote_table():
     remote_csv()
 
-    sisyphusdb = sqlite3.connect(sisyphus.getfs.lcl_db)
+    sisyphusdb = sqlite3.connect(sisyphus.getfs.local_db)
     sisyphusdb.cursor().execute('''drop table if exists remote_packages''')
     sisyphusdb.cursor().execute('''drop table if exists remote_descriptions''')
     sisyphusdb.cursor().execute(
@@ -90,12 +90,12 @@ def remote_table():
     sisyphusdb.cursor().execute(
         '''create table remote_descriptions (category TEXT,name TEXT,description TEXT)''')
 
-    with open(sisyphus.getfs.rmt_pcsv) as input_file:
+    with open(sisyphus.getfs.remote_pkg_csv) as input_file:
         for row in csv.reader(input_file):
             sisyphusdb.cursor().execute(
                 "insert into remote_packages (category, name, version, slot) values (?, ?, ?, ?);", row)
 
-    with open(sisyphus.getfs.rmt_dcsv) as input_file:
+    with open(sisyphus.getfs.remote_desc_csv) as input_file:
         for row in csv.reader(input_file):
             sisyphusdb.cursor().execute(
                 "insert into remote_descriptions (category, name, description) values (?, ?, ?);", row)

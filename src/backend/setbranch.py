@@ -69,9 +69,9 @@ def insert_gentoo_repo(branch, remote, gfx_ui=False):
     else:
         pass
 
-    if not os.path.isdir(os.path.join(sisyphus.getfs.g_src_dir, '.git')):
+    if not os.path.isdir(os.path.join(sisyphus.getfs.gentoo_ebuild_dir, '.git')):
         git.Repo.clone_from(
-            "/".join(gentoo_remote), sisyphus.getfs.g_src_dir, depth=1, branch=branch)
+            "/".join(gentoo_remote), sisyphus.getfs.gentoo_ebuild_dir, depth=1, branch=branch)
 
     if gfx_ui:
         print("\r" + " " * len("injecting Gentoo Linux portage tree") +
@@ -89,9 +89,9 @@ def insert_redcore_repo(branch, remote, gfx_ui=False):
     else:
         pass
 
-    if not os.path.isdir(os.path.join(sisyphus.getfs.r_src_dir, '.git')):
+    if not os.path.isdir(os.path.join(sisyphus.getfs.redcore_ebuild_dir, '.git')):
         git.Repo.clone_from(
-            "/".join(redcore_remote), sisyphus.getfs.r_src_dir, depth=1, branch=branch)
+            "/".join(redcore_remote), sisyphus.getfs.redcore_ebuild_dir, depth=1, branch=branch)
 
     if gfx_ui:
         print("\r" + " " * len("injecting Redcore Linux ebuild overlay") +
@@ -109,9 +109,9 @@ def insert_portage_cfg_repo(branch, remote, gfx_ui=False):
     else:
         pass
 
-    if not os.path.isdir(os.path.join(sisyphus.getfs.p_cfg_dir, '.git')):
+    if not os.path.isdir(os.path.join(sisyphus.getfs.portage_cfg_dir, '.git')):
         git.Repo.clone_from("/".join(portage_cfg_remote),
-                            sisyphus.getfs.p_cfg_dir, depth=1, branch=branch)
+                            sisyphus.getfs.portage_cfg_dir, depth=1, branch=branch)
 
     if gfx_ui:
         print("\r" + " " * len("injecting Redcore Linux portage config") +

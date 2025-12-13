@@ -8,63 +8,63 @@ import sisyphus.getfs
 
 @animation.wait('purging branch configuration')
 def branch():
-    if os.path.isdir(sisyphus.getfs.g_src_dir):
-        for files in os.listdir(sisyphus.getfs.g_src_dir):
-            if os.path.isfile(os.path.join(sisyphus.getfs.g_src_dir, files)):
-                os.remove(os.path.join(sisyphus.getfs.g_src_dir, files))
+    if os.path.isdir(sisyphus.getfs.gentoo_ebuild_dir):
+        for files in os.listdir(sisyphus.getfs.gentoo_ebuild_dir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.gentoo_ebuild_dir, files)):
+                os.remove(os.path.join(sisyphus.getfs.gentoo_ebuild_dir, files))
             else:
                 shutil.rmtree(os.path.join(
-                    sisyphus.getfs.g_src_dir, files))
+                    sisyphus.getfs.gentoo_ebuild_dir, files))
     else:
-        os.makedirs(sisyphus.getfs.g_src_dir)
+        os.makedirs(sisyphus.getfs.gentoo_ebuild_dir)
 
-    if os.path.isdir(sisyphus.getfs.r_src_dir):
-        for files in os.listdir(sisyphus.getfs.r_src_dir):
-            if os.path.isfile(os.path.join(sisyphus.getfs.r_src_dir, files)):
-                os.remove(os.path.join(sisyphus.getfs.r_src_dir, files))
+    if os.path.isdir(sisyphus.getfs.redcore_ebuild_dir):
+        for files in os.listdir(sisyphus.getfs.redcore_ebuild_dir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.redcore_ebuild_dir, files)):
+                os.remove(os.path.join(sisyphus.getfs.redcore_ebuild_dir, files))
             else:
                 shutil.rmtree(os.path.join(
-                    sisyphus.getfs.r_src_dir, files))
+                    sisyphus.getfs.redcore_ebuild_dir, files))
     else:
-        os.makedirs(sisyphus.getfs.r_src_dir)
+        os.makedirs(sisyphus.getfs.redcore_ebuild_dir)
 
-    if os.path.isdir(sisyphus.getfs.p_cfg_dir):
-        for files in os.listdir(sisyphus.getfs.p_cfg_dir):
-            if os.path.isfile(os.path.join(sisyphus.getfs.p_cfg_dir, files)):
-                os.remove(os.path.join(sisyphus.getfs.p_cfg_dir, files))
+    if os.path.isdir(sisyphus.getfs.portage_cfg_dir):
+        for files in os.listdir(sisyphus.getfs.portage_cfg_dir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.portage_cfg_dir, files)):
+                os.remove(os.path.join(sisyphus.getfs.portage_cfg_dir, files))
             else:
                 shutil.rmtree(os.path.join(
-                    sisyphus.getfs.p_cfg_dir, files))
+                    sisyphus.getfs.portage_cfg_dir, files))
     else:
-        os.makedirs(sisyphus.getfs.p_cfg_dir)
+        os.makedirs(sisyphus.getfs.portage_cfg_dir)
 
 
 @animation.wait('purging cached files')
 def cache():
-    if os.path.isdir(sisyphus.getfs.p_cch_dir):
-        for files in os.listdir(sisyphus.getfs.p_cch_dir):
-            if os.path.isfile(os.path.join(sisyphus.getfs.p_cch_dir, files)):
-                os.remove(os.path.join(sisyphus.getfs.p_cch_dir, files))
+    if os.path.isdir(sisyphus.getfs.pkg_cache_dir):
+        for files in os.listdir(sisyphus.getfs.pkg_cache_dir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.pkg_cache_dir, files)):
+                os.remove(os.path.join(sisyphus.getfs.pkg_cache_dir, files))
             else:
                 shutil.rmtree(os.path.join(
-                    sisyphus.getfs.p_cch_dir, files))
+                    sisyphus.getfs.pkg_cache_dir, files))
 
-    if os.path.isdir(sisyphus.getfs.p_dst_dir):
-        for files in os.listdir(sisyphus.getfs.p_dst_dir):
-            if os.path.isfile(os.path.join(sisyphus.getfs.p_dst_dir, files)):
-                os.remove(os.path.join(sisyphus.getfs.p_dst_dir, files))
+    if os.path.isdir(sisyphus.getfs.src_cache_dir):
+        for files in os.listdir(sisyphus.getfs.src_cache_dir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.src_cache_dir, files)):
+                os.remove(os.path.join(sisyphus.getfs.src_cache_dir, files))
             else:
                 shutil.rmtree(os.path.join(
-                    sisyphus.getfs.p_dst_dir, files))
+                    sisyphus.getfs.src_cache_dir, files))
 
 
 @animation.wait('purging metadata files')
 def metadata():
-    if os.path.isdir(sisyphus.getfs.p_mtd_dir):
-        for files in os.listdir(sisyphus.getfs.p_mtd_dir):
-            if os.path.isfile(os.path.join(sisyphus.getfs.p_mtd_dir, files)):
+    if os.path.isdir(sisyphus.getfs.pkg_metadata_dir):
+        for files in os.listdir(sisyphus.getfs.pkg_metadata_dir):
+            if os.path.isfile(os.path.join(sisyphus.getfs.pkg_metadata_dir, files)):
                 os.remove(os.path.join(
-                    sisyphus.getfs.p_mtd_dir, files))
+                    sisyphus.getfs.pkg_metadata_dir, files))
             else:
                 shutil.rmtree(os.path.join(
-                    sisyphus.getfs.p_mtd_dir, files))
+                    sisyphus.getfs.pkg_metadata_dir, files))

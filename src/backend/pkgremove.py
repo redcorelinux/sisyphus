@@ -74,7 +74,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                     pkgname, depclean=True, unmerge=False)
 
         is_installed, is_needed, is_vague, rm_list = pickle.load(
-            open(os.path.join(sisyphus.getfs.p_mtd_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
+            open(os.path.join(sisyphus.getfs.pkg_metadata_dir, "sisyphus_pkgrevdeps.pickle"), "rb"))
 
     if is_vague != 0:  # catch ambiguous packages
         if unmerge:

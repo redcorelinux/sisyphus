@@ -23,10 +23,10 @@ def start(dl_world=False, gfx_ui=False):
 
     if dl_world:
         file_path = os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_worlddeps.pickle")
+            sisyphus.getfs.pkg_metadata_dir, "sisyphus_worlddeps.pickle")
     else:
         file_path = os.path.join(
-            sisyphus.getfs.p_mtd_dir, "sisyphus_pkgdeps.pickle")
+            sisyphus.getfs.pkg_metadata_dir, "sisyphus_pkgdeps.pickle")
 
     with open(file_path, "rb") as f:
         bin_list, src_list, is_missing, is_vague, need_cfg = pickle.load(f)

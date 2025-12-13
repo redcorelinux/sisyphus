@@ -32,7 +32,7 @@ def tosql(value):
 def srch_db(filter, cat='', pn='', desc=''):
     results = []
 
-    with sqlite3.connect(sisyphus.getfs.lcl_db) as db:
+    with sqlite3.connect(sisyphus.getfs.local_db) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
 
