@@ -204,7 +204,7 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         ) == f'Package Description' else ''
 
         query = sisyphus.querydb.start(filter_val, cat, pn, desc)
-        with sqlite3.connect(sisyphus.getfs.lcl_db) as db:
+        with sqlite3.connect(sisyphus.getfs.local_db) as db:
             cursor = db.cursor()
             cursor.execute(query)
             rows = cursor.fetchall()
