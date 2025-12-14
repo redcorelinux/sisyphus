@@ -28,7 +28,7 @@ def adjust_makeopts():
     n_cpus = get_ncpus()
     new_jobs = n_cpus // 2 if smt_active() else n_cpus
 
-    with open(makeopts_file, "r", encoding="utf-8") as f:
+    with open(makeopts_file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     pattern = r'(MAKEOPTS="-j)(\d+)(")'
@@ -45,7 +45,7 @@ def adjust_makeopts():
         updated += makeopts_line(new_jobs)
 
     if updated != content:
-        with open(makeopts_file, "w", encoding="utf-8") as f:
+        with open(makeopts_file_path, "w", encoding="utf-8") as f:
             f.write(updated)
     else:
         pass  # MAKEOPTS already optimised
