@@ -90,6 +90,9 @@ def search(package: List[str] = typer.Argument(...),
                Filter.all, "--filter", show_default=True),
            quiet: bool = typer.Option(False, "--quiet"),
            ebuild: bool = typer.Option(False, "--ebuild")):
+    if sisyphus.getenv.system_branch() == "next" and not quiet:
+        typer.secho(
+            "Binary search results may be inaccurate. Use the --ebuild option for current source packages.", fg=typer.colors.YELLOW)
     if not package:
         raise typer.Exit(
             "No search term provided, try: sisyphus search --help")
@@ -104,7 +107,8 @@ def search(package: List[str] = typer.Argument(...),
 @app.command("install", help=sisyphus.helptexts.INSTALL)
 def install(pkgname: List[str],
             ask: bool = typer.Option(True),
-            ebuild: bool = typer.Option(False, "--ebuild"),
+            ebuild: bool = typer.Option(
+                lambda: sisyphus.getenv.system_branch() == "next", "--ebuild"),
             oneshot: bool = typer.Option(False, "--oneshot"),
             nodeps: bool = typer.Option(False, "--nodeps"),
             onlydeps: bool = typer.Option(False, "--onlydeps")):
@@ -158,7 +162,7 @@ def update():
 @app.command("upgrade", help=sisyphus.helptexts.UPGRADE)
 def upgrade(
         ask: bool = typer.Option(True),
-        ebuild: bool = typer.Option(False, "--ebuild")):
+        ebuild: bool = typer.Option(lambda: sisyphus.getenv.system_branch() == "next", "--ebuild")):
     sisyphus.sysupgrade.start(ask=ask, ebuild=ebuild, gfx_ui=False)
 
 
