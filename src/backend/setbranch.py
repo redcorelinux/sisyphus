@@ -62,7 +62,8 @@ def get_branch_remote(branch, remote):
 
 @animation.wait('injecting Gentoo Linux portage tree')
 def insert_gentoo_repo(branch, remote, gfx_ui=False):
-    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(branch, remote)
+    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(
+        branch, remote)
 
     if gfx_ui:
         print("\ninjecting Gentoo Linux portage tree", flush=True)
@@ -82,7 +83,8 @@ def insert_gentoo_repo(branch, remote, gfx_ui=False):
 
 @animation.wait('injecting Redcore Linux ebuild overlay')
 def insert_redcore_repo(branch, remote, gfx_ui=False):
-    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(branch, remote)
+    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(
+        branch, remote)
 
     if gfx_ui:
         print("\ninjecting Redcore Linux ebuild overlay", flush=True)
@@ -102,7 +104,8 @@ def insert_redcore_repo(branch, remote, gfx_ui=False):
 
 @animation.wait('injecting Redcore Linux portage config')
 def insert_portage_cfg_repo(branch, remote, gfx_ui=False):
-    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(branch, remote)
+    gentoo_remote, redcore_remote, portage_cfg_remote = get_branch_remote(
+        branch, remote)
 
     if gfx_ui:
         print("\ninjecting Redcore Linux portage config", flush=True)
@@ -148,6 +151,20 @@ def set_binhost_index(branch, remote, gfx_ui=False):
         set_branch_master_index()
     elif "next" in branch:
         set_branch_next_index()
+        if gfx_ui:
+            print(
+                f"\nWARNING: Branch '{branch}' detected (testing/development)."
+                f"\n• Sisyphus GUI disabled — use Sisyphus CLI instead."
+                f"\n• CLI install/upgrade: --ebuild enabled by default."
+                f"\n• 'emerge --sync' && 'emaint sync -a' BROKEN — use 'sisyphus update'"
+                f"\n• Binary packages lag behind source availability.")
+        else:
+            print(
+                f"{Fore.YELLOW}{Style.BRIGHT}\nWARNING: Branch '{branch}' detected (testing/development).{Style.RESET_ALL}"
+                f"{Fore.YELLOW}\n• Sisyphus GUI disabled — use Sisyphus CLI instead.{Style.RESET_ALL}"
+                f"{Fore.YELLOW}\n• CLI install/upgrade: --ebuild enabled by default.{Style.RESET_ALL}"
+                f"{Fore.YELLOW}\n• 'emerge --sync' && 'emaint sync -a' BROKEN — use 'sisyphus update'{Style.RESET_ALL}"
+                f"{Fore.YELLOW}\n• Binary packages lag behind source availability.{Style.RESET_ALL}")
 
 
 def start(branch, remote, gfx_ui=False):
