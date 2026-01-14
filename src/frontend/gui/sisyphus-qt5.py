@@ -227,6 +227,20 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         self.loadDatabase()
 
     def updateSystem(self):
+        if sisyphus.getenv.system_branch() == "next":
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle("Sisyphus GUI - Branch Notice")
+            msg.setTextFormat(QtCore.Qt.TextFormat.RichText)
+            msg.setText(
+                "<b>BRANCH</b> next <b>ACTIVE: GUI DISABLED — PLEASE USE CLI</b>")
+            msg.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+            msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
+
+            msg.show()
+            screen = QtWidgets.QApplication.primaryScreen().geometry()
+            msg.move(screen.center() - msg.rect().center())
+            msg.finished.connect(self.close)
+            return
         self.loadDatabase()
         self.statusBar().showMessage(f"I am syncing myself, hope to finish soon ...")
         self.updateThread.start()
