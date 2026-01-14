@@ -237,7 +237,7 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
             msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
 
             msg.show()
-            screen = QtWidgets.QApplication.primaryScreen().geometry()
+            screen = QtWidgets.QDesktopWidget().screenGeometry()
             msg.move(screen.center() - msg.rect().center())
             msg.finished.connect(self.close)
             return
