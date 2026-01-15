@@ -90,12 +90,6 @@ def search(package: List[str] = typer.Argument(...),
                Filter.all, "--filter", show_default=True),
            quiet: bool = typer.Option(False, "--quiet"),
            ebuild: bool = typer.Option(False, "--ebuild")):
-    if sisyphus.getenv.system_branch() == "next" and not quiet:
-        typer.secho(
-            "WARNING: Branch 'next' detected (testing/development)."
-            "\n• Binary search results will be out-of-date and inaccurate."
-            "\n• Use the --ebuild option to search current source packages.",
-            fg=typer.colors.YELLOW)
     if not package:
         raise typer.Exit(
             "No search term provided, try: sisyphus search --help")
@@ -103,6 +97,12 @@ def search(package: List[str] = typer.Argument(...),
     if ebuild:
         sisyphus.searchdb.start("ebuild", "", package, "", quiet)
     else:
+        if sisyphus.getenv.system_branch() == "next" and not quiet:
+            typer.secho(
+                "WARNING: Branch 'next' detected (testing/development)."
+                "\n• Binary search results will be out-of-date and inaccurate."
+                "\n• Use the --ebuild option to search current source packages.",
+                fg=typer.colors.YELLOW)
         cat, pn = package[0].split("/") if "/" in package else ("", package)
         sisyphus.searchdb.start(filter.value, cat, pn, desc, quiet)
 
