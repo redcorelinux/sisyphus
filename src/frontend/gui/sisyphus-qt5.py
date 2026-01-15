@@ -229,10 +229,17 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
     def updateSystem(self):
         if sisyphus.getenv.system_branch() == "next":
             msg = QtWidgets.QMessageBox(self)
-            msg.setWindowTitle("Sisyphus GUI - Branch Notice")
+            msg.setWindowTitle("Sisyphus GUI - Branch Warning")
             msg.setTextFormat(QtCore.Qt.TextFormat.RichText)
             msg.setText(
-                "<b>BRANCH</b> next <b>ACTIVE: GUI DISABLED — PLEASE USE CLI</b>")
+                "<div style='text-align:center;'>"
+                "<br>Branch 'next' detected (testing/development).<br>"
+                "<br>• Sisyphus GUI disabled — use Sisyphus CLI instead."
+                "<br>• CLI install/upgrade: --ebuild enabled by default."
+                "<br>• 'emerge --sync' && 'emaint sync -a' BROKEN — use 'sisyphus update'"
+                "<br>• Binary packages lag behind source availability."
+                "</div>")
+
             msg.setIcon(QtWidgets.QMessageBox.Icon.Warning)
             msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
 
