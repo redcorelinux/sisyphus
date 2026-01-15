@@ -92,7 +92,10 @@ def search(package: List[str] = typer.Argument(...),
            ebuild: bool = typer.Option(False, "--ebuild")):
     if sisyphus.getenv.system_branch() == "next" and not quiet:
         typer.secho(
-            "Binary search results may be inaccurate. Use the --ebuild option for current source packages.", fg=typer.colors.YELLOW)
+            "WARNING: Branch 'next' detected (testing/development)."
+            "\n• Binary search results will be out-of-date and inaccurate."
+            "\n• Use the --ebuild option to search current source packages.",
+            fg=typer.colors.YELLOW)
     if not package:
         raise typer.Exit(
             "No search term provided, try: sisyphus search --help")

@@ -152,15 +152,10 @@ def set_binhost_index(branch, remote, gfx_ui=False):
     elif "next" in branch:
         set_branch_next_index()
         if gfx_ui:
-            print(
-                f"\nWARNING: Branch '{branch}' detected (testing/development)."
-                f"\n• Sisyphus GUI disabled — use Sisyphus CLI instead."
-                f"\n• CLI install/upgrade: --ebuild enabled by default."
-                f"\n• 'emerge --sync' && 'emaint sync -a' BROKEN — use 'sisyphus update'"
-                f"\n• Binary packages lag behind source availability.")
+            pass # gui client already handles it
         else:
             print(
-                f"{Fore.YELLOW}{Style.BRIGHT}\nWARNING: Branch '{branch}' detected (testing/development).{Style.RESET_ALL}"
+                f"{Fore.YELLOW}\nWARNING: Branch '{branch}' detected (testing/development).{Style.RESET_ALL}"
                 f"{Fore.YELLOW}\n• Sisyphus GUI disabled — use Sisyphus CLI instead.{Style.RESET_ALL}"
                 f"{Fore.YELLOW}\n• CLI install/upgrade: --ebuild enabled by default.{Style.RESET_ALL}"
                 f"{Fore.YELLOW}\n• 'emerge --sync' && 'emaint sync -a' BROKEN — use 'sisyphus update'{Style.RESET_ALL}"
