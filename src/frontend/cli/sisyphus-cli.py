@@ -94,16 +94,13 @@ def search(package: List[str] = typer.Argument(...),
         raise typer.Exit(
             "No search term provided, try: sisyphus search --help")
 
+    single = quiet
+
     if ebuild:
         sisyphus.searchdb.start("ebuild", "", package, "", quiet)
     else:
-        if sisyphus.getenv.system_branch() == "next" and not quiet:
-            typer.secho(
-                "WARNING: Branch 'next' detected (testing/development)."
-                "\n• Binary search results will be out-of-date and inaccurate."
-                "\n• Use the --ebuild option to search current source packages.",
-                fg=typer.colors.YELLOW)
         cat, pn = package[0].split("/") if "/" in package else ("", package)
+        sisyphus.warnbranch.start(quiet=quiet)
         sisyphus.searchdb.start(filter.value, cat, pn, desc, quiet)
 
 
@@ -120,6 +117,7 @@ def install(pkgname: List[str],
             "Error: --nodeps and --onlydeps are mutually exclusive.", fg=typer.colors.RED)
         raise typer.Exit(code=1)
 
+    sisyphus.warnbranch.start(quiet=False)
     sisyphus.pkgadd.start(
         pkgname, ask=ask, ebuild=ebuild, gfx_ui=False,
         oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps
@@ -166,6 +164,7 @@ def update():
 def upgrade(
         ask: bool = typer.Option(True),
         ebuild: bool = typer.Option(lambda: sisyphus.getenv.system_branch() == "next", "--ebuild")):
+    sisyphus.warnbranch.start(quiet=False)
     sisyphus.sysupgrade.start(ask=ask, ebuild=ebuild, gfx_ui=False)
 
 

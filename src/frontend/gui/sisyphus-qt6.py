@@ -233,13 +233,15 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
             msg.setTextFormat(QtCore.Qt.TextFormat.RichText)
             msg.setText(
                 "<div style='text-align:center;'>"
-                "<br>Branch 'next' detected (testing/development).<br>"
+                "<br>WARNING: Branch 'next' detected (testing/development)."
                 "<br>• Sisyphus GUI disabled — use Sisyphus CLI instead."
-                "<br>• CLI install/upgrade: --ebuild enabled by default."
-                "<br>• 'emerge --sync' && 'emaint sync -a' BROKEN — use 'sisyphus update'"
-                "<br>• Binary packages lag behind source availability."
+                "<br>• sisyphus install: --ebuild option enabled by default."
+                "<br>• sisyphus upgrade: --ebuild option enabled by default."
+                "<br>• sisyphus search: binary search inaccurate — use --ebuild option."
+                "<br>• 'emerge --sync' BROKEN — use 'sisyphus update' to sync the trees."
+                "<br>• 'emaint sync -a' BROKEN — use 'sisyphus update' to sync the trees."
+                "<br>• Binary package availability lags behind the git (source) state."
                 "</div>")
-            msg.setIcon(QtWidgets.QMessageBox.Icon.Warning)
             msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
 
             msg.show()

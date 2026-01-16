@@ -94,7 +94,7 @@ def start(filter, cat, pn, desc, single):
         return
 
     if sisyphus.checkenv.root():
-        print(f"{Fore.RED}{Style.BRIGHT}Searching as root allows database updates. {Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results would be accurate.{Style.RESET_ALL}")
+        print(f"\n{Fore.RED}{Style.BRIGHT}Searching as root allows database updates. {Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results would be accurate.{Style.RESET_ALL}")
         while True:
             user_input = input(
                 f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
@@ -107,6 +107,6 @@ def start(filter, cat, pn, desc, single):
             else:
                 continue
     else:
-        print(f"{Fore.RED}{Style.BRIGHT}Searching as user does not allow database updates.{Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results may not be accurate.{Style.RESET_ALL}")
+        print(\nf"{Fore.RED}{Style.BRIGHT}Searching as user does not allow database updates.{Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results may not be accurate.{Style.RESET_ALL}")
 
     srch_rslt(filter, cat, pn, desc, single)

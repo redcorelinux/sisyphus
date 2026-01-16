@@ -14,6 +14,7 @@ import sisyphus.purgeenv
 import sisyphus.setjobs
 import sisyphus.setmirror
 import sisyphus.setprofile
+import sisyphus.warnbranch
 from colorama import Fore, Back, Style
 
 colorama.init()
@@ -152,14 +153,10 @@ def set_binhost_index(branch, remote, gfx_ui=False):
     elif "next" in branch:
         set_branch_next_index()
         if gfx_ui:
-            pass # gui client already handles it
+            # GUI client shows own warning
+            pass
         else:
-            print(
-                f"{Fore.YELLOW}\nWARNING: Branch '{branch}' detected (testing/development).{Style.RESET_ALL}"
-                f"{Fore.YELLOW}\n• Sisyphus GUI disabled — use Sisyphus CLI instead.{Style.RESET_ALL}"
-                f"{Fore.YELLOW}\n• CLI install/upgrade: --ebuild enabled by default.{Style.RESET_ALL}"
-                f"{Fore.YELLOW}\n• 'emerge --sync' && 'emaint sync -a' BROKEN — use 'sisyphus update'{Style.RESET_ALL}"
-                f"{Fore.YELLOW}\n• Binary packages lag behind source availability.{Style.RESET_ALL}")
+            sisyphus.warnbranch.start(branch, quiet=False)
 
 
 def start(branch, remote, gfx_ui=False):

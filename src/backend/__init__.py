@@ -27,4 +27,5 @@ from .syncspm import *
 from .sysclean import *
 from .sysinfo import *
 from .sysupgrade import *
+from .warnbranch import *
 from .watchdog import *
