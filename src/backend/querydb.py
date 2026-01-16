@@ -1,5 +1,6 @@
 #!usr/bin/python3
 
+
 def start(filter, cat='', pn='', desc=''):
     NOVIRT = "AND cat NOT LIKE 'virtual'"
     NO_DESC = "Alien package outside of Gentoo Linux/Redcore Linux"
@@ -33,6 +34,7 @@ def start(filter, cat='', pn='', desc=''):
                     LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
                     WHERE a.category LIKE '%{cat}%' AND a.name LIKE '%{pn}%'
                     AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}''',
+
         'installed': f'''SELECT
                     i.category AS cat,
                     i.name AS pn,
@@ -48,22 +50,28 @@ def start(filter, cat='', pn='', desc=''):
                     LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                     WHERE i.category LIKE '%{cat}%' AND i.name LIKE '%{pn}%'
                     AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}''',
+
         'alien': f'''SELECT
                     i.category AS cat,
                     i.name AS pn,
                     i.slot as ist,
                     i.version as iv,
-                    IFNULL(a.version, 'alien') AS av,
+                    COALESCE(
+                        (SELECT MAX(a2.version) FROM remote_packages a2
+                         WHERE a2.category = i.category AND a2.name = i.name),
+                        'alien'
+                    ) AS av,
                     COALESCE(d.description, '{NO_DESC}') AS desc
                     FROM local_packages AS i
-                    LEFT JOIN remote_packages AS a
-                    ON a.category = i.category
-                    AND a.name = i.name
-                    AND a.slot = i.slot
                     LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                     WHERE i.category LIKE '%{cat}%' AND i.name LIKE '%{pn}%'
                     AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}
-                    AND IFNULL(a.version, 'alien') = 'alien' ''',
+                    AND COALESCE(
+                        (SELECT MAX(a2.version) FROM remote_packages a2
+                         WHERE a2.category = i.category AND a2.name = i.name),
+                        'alien'
+                    ) = 'alien' ''',
+
         'available': f'''SELECT
                     a.category AS cat,
                     a.name AS pn,
@@ -80,6 +88,7 @@ def start(filter, cat='', pn='', desc=''):
                     WHERE a.category LIKE '%{cat}%' AND a.name LIKE '%{pn}%'
                     AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}
                     AND i.version IS NULL''',
+
         'upgradable': f'''SELECT
                     i.category AS cat,
                     i.name AS pn,
@@ -91,7 +100,16 @@ def start(filter, cat='', pn='', desc=''):
                     INNER JOIN remote_packages AS a
                     ON i.category = a.category
                     AND i.name = a.name
-                    AND i.slot = a.slot
+                    AND (
+                        CASE
+                            WHEN instr(i.slot, '/') = 0 THEN i.slot
+                            ELSE substr(i.slot, 1, instr(i.slot, '/')-1)
+                        END =
+                        CASE
+                            WHEN instr(a.slot, '/') = 0 THEN a.slot
+                            ELSE substr(a.slot, 1, instr(a.slot, '/')-1)
+                        END
+                    )
                     LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
                     WHERE i.category LIKE '%{cat}%' AND i.name LIKE '%{pn}%'
                     AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}
@@ -99,4 +117,3 @@ def start(filter, cat='', pn='', desc=''):
     }
 
     return SELECTS[filter]
-
