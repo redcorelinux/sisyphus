@@ -107,6 +107,6 @@ def start(filter, cat, pn, desc, single):
             else:
                 continue
     else:
-        print(\nf"{Fore.RED}{Style.BRIGHT}Searching as user does not allow database updates.{Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results may not be accurate.{Style.RESET_ALL}")
+        print(f"\n{Fore.RED}{Style.BRIGHT}Searching as user does not allow database updates.{Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results may not be accurate.{Style.RESET_ALL}")
 
     srch_rslt(filter, cat, pn, desc, single)
