@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
-import colorama
 import os
+import colorama
+import sisyphus.checkenv
 import sisyphus.getfs
 from colorama import Fore, Back, Style
 
@@ -9,10 +10,14 @@ colorama.init()
 
 NEWS_DIR = "news"
 
-N_NEWS_FILE = os.path.join(sisyphus.getfs.portage_cfg_dir,
-                           os.path.join(NEWS_DIR, "n_news.txt"))
-R_NEWS_FILE = os.path.join(sisyphus.getfs.sisyphus_cfg_dir,
-                           os.path.join(NEWS_DIR, "r_news.txt"))
+N_NEWS_FILE = os.path.join(
+    sisyphus.getfs.portage_cfg_dir,
+    os.path.join(NEWS_DIR, "n_news.txt")
+)
+R_NEWS_FILE = os.path.join(
+    sisyphus.getfs.sisyphus_cfg_dir,
+    os.path.join(NEWS_DIR, "r_news.txt")
+)
 DELIMITER = "---"
 
 
@@ -43,15 +48,24 @@ def list_all_news():
 
     if not n_news:
         print(
-            f"\n{Fore.YELLOW}{Style.BRIGHT}No articles available{Style.RESET_ALL}.")
+            f"\n{Fore.YELLOW}{Style.BRIGHT}No articles available{Style.RESET_ALL}."
+        )
         return
 
     for index, news in enumerate(n_news):
-        heading = next((line.strip()
-                       for line in news.splitlines() if line.strip()), "No heading")
-        status = f"{Fore.GREEN}{Style.BRIGHT}Read{Style.RESET_ALL}" if index in r_news_index else f"{Fore.RED}{Style.BRIGHT}Unread{Style.RESET_ALL}"
+        heading = next(
+            (line.strip() for line in news.splitlines() if line.strip()),
+            "No heading"
+        )
+        status = (
+            f"{Fore.GREEN}{Style.BRIGHT}Read{Style.RESET_ALL}"
+            if index in r_news_index
+            else f"{Fore.RED}{Style.BRIGHT}Unread{Style.RESET_ALL}"
+        )
         print(
-            f"[{Fore.MAGENTA}{Style.BRIGHT}{index + 1}{Style.RESET_ALL}] ({status}): {heading}")
+            f"[{Fore.MAGENTA}{Style.BRIGHT}{index + 1}{Style.RESET_ALL}] "
+            f"({status}): {heading}"
+        )
 
 
 def mark_read(article_nr):
@@ -64,19 +78,31 @@ def mark_read(article_nr):
 
         if index in r_news_index:
             print(
-                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}{Style.RESET_ALL}:\n\n{news}")
+                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
+                f"{Style.RESET_ALL}:\n\n{news}"
+            )
             print(
-                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} is already marked as {Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}.")
+                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+                f"{Style.RESET_ALL} is already marked as "
+                f"{Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}."
+            )
         else:
             r_news_index.append(index)
             save_r_news(r_news_index)
             print(
-                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}{Style.RESET_ALL}:\n\n{news}")
+                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
+                f"{Style.RESET_ALL}:\n\n{news}"
+            )
             print(
-                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} marked as {Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}.")
+                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+                f"{Style.RESET_ALL} marked as "
+                f"{Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}."
+            )
     else:
         print(
-            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} doesn't exist.")
+            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+            f"{Style.RESET_ALL} doesn't exist."
+        )
 
 
 def mark_unread(article_nr):
@@ -89,29 +115,61 @@ def mark_unread(article_nr):
 
         if index not in r_news_index:
             print(
-                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}{Style.RESET_ALL}:\n\n{news}")
+                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
+                f"{Style.RESET_ALL}:\n\n{news}"
+            )
             print(
-                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} is already marked as {Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}.")
+                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+                f"{Style.RESET_ALL} is already marked as "
+                f"{Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}."
+            )
         else:
             r_news_index.remove(index)
             save_r_news(r_news_index)
             print(
-                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}{Style.RESET_ALL}:\n\n{news}")
+                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
+                f"{Style.RESET_ALL}:\n\n{news}"
+            )
             print(
-                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} marked as {Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}.")
+                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+                f"{Style.RESET_ALL} marked as "
+                f"{Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}."
+            )
     else:
         print(
-            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}{Style.RESET_ALL} doesn't exist.")
+            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+            f"{Style.RESET_ALL} doesn't exist."
+        )
 
 
 def start(list=False, read=False, unread=False, article_nr=None):
     if list:
         list_all_news()
 
-    if read:
+    if (read or unread) and not sisyphus.checkenv.root():
+        print(
+            f"\n{Fore.YELLOW}{Style.BRIGHT}"
+            "Cannot mark articles as read/unread, root privileges required."
+            f"{Style.RESET_ALL}"
+        )
         if article_nr is not None:
-            mark_read(article_nr)
+            n_news = ld_n_news()
+            if 1 <= article_nr <= len(n_news):
+                index = article_nr - 1
+                news = n_news[index]
+                print(
+                    f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
+                    f"{Style.RESET_ALL}:\n\n{news}"
+                )
+            else:
+                print(
+                    f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+                    f"{Style.RESET_ALL} doesn't exist."
+                )
+        return
 
-    if unread:
-        if article_nr is not None:
-            mark_unread(article_nr)
+    if read and article_nr is not None:
+        mark_read(article_nr)
+
+    if unread and article_nr is not None:
+        mark_unread(article_nr)

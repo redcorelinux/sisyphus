@@ -213,15 +213,11 @@ def list_news():
 
 @news.command("read", help=sisyphus.helptexts.NEWS_READ)
 def read_news(index: int):
-    if not sisyphus.checkenv.root():
-        raise typer.Exit("\nYou need root permissions.\n")
     sisyphus.getnews.start(read=True, article_nr=index)
 
 
 @news.command("unread", help=sisyphus.helptexts.NEWS_UNREAD)
 def unread_news(index: int):
-    if not sisyphus.checkenv.root():
-        raise typer.Exit("\nYou need root permissions.\n")
     sisyphus.getnews.start(unread=True, article_nr=index)
 
 
