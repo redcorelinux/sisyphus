@@ -68,77 +68,70 @@ def list_all_news():
         )
 
 
-def mark_read(article_nr):
+def show_article(article_nr):
     n_news = ld_n_news()
-    r_news_index = ld_r_news()
 
-    if 1 <= article_nr <= len(n_news):
-        index = article_nr - 1
-        news = n_news[index]
-
-        if index in r_news_index:
-            print(
-                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
-                f"{Style.RESET_ALL}:\n\n{news}"
-            )
-            print(
-                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
-                f"{Style.RESET_ALL} is already marked as "
-                f"{Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}."
-            )
-        else:
-            r_news_index.append(index)
-            save_r_news(r_news_index)
-            print(
-                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
-                f"{Style.RESET_ALL}:\n\n{news}"
-            )
-            print(
-                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
-                f"{Style.RESET_ALL} marked as "
-                f"{Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}."
-            )
-    else:
+    if not (1 <= article_nr <= len(n_news)):
         print(
             f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
             f"{Style.RESET_ALL} doesn't exist."
         )
+        return None, None, None
+
+    index = article_nr - 1
+    news = n_news[index]
+
+    print(
+        f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
+        f"{Style.RESET_ALL}:\n\n{news}"
+    )
+
+    return n_news, index, news
+
+
+def mark_read(article_nr):
+    n_news, index, news = show_article(article_nr)
+    if n_news is None:
+        return
+
+    r_news_index = ld_r_news()
+
+    if index in r_news_index:
+        print(
+            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+            f"{Style.RESET_ALL} is already marked as "
+            f"{Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}."
+        )
+    else:
+        r_news_index.append(index)
+        save_r_news(r_news_index)
+        print(
+            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+            f"{Style.RESET_ALL} marked as "
+            f"{Fore.GREEN}{Style.BRIGHT}read{Style.RESET_ALL}."
+        )
 
 
 def mark_unread(article_nr):
-    n_news = ld_n_news()
+    n_news, index, news = show_article(article_nr)
+    if n_news is None:
+        return
+
     r_news_index = ld_r_news()
 
-    if 1 <= article_nr <= len(n_news):
-        index = article_nr - 1
-        news = n_news[index]
-
-        if index not in r_news_index:
-            print(
-                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
-                f"{Style.RESET_ALL}:\n\n{news}"
-            )
-            print(
-                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
-                f"{Style.RESET_ALL} is already marked as "
-                f"{Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}."
-            )
-        else:
-            r_news_index.remove(index)
-            save_r_news(r_news_index)
-            print(
-                f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
-                f"{Style.RESET_ALL}:\n\n{news}"
-            )
-            print(
-                f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
-                f"{Style.RESET_ALL} marked as "
-                f"{Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}."
-            )
-    else:
+    if index not in r_news_index:
         print(
             f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
-            f"{Style.RESET_ALL} doesn't exist."
+            f"{Style.RESET_ALL} is already marked as "
+            f"{Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}."
+        )
+    else:
+        r_news_index.remove(index)
+        save_r_news(r_news_index)
+        print(
+            f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
+            f"{Style.RESET_ALL} marked as "
+            f"{Fore.RED}{Style.BRIGHT}unread{Style.RESET_ALL}."
         )
 
 
@@ -153,19 +146,7 @@ def start(list=False, read=False, unread=False, article_nr=None):
             f"{Style.RESET_ALL}"
         )
         if article_nr is not None:
-            n_news = ld_n_news()
-            if 1 <= article_nr <= len(n_news):
-                index = article_nr - 1
-                news = n_news[index]
-                print(
-                    f"\n{Fore.MAGENTA}{Style.BRIGHT}Article {article_nr}"
-                    f"{Style.RESET_ALL}:\n\n{news}"
-                )
-            else:
-                print(
-                    f"\nArticle {Fore.WHITE}{Style.BRIGHT}{article_nr}"
-                    f"{Style.RESET_ALL} doesn't exist."
-                )
+            show_article(article_nr)
         return
 
     if read and article_nr is not None:
