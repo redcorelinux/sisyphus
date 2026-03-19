@@ -24,13 +24,11 @@ branch_remote_map = {
     "master": {
         "github": sisyphus.getfs.rmt_gh_addr,
         "gitlab": sisyphus.getfs.rmt_gl_addr,
-        "pagure": sisyphus.getfs.rmt_pg_addr,
         "codeberg": sisyphus.getfs.rmt_cb_addr
     },
     "next": {
         "github": sisyphus.getfs.rmt_gh_addr,
         "gitlab": sisyphus.getfs.rmt_gl_addr,
-        "pagure": sisyphus.getfs.rmt_pg_addr,
         "codeberg": sisyphus.getfs.rmt_cb_addr
     }
 }
