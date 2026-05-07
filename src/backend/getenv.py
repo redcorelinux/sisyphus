@@ -5,7 +5,7 @@ import subprocess
 import sisyphus.getfs
 
 
-def binhost_addr():
+def binpkg_addr():
     files = [
         (sisyphus.getfs.binhostcfg, 'BINHOST (DEPRECATED)'),
         (sisyphus.getfs.binreposcfg, 'BINREPOS (CURRENT)')
@@ -30,7 +30,7 @@ def binhost_addr():
 
 
 def csv_addr():
-    active_url = binhost_addr()
+    active_url = binpkg_addr()
     if not active_url:
         return None, None
 

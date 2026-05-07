@@ -38,7 +38,7 @@ def cli_sync():
 
 def check_n_sync(gfx_ui=False):
     active_branch = sisyphus.getenv.system_branch()
-    binhost_addr = sisyphus.getenv.binhost_addr()
+    binpkg_addr = sisyphus.getenv.binpkg_addr()
     is_online = sisyphus.checkenv.connectivity()
     unread_count = sisyphus.checkenv.news()
 
