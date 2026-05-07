@@ -25,7 +25,9 @@ remote_desc_csv = '/var/lib/sisyphus/csv/remoteDescriptionsPre.csv'
 local_db = '/var/lib/sisyphus/db/sisyphus.db'
 
 if platform.uname()[4] == 'x86_64':
-    mirrorCfg = '/etc/sisyphus/sisyphus-mirrors-amd64.conf'
+    binhostcfg = '/etc/sisyphus/sisyphus-binhost-amd64.conf'
+    binreposcfg = '/etc/sisyphus/sisyphus-binrepos-amd64.conf'
 
 if platform.uname()[4] == 'aarch64':
-    mirrorCfg = '/etc/sisyphus/sisyphus-mirrors-arm64.conf'
+    binhostcfg = '/etc/sisyphus/sisyphus-binhost-arm64.conf'
+    binreposcfg = '/etc/sisyphus/sisyphus-binrepos-arm64.conf'
