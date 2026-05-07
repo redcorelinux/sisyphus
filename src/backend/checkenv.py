@@ -3,7 +3,6 @@
 import os
 import re
 import subprocess
-import sisyphus.getenv
 import sisyphus.getfs
 import sisyphus.getnews
 import urllib.request
@@ -69,22 +68,3 @@ def news():
     unread_count = len(n_news) - len(r_news_index)
 
     return unread_count
-
-
-def sanity():
-    active_branch = sisyphus.getenv.system_branch()
-    binhost_addr = sisyphus.getenv.binhost_addr()
-    is_sane = int()
-
-    if "packages-next" in binhost_addr:
-        if active_branch == "next":
-            is_sane = int(1)
-        else:
-            is_sane = int(0)
-    else:
-        if active_branch == "master":
-            is_sane = int(1)
-        else:
-            is_sane = int(0)
-
-    return is_sane
