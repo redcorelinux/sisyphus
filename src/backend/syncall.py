@@ -57,10 +57,10 @@ def check_n_sync(gfx_ui=False):
     else:
         if gfx_ui:
             gfx_sync()
-            sisyphus.checksig.start()
+            sisyphus.checksig.src_tree()
         else:
             cli_sync()
-            sisyphus.checksig.start()
+            sisyphus.checksig.src_tree()
 
         if gfx_ui:
             print(
