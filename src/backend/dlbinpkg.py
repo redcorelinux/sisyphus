@@ -24,6 +24,42 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
+def get_headers(path):
+    if os.path.exists(path):
+        mtime = os.path.getmtime(path)
+        return {'If-Modified-Since': formatdate(mtime, usegmt=True)}
+    return {}
+
+
+def dl_index_files(session, pkg_root, base_url):
+    index_files = ["Packages", "Packages.gz",
+                   "Packages.asc", "Packages.gz.asc"]
+
+    for filename in index_files:
+        url = f"{base_url}/{filename}"
+        local_path = os.path.join(pkg_root, filename)
+
+        try:
+            with session.get(url, headers=get_headers(local_path), timeout=10) as r:
+                if r.status_code == 200:
+                    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+                    with open(local_path, 'wb') as f:
+                        f.write(r.content)
+
+                    if 'Last-Modified' in r.headers:
+                        mtime = parsedate_to_datetime(
+                            r.headers['Last-Modified']).timestamp()
+                        os.utime(local_path, (mtime, mtime))
+
+                    console.print(
+                        f">>> Fetching package index: [magenta]{filename}[/magenta]")
+                elif r.status_code == 304:
+                    console.print(
+                        f">>> Skipping package index: [magenta]{filename}[/magenta]")
+        except Exception as e:
+            console.print(f"[red]Error fetching index {filename}: {e}[/red]")
+
+
 def dl_binpkg(session, package_name, current_count, total_count, pkg_root, base_url, progress):
     pkg_name = f"{package_name}.gpkg.tar"
     asc_name = f"{package_name}.gpkg.tar.asc"
@@ -35,12 +71,6 @@ def dl_binpkg(session, package_name, current_count, total_count, pkg_root, base_
     progress_prefix = (f">>> Fetching ([bold yellow]{current_count}[/bold yellow] "
                        f"of [bold yellow]{total_count}[/bold yellow]) "
                        f"[magenta]{pkg_name}[/magenta]")
-
-    def get_headers(path):
-        if os.path.exists(path):
-            mtime = os.path.getmtime(path)
-            return {'If-Modified-Since': formatdate(mtime, usegmt=True)}
-        return {}
 
     try:
         with session.get(pkg_url, headers=get_headers(local_pkg_path), stream=True, timeout=20) as r:
@@ -81,6 +111,7 @@ def dl_binpkg(session, package_name, current_count, total_count, pkg_root, base_
                     asc_mtime = parsedate_to_datetime(
                         r_asc.headers['Last-Modified']).timestamp()
                     os.utime(local_asc_path, (asc_mtime, asc_mtime))
+
             elif r_asc.status_code == 304:
                 pass
 
@@ -111,16 +142,17 @@ def start(dl_world=False, max_workers=4):
 
     total_packages = len(bin_list)
 
-    with Progress(
-        TextColumn("{task.description}"),
-        BarColumn(bar_width=30),
-        DownloadColumn(),
-        TransferSpeedColumn(),
-        console=console,
-        refresh_per_second=10
-    ) as progress:
+    with requests.Session() as session:
+        dl_index_files(session, pkg_root, base_url)
 
-        with requests.Session() as session:
+        with Progress(
+            TextColumn("{task.description}"),
+            BarColumn(bar_width=30),
+            DownloadColumn(),
+            TransferSpeedColumn(),
+            console=console,
+            refresh_per_second=10
+        ) as progress:
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
                 for index, package in enumerate(bin_list, start=1):
                     executor.submit(dl_binpkg, session, package, index, total_packages,
