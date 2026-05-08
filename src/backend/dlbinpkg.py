@@ -1,106 +1,101 @@
 #!/usr/bin/python3
 
-import colorama
 import os
 import sys
 import pickle
 import requests
 import signal
-
-from colorama import Fore, Back, Style
-from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor
 from email.utils import formatdate, parsedate_to_datetime
+from rich.progress import Progress, BarColumn, TextColumn, DownloadColumn, TransferSpeedColumn
+from rich.console import Console
 
 import sisyphus.getfs
 import sisyphus.getenv
 
-colorama.init()
+console = Console()
 
 
 def sigint_handler(signal, frame):
-    print(Style.RESET_ALL)
+    console.print("\n[bold red]Interrupted. Exiting...[/bold red]")
     sys.exit(0)
 
 
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def dl_binpkg(package_name, current_count, total_count, pkg_root, base_url):
+def dl_binpkg(session, package_name, current_count, total_count, pkg_root, base_url, progress):
     pkg_name = f"{package_name}.gpkg.tar"
     asc_name = f"{package_name}.gpkg.tar.asc"
     local_pkg_path = os.path.join(pkg_root, pkg_name)
     local_asc_path = os.path.join(pkg_root, asc_name)
-
     pkg_url = f"{base_url}/{pkg_name}"
     asc_url = f"{base_url}/{asc_name}"
 
-    progress_prefix = (f">>> Fetching ({Fore.YELLOW}{Style.BRIGHT}{current_count}{Style.RESET_ALL} "
-                       f"of {Fore.YELLOW}{Style.BRIGHT}{total_count}{Style.RESET_ALL}) "
-                       f"{Fore.MAGENTA}{pkg_name}{Style.RESET_ALL}")
+    progress_prefix = (f">>> Fetching ([bold yellow]{current_count}[/bold yellow] "
+                       f"of [bold yellow]{total_count}[/bold yellow]) "
+                       f"[magenta]{pkg_name}[/magenta]")
 
-    headers = {}
-
-    if os.path.exists(local_pkg_path):
-        mtime = os.path.getmtime(local_pkg_path)
-        headers['If-Modified-Since'] = formatdate(mtime, usegmt=True)
+    def get_headers(path):
+        if os.path.exists(path):
+            mtime = os.path.getmtime(path)
+            return {'If-Modified-Since': formatdate(mtime, usegmt=True)}
+        return {}
 
     try:
-        with requests.get(pkg_url, headers=headers, stream=True, timeout=20) as r:
-            if r.status_code == 304:
-                print(
-                    f"{progress_prefix}: {Fore.GREEN}Up to date (Skipped){Style.RESET_ALL}")
-                return
-
+        with session.get(pkg_url, headers=get_headers(local_pkg_path), stream=True, timeout=20) as r:
             if r.status_code == 200:
                 os.makedirs(os.path.dirname(local_pkg_path), exist_ok=True)
                 total_size = int(r.headers.get('content-length', 0))
+                task_id = progress.add_task(progress_prefix, total=total_size)
 
-                with open(local_pkg_path, 'wb') as f, tqdm(
-                    desc=progress_prefix,
-                    total=total_size,
-                    unit='iB',
-                    unit_scale=True,
-                    unit_divisor=1024,
-                    leave=True,
-                    ascii=" >>",
-                    bar_format='{desc} {percentage:3.0f}% [ {bar:30} ] {n_fmt}/{total_fmt} {rate_fmt}'
-                ) as bar:
-                    for chunk in r.iter_content(chunk_size=65536):
-                        size = f.write(chunk)
-                        bar.update(size)
+                with open(local_pkg_path, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=131072):
+                        f.write(chunk)
+                        progress.update(task_id, advance=len(chunk))
+
+                progress.remove_task(task_id)
 
                 if 'Last-Modified' in r.headers:
                     remote_mtime = parsedate_to_datetime(
                         r.headers['Last-Modified']).timestamp()
                     os.utime(local_pkg_path, (remote_mtime, remote_mtime))
 
-                try:
-                    asc_res = requests.get(asc_url, timeout=10)
-                    if asc_res.status_code == 200:
-                        with open(local_asc_path, 'wb') as f_asc:
-                            f_asc.write(asc_res.content)
-                        if 'Last-Modified' in asc_res.headers:
-                            asc_mtime = parsedate_to_datetime(
-                                asc_res.headers['Last-Modified']).timestamp()
-                            os.utime(local_asc_path, (asc_mtime, asc_mtime))
-                except requests.RequestException:
-                    pass
+                progress.console.print(
+                    f"{progress_prefix}: [green]Fetch completed[/green]")
 
+            elif r.status_code == 304:
+                progress.console.print(
+                    f"{progress_prefix}: [green]Fetch skipped[/green]")
             else:
-                print(
-                    f"{progress_prefix}: {Fore.RED}Failed (HTTP {r.status_code}){Style.RESET_ALL}")
+                progress.console.print(
+                    f"{progress_prefix}: [red]Failed (HTTP {r.status_code})[/red]")
+                return
+
+        with session.get(asc_url, headers=get_headers(local_asc_path), timeout=10) as r_asc:
+            if r_asc.status_code == 200:
+                with open(local_asc_path, 'wb') as f_asc:
+                    f_asc.write(r_asc.content)
+
+                if 'Last-Modified' in r_asc.headers:
+                    asc_mtime = parsedate_to_datetime(
+                        r_asc.headers['Last-Modified']).timestamp()
+                    os.utime(local_asc_path, (asc_mtime, asc_mtime))
+            elif r_asc.status_code == 304:
+                pass
 
     except Exception as e:
-        print(f"{progress_prefix}: {Fore.RED}Error ({e}){Style.RESET_ALL}")
+        progress.console.print(
+            f"{progress_prefix}: [bold red]Error ({e})[/bold red]")
 
 
-def start(dl_world=False, gfx_ui=False):
+def start(dl_world=False, max_workers=4):
     pkg_root = sisyphus.getfs.pkg_cache_dir
     base_url = sisyphus.getenv.binpkg_addr()
 
     if not base_url:
-        print(
-            f"{Fore.RED}Error: Could not resolve BINHOST/BINREPOS address.{Style.RESET_ALL}")
+        console.print(
+            "[bold red]Error: Could not resolve URL address.[/bold red]")
         return
 
     metadata_dir = sisyphus.getfs.pkg_metadata_dir
@@ -108,7 +103,7 @@ def start(dl_world=False, gfx_ui=False):
     file_path = os.path.join(metadata_dir, pickle_name)
 
     if not os.path.exists(file_path):
-        print(f"{Fore.RED}Error: {file_path} not found.{Style.RESET_ALL}")
+        console.print(f"[bold red]Error: {file_path} not found.[/bold red]")
         return
 
     with open(file_path, "rb") as f:
@@ -116,5 +111,17 @@ def start(dl_world=False, gfx_ui=False):
 
     total_packages = len(bin_list)
 
-    for index, package in enumerate(bin_list, start=1):
-        dl_binpkg(package, index, total_packages, pkg_root, base_url)
+    with Progress(
+        TextColumn("{task.description}"),
+        BarColumn(bar_width=30),
+        DownloadColumn(),
+        TransferSpeedColumn(),
+        console=console,
+        refresh_per_second=10
+    ) as progress:
+
+        with requests.Session() as session:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                for index, package in enumerate(bin_list, start=1):
+                    executor.submit(dl_binpkg, session, package, index, total_packages,
+                                    pkg_root, base_url, progress)

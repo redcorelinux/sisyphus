@@ -157,7 +157,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                         user_input = 'yes'
 
                     if user_input.lower() in ['yes', 'y', '']:
-                        sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=False)
+                        sisyphus.dlbinpkg.start(dl_world=True)
                         os.chdir(sisyphus.getfs.pkg_cache_dir)
                         p_exe = subprocess.Popen(
                             ['emerge'] + go_args + ['--usepkg', '--rebuilt-binaries', '@world'])
@@ -204,7 +204,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                         user_input = 'yes'
 
                     if user_input.lower() in ['yes', 'y', '']:
-                        sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=False)
+                        sisyphus.dlbinpkg.start(dl_world=True)
                         os.chdir(sisyphus.getfs.pkg_cache_dir)
                         p_exe = subprocess.Popen(
                             ['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries', '@world'])
@@ -278,7 +278,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                     sys.exit()
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
-                    sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=True)
+                    sisyphus.dlbinpkg.start(dl_world=True)
                     os.chdir(sisyphus.getfs.pkg_cache_dir)
                     p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly',
                                              '--rebuilt-binaries', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -300,8 +300,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                             user_input = 'yes'
 
                         if user_input.lower() in ['yes', 'y', '']:
-                            sisyphus.dlbinpkg.start(
-                                dl_world=True, gfx_ui=False)
+                            sisyphus.dlbinpkg.start(dl_world=True)
                             os.chdir(sisyphus.getfs.pkg_cache_dir)
                             p_exe = subprocess.Popen(
                                 ['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries', '@world'])
