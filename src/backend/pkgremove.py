@@ -121,7 +121,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                 p_exe.wait()
                 print(
                     "\nUnable to proceed! There are other packages with dependencies that prevent removal.")
-                for i in range(9, 0, -1):
+                for i in range(15, 0, -1):
                     print(f"Killing application in : {i} seconds!")
                     time.sleep(1)
 
@@ -163,7 +163,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
             if gfx_ui:
                 print(
                     "\nUnable to proceed! One or more selected packages could not be located for removal.")
-                for i in range(9, 0, -1):
+                for i in range(15, 0, -1):
                     print(f"Killing application in : {i} seconds!")
                     time.sleep(1)
 

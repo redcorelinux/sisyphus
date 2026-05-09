@@ -83,7 +83,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
             sys.exit()
         if gfx_ui:
             print("\nCannot proceed!\nPlease apply the above changes to your portage configuration files and try again.")
-            for i in range(9, 0, -1):
+            for i in range(15, 0, -1):
                 print(f"Killing application in : {i} seconds!")
                 time.sleep(1)
 
@@ -248,7 +248,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                     print(
                         f"Use the Sisyphus CLI command: 'sisyphus upgrade --ebuild' to perform the upgrade; Aborting.")
 
-                    for i in range(9, 0, -1):
+                    for i in range(15, 0, -1):
                         print(f"Killing application in : {i} seconds!")
                         time.sleep(1)
 
@@ -265,7 +265,7 @@ def start(ask=False, ebuild=False, gfx_ui=False):
                     print(
                         f"Use the Sisyphus CLI command: 'sisyphus upgrade --ebuild' to perform the upgrade; Aborting.")
 
-                    for i in range(9, 0, -1):
+                    for i in range(15, 0, -1):
                         print(f"Killing application in : {i} seconds!")
                         time.sleep(1)
 

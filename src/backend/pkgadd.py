@@ -116,7 +116,7 @@ def start(pkgname, ask=False, ebuild=False, gfx_ui=False, oneshot=False, nodeps=
             sys.exit()
         if gfx_ui:
             print("\nCannot proceed!\nPlease apply the above changes to your portage configuration files and try again.")
-            for i in range(9, 0, -1):
+            for i in range(15, 0, -1):
                 print(f"Killing application in : {i} seconds!")
                 time.sleep(1)
 
@@ -139,7 +139,7 @@ def start(pkgname, ask=False, ebuild=False, gfx_ui=False, oneshot=False, nodeps=
         if gfx_ui:
             print(
                 "\nInstallation failed; some specified packages are missing or not found.")
-            for i in range(9, 0, -1):
+            for i in range(15, 0, -1):
                 print(f"Killing application in : {i} seconds!")
                 time.sleep(1)
 
@@ -296,7 +296,7 @@ def start(pkgname, ask=False, ebuild=False, gfx_ui=False, oneshot=False, nodeps=
                     print(
                         f"Use the Sisyphus CLI command: 'sisyphus install {' '.join(pkgname)} --ebuild' to perform the install; Aborting.")
 
-                    for i in range(9, 0, -1):
+                    for i in range(15, 0, -1):
                         print(f"Killing application in : {i} seconds!")
                         time.sleep(1)
 
@@ -313,7 +313,7 @@ def start(pkgname, ask=False, ebuild=False, gfx_ui=False, oneshot=False, nodeps=
                     print(
                         f"Use the Sisyphus CLI command:: 'sisyphus install {' '.join(pkgname)} --ebuild' to perform the install; Aborting.")
 
-                    for i in range(9, 0, -1):
+                    for i in range(15, 0, -1):
                         print(f"Killing application in : {i} seconds!")
                         time.sleep(1)
 

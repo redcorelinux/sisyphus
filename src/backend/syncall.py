@@ -45,7 +45,7 @@ def check_n_sync(gfx_ui=False):
     if is_online != 1:
         if gfx_ui:
             print("\nNo internet connection detected. Aborting!\n")
-            for i in range(9, 0, -1):
+            for i in range(15, 0, -1):
                 print(f"Killing application in : {i} seconds!")
                 time.sleep(1)
 
