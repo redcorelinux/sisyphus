@@ -3,6 +3,8 @@
 import os
 import sys
 import subprocess
+import time
+import signal
 import sisyphus.getfs
 
 
@@ -14,7 +16,7 @@ KEY_PATH = os.path.join(
 )
 
 
-def src_tree():
+def portage_tree(gfx_ui=False):
     tree = sisyphus.getfs.gentoo_ebuild_dir
     try:
         g_exec = subprocess.Popen(['gemato', 'verify', tree, '-s', '-K', KEY_PATH],
@@ -32,7 +34,14 @@ def src_tree():
         if g_exec.returncode != 0:
             print(
                 f"\nPortage tree signature verification failed for '{tree}'\n", file=sys.stderr,)
-            sys.exit(g_exec.returncode)
+            if gfx_ui:
+                for i in range(9, 0, -1):
+                    print(f"Killing application in : {i} seconds!")
+                    time.sleep(1)
+
+                os.kill(os.getpid(), signal.SIGTERM)  # kill GUI window
+            else:
+                sys.exit(g_exec.returncode)
     except KeyboardInterrupt:
         print("\nPortage tree signature verification interrupted.", file=sys.stderr)
         g_exec.terminate()
