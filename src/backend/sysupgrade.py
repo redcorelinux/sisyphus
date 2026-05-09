@@ -289,7 +289,7 @@ def start(ask=False, checksig=False, ebuild=False, gfx_ui=False):
                     sys.exit()
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
-                    sisyphus.dlbinpkg.start(dl_world=True)
+                    sisyphus.dlbinpkg.start(dl_world=True, gfx_ui=gfx_ui)
                     sisyphus.checksig.binpkg_cache(
                         sisyphus.checksig.GPG_FINGERPRINT, gfx_ui=gfx_ui)
                     os.chdir(sisyphus.getfs.pkg_cache_dir)
