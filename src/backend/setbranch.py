@@ -9,12 +9,12 @@ import signal
 import sys
 import time
 import sisyphus.checkenv
+import sisyphus.devbranch
 import sisyphus.getfs
 import sisyphus.purgeenv
 import sisyphus.setjobs
 import sisyphus.setmirror
 import sisyphus.setprofile
-import sisyphus.warnbranch
 from colorama import Fore, Back, Style
 
 colorama.init()
@@ -154,7 +154,7 @@ def set_binhost_index(branch, remote, gfx_ui=False):
             # GUI client shows own warning
             pass
         else:
-            sisyphus.warnbranch.start(branch, quiet=False)
+            sisyphus.devbranch.start(branch, quiet=False)
 
 
 def start(branch, remote, gfx_ui=False):

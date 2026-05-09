@@ -12,6 +12,7 @@ import subprocess
 import sys
 import time
 import sisyphus.checkenv
+import sisyphus.checksig
 import sisyphus.colsview
 import sisyphus.depsolve
 import sisyphus.dlbinpkg
@@ -51,7 +52,7 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 
-def start(ask=False, ebuild=False, gfx_ui=False):
+def start(ask=False, checksig=False, ebuild=False, gfx_ui=False):
     go_args = ['--quiet', '--verbose', '--update', '--deep', '--newuse',
                '--backtrack=100', '--with-bdeps=y', '--misspell-suggestion=n', '--fuzzy-search=n']
     nogo_args = ['--quiet', '--update', '--deep', '--newuse', '--pretend', '--getbinpkg',
@@ -158,6 +159,11 @@ def start(ask=False, ebuild=False, gfx_ui=False):
 
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=True)
+
+                        if checksig:
+                            sisyphus.checksig.binpkg_cache(
+                                sisyphus.checksig.GPG_FINGERPRINT, gfx_ui=gfx_ui)
+
                         os.chdir(sisyphus.getfs.pkg_cache_dir)
                         p_exe = subprocess.Popen(
                             ['emerge'] + go_args + ['--usepkg', '--rebuilt-binaries', '@world'])
@@ -205,6 +211,11 @@ def start(ask=False, ebuild=False, gfx_ui=False):
 
                     if user_input.lower() in ['yes', 'y', '']:
                         sisyphus.dlbinpkg.start(dl_world=True)
+
+                        if checksig:
+                            sisyphus.checksig.binpkg_cache(
+                                sisyphus.checksig.GPG_FINGERPRINT, gfx_ui=gfx_ui)
+
                         os.chdir(sisyphus.getfs.pkg_cache_dir)
                         p_exe = subprocess.Popen(
                             ['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries', '@world'])
@@ -279,6 +290,8 @@ def start(ask=False, ebuild=False, gfx_ui=False):
             elif len(bin_list) != 0 and len(src_list) == 0:  # binary mode
                 if gfx_ui:
                     sisyphus.dlbinpkg.start(dl_world=True)
+                    sisyphus.checksig.binpkg_cache(
+                        sisyphus.checksig.GPG_FINGERPRINT, gfx_ui=gfx_ui)
                     os.chdir(sisyphus.getfs.pkg_cache_dir)
                     p_exe = subprocess.Popen(['emerge'] + go_args + ['--usepkg', '--usepkgonly',
                                              '--rebuilt-binaries', '@world'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -301,6 +314,11 @@ def start(ask=False, ebuild=False, gfx_ui=False):
 
                         if user_input.lower() in ['yes', 'y', '']:
                             sisyphus.dlbinpkg.start(dl_world=True)
+
+                            if checksig:
+                                sisyphus.checksig.binpkg_cache(
+                                    sisyphus.checksig.GPG_FINGERPRINT, gfx_ui=gfx_ui)
+
                             os.chdir(sisyphus.getfs.pkg_cache_dir)
                             p_exe = subprocess.Popen(
                                 ['emerge'] + go_args + ['--usepkg', '--usepkgonly', '--rebuilt-binaries', '@world'])

@@ -234,6 +234,8 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
                 "<div style='text-align:center;'>"
                 "<br>WARNING: Branch 'next' detected (testing/development)."
                 "<br>• Sisyphus GUI disabled — use Sisyphus CLI instead."
+                "<br>• sisyphus install: --checksig option disabled by default."
+                "<br>• sisyphus upgrade: --checksig option disabled by default."
                 "<br>• sisyphus install: --ebuild option enabled by default."
                 "<br>• sisyphus upgrade: --ebuild option enabled by default."
                 "<br>• sisyphus search: binary search inaccurate — use --ebuild option."

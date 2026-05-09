@@ -99,13 +99,15 @@ def search(package: List[str] = typer.Argument(...),
         sisyphus.searchdb.start("ebuild", "", package, "", quiet)
     else:
         cat, pn = package[0].split("/") if "/" in package else ("", package)
-        sisyphus.warnbranch.start(quiet=quiet)
+        sisyphus.devbranch.start(quiet=quiet)
         sisyphus.searchdb.start(filter.value, cat, pn, desc, quiet)
 
 
 @app.command("install", help=sisyphus.helptexts.INSTALL)
 def install(pkgname: List[str],
             ask: bool = typer.Option(True),
+            checksig: bool = typer.Option(
+                lambda: sisyphus.getenv.system_branch() == "master", "--checksig"),
             ebuild: bool = typer.Option(
                 lambda: sisyphus.getenv.system_branch() == "next", "--ebuild"),
             oneshot: bool = typer.Option(False, "--oneshot"),
@@ -116,11 +118,9 @@ def install(pkgname: List[str],
             "Error: --nodeps and --onlydeps are mutually exclusive.", fg=typer.colors.RED)
         raise typer.Exit(code=1)
 
-    sisyphus.warnbranch.start(quiet=False)
-    sisyphus.pkgadd.start(
-        pkgname, ask=ask, ebuild=ebuild, gfx_ui=False,
-        oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps
-    )
+    sisyphus.devbranch.start(quiet=False)
+    sisyphus.pkgadd.start(pkgname, ask=ask, checksig=checksig, ebuild=ebuild,
+                          gfx_ui=False, oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps)
 
 
 @app.command("uninstall", help=sisyphus.helptexts.UNINSTALL)
@@ -162,9 +162,12 @@ def update():
 @app.command("upgrade", help=sisyphus.helptexts.UPGRADE)
 def upgrade(
         ask: bool = typer.Option(True),
+        checksig: bool = typer.Option(
+            lambda: sisyphus.getenv.system_branch() == "master", "--checksig"),
         ebuild: bool = typer.Option(lambda: sisyphus.getenv.system_branch() == "next", "--ebuild")):
-    sisyphus.warnbranch.start(quiet=False)
-    sisyphus.sysupgrade.start(ask=ask, ebuild=ebuild, gfx_ui=False)
+    sisyphus.devbranch.start(quiet=False)
+    sisyphus.sysupgrade.start(
+        ask=ask, checksig=checksig, ebuild=ebuild, gfx_ui=False)
 
 
 @app.command("spmsync", help=sisyphus.helptexts.SPMSYNC)

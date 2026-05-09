@@ -13,6 +13,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 colorama.init()
 
+GPG_FINGERPRINT = "147C397702FFDC44D6BBDBD9AE0C7BDA5C742685"
+
 KEY_PATH = os.path.join(
     '/usr',
     'share',
