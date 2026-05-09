@@ -50,9 +50,9 @@ def _verify_single_file(gpg, data_path, sig_path, authorized_fingerprint, gfx_ui
         is_valid = result.valid and result.pubkey_fingerprint == authorized_fingerprint
 
         if is_valid:
-            log(f"{c_ok}      {c_name}", gfx_ui=gfx_ui)
+            log(f">>> Verifying signature: {c_name} {c_ok}", gfx_ui=gfx_ui)
         else:
-            log(f"{c_fail}    {c_name}", gfx_ui=gfx_ui)
+            log(f">>> Verifying signature: {c_name} {c_fail}", gfx_ui=gfx_ui)
 
         return is_valid, display_name
     except Exception as e:
@@ -67,6 +67,11 @@ def binpkg_cache(authorized_fingerprint, gfx_ui=False, max_workers=None):
     tasks = []
     missing_sig = False
     failed_files = []
+
+    log("="*60, color=Fore.WHITE, gfx_ui=gfx_ui)
+    log(f">>> Verifying signatures in '{cache_dir}'",
+        color=Fore.WHITE, gfx_ui=gfx_ui)
+    log("="*60, color=Fore.WHITE, gfx_ui=gfx_ui)
 
     for root, _, files in os.walk(cache_dir):
         for filename in files:
@@ -83,7 +88,7 @@ def binpkg_cache(authorized_fingerprint, gfx_ui=False, max_workers=None):
                 tasks.append((path, sig_path))
 
     if missing_sig:
-        log("\n" + "="*60, color=Fore.RED, gfx_ui=gfx_ui)
+        log("="*60, color=Fore.RED, gfx_ui=gfx_ui)
         log(f"SECURITY ALERT: MISSING SIGNATURES IN '{cache_dir}'",
             color=Fore.RED, gfx_ui=gfx_ui)
         log("="*60, color=Fore.RED, gfx_ui=gfx_ui)
@@ -115,7 +120,7 @@ def binpkg_cache(authorized_fingerprint, gfx_ui=False, max_workers=None):
             sys.exit(1)
 
     if not overall_success:
-        log("\n" + "="*60, color=Fore.RED, gfx_ui=gfx_ui)
+        log("="*60, color=Fore.RED, gfx_ui=gfx_ui)
         log("SECURITY ALERT: SIGNATURE VERIFICATION FAILED",
             color=Fore.RED, gfx_ui=gfx_ui)
         log("="*60, color=Fore.RED, gfx_ui=gfx_ui)
@@ -143,7 +148,7 @@ def portage_tree(gfx_ui=False):
 
         g_exec.wait()
         if g_exec.returncode != 0:
-            log("\n" + "="*60, color=Fore.RED, gfx_ui=gfx_ui)
+            log("="*60, color=Fore.RED, gfx_ui=gfx_ui)
             log("SECURITY ALERT: SIGNATURE VERIFICATION FAILED",
                 color=Fore.RED, gfx_ui=gfx_ui, error=True)
             log("="*60, color=Fore.RED, gfx_ui=gfx_ui)
