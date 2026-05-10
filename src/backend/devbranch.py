@@ -13,10 +13,10 @@ def start(branch=None, quiet=False):
     typer.secho(
         f"\nWARNING: Branch '{branch}' detected (testing/development)."
         f"\n• Sisyphus GUI disabled — use Sisyphus CLI instead."
-        f"\n• sisyphus install: --checksig option disabled by default."
-        f"\n• sisyphus upgrade: --checksig option disabled by default."
         f"\n• sisyphus install: --ebuild option enabled by default."
         f"\n• sisyphus upgrade: --ebuild option enabled by default."
+        f"\n• sisyphus install: --verifysig option disabled by default."
+        f"\n• sisyphus upgrade: --verifysig option disabled by default."
         f"\n• sisyphus search: binary search inaccurate — use --ebuild option."
         f"\n• 'emerge --sync' BROKEN — use 'sisyphus update' to sync the trees."
         f"\n• 'emaint sync -a' BROKEN — use 'sisyphus update' to sync the trees."

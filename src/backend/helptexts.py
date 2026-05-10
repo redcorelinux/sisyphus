@@ -21,11 +21,11 @@ Default: binary packages. Use --ebuild to install source packages.
 
 Options:\n
   --ask/--no-ask  Ask/Don't ask for user confirmation to proceed.\n
-  --checksig      Verify binary packages signatures.\n
   --ebuild        Install source packages.\n
   --oneshot       Do not mark package as explicitly installed.\n
   --nodeps        Do not install dependencies.\n
   --onlydeps      Install only dependencies.\n
+  --verifysig     Verify binary packages signatures.\n
   \n
 Examples:\n
   sisyphus install firefox --no-ask\n
@@ -77,8 +77,8 @@ Default: binary packages. Use --ebuild to upgrade source packages.
 
 Options:\n
   --ask/--no-ask  Ask for user confirmation to proceed.\n
-  --checksig      Verify binary packages signatures.\n
   --ebuild        Upgrade source packages.\n
+  --verifysig     Verify binary packages signatures.\n
   \n
 Examples:\n
   sisyphus upgrade --ask\n

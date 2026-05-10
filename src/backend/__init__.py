@@ -1,5 +1,4 @@
 from .checkenv import *
-from .checksig import *
 from .colsview import *
 from .depsolve import *
 from .devbranch import *
@@ -28,4 +27,5 @@ from .syncspm import *
 from .sysclean import *
 from .sysinfo import *
 from .sysupgrade import *
+from .verifysig import *
 from .watchdog import *

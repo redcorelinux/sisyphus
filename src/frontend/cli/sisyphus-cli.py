@@ -106,21 +106,21 @@ def search(package: List[str] = typer.Argument(...),
 @app.command("install", help=sisyphus.helptexts.INSTALL)
 def install(pkgname: List[str],
             ask: bool = typer.Option(True),
-            checksig: bool = typer.Option(
-                lambda: sisyphus.getenv.system_branch() == "master", "--checksig"),
             ebuild: bool = typer.Option(
                 lambda: sisyphus.getenv.system_branch() == "next", "--ebuild"),
             oneshot: bool = typer.Option(False, "--oneshot"),
             nodeps: bool = typer.Option(False, "--nodeps"),
-            onlydeps: bool = typer.Option(False, "--onlydeps")):
+            onlydeps: bool = typer.Option(False, "--onlydeps"),
+            verifysig: bool = typer.Option(
+                lambda: sisyphus.getenv.system_branch() == "master", "--verifysig")):
     if nodeps and onlydeps:
         typer.secho(
             "Error: --nodeps and --onlydeps are mutually exclusive.", fg=typer.colors.RED)
         raise typer.Exit(code=1)
 
     sisyphus.devbranch.start(quiet=False)
-    sisyphus.pkgadd.start(pkgname, ask=ask, checksig=checksig, ebuild=ebuild,
-                          gfx_ui=False, oneshot=oneshot, nodeps=nodeps, onlydeps=onlydeps)
+    sisyphus.pkgadd.start(pkgname, ask=ask, ebuild=ebuild, oneshot=oneshot,
+                          nodeps=nodeps, onlydeps=onlydeps, verifysig=verifysig, gfx_ui=False)
 
 
 @app.command("uninstall", help=sisyphus.helptexts.UNINSTALL)
@@ -162,12 +162,12 @@ def update():
 @app.command("upgrade", help=sisyphus.helptexts.UPGRADE)
 def upgrade(
         ask: bool = typer.Option(True),
-        checksig: bool = typer.Option(
-            lambda: sisyphus.getenv.system_branch() == "master", "--checksig"),
-        ebuild: bool = typer.Option(lambda: sisyphus.getenv.system_branch() == "next", "--ebuild")):
+        ebuild: bool = typer.Option(
+            lambda: sisyphus.getenv.system_branch() == "next", "--ebuild"),
+        verifysig: bool = typer.Option(lambda: sisyphus.getenv.system_branch() == "master", "--verifysig")):
     sisyphus.devbranch.start(quiet=False)
-    sisyphus.sysupgrade.start(
-        ask=ask, checksig=checksig, ebuild=ebuild, gfx_ui=False)
+    sisyphus.sysupgrade.start(ask=ask, ebuild=ebuild,
+                              verifysig=verifysig, gfx_ui=False)
 
 
 @app.command("spmsync", help=sisyphus.helptexts.SPMSYNC)

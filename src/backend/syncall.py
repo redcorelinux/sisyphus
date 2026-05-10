@@ -7,10 +7,10 @@ import signal
 import sys
 import time
 import sisyphus.checkenv
-import sisyphus.checksig
 import sisyphus.getenv
 import sisyphus.syncdb
 import sisyphus.syncenv
+import sisyphus.verifysig
 from colorama import Fore, Back, Style
 
 colorama.init()
@@ -57,10 +57,10 @@ def check_n_sync(gfx_ui=False):
     else:
         if gfx_ui:
             gfx_sync()
-            sisyphus.checksig.portage_tree(gfx_ui=True)
+            sisyphus.verifysig.portage_tree(gfx_ui=True)
         else:
             cli_sync()
-            sisyphus.checksig.portage_tree(gfx_ui=False)
+            sisyphus.verifysig.portage_tree(gfx_ui=False)
 
         if gfx_ui:
             print(

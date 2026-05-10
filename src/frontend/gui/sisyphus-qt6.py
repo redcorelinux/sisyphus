@@ -234,10 +234,10 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
                 "<div style='text-align:center;'>"
                 "<br>WARNING: Branch 'next' detected (testing/development)."
                 "<br>• Sisyphus GUI disabled — use Sisyphus CLI instead."
-                "<br>• sisyphus install: --checksig option disabled by default."
-                "<br>• sisyphus upgrade: --checksig option disabled by default."
                 "<br>• sisyphus install: --ebuild option enabled by default."
                 "<br>• sisyphus upgrade: --ebuild option enabled by default."
+                "<br>• sisyphus install: --verifysig option disabled by default."
+                "<br>• sisyphus upgrade: --verifysig option disabled by default."
                 "<br>• sisyphus search: binary search inaccurate — use --ebuild option."
                 "<br>• 'emerge --sync' BROKEN — use 'sisyphus update' to sync the trees."
                 "<br>• 'emaint sync -a' BROKEN — use 'sisyphus update' to sync the trees."
@@ -523,8 +523,8 @@ class MainWorker(QtCore.QObject):
     def startInstall(self):
         self.started.emit()
         pkgname = self.sisyphus_window.pkgname if self.sisyphus_window else []
-        sisyphus.pkgadd.start(pkgname, ask=False, ebuild=False,
-                              gfx_ui=True, oneshot=False, nodeps=False, onlydeps=False)
+        sisyphus.pkgadd.start(pkgname, ask=False, ebuild=False, oneshot=False,
+                              nodeps=False, onlydeps=False, verifysig=True, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
@@ -532,13 +532,14 @@ class MainWorker(QtCore.QObject):
         self.started.emit()
         pkgname = self.sisyphus_window.pkgname if self.sisyphus_window else []
         sisyphus.pkgremove.start(
-            pkgname, ask=False, depclean=True, gfx_ui=True, unmerge=False)
+            pkgname, ask=False, depclean=True, unmerge=False, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
     def startUpgrade(self):
         self.started.emit()
-        sisyphus.sysupgrade.start(ask=False, ebuild=False, gfx_ui=True)
+        sisyphus.sysupgrade.start(
+            ask=False, ebuild=False, verifysig=True, gfx_ui=True)
         self.finished.emit()
 
     @QtCore.pyqtSlot()
