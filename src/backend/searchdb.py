@@ -8,7 +8,6 @@ import sys
 import sisyphus.checkenv
 import sisyphus.getfs
 import sisyphus.querydb
-import sisyphus.syncall
 from colorama import Fore, Style
 
 colorama.init()
@@ -94,19 +93,9 @@ def start(filter, cat, pn, desc, single):
         return
 
     if sisyphus.checkenv.root():
-        print(f"\n{Fore.RED}{Style.BRIGHT}Searching as root allows database updates. {Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results would be accurate.{Style.RESET_ALL}")
-        while True:
-            user_input = input(
-                f"{Fore.WHITE}{Style.BRIGHT}Would you like to proceed?{Style.RESET_ALL} [{Fore.GREEN}{Style.BRIGHT}Yes{Style.RESET_ALL}/{Fore.RED}{Style.BRIGHT}No{Style.RESET_ALL}] ")
-            if user_input.lower() in ['yes', 'y', '']:
-                sisyphus.syncall.start(gfx_ui=False)
-                break
-            elif user_input.lower() in ['no', 'n']:
-                print(f"{Fore.RED}{Style.BRIGHT}Skipping database update; displaying search results.{Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results may not be accurate.{Style.RESET_ALL}")
-                break
-            else:
-                continue
+        msg = f"Tip: Run {Fore.CYAN}'sisyphus update'{Style.RESET_ALL} first to ensure search results are accurate."
     else:
-        print(f"\n{Fore.RED}{Style.BRIGHT}Searching as user does not allow database updates.{Style.RESET_ALL}\n{Fore.WHITE}{Style.BRIGHT}Search results may not be accurate.{Style.RESET_ALL}")
+        msg = f"Note: Search results may be inaccurate. Run {Fore.CYAN}'sisyphus update'{Style.RESET_ALL} as root first to refresh the database."
 
+    print(f"\n{msg}\n")
     srch_rslt(filter, cat, pn, desc, single)
