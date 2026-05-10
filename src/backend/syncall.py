@@ -36,7 +36,7 @@ def cli_sync():
     gfx_sync()
 
 
-def check_n_sync(gfx_ui=False):
+def start(verifysig=False, gfx_ui=False):
     active_branch = sisyphus.getenv.system_branch()
     binpkg_addr = sisyphus.getenv.binpkg_addr()
     is_online = sisyphus.checkenv.connectivity()
@@ -57,10 +57,11 @@ def check_n_sync(gfx_ui=False):
     else:
         if gfx_ui:
             gfx_sync()
-            sisyphus.verifysig.portage_tree(gfx_ui=True)
         else:
             cli_sync()
-            sisyphus.verifysig.portage_tree(gfx_ui=False)
+
+        if verifysig:
+            sisyphus.verifysig.portage_tree(gfx_ui=gfx_ui)
 
         if gfx_ui:
             print(
@@ -72,10 +73,3 @@ def check_n_sync(gfx_ui=False):
             else:
                 print(
                     f"\n\nThere are {Fore.GREEN}{unread_count}{Style.RESET_ALL} unread {Fore.WHITE}{Style.BRIGHT}Redcore Linux Project{Style.RESET_ALL} news article(s).")
-
-
-def start(gfx_ui=False):
-    if gfx_ui:
-        check_n_sync(gfx_ui=True)
-    else:
-        check_n_sync(gfx_ui=False)

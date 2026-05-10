@@ -82,7 +82,7 @@ def start(pkgname, ask=False, ebuild=False, oneshot=False, nodeps=False, onlydep
             sisyphus.depsolve.start.__wrapped__(
                 pkgname, nodeps=False, onlydeps=False)  # undecorate
         else:
-            sisyphus.syncall.start(gfx_ui=False)
+            sisyphus.syncall.start(verifysig=verifysig, gfx_ui=False)
             sisyphus.depsolve.start(pkgname, nodeps=nodeps, onlydeps=onlydeps)
 
         bin_list, src_list, is_missing, is_vague, need_cfg = pickle.load(

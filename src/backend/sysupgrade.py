@@ -65,7 +65,7 @@ def start(ask=False, ebuild=False, verifysig=False, gfx_ui=False):
         if gfx_ui:
             sisyphus.depsolve.start.__wrapped__()  # undecorate
         else:
-            sisyphus.syncall.start(gfx_ui=False)
+            sisyphus.syncall.start(verifysig=verifysig, gfx_ui=False)
             sisyphus.depsolve.start()
 
         bin_list, src_list, is_missing, is_vague, need_cfg = pickle.load(
