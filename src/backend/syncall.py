@@ -55,12 +55,18 @@ def start(verifysig=False, gfx_ui=False):
                 f"{Fore.RED}{Style.BRIGHT}\nNo internet connection detected; Aborting!\n{Style.RESET_ALL}")
             sys.exit()
     else:
+        git_head_before = sisyphus.checkenv.git_head()
+
         if gfx_ui:
             gfx_sync()
         else:
             cli_sync()
 
-        if verifysig:
+        git_head_after = sisyphus.checkenv.git_head()
+
+        git_synced = git_head_before != git_head_after and git_head_before is not None
+
+        if verifysig and git_synced:
             sisyphus.verifysig.portage_tree(gfx_ui=gfx_ui)
 
         if gfx_ui:

@@ -57,6 +57,14 @@ def connectivity():
     return is_online
 
 
+def git_head():
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"],
+                                       cwd=sisyphus.getfs.gentoo_ebuild_dir, stderr=subprocess.DEVNULL).decode().strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
 def root():
     return True if os.getuid() == 0 else False
 
