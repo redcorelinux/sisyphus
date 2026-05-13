@@ -475,15 +475,14 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
         for mirror in self.MIRRORLIST:
             is_legacy = mirror['Type'] == 'BINHOST (DEPRECATED)'
             file_path = sisyphus.getfs.binhostcfg if is_legacy else sisyphus.getfs.binreposcfg
-
-            should_activate = (mirror['Url'] == target_mirror_url)
-
             sisyphus.setmirror.writeList(
-                file_path,
-                mirror['Url'],
-                should_activate,
-                is_legacy
-            )
+                file_path, mirror['Url'], False, is_legacy)
+
+        if target_mirror_url:
+            is_legacy = selection['Type'] == 'BINHOST (DEPRECATED)'
+            file_path = sisyphus.getfs.binhostcfg if is_legacy else sisyphus.getfs.binreposcfg
+            sisyphus.setmirror.writeList(
+                file_path, target_mirror_url, True, is_legacy)
 
         self.MIRRORLIST = sisyphus.setmirror.getList()
         self.updateMirrorList()
