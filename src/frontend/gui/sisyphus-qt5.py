@@ -446,7 +446,8 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
         for row in self.MIRRORLIST:
             indx = self.MIRRORLIST.index(row)
             item = QtGui.QStandardItem()
-            item.setText(f"{row['Url']}")
+            display_text = f"{row['Type']} | ({row['Branch'].upper()}) | {row['Url']}"
+            item.setText(display_text)
             model.setItem(indx, item)
             if row['isActive']:
                 self.ACTIVEMIRRORINDEX = indx
@@ -459,7 +460,33 @@ class SettingsWindow(CenterMixin, QtWidgets.QMainWindow):
         self.MIRRORLIST[self.ACTIVEMIRRORINDEX]['isActive'] = True
 
     def writeMirrorList(self):
-        sisyphus.setmirror.writeList(self.MIRRORLIST)
+        selection = self.MIRRORLIST[self.mirrorCombo.currentIndex()]
+        sys_branch = "testing" if sisyphus.getenv.system_branch() == "next" else "stable"
+        base_host = selection['Url'].replace(
+            'packages-next/', '').replace('packages/', '')
+
+        target_mirror_url = None
+        for m in self.MIRRORLIST:
+            if m['Type'] == selection['Type'] and m['Branch'] == sys_branch:
+                if base_host in m['Url']:
+                    target_mirror_url = m['Url']
+                    break
+
+        for mirror in self.MIRRORLIST:
+            is_legacy = mirror['Type'] == 'BINHOST (DEPRECATED)'
+            file_path = sisyphus.getfs.binhostcfg if is_legacy else sisyphus.getfs.binreposcfg
+
+            should_activate = (mirror['Url'] == target_mirror_url)
+
+            sisyphus.setmirror.writeList(
+                file_path,
+                mirror['Url'],
+                should_activate,
+                is_legacy
+            )
+
+        self.MIRRORLIST = sisyphus.setmirror.getList()
+        self.updateMirrorList()
 
     def loadBranchRemote(self):
         selected_branch = BRANCHES[self.branchCombo.currentText()]
