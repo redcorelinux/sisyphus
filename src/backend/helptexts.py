@@ -68,6 +68,9 @@ Example:\n
 
 UPDATE = """Update source trees, configs, and binary DB.
 
+Options:\n
+  --verifysig     Verify ebuild tree signatures.\n
+
 Example:\n
   sisyphus update\n
 """

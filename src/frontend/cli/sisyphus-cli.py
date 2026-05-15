@@ -153,10 +153,11 @@ def autoclean():
 
 
 @app.command("update", help=sisyphus.helptexts.UPDATE)
-def update():
+def update(
+        verifysig: bool = typer.Option(lambda: sisyphus.getenv.system_branch() == "master", "--verifysig")):
     if not sisyphus.checkenv.root():
         raise typer.Exit("\nYou need root permissions.\n")
-    sisyphus.syncall.start(gfx_ui=False)
+    sisyphus.syncall.start(verifysig=verifysig, gfx_ui=False)
 
 
 @app.command("upgrade", help=sisyphus.helptexts.UPGRADE)
