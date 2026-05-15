@@ -40,7 +40,6 @@ def start(verifysig=False, gfx_ui=False):
     active_branch = sisyphus.getenv.system_branch()
     binpkg_addr = sisyphus.getenv.binpkg_addr()
     is_online = sisyphus.checkenv.connectivity()
-    unread_count = sisyphus.checkenv.news()
 
     if is_online != 1:
         if gfx_ui:
@@ -68,6 +67,8 @@ def start(verifysig=False, gfx_ui=False):
 
         if verifysig and git_synced:
             sisyphus.verifysig.portage_tree(gfx_ui=gfx_ui)
+
+        unread_count = sisyphus.checkenv.news()
 
         if gfx_ui:
             print(
