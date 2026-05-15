@@ -122,21 +122,34 @@ def insert_portage_cfg_repo(branch, remote, gfx_ui=False):
         pass
 
 
-def set_branch_master_index():
+def set_mirror_by_branch(branch):
+    target_branch = "stable" if branch == "master" else "testing"
     mirrorList = sisyphus.setmirror.getList()
-    odd_indices = [i + 1 for i in range(len(mirrorList)) if (i + 1) % 2 == 1]
-    chosen_index = random.choice(odd_indices)
-    sisyphus.setmirror.setActive(chosen_index)
+
+    branch_matches = [
+        (i + 1, m) for i, m in enumerate(mirrorList)
+        if m['Branch'] == target_branch
+    ]
+
+    binrepos_indices = [
+        idx for idx, m in branch_matches
+        if m['Type'] == 'BINREPOS (CURRENT)'
+    ]
+
+    if binrepos_indices:
+        chosen_index = random.choice(binrepos_indices)
+        sisyphus.setmirror.setActive(chosen_index)
+    elif branch_matches:
+        fallback_indices = [idx for idx, m in branch_matches]
+        chosen_index = random.choice(fallback_indices)
+        sisyphus.setmirror.setActive(chosen_index)
+    else:
+        print(
+            f"{Fore.RED}Warning: No mirrors found for branch {target_branch}{Style.RESET_ALL}")
 
 
-def set_branch_next_index():
-    mirrorList = sisyphus.setmirror.getList()
-    even_indices = [i + 1 for i in range(len(mirrorList)) if (i + 1) % 2 == 0]
-    chosen_index = random.choice(even_indices)
-    sisyphus.setmirror.setActive(chosen_index)
-
-
-def set_binhost_index(branch, remote, gfx_ui=False):
+def set_binpkg_addr(branch, remote, gfx_ui=False):
+    set_mirror_by_branch(branch)
     if gfx_ui:
         print(f"\nThe active branch has been switched to '{branch}'")
         print(f"\nThe active remote has been switched to '{remote}'")
@@ -146,10 +159,6 @@ def set_binhost_index(branch, remote, gfx_ui=False):
         print(
             f"{Fore.GREEN}\nThe active remote has been switched to '{remote}'{Style.RESET_ALL}")
 
-    if "master" in branch:
-        set_branch_master_index()
-    elif "next" in branch:
-        set_branch_next_index()
         if gfx_ui:
             # GUI client shows own warning
             pass
@@ -179,7 +188,7 @@ def start(branch, remote, gfx_ui=False):
             insert_gentoo_repo.__wrapped__(branch, remote, gfx_ui=True)
             insert_redcore_repo.__wrapped__(branch, remote, gfx_ui=True)
             insert_portage_cfg_repo.__wrapped__(branch, remote, gfx_ui=True)
-            set_binhost_index(branch, remote, gfx_ui=True)
+            set_binpkg_addr(branch, remote, gfx_ui=True)
             sisyphus.setprofile.start.__wrapped__()
             sisyphus.setjobs.start()
         else:
@@ -188,6 +197,6 @@ def start(branch, remote, gfx_ui=False):
             insert_gentoo_repo(branch, remote, gfx_ui=False)
             insert_redcore_repo(branch, remote, gfx_ui=False)
             insert_portage_cfg_repo(branch, remote, gfx_ui=False)
-            set_binhost_index(branch, remote, gfx_ui=False)
+            set_binpkg_addr(branch, remote, gfx_ui=False)
             sisyphus.setprofile.start()
             sisyphus.setjobs.start()
