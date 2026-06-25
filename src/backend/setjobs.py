@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import os
-import re
 import sisyphus.getfs
 
 makeopts_file_path = os.path.join(
@@ -20,35 +19,33 @@ def smt_active():
         return False
 
 
-def makeopts_line(jobs):
-    return f'MAKEOPTS="-j{jobs}"\n'
-
-
 def adjust_makeopts():
     n_cpus = get_ncpus()
-    new_jobs = n_cpus // 2 if smt_active() else n_cpus
+    phys_cores = n_cpus // 2 if smt_active() else n_cpus
 
-    with open(makeopts_file_path, "r", encoding="utf-8") as f:
-        content = f.read()
+    src_jobs = phys_cores
+    src_load = phys_cores
 
-    pattern = r'(MAKEOPTS="-j)(\d+)(")'
+    bin_jobs = 4 if phys_cores > 4 else phys_cores
+    bin_load = phys_cores
 
-    def repl(match):
-        return f'{match.group(1)}{new_jobs}{match.group(3)}'
+    comments = []
+    if os.path.exists(makeopts_file_path):
+        with open(makeopts_file_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip().startswith("#"):
+                    comments.append(line)
 
-    if re.search(pattern, content):
-        updated = re.sub(pattern, repl, content)
-    else:
-        updated = content
-        if not content.endswith("\n"):
-            updated += "\n"
-        updated += makeopts_line(new_jobs)
+    new_content = "".join(comments)
+    if new_content and not new_content.endswith("\n"):
+        new_content += "\n"
 
-    if updated != content:
-        with open(makeopts_file_path, "w", encoding="utf-8") as f:
-            f.write(updated)
-    else:
-        pass  # MAKEOPTS already optimised
+    new_content += "\n"
+    new_content += f'MAKEOPTS="-j{src_jobs} -l{src_load}"\n'
+    new_content += f'EMERGE_DEFAULT_OPTS="${{EMERGE_DEFAULT_OPTS}} --jobs={bin_jobs} --load-average={bin_load}"\n'
+
+    with open(makeopts_file_path, "w", encoding="utf-8") as f:
+        f.write(new_content)
 
 
 def start():
