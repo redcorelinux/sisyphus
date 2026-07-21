@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import os
+import sisyphus.checkenv
 import sisyphus.getfs
 
 makeopts_file_path = os.path.join(
@@ -49,4 +50,7 @@ def adjust_makeopts():
 
 
 def start():
-    adjust_makeopts()
+    if sisyphus.checkenv.root():
+        adjust_makeopts()
+    else:
+        pass
