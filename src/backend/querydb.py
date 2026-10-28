@@ -17,8 +17,8 @@ def start(filter, cat='', pn='', desc=''):
                     AND i.name = a.name
                     AND i.slot = a.slot
                     LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                    WHERE i.category LIKE '%{cat}%' AND i.name LIKE '%{pn}%'
-                    AND (COALESCE(d.description, '{NO_DESC}, ') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}
+                    WHERE i.category LIKE '%' || :cat || '%' AND i.name LIKE '%' || :pn || '%'
+                    AND (COALESCE(d.description, '{NO_DESC}, ') LIKE '%' || :desc || '%' OR d.description IS NULL) {NOVIRT}
                     UNION
                     SELECT
                     a.category AS cat,
@@ -32,8 +32,8 @@ def start(filter, cat='', pn='', desc=''):
                     AND a.name = i.name
                     AND a.slot = i.slot
                     LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
-                    WHERE a.category LIKE '%{cat}%' AND a.name LIKE '%{pn}%'
-                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}''',
+                    WHERE a.category LIKE '%' || :cat || '%' AND a.name LIKE '%' || :pn || '%'
+                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%' || :desc || '%' OR d.description IS NULL) {NOVIRT}''',
 
         'installed': f'''SELECT
                     i.category AS cat,
@@ -48,8 +48,8 @@ def start(filter, cat='', pn='', desc=''):
                     AND i.name = a.name
                     AND i.slot = a.slot
                     LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                    WHERE i.category LIKE '%{cat}%' AND i.name LIKE '%{pn}%'
-                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}''',
+                    WHERE i.category LIKE '%' || :cat || '%' AND i.name LIKE '%' || :pn || '%'
+                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%' || :desc || '%' OR d.description IS NULL) {NOVIRT}''',
 
         'alien': f'''SELECT
                     i.category AS cat,
@@ -64,8 +64,8 @@ def start(filter, cat='', pn='', desc=''):
                     COALESCE(d.description, '{NO_DESC}') AS desc
                     FROM local_packages AS i
                     LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                    WHERE i.category LIKE '%{cat}%' AND i.name LIKE '%{pn}%'
-                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}
+                    WHERE i.category LIKE '%' || :cat || '%' AND i.name LIKE '%' || :pn || '%'
+                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%' || :desc || '%' OR d.description IS NULL) {NOVIRT}
                     AND COALESCE(
                         (SELECT MAX(a2.version) FROM remote_packages a2
                          WHERE a2.category = i.category AND a2.name = i.name),
@@ -85,8 +85,8 @@ def start(filter, cat='', pn='', desc=''):
                     AND a.name = i.name
                     AND a.slot = i.slot
                     LEFT JOIN remote_descriptions AS d ON a.name = d.name AND a.category = d.category
-                    WHERE a.category LIKE '%{cat}%' AND a.name LIKE '%{pn}%'
-                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}
+                    WHERE a.category LIKE '%' || :cat || '%' AND a.name LIKE '%' || :pn || '%'
+                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%' || :desc || '%' OR d.description IS NULL) {NOVIRT}
                     AND i.version IS NULL''',
 
         'upgradable': f'''SELECT
@@ -111,9 +111,9 @@ def start(filter, cat='', pn='', desc=''):
                         END
                     )
                     LEFT JOIN remote_descriptions AS d ON i.name = d.name AND i.category = d.category
-                    WHERE i.category LIKE '%{cat}%' AND i.name LIKE '%{pn}%'
-                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%{desc}%' OR d.description IS NULL) {NOVIRT}
+                    WHERE i.category LIKE '%' || :cat || '%' AND i.name LIKE '%' || :pn || '%'
+                    AND (COALESCE(d.description, '{NO_DESC}') LIKE '%' || :desc || '%' OR d.description IS NULL) {NOVIRT}
                     AND i.version <> a.version'''
     }
 
-    return SELECTS[filter]
+    return SELECTS[filter], {'cat': cat, 'pn': pn, 'desc': desc}
