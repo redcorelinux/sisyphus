@@ -98,9 +98,8 @@ def search(package: List[str] = typer.Argument(...),
     if ebuild:
         sisyphus.searchdb.start("ebuild", "", package, "", quiet)
     else:
-        cat, pn = package[0].split("/") if "/" in package else ("", package)
         sisyphus.devbranch.start(quiet=quiet)
-        sisyphus.searchdb.start(filter.value, cat, pn, desc, quiet)
+        sisyphus.searchdb.start(filter.value, "", package, desc, quiet)
 
 
 @app.command("install", help=sisyphus.helptexts.INSTALL)

@@ -28,6 +28,12 @@ def tosql(value):
     return str(value).replace('*', '%').replace('?', '_')
 
 
+def split_term(term, cat=''):
+    if "/" in term:
+        return tuple(term.split("/", 1))
+    return cat, term
+
+
 def srch_db(filter, cat='', pn='', desc=''):
     results = []
 
@@ -36,9 +42,10 @@ def srch_db(filter, cat='', pn='', desc=''):
         cursor = db.cursor()
 
         if isinstance(pn, list):
-            for name in pn:
+            for term in pn:
+                term_cat, name = split_term(term, cat)
                 query = sisyphus.querydb.start(
-                    filter, tosql(cat), tosql(name), tosql(desc))
+                    filter, tosql(term_cat), tosql(name), tosql(desc))
                 cursor.execute(query)
                 results.extend(cursor.fetchall())
         else:
