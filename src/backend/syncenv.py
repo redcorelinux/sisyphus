@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 def sigint_handler(signum, frame):
-    sys.exit(0)
+    raise KeyboardInterrupt
 
 
 signal.signal(signal.SIGINT, sigint_handler)
