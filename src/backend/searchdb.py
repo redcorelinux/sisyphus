@@ -44,14 +44,14 @@ def srch_db(filter, cat='', pn='', desc=''):
         if isinstance(pn, list):
             for term in pn:
                 term_cat, name = split_term(term, cat)
-                query = sisyphus.querydb.start(
+                query, params = sisyphus.querydb.start(
                     filter, tosql(term_cat), tosql(name), tosql(desc))
-                cursor.execute(query)
+                cursor.execute(query, params)
                 results.extend(cursor.fetchall())
         else:
-            query = sisyphus.querydb.start(
+            query, params = sisyphus.querydb.start(
                 filter, tosql(cat), tosql(pn), tosql(desc))
-            cursor.execute(query)
+            cursor.execute(query, params)
             results = cursor.fetchall()
 
     return results

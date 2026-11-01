@@ -202,10 +202,10 @@ class Sisyphus(CenterMixin, QtWidgets.QMainWindow):
         desc = f'%{self.inputBox.text()}%' if self.applicationFilter.currentText(
         ) == f'Package Description' else ''
 
-        query = sisyphus.querydb.start(filter_val, cat, pn, desc)
+        query, params = sisyphus.querydb.start(filter_val, cat, pn, desc)
         with sqlite3.connect(sisyphus.getfs.local_db) as db:
             cursor = db.cursor()
-            cursor.execute(query)
+            cursor.execute(query, params)
             rows = cursor.fetchall()
             self.pkgCount = len(rows)
             self.pkgSelect = 0
