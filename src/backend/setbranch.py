@@ -35,7 +35,7 @@ branch_remote_map = {
 
 
 def sigint_handler(signal, frame):
-    sys.exit(0)
+    raise KeyboardInterrupt
 
 
 signal.signal(signal.SIGINT, sigint_handler)

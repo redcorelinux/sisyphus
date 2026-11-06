@@ -2,7 +2,8 @@
 
 These tests only check functions that work on plain values or on temporary
 files. They don't need root, Portage or a network connection, and they never
-touch the real configuration in /etc/sisyphus.
+touch the real configuration in /etc/sisyphus. The Ctrl+C tests send SIGINT
+to the test run itself and use `sleep` as a stand-in for emerge.
 
 Run them from the top of the source tree:
 
