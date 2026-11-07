@@ -81,7 +81,7 @@ def start(ask=False, ebuild=False, verifysig=False, gfx_ui=False):
                 p_exe.wait(1)
             except subprocess.TimeoutExpired:
                 p_exe.kill()
-            sys.exit()
+            sys.exit(130)
         if gfx_ui:
             print("\nCannot proceed!\nPlease apply the above changes to your portage configuration files and try again.")
             for i in range(15, 0, -1):
@@ -136,7 +136,7 @@ def start(ask=False, ebuild=False, verifysig=False, gfx_ui=False):
                                 p_exe.wait(1)
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
-                            sys.exit()
+                            sys.exit(130)
                         finally:
                             p_exe.wait()
                         sisyphus.syncdb.local_table()
@@ -189,7 +189,7 @@ def start(ask=False, ebuild=False, verifysig=False, gfx_ui=False):
                                 p_exe.wait(1)
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
-                            sys.exit()
+                            sys.exit(130)
                         finally:
                             p_exe.wait()
                         sisyphus.syncdb.local_table()
@@ -241,7 +241,7 @@ def start(ask=False, ebuild=False, verifysig=False, gfx_ui=False):
                                 p_exe.wait(1)
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
-                            sys.exit()
+                            sys.exit(130)
                         finally:
                             p_exe.wait()
                         sisyphus.syncdb.local_table()
@@ -347,7 +347,7 @@ def start(ask=False, ebuild=False, verifysig=False, gfx_ui=False):
                                     p_exe.wait(1)
                                 except subprocess.TimeoutExpired:
                                     p_exe.kill()
-                                sys.exit()
+                                sys.exit(130)
                             finally:
                                 p_exe.wait()
                             sisyphus.syncdb.local_table()

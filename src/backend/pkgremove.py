@@ -88,7 +88,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                     p_exe.wait(1)
                 except subprocess.TimeoutExpired:
                     p_exe.kill()
-                sys.exit()
+                sys.exit(130)
         else:
             if gfx_ui:
                 pass  # GUI always calls <category>/<pkgname>, no ambiguity
@@ -103,7 +103,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                         p_exe.wait(1)
                     except subprocess.TimeoutExpired:
                         p_exe.kill()
-                    sys.exit()
+                    sys.exit(130)
 
     elif is_needed != 0:
         if unmerge:
@@ -151,7 +151,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                         p_exe.wait(1)
                     except subprocess.TimeoutExpired:
                         p_exe.kill()
-                    sys.exit()
+                    sys.exit(130)
                 finally:
                     p_exe.wait()
                 print(
@@ -215,7 +215,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                                         p_exe.wait(1)
                                     except subprocess.TimeoutExpired:
                                         p_exe.kill()
-                                    sys.exit()
+                                    sys.exit(130)
                                 finally:
                                     p_exe.wait()
                                 sisyphus.syncdb.local_table()
@@ -278,7 +278,7 @@ def start(pkgname, ask=False, depclean=False, gfx_ui=False, unmerge=False):
                                     p_exe.wait(1)
                                 except subprocess.TimeoutExpired:
                                     p_exe.kill()
-                                sys.exit()
+                                sys.exit(130)
                             finally:
                                 p_exe.wait()
                             sisyphus.syncdb.local_table()

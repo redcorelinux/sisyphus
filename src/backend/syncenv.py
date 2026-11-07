@@ -26,7 +26,7 @@ def run_git(cmd, cwd=None):
             proc.wait(1)
         except subprocess.TimeoutExpired:
             proc.kill()
-        sys.exit()
+        sys.exit(130)
 
 
 def get_branch(repo_dir):

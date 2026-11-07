@@ -117,7 +117,7 @@ def start(ask=False, depclean=False, gfx_ui=False):
                             p_exe.wait(1)
                         except subprocess.TimeoutExpired:
                             p_exe.kill()
-                        sys.exit()
+                        sys.exit(130)
                     finally:
                         p_exe.wait()
                     sisyphus.syncdb.local_table()

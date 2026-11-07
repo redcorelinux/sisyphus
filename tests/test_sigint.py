@@ -1,5 +1,7 @@
+import ast
 import importlib
 import os
+import pathlib
 import signal
 import subprocess
 import threading
@@ -89,7 +91,7 @@ def test_ctrl_c_stops_the_child_before_sisyphus_exits(monkeypatch):
 
     timer = send_sigint_after(0.3)
     try:
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit) as exit_info:
             sisyphus.syncenv.run_git(["sleep", "30"])
         # Checked before the clean-up below, which would stop it anyway.
         child_status = children[0].poll()
@@ -104,3 +106,25 @@ def test_ctrl_c_stops_the_child_before_sisyphus_exits(monkeypatch):
     # The clean-up code ran: the child had already stopped when run_git exited.
     assert child_status is not None
     assert child_status != 0
+    # 130 is the usual status for a run stopped by Ctrl+C (128 + SIGINT).
+    assert exit_info.value.code == 130
+
+
+def interrupt_exit_args():
+    # Every "except KeyboardInterrupt" block in the backend, with the argument
+    # of the sys.exit() call that ends it.
+    backend = pathlib.Path(__file__).parent.parent / "src" / "backend"
+    for path in sorted(backend.glob("*.py")):
+        for node in ast.walk(ast.parse(path.read_text())):
+            if (isinstance(node, ast.ExceptHandler)
+                    and isinstance(node.type, ast.Name)
+                    and node.type.id == "KeyboardInterrupt"):
+                call = node.body[-1].value
+                yield f"{path.name}:{node.lineno}", ast.unparse(call)
+
+
+def test_every_clean_up_block_exits_with_status_130():
+    blocks = list(interrupt_exit_args())
+    assert blocks
+    wrong = [where for where, call in blocks if call != "sys.exit(130)"]
+    assert wrong == []

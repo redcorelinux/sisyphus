@@ -117,7 +117,7 @@ def binpkg_cache(authorized_fingerprint, gfx_ui=False, max_workers=None):
                     failed_files.append(name)
         except KeyboardInterrupt:
             executor.shutdown(wait=False, cancel_futures=True)
-            sys.exit(1)
+            sys.exit(130)
 
     if not overall_success:
         log("="*60, color=Fore.RED, gfx_ui=gfx_ui)
@@ -166,4 +166,4 @@ def portage_tree(gfx_ui=False):
             g_exec.wait(1)
         except subprocess.TimeoutExpired:
             g_exec.kill()
-        sys.exit(1)
+        sys.exit(130)

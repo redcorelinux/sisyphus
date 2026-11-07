@@ -106,4 +106,4 @@ def start(pkgname=None, nodeps=False, onlydeps=False):
             p_exe.wait(1)
         except subprocess.TimeoutExpired:
             p_exe.kill()
-        sys.exit()
+        sys.exit(130)
