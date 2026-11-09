@@ -26,7 +26,7 @@ def start():
                 e_exe.wait(1)
             except subprocess.TimeoutExpired:
                 e_exe.kill()
-            sys.exit()
+            sys.exit(130)
 
     if platform.uname()[4] == 'aarch64':
         e_exe = subprocess.Popen(
@@ -39,7 +39,7 @@ def start():
                 e_exe.wait(1)
             except subprocess.TimeoutExpired:
                 e_exe.kill()
-            sys.exit()
+            sys.exit(130)
 
     env_exe = subprocess.Popen(['env-update'], stdout=subprocess.DEVNULL)
     try:
@@ -50,4 +50,4 @@ def start():
             env_exe.wait(1)
         except subprocess.TimeoutExpired:
             env_exe.kill()
-        sys.exit()
+        sys.exit(130)

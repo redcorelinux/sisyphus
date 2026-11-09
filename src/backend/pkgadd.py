@@ -98,7 +98,7 @@ def start(pkgname, ask=False, ebuild=False, oneshot=False, nodeps=False, onlydep
                 p_exe.wait(1)
             except subprocess.TimeoutExpired:
                 p_exe.kill()
-            sys.exit()
+            sys.exit(130)
         if gfx_ui:
             pass  # GUI always calls <category>/<pkgname>, no ambiguity
         else:
@@ -114,7 +114,7 @@ def start(pkgname, ask=False, ebuild=False, oneshot=False, nodeps=False, onlydep
                 p_exe.wait(1)
             except subprocess.TimeoutExpired:
                 p_exe.kill()
-            sys.exit()
+            sys.exit(130)
         if gfx_ui:
             print("\nCannot proceed!\nPlease apply the above changes to your portage configuration files and try again.")
             for i in range(15, 0, -1):
@@ -136,7 +136,7 @@ def start(pkgname, ask=False, ebuild=False, oneshot=False, nodeps=False, onlydep
                 p_exe.wait(1)
             except subprocess.TimeoutExpired:
                 p_exe.kill()
-            sys.exit()
+            sys.exit(130)
         if gfx_ui:
             print(
                 "\nInstallation failed; some specified packages are missing or not found.")
@@ -184,7 +184,7 @@ def start(pkgname, ask=False, ebuild=False, oneshot=False, nodeps=False, onlydep
                                 p_exe.wait(1)
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
-                            sys.exit()
+                            sys.exit(130)
                         finally:
                             p_exe.wait()
                         sisyphus.syncdb.local_table()
@@ -237,7 +237,7 @@ def start(pkgname, ask=False, ebuild=False, oneshot=False, nodeps=False, onlydep
                                 p_exe.wait(1)
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
-                            sys.exit()
+                            sys.exit(130)
                         finally:
                             p_exe.wait()
                         sisyphus.syncdb.local_table()
@@ -289,7 +289,7 @@ def start(pkgname, ask=False, ebuild=False, oneshot=False, nodeps=False, onlydep
                                 p_exe.wait(1)
                             except subprocess.TimeoutExpired:
                                 p_exe.kill()
-                            sys.exit()
+                            sys.exit(130)
                         finally:
                             p_exe.wait()
                         sisyphus.syncdb.local_table()
@@ -394,7 +394,7 @@ def start(pkgname, ask=False, ebuild=False, oneshot=False, nodeps=False, onlydep
                                     p_exe.wait(1)
                                 except subprocess.TimeoutExpired:
                                     p_exe.kill()
-                                sys.exit()
+                                sys.exit(130)
                             finally:
                                 p_exe.wait()
                             sisyphus.syncdb.local_table()
